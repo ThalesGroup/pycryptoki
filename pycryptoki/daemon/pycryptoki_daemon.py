@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 '''
 xmlrpc server daemon that wraps pycryptoki so pycryptoki can be used over
 the network
@@ -25,8 +26,8 @@ from pycryptoki.policy_management import ca_set_hsm_policy, ca_set_hsm_policy_ex
     ca_set_destructive_hsm_policy, ca_set_destructive_hsm_policy_ex, \
     ca_set_container_policy, ca_set_container_policy_ex
 from pycryptoki.session_management import c_initialize, c_initialize_ex, \
-    c_finalize, c_finalize_ex, c_open_session, c_open_session_ex, c_get_session_info, c_get_session_info_ex, \
-    c_get_token_info, c_get_token_info_ex, c_close_session, c_close_session_ex, c_logout, c_logout_ex, \
+    c_finalize, c_finalize_ex, c_open_session, c_open_session_ex, c_get_token_info, \
+    c_get_token_info_ex, c_close_session, c_close_session_ex, c_logout, c_logout_ex, \
     c_init_pin, c_init_pin_ex, ca_factory_reset, ca_factory_reset_ex, c_set_pin, \
     c_set_pin_ex, c_close_all_sessions, c_close_all_sessions_ex, ca_create_container, \
     ca_create_container_ex, login, login_ex
@@ -41,16 +42,7 @@ from ctypes import cast
 import ctypes
 from pycryptoki.key_generator import _get_mechanism
 from pycryptoki.cryptoki import CK_ULONG, CK_VOID_PTR
-from pycryptoki.hsm_management import c_performselftest, c_performselftest_ex,\
-    ca_settokencertificatesignature, ca_settokencertificatesignature_ex, \
-    ca_hainit, ca_hainit_ex, ca_createloginchallenge, ca_createloginchallenge_ex, \
-    ca_initializeremotepedvector, ca_initializeremotepedvector_ex, ca_deleteremotepedvector, \
-    ca_deleteremotepedvector_ex, ca_mtkrestore, ca_mtkrestore_ex, ca_mtkresplit, \
-    ca_mtkresplit_ex, ca_mtkzeroize, ca_mtkzeroize_ex
-from pycryptoki.key_management import ca_generatemofn, ca_generatemofn_ex, \
-    ca_modifyusagecount, ca_modifyusagecount_ex
-from pycryptoki.key_usage import ca_clonemofn, ca_clonemofn_ex, ca_duplicatemofn, \
-    ca_duplicatemofn_ex
+
 
 '''
 All the functions the server supports
@@ -85,8 +77,6 @@ pycryptoki_functions = {"c_wrap_key" : c_wrap_key,
                         "c_open_session_ex" : c_open_session_ex,
                         "login" : login,
                         "login_ex" : login_ex,
-                        "c_get_session_info" : c_get_session_info,
-                        "c_get_session_info_ex" : c_get_session_info_ex,
                         "c_get_token_info" : c_get_token_info,
                         "c_get_token_info_ex" : c_get_token_info_ex,
                         "c_close_session" : c_close_session,
@@ -132,33 +122,7 @@ pycryptoki_functions = {"c_wrap_key" : c_wrap_key,
                         "ca_init_audit": ca_init_audit,
                         "ca_init_audit_ex": ca_init_audit_ex,
                         "ca_time_sync": ca_time_sync,
-                        "ca_time_sync_ex": ca_time_sync_ex,
-                        "c_performselftest" : c_performselftest,
-                        "c_performselftest_ex" : c_performselftest_ex,
-                        "ca_settokencertificatesignature" : ca_settokencertificatesignature,
-                        "ca_settokencertificatesignature_ex" : ca_settokencertificatesignature_ex,
-                        "ca_hainit" : ca_hainit,
-                        "ca_hainit_ex" : ca_hainit_ex,
-                        "ca_createloginchallenge" : ca_createloginchallenge,
-                        "ca_createloginchallenge_ex" : ca_createloginchallenge_ex,
-                        "ca_initializeremotepedvector" : ca_initializeremotepedvector,
-                        "ca_initializeremotepedvector_ex" : ca_initializeremotepedvector_ex,
-                        "ca_deleteremotepedvector" : ca_deleteremotepedvector,
-                        "ca_deleteremotepedvector_ex" : ca_deleteremotepedvector_ex,
-                        "ca_mtkrestore" : ca_mtkrestore,
-                        "ca_mtkrestore_ex" : ca_mtkrestore_ex,
-                        "ca_mtkresplit" : ca_mtkresplit,
-                        "ca_mtkresplit_ex" : ca_mtkresplit_ex,
-                        "ca_mtkzeroize" : ca_mtkzeroize,
-                        "ca_mtkzeroize_ex" : ca_mtkzeroize_ex,
-                        "ca_generatemofn" : ca_generatemofn,
-                        "ca_generatemofn_ex" : ca_generatemofn_ex,
-                        "ca_modifyusagecount" : ca_modifyusagecount,
-                        "ca_modifyusagecount_ex" : ca_modifyusagecount_ex,
-                        "ca_clonemofn" : ca_clonemofn,
-                        "ca_clonemofn_ex" : ca_clonemofn_ex,
-                        "ca_duplicatemofn" : ca_duplicatemofn,
-                        "ca_duplicatemofn_ex" : ca_duplicatemofn_ex,
+                        "ca_time_sync_ex": ca_time_sync_ex
                         }
 
 '''
@@ -228,7 +192,7 @@ def c_find_objects_ex_serialize(h_session, h_object, template):
     ''' returns dictionary with k,v pairs of <string, value> for xmlrpc'''
     dictionary = c_find_objects_ex(h_session, h_object, template)
     return serialize_dict(dictionary)
-    
+
 def c_derive_key_serialize(h_session, h_base_key, h_second_key, template, mech_flavor, mech = None):
     if mech:
         mech = _get_mechanism(mech)
@@ -268,7 +232,7 @@ def c_verify_serialize( h_session, h_key, verify_flavor, data_to_verify, signatu
 
 def c_verify_ex_serialize(h_session, h_key, verify_flavor, data_to_verify, signature, mech = None):
     return c_verify_ex(h_session, h_key, verify_flavor, data_to_verify, signature.data, mech)
-    
+
 def c_decrypt(h_session, decrypt_flavor, h_key, encrypted_data, mech = None):
     return c_decrypt(h_session, decrypt_flavor, h_key, encrypted_data.data, mech)
 

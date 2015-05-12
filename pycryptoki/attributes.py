@@ -17,7 +17,8 @@ from defines import CKA_USAGE_LIMIT, CKA_USAGE_COUNT, CKA_CLASS, CKA_TOKEN, \
     CKA_PRIME, CKA_SUBPRIME, CKA_BASE, CKA_PRIME_BITS, CKA_SUBPRIME_BITS, \
     CKA_VALUE_BITS, CKA_VALUE_LEN, CKA_ECDSA_PARAMS, CKA_EC_POINT, CKA_LOCAL, \
     CKA_MODIFIABLE, CKA_EXTRACTABLE, CKA_ALWAYS_SENSITIVE, CKA_NEVER_EXTRACTABLE, \
-    CKA_CCM_PRIVATE, CKA_FINGERPRINT_SHA1, CKA_FINGERPRINT_SHA256, CKA_PKC_TCTRUST, CKA_PKC_CITS, CKA_OUID, \
+    CKA_CCM_PRIVATE, CKA_FINGERPRINT_SHA1, CKA_FINGERPRINT_SHA256, CKA_PKC_TCTRUST, CKA_PKC_CITS, \
+    CKA_OUID, \
     CKA_X9_31_GENERATED, CKA_PKC_ECC, CKR_OK
 from pycryptoki.cryptoki import CK_ULONG_PTR, CK_ATTRIBUTE_PTR, CK_BYTE_PTR
 from pycryptoki.defines import CKA_EKM_UID, CKA_GENERIC_1, CKA_GENERIC_2, \
@@ -28,16 +29,21 @@ import logging
 '''
 List class for handling attributes with lists of a certain type
 '''
+
+
 class CList:
     list_type = None
 
     def __init__(self, list_type):
         self.list_type = list_type
 
+
 class NonAsciiString:
     data = None
+
     def __init__(self, data):
         self.data = data
+
 
 def get_byte_list_from_python_list(python_byte_list):
     '''
@@ -53,89 +59,89 @@ def get_byte_list_from_python_list(python_byte_list):
         return ptr
 
 
-date_attrb = {'year'  : str,
-              'month' : str,
-              'day'   : str}
+date_attrb = {'year': str,
+              'month': str,
+              'day': str}
 
 '''
 A mapping of attributes to what type they have. This is used when converting
 a python dictionary to a C struct or vice versa
 '''
-key_attributes = {CKA_USAGE_LIMIT : long,
-                  CKA_USAGE_COUNT : long,
-                  CKA_CLASS : long,
-                  CKA_TOKEN : bool,
-                  CKA_PRIVATE : bool,
-                  CKA_LABEL : str,
-                  CKA_APPLICATION : None,
-                  CKA_VALUE : CList(str),
-                  CKA_CERTIFICATE_TYPE : long, # TODO guessing
-                  CKA_ISSUER : None,
-                  CKA_SERIAL_NUMBER : None,
-                  CKA_KEY_TYPE : long,
-                  CKA_SUBJECT : str,
-                  CKA_ID : None,
-                  CKA_SENSITIVE : bool,
-                  CKA_ENCRYPT : bool,
-                  CKA_DECRYPT : bool,
-                  CKA_WRAP : bool,
-                  CKA_UNWRAP : bool,
-                  CKA_SIGN : bool,
-                  CKA_SIGN_RECOVER : None,
-                  CKA_VERIFY : bool,
-                  CKA_VERIFY_RECOVER : None,
-                  CKA_DERIVE : bool,
-                  CKA_START_DATE : CDict(date_attrb),
-                  CKA_END_DATE : CDict(date_attrb),
-                  CKA_MODULUS : None,
-                  CKA_MODULUS_BITS : long,
-                  CKA_PUBLIC_EXPONENT : int, #Python has no concept of byte
-                  CKA_PRIVATE_EXPONENT : None,
-                  CKA_PRIME_1 : None,
-                  CKA_PRIME_2 : None,
-                  CKA_EXPONENT_1 : None,
-                  CKA_EXPONENT_2 : None,
-                  CKA_COEFFICIENT : None,
-                  CKA_PRIME : CList(str),
-                  CKA_SUBPRIME : CList(str),
-                  CKA_BASE : CList(str),
-                  CKA_PRIME_BITS : long,
-                  CKA_SUBPRIME_BITS : long,
-                  CKA_VALUE_BITS : long,
+key_attributes = {CKA_USAGE_LIMIT: long,
+                  CKA_USAGE_COUNT: long,
+                  CKA_CLASS: long,
+                  CKA_TOKEN: bool,
+                  CKA_PRIVATE: bool,
+                  CKA_LABEL: str,
+                  CKA_APPLICATION: None,
+                  CKA_VALUE: CList(str),
+                  CKA_CERTIFICATE_TYPE: long,  # TODO guessing
+                  CKA_ISSUER: None,
+                  CKA_SERIAL_NUMBER: None,
+                  CKA_KEY_TYPE: long,
+                  CKA_SUBJECT: str,
+                  CKA_ID: None,
+                  CKA_SENSITIVE: bool,
+                  CKA_ENCRYPT: bool,
+                  CKA_DECRYPT: bool,
+                  CKA_WRAP: bool,
+                  CKA_UNWRAP: bool,
+                  CKA_SIGN: bool,
+                  CKA_SIGN_RECOVER: None,
+                  CKA_VERIFY: bool,
+                  CKA_VERIFY_RECOVER: None,
+                  CKA_DERIVE: bool,
+                  CKA_START_DATE: CDict(date_attrb),
+                  CKA_END_DATE: CDict(date_attrb),
+                  CKA_MODULUS: None,
+                  CKA_MODULUS_BITS: long,
+                  CKA_PUBLIC_EXPONENT: int,  # Python has no concept of byte
+                  CKA_PRIVATE_EXPONENT: None,
+                  CKA_PRIME_1: None,
+                  CKA_PRIME_2: None,
+                  CKA_EXPONENT_1: None,
+                  CKA_EXPONENT_2: None,
+                  CKA_COEFFICIENT: None,
+                  CKA_PRIME: CList(str),
+                  CKA_SUBPRIME: CList(str),
+                  CKA_BASE: CList(str),
+                  CKA_PRIME_BITS: long,
+                  CKA_SUBPRIME_BITS: long,
+                  CKA_VALUE_BITS: long,
                   CKA_VALUE_LEN: long,
-                  CKA_ECDSA_PARAMS : CList(str),
-                  CKA_EC_POINT : None,
-                  CKA_LOCAL : None,
-                  CKA_MODIFIABLE : bool,
-                  CKA_EXTRACTABLE : bool,
-                  CKA_ALWAYS_SENSITIVE : bool,
-                  CKA_NEVER_EXTRACTABLE : bool,
-                  CKA_CCM_PRIVATE : None,
-                  CKA_FINGERPRINT_SHA1 : NonAsciiString,
-                  CKA_FINGERPRINT_SHA256 : NonAsciiString,
-                  CKA_PKC_TCTRUST : None,
-                  CKA_PKC_CITS : None,
-                  CKA_OUID : NonAsciiString,
-                  CKA_X9_31_GENERATED : None,
-                  CKA_PKC_ECC : None,
-                  CKA_EKM_UID : None,
-                  CKA_GENERIC_1 : None,
-                  CKA_GENERIC_2 : None,
-                  CKA_GENERIC_3 : None}
-
+                  CKA_ECDSA_PARAMS: CList(str),
+                  CKA_EC_POINT: None,
+                  CKA_LOCAL: None,
+                  CKA_MODIFIABLE: bool,
+                  CKA_EXTRACTABLE: bool,
+                  CKA_ALWAYS_SENSITIVE: bool,
+                  CKA_NEVER_EXTRACTABLE: bool,
+                  CKA_CCM_PRIVATE: None,
+                  CKA_FINGERPRINT_SHA1: NonAsciiString,
+                  CKA_FINGERPRINT_SHA256: NonAsciiString,
+                  CKA_PKC_TCTRUST: None,
+                  CKA_PKC_CITS: None,
+                  CKA_OUID: NonAsciiString,
+                  CKA_X9_31_GENERATED: None,
+                  CKA_PKC_ECC: None,
+                  CKA_EKM_UID: None,
+                  CKA_GENERIC_1: None,
+                  CKA_GENERIC_2: None,
+                  CKA_GENERIC_3: None}
 
 role_attributes = {}
+
 
 def to_byte_array(val):
     """
     Converts an arbitrarily sized integer into a byte array.
 
     It'll zero-pad the bit length so it's a multiple of 8, then convert
-    the int to binary, split the binary string into sections of 8, then 
+    the int to binary, split the binary string into sections of 8, then
     place each section into a slot in a c_ubyte array (converting to small
-    int). 
+    int).
 
-    :param val: Big Integer to convert. 
+    :param val: Big Integer to convert.
     :return: c_ubyte array
     """
     width = val.bit_length()
@@ -144,10 +150,9 @@ def to_byte_array(val):
     fmt = "{:0%sb}" % width
     str_val = fmt.format(val)
     n = 8
-    str_array = [str_val[i:i+n] for i in range(0, len(str_val), n)]
+    str_array = [str_val[i:i + n] for i in range(0, len(str_val), n)]
 
     return (CK_BYTE * len(str_array))(*[int(x, 2) for x in str_array])
-
 
 
 class Attributes:
@@ -167,7 +172,8 @@ class Attributes:
         '''
 
         if attributes_list is not None:
-            #take either strings or ints as the key to the dictionary (used mainly to accomodate xmlrpc easily)
+            # take either strings or ints as the key to the dictionary (used mainly to accomodate
+            #  xmlrpc easily)
             attributes_list_new = {}
             for key, value in attributes_list.iteritems():
                 if isinstance(key, str):
@@ -188,7 +194,7 @@ class Attributes:
         @param value: The value of the attribute
         '''
         if isinstance(key, str):
-            #take either strings or ints for the key (used mainly to accomodate xmlrpc easily)
+            # take either strings or ints for the key (used mainly to accomodate xmlrpc easily)
             key = int(key)
 
         self._input_check(key, value)
@@ -200,12 +206,17 @@ class Attributes:
 
         @param key: They key of the attribute to check
         @param value: The actual value of the input to check
-        @return: Returns true if the variable is a of a type that has been accounted for in the key_attributes dictionary
+        @return: Returns true if the variable is a of a type that has been accounted for in the
+        key_attributes dictionary
         '''
-        if isinstance(value, bool) or isinstance(value, int) or isinstance(value, CDict) or isinstance(value, long) or isinstance(value, str) or isinstance(value, list) or isinstance(value, CList) or isinstance(value, NonAsciiString):
+        if isinstance(value, bool) or isinstance(value, int) or isinstance(value,
+                                                                           CDict) or isinstance(
+                value, long) or isinstance(value, str) or isinstance(value, list) or isinstance(
+                value, CList) or isinstance(value, NonAsciiString):
             return True
         else:
-            raise Exception("Argument type not supported. <key: " + str(key) + ", value: " + str(value) + ">")
+            raise Exception(
+                "Argument type not supported. <key: " + str(key) + ", value: " + str(value) + ">")
 
     def get_c_struct(self):
         '''
@@ -220,17 +231,21 @@ class Attributes:
             value = self.attributes[key]
             self._input_check(key, value)
 
-            #Get the proper type for what your data is, originally I had
+            # Get the proper type for what your data is, originally I had
             #this automatically detected from the python type but passing in
             #int's vs longs was problematic
             item_type = lookup_attributes(key)
 
             if item_type == bool:
                 byte_val = CK_BBOOL(value)
-                c_struct[i] = CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE(key), cast(pointer(byte_val), c_void_p), CK_ULONG(sizeof(byte_val)))
+                c_struct[i] = CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE(key),
+                                           cast(pointer(byte_val), c_void_p),
+                                           CK_ULONG(sizeof(byte_val)))
             elif item_type == long:
                 long_val = CK_ULONG(value)
-                c_struct[i] = CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE(key), cast(pointer(long_val), c_void_p), CK_ULONG(sizeof(long_val)))
+                c_struct[i] = CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE(key),
+                                           cast(pointer(long_val), c_void_p),
+                                           CK_ULONG(sizeof(long_val)))
             elif item_type == int:
                 ck_byte_array = to_byte_array(value)
                 c_struct[i] = CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE(key),
@@ -238,15 +253,17 @@ class Attributes:
                                            CK_ULONG(sizeof(ck_byte_array)))
             elif item_type == str:
                 string_val = create_string_buffer(value)
-                c_struct[i] = CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE(key), cast(string_val, c_void_p), CK_ULONG(len(string_val)))
+                c_struct[i] = CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE(key), cast(string_val, c_void_p),
+                                           CK_ULONG(len(string_val)))
             elif isinstance(item_type, CDict):
                 date = CK_DATE()
 
-                date.year =  convert_string_to_CK_CHAR(value.dict_val['year'])
+                date.year = convert_string_to_CK_CHAR(value.dict_val['year'])
                 date.month = convert_string_to_CK_CHAR(value.dict_val['month'])
-                date.day =   convert_string_to_CK_CHAR(value.dict_val['day'])
+                date.day = convert_string_to_CK_CHAR(value.dict_val['day'])
 
-                c_struct[i] = CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE(key), cast(pointer(date), c_void_p), CK_ULONG(sizeof(date)))
+                c_struct[i] = CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE(key), cast(pointer(date), c_void_p),
+                                           CK_ULONG(sizeof(date)))
             elif isinstance(item_type, CList):
                 if item_type.list_type == str:
                     list_val = create_string_buffer("", len(value))
@@ -262,15 +279,18 @@ class Attributes:
                     for j in range(0, len(value)):
                         list_val[j] = CK_ULONG(value[j])
 
-                    c_struct[i] = CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE(key), ptr, CK_ULONG(sizeof(CK_ULONG(0)) * len(value)))
+                    c_struct[i] = CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE(key), ptr,
+                                               CK_ULONG(sizeof(CK_ULONG(0)) * len(value)))
             elif item_type == NonAsciiString:
                 list_val = (CK_CHAR * len(value))()
                 ptr = cast(pointer(list_val), c_void_p)
                 for j in range(0, len(value)):
                     list_val[j] = CK_CHAR(ord(value[j]) - 0x30)
-                c_struct[i] = CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE(key), ptr, CK_ULONG(sizeof(CK_CHAR(0)) * len(value)))
+                c_struct[i] = CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE(key), ptr,
+                                           CK_ULONG(sizeof(CK_CHAR(0)) * len(value)))
             else:
-                raise Exception("Argument type " + str(item_type) + " not supported. <key: " + str(key) + ", value: " + str(value) + ">")
+                raise Exception("Argument type " + str(item_type) + " not supported. <key: " + str(
+                    key) + ", value: " + str(value) + ">")
             i = i + 1
 
         return c_struct
@@ -283,18 +303,19 @@ class Attributes:
         @param h_session: Current session
         @param h_object: The handle of the object to fetch the attributes for
         '''
-        #Clean before starting
+        # Clean before starting
         self.attributes = {}
 
         for key in key_attributes:
             attribute = CK_ATTRIBUTE()
             attribute.type = CK_ULONG(key)
             attribute.pValue = c_void_p(0)
-            retCode = C_GetAttributeValue(h_session, CK_OBJECT_HANDLE(h_object), byref(attribute), CK_ULONG(1))
+            retCode = C_GetAttributeValue(h_session, CK_OBJECT_HANDLE(h_object), byref(attribute),
+                                          CK_ULONG(1))
             if retCode == CKR_OK:
                 attr_type = lookup_attributes(key)
 
-                if isinstance(attr_type,  CList):
+                if isinstance(attr_type, CList):
                     if attr_type.list_type == str:
                         pb_value = (CK_BYTE * attribute.usValueLen)()
                     elif attr_type.list_type == long:
@@ -303,17 +324,21 @@ class Attributes:
                     pb_value = create_string_buffer(attribute.usValueLen)
 
                 attribute.pValue = cast(pb_value, c_void_p)
-                retCode = C_GetAttributeValue(h_session, CK_OBJECT_HANDLE(h_object), byref(attribute), CK_ULONG(1))
+                retCode = C_GetAttributeValue(h_session, CK_OBJECT_HANDLE(h_object),
+                                              byref(attribute), CK_ULONG(1))
                 if retCode == CKR_OK:
                     if attr_type == bool:
-                        self.add_attribute(attribute.type, attr_type(cast(attribute.pValue, POINTER(c_bool)).contents.value))
+                        self.add_attribute(attribute.type, attr_type(
+                            cast(attribute.pValue, POINTER(c_bool)).contents.value))
                     elif attr_type == str:
                         string = cast(attribute.pValue, c_char_p).value[0:attribute.usValueLen]
                         self.add_attribute(attribute.type, attr_type(string))
                     elif attr_type == long:
-                        self.add_attribute(attribute.type, (attr_type(cast(attribute.pValue, POINTER(c_ulong)).contents.value)))
+                        self.add_attribute(attribute.type, (
+                        attr_type(cast(attribute.pValue, POINTER(c_ulong)).contents.value)))
                     elif attr_type == int:
-                        self.add_attribute(attribute.type, attr_type(cast(attribute.pValue, POINTER(c_int)).contents.value))
+                        self.add_attribute(attribute.type, attr_type(
+                            cast(attribute.pValue, POINTER(c_int)).contents.value))
                     elif isinstance(attr_type, CList):
                         value = []
                         i = 0
@@ -326,12 +351,13 @@ class Attributes:
                         value = ''
                         i = 0
                         while i < attribute.usValueLen:
-                            value += '%02x'% cast(pb_value, CK_CHAR_PTR)[i]
+                            value += '%02x' % cast(pb_value, CK_CHAR_PTR)[i]
                             i = i + 1
 
                         self.add_attribute(attribute.type, value)
                     elif attr_type == None:
-                        #raise Exception("Attribute of type " + str(attribute.type) + "'s value type not yet determined") # Add type to all_attributes
+                        #raise Exception("Attribute of type " + str(attribute.type) + "'s value
+                        # type not yet determined") # Add type to all_attributes
                         pass
 
     def get_attributes(self):
@@ -350,7 +376,8 @@ class Attributes:
         other_attribs = other.get_attributes()
         self_attribs = self.get_attributes()
         for key in self.attributes:
-            if key in self_attribs and key in other_attribs: #TODO we are only checking if the key exists in both, maybe this is a bad idea
+            if key in self_attribs and key in other_attribs:  # TODO we are only checking if the
+                # key exists in both, maybe this is a bad idea
                 if self_attribs[key] != other_attribs[key]:
                     return False
         return True
@@ -361,6 +388,7 @@ class Attributes:
         '''
         for key in self.attributes:
             print "key: " + str(key) + ", value: " + str(self.attributes[key])
+
 
 def get_attribute_py_value(attribute):
     '''
@@ -391,7 +419,6 @@ def get_attribute_py_value(attribute):
         py_date['day'] = convert_CK_CHAR_to_string(cast(c_date.day, CK_CHAR_PTR))
         return py_date
 
-
     elif isinstance(attr_type, CList):
         if attr_type.list_type == str:
             value = []
@@ -410,10 +437,11 @@ def get_attribute_py_value(attribute):
     elif attr_type == NonAsciiString:
         value = ''
         for i in range(0, attribute.usValueLen / sizeof(CK_CHAR(0))):
-            value += '%02x'% cast(attribute.pValue, CK_CHAR_PTR)[i]
+            value += '%02x' % cast(attribute.pValue, CK_CHAR_PTR)[i]
         return value
     elif attr_type == None:
-        #raise Exception("Attribute of type " + str(attribute.type) + "'s value type not yet determined") # Add type to all_attributes
+        # raise Exception("Attribute of type " + str(attribute.type) + "'s value type not yet
+        # determined") # Add type to all_attributes
         pass
 
 
@@ -434,6 +462,7 @@ def c_struct_to_python(c_struct):
 
     return py_struct
 
+
 def lookup_attributes(key):
     '''
     Utility function to look through the lists of attributes and figure out
@@ -451,14 +480,16 @@ def lookup_attributes(key):
 
     return ret_val
 
+
 def convert_string_to_CK_CHAR(string):
     byte_array = (c_ubyte * len (string))()
     i = 0
     for char in string:
         byte_array[i] = ord(char)
-        i = i +1
+        i = i + 1
 
     return byte_array
+
 
 def convert_CK_CHAR_to_string(byte_array):
     string = ""
@@ -467,6 +498,7 @@ def convert_CK_CHAR_to_string(byte_array):
         string = string + chr(b)
     return string
 
+
 def convert_ck_char_array_to_string(ck_char_array):
     string = ""
 
@@ -474,10 +506,12 @@ def convert_ck_char_array_to_string(ck_char_array):
         string = string + b
     return string
 
+
 def convert_CK_BYTE_array_to_string(byte_array):
     string = ""
 
     for b in byte_array:
-        string = string + "%02x"%(b)
+        string = string + "%02x" % (b)
     return string
+
 

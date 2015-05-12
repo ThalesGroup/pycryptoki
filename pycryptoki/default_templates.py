@@ -539,7 +539,6 @@ CKM_ECDSA_KEY_PAIR_GEN_PUBTEMP = {CKA_TOKEN : True,
                                   CKA_DERIVE : True,
                                   CKA_ECDSA_PARAMS : curve_list['secp112r1'],
                                   CKA_LABEL : "ECDSA Public Key"}
-
 CKM_ECDSA_KEY_PAIR_GEN_PRIVTEMP = {CKA_TOKEN : True,
                                    CKA_PRIVATE : True,
                                    CKA_SENSITIVE : True,

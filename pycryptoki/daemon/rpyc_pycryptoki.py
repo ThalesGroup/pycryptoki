@@ -1,8 +1,7 @@
+#!/usr/bin/env python
 """
-This is the rpy
+RPYC version of of the pycryptoki daemon
 """
-
-import logging
 from optparse import OptionParser
 from _ctypes import pointer
 from ctypes import cast
@@ -11,37 +10,37 @@ import ctypes
 import rpyc
 import pycryptoki
 
-from pycryptoki.backup import ca_open_secure_token, ca_close_secure_token, \
-    ca_open_secure_token_ex, ca_close_secure_token_ex, ca_extract, ca_extract_ex, \
+from pycryptoki.backup import ca_open_secure_token, ca_close_secure_token,\
+    ca_open_secure_token_ex, ca_close_secure_token_ex, ca_extract, ca_extract_ex,\
     ca_insert, ca_insert_ex
-from pycryptoki.encryption import c_encrypt, c_encrypt_ex, c_decrypt, \
+from pycryptoki.encryption import c_encrypt, c_encrypt_ex, c_decrypt,\
     c_decrypt_ex, c_wrap_key, c_wrap_key_ex, c_unwrap_key, c_unwrap_key_ex
-from pycryptoki.key_generator import c_destroy_object, c_destroy_object_ex, \
-    c_generate_key_pair, c_generate_key_pair_ex, c_generate_key, c_generate_key_ex, \
+from pycryptoki.key_generator import c_destroy_object, c_destroy_object_ex,\
+    c_generate_key_pair, c_generate_key_pair_ex, c_generate_key, c_generate_key_ex,\
     c_derive_key, c_derive_key_ex, c_copy_object_ex, c_copy_object
-from pycryptoki.misc import c_generate_random, c_generate_random_ex, \
-    c_seed_random, c_seed_random_ex, c_digest, c_digest_ex, c_set_ped_id, \
-    c_set_ped_id_ex, c_get_ped_id, c_get_ped_id_ex, c_create_object, \
+from pycryptoki.misc import c_generate_random, c_generate_random_ex,\
+    c_seed_random, c_seed_random_ex, c_digest, c_digest_ex, c_set_ped_id,\
+    c_set_ped_id_ex, c_get_ped_id, c_get_ped_id_ex, c_create_object,\
     c_create_object_ex, c_digestkey, c_digestkey_ex
-from pycryptoki.object_attr_lookup import c_find_objects, c_find_objects_ex, \
+from pycryptoki.object_attr_lookup import c_find_objects, c_find_objects_ex,\
     c_get_attribute_value, c_get_attribute_value_ex, c_set_attribute_value, c_set_attribute_value_ex
-from pycryptoki.policy_management import ca_set_hsm_policy, ca_set_hsm_policy_ex, \
-    ca_set_destructive_hsm_policy, ca_set_destructive_hsm_policy_ex, \
+from pycryptoki.policy_management import ca_set_hsm_policy, ca_set_hsm_policy_ex,\
+    ca_set_destructive_hsm_policy, ca_set_destructive_hsm_policy_ex,\
     ca_set_container_policy, ca_set_container_policy_ex
-from pycryptoki.session_management import c_initialize, c_initialize_ex, \
+from pycryptoki.session_management import c_initialize, c_initialize_ex,\
     c_finalize, c_finalize_ex, c_open_session, c_open_session_ex, \
     c_get_session_info, c_get_session_info_ex, c_get_token_info, \
-    c_get_token_info_ex, c_close_session, c_close_session_ex, c_logout, c_logout_ex, \
-    c_init_pin, c_init_pin_ex, ca_factory_reset, ca_factory_reset_ex, c_set_pin, \
-    c_set_pin_ex, c_close_all_sessions, c_close_all_sessions_ex, ca_create_container, \
-    ca_create_container_ex, login, login_ex, ca_openapplicationID_ex, ca_openapplicationID, ca_closeapplicationID_ex, \
+    c_get_token_info_ex, c_close_session, c_close_session_ex, c_logout, c_logout_ex,\
+    c_init_pin, c_init_pin_ex, ca_factory_reset, ca_factory_reset_ex, c_set_pin,\
+    c_set_pin_ex, c_close_all_sessions, c_close_all_sessions_ex, ca_create_container,\
+    ca_create_container_ex, login, login_ex, ca_openapplicationID_ex, ca_openapplicationID, ca_closeapplicationID_ex,\
     ca_closeapplicationID, ca_restart, ca_restart_ex, ca_delete_container_with_handle_ex, \
     ca_delete_container_with_handle, ca_setapplicationID, ca_setapplicationID_ex
 from pycryptoki.sign_verify import c_sign, c_sign_ex, c_verify, c_verify_ex
-from pycryptoki.token_management import c_init_token, c_init_token_ex, \
-    c_get_mechanism_list, c_get_mechanism_list_ex, c_get_mechanism_info, \
+from pycryptoki.token_management import c_init_token, c_init_token_ex,\
+    c_get_mechanism_list, c_get_mechanism_list_ex, c_get_mechanism_info,\
     c_get_mechanism_info_ex, get_token_by_label, get_token_by_label_ex
-from pycryptoki.audit_handling import ca_get_time, ca_get_time_ex, ca_init_audit, \
+from pycryptoki.audit_handling import ca_get_time, ca_get_time_ex, ca_init_audit,\
     ca_init_audit_ex, ca_time_sync, ca_time_sync_ex
 from pycryptoki.cryptoki import CK_ULONG, CK_VOID_PTR
 from pycryptoki.key_generator import _get_mechanism
@@ -57,7 +56,7 @@ from pycryptoki.key_usage import ca_clonemofn, ca_clonemofn_ex, \
     ca_duplicatemofn, ca_duplicatemofn_ex
 
 from pycryptoki.cryptoki import *
-
+import logging
 
 logger = logging.getLogger(__name__)
 

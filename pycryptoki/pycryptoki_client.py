@@ -1,15 +1,13 @@
 '''
 Contains both a local and remote pycryptoki client
 '''
-import xmlrpclib
 from pycryptoki.daemon.pycryptoki_daemon import pycryptoki_functions,\
     functions_needing_serialization
 from pycryptoki.session_management import c_finalize, c_initialize_ex, c_initialize
-
-from LunaTAP.util.UtilityMethods import get_logger
+import logging
 import rpyc
 
-log = get_logger(__name__)
+log = logging.getLogger(__name__)
 
 
 class RemotePycryptokiClient():

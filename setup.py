@@ -12,6 +12,11 @@ setup(name='pycryptoki',
       author='Michael Hughes',
       author_email='michael.hughes@safenet-inc.com',
       url='http://mysno/Personal/amer_pohalloran/KnowledgeBaseWiki/Pages/pycryptoki.aspx',
-      version='1.0',
-      packages=['pycryptoki', 'pycryptoki.setup', 'pycryptoki.tests', 'pycryptoki.daemon']
+      version='1.1',
+      packages=['pycryptoki',
+                'pycryptoki.setup',
+                'pycryptoki.tests',
+                'pycryptoki.daemon'],
+      scripts=['pycryptoki/daemon/rpyc_pycryptoki.py',
+               'pycryptoki/daemon/pycryptoki_daemon.py']
       )

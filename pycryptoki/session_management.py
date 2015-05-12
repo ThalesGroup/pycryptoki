@@ -332,7 +332,7 @@ ca_closeapplicationID_ex= make_error_handle_function(ca_closeapplicationID)
 
 def ca_setapplicationID(id_high, id_low):
     """
-    Set the App ID for the current application. 
+    Set the App ID for the current application.
     """
     uid_high = CK_ULONG(id_high)
     uid_low = CK_ULONG(id_low)

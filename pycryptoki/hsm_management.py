@@ -3,7 +3,7 @@ Methods responsible for pycryptoki 'hsm management' set of commands.
 """
 from ctypes import byref, create_string_buffer, cast
 from pycryptoki.cryptoki import CK_SLOT_ID, CK_USER_TYPE, \
-    CA_PerformSelfTest, CA_SetTokenCertificateSignature, CA_HAInit, \
+    C_PerformSelfTest, CA_SetTokenCertificateSignature, CA_HAInit, \
     CA_CreateLoginChallenge, CA_InitializeRemotePEDVector, \
     CA_DeleteRemotePEDVector, CA_MTKRestore, CA_MTKResplit, CA_MTKZeroize, CK_ULONG, CK_BYTE_PTR, CK_BYTE, CK_CHAR_PTR, CK_CHAR
 from pycryptoki.attributes import Attributes
@@ -34,7 +34,7 @@ def c_performselftest(slot,
     output_data = cast(create_string_buffer('', input_data_len), CK_BYTE_PTR)
     output_data_len = CK_ULONG()
 
-    ret = CA_PerformSelfTest(slot,
+    ret = C_PerformSelfTest(slot,
                             test_type,
                             input_data,
                             input_length,
