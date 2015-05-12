@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python -u
 """
 RPYC version of of the pycryptoki daemon
 """
@@ -287,7 +287,6 @@ if __name__ == '__main__':
     t = ThreadedServer(PycryptokiService,
                        hostname=ip,
                        port=port,
-                       logger=logger,
                        protocol_config={'allow_public_attrs': True,
                                         'allow_all_attrs': True,
                                         'allow_getattr': True,
@@ -295,17 +294,3 @@ if __name__ == '__main__':
                                         'allow_delattr': True})
     print "Starting Server"
     t.start()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
