@@ -144,7 +144,9 @@ def to_byte_array(val):
     :param val: Big Integer to convert.
     :return: c_ubyte array
     """
-    width = val.bit_length()
+    # Explicitly convert to a long. Python doesn't like X.bit_length() where X is an int
+    # and not a variable assigned an int. 
+    width = long(val).bit_length()
     width += 8 - ((width % 8) or 8)
 
     fmt = "{:0%sb}" % width
