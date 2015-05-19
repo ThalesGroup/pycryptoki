@@ -2,10 +2,21 @@
 Methods responsible for pycryptoki 'hsm management' set of commands.
 """
 from ctypes import byref, create_string_buffer, cast
-from pycryptoki.cryptoki import CK_SLOT_ID, CK_USER_TYPE, \
-    C_PerformSelfTest, CA_SetTokenCertificateSignature, CA_HAInit, \
-    CA_CreateLoginChallenge, CA_InitializeRemotePEDVector, \
-    CA_DeleteRemotePEDVector, CA_MTKRestore, CA_MTKResplit, CA_MTKZeroize, CK_ULONG, CK_BYTE_PTR, CK_BYTE, CK_CHAR_PTR, CK_CHAR
+from pycryptoki.cryptoki import (CK_SLOT_ID,
+                                 CK_USER_TYPE,
+                                 CA_SetTokenCertificateSignature,
+                                 CA_HAInit,
+                                 CA_CreateLoginChallenge,
+                                 CA_InitializeRemotePEDVector,
+                                 CA_DeleteRemotePEDVector,
+                                 CA_MTKRestore,
+                                 CA_MTKResplit,
+                                 CA_MTKZeroize,
+                                 CK_ULONG,
+                                 CK_BYTE_PTR,
+                                 CK_BYTE,
+                                 CK_CHAR_PTR,
+                                 CK_CHAR)
 from pycryptoki.attributes import Attributes
 from pycryptoki.test_functions import make_error_handle_function
 
@@ -20,9 +31,7 @@ def c_performselftest(slot,
     @param slot: slot number
     @param test_type: type of test CK_ULONG
     @param input_data: pointer to input data CK_BYTE_PTR
-    @param input_length: input data length CK_ULONG
-    @param output_data: pointer to output data CK_BYTE_PTR
-    @param output_length: output data length CK_ULONG_PTR
+    @param input_data_len: input data length CK_ULONG
     @return: the result code
 
         [CK_SLOT_ID, CK_ULONG, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR]
@@ -33,13 +42,17 @@ def c_performselftest(slot,
     input_data = (CK_BYTE * input_data)()
     output_data = cast(create_string_buffer('', input_data_len), CK_BYTE_PTR)
     output_data_len = CK_ULONG()
+    try:
+        from pycryptoki.cryptoki import CA_PerformSelfTest as selftest
+    except ImportError:
+        from pycryptoki.cryptoki import C_PerformSelftest as selftest
 
-    ret = C_PerformSelfTest(slot,
-                            test_type,
-                            input_data,
-                            input_length,
-                            output_data,
-                            byref(output_data_len))
+    ret = selftest(slot,
+                   test_type,
+                   input_data,
+                   input_length,
+                   output_data,
+                   byref(output_data_len))
     return ret, output_data
 c_performselftest_ex = make_error_handle_function(c_performselftest)
 

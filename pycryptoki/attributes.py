@@ -145,7 +145,7 @@ def to_byte_array(val):
     :return: c_ubyte array
     """
     # Explicitly convert to a long. Python doesn't like X.bit_length() where X is an int
-    # and not a variable assigned an int. 
+    # and not a variable assigned an int.
     width = long(val).bit_length()
     width += 8 - ((width % 8) or 8)
 
@@ -192,6 +192,7 @@ class Attributes:
     def add_attribute(self, key, value):
         '''
         Add an attribute to the dictionary in place
+
         @param key: The type of the attribute
         @param value: The value of the attribute
         '''
