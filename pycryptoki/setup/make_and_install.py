@@ -1,7 +1,7 @@
-'''
+"""
 Script used to automatically generate python code bindings to the cryptoki library
 and install the pycryptoki module in the system.
-'''
+"""
 import argparse
 from pycryptoki.setup.initialize import initialize
 import os

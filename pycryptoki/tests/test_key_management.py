@@ -20,38 +20,36 @@ import os
 import pytest
 
 
-class TestAlgorithm():
-    """ Test algorithm class """
+class TestAlgorithm:
+    """Test algorithm class"""
     h_session = 0
     admin_slot = 0
 
     @classmethod
-    def setup_class(self):
-        """ Setup class """
+    def setup_class(cls):
+        """Setup class"""
         setup_for_tests(True, True, True)
         c_initialize_ex()
 
     @classmethod
-    def teardown_class(self):
-        """ Finalize tests """
+    def teardown_class(cls):
+        """Finalize tests"""
         c_finalize_ex()
 
     def setup(self):
-        """ Setup test """
+        """Setup test"""
         self.admin_slot = get_token_by_label_ex(ADMIN_PARTITION_LABEL)
         self.h_session = c_open_session_ex(slot_num=self.admin_slot)
         login_ex(self.h_session, self.admin_slot, CO_PASSWORD, CKU_USER)
 
     def teardown(self):
-        """ Teardown test """
+        """Teardown test"""
         c_logout_ex(self.h_session)
         c_close_session_ex(self.h_session)
 
 
     def test_generatemofn(self):
-        '''
-        Test generate M of N
-        '''
+        """Test generate M of N"""
         m_value = CK_ULONG(1)
         value = (CK_BYTE*16)()
         vector_count = CK_ULONG(2)
@@ -80,9 +78,11 @@ class TestAlgorithm():
         [CK_MODIFY_USAGE_COUNT_COMMAND_TYPE_INCREMENT,
          CK_MODIFY_USAGE_COUNT_COMMAND_TYPE_SET])
     def test_modifyusagecount(self, command_type):
-        '''
-        Test modify usage count
-        '''
+        """Test modify usage count
+
+        :param command_type:
+
+        """
         ret, key_handle = c_generate_key(self.h_session,
                                          CKM_DES_KEY_GEN,
                                          CKM_DES_KEY_GEN_TEMP)

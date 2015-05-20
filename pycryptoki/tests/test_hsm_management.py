@@ -28,65 +28,62 @@ import os
 import pytest
 
 
-class TestAlgorithm():
-    """ Test algorithm class """
+class TestAlgorithm:
+    """Test algorithm class"""
     h_session = 0
     admin_slot = 0
 
     @classmethod
-    def setup_class(self):
-        """ Setup class """
+    def setup_class(cls):
+        """Setup class"""
         setup_for_tests(True, True, True)
         c_initialize_ex()
 
     @classmethod
-    def teardown_class(self):
-        """ Finalize tests """
+    def teardown_class(cls):
+        """Finalize tests"""
         c_finalize_ex()
 
     def setup(self):
-        """ Setup test """
+        """Setup test"""
         self.admin_slot = get_token_by_label_ex(ADMIN_PARTITION_LABEL)
         self.h_session = c_open_session_ex(slot_num=self.admin_slot)
         login_ex(self.h_session, self.admin_slot, CO_PASSWORD, CKU_USER)
 
     def teardown(self):
-        """ Teardown test """
+        """Teardown test"""
         c_logout_ex(self.h_session)
         c_close_session_ex(self.h_session)
 
 
-    @pytest.mark.parametrize(("test_type"),
+    @pytest.mark.parametrize("test_type",
                              [LUNA_TTYPE_CRYPTO,
                               LUNA_TTYPE_RNG,
                               LUNA_DSS_SIGVERIFY_TEST])
     def test_performselftest(self, test_type):
-        '''
-        Tests performs self test
+        """Tests performs self test
 
-        @param test_type: test type
-        '''
+        :param test_type: test type
+
+        """
         input_data = (CK_BYTE*1000)()
         input_length = CK_ULONG(1000)
-        output_data = (CK_BYTE*1000)()
-        output_length = CK_ULONG(0)
 
         ret = c_performselftest(self.admin_slot,
                                 test_type,
                                 input_data,
-                                input_length,
-                                output_data,
-                                output_length)
+                                input_length)
         assert ret == CKR_OK, \
             "Return code should be " + ret_vals_dictionary[CKR_OK] + \
             " not " + ret_vals_dictionary[ret]
 
 
     def test_settokencertsignature(self):
-        '''
-        Tests set token certificate signature
+        """Tests set token certificate signature
         To do: fix attribute value
-        '''
+
+
+        """
         gen_temp = {CKA_CLASS : CKO_SECRET_KEY,
                     CKA_KEY_TYPE :  CKK_AES,
                     CKA_TOKEN :     True,
@@ -106,7 +103,6 @@ class TestAlgorithm():
         access_level = CK_ULONG(1)
         customer_id = CK_ULONG(1)
         pub_template = gen_temp
-        pub_template_length = CK_ULONG(len(pub_template))
         signature = (CK_BYTE*4000)()
         signature_length = CK_ULONG(4000)
 
@@ -114,7 +110,6 @@ class TestAlgorithm():
                                               access_level,
                                               customer_id,
                                               pub_template,
-                                              pub_template_length,
                                               signature,
                                               signature_length)
         assert ret == CKR_ATTRIBUTE_VALUE_INVALID, \
@@ -124,9 +119,7 @@ class TestAlgorithm():
 
 
     def test_hainit(self):
-        '''
-        Tests performs HA init
-        '''
+        """Tests performs HA init"""
         ret, pubkey_h, prikey_h = c_generate_key_pair(self.h_session,
                                 CKM_RSA_PKCS_KEY_PAIR_GEN,
                                 CKM_RSA_PKCS_KEY_PAIR_GEN_PUBTEMP,
@@ -147,32 +140,25 @@ class TestAlgorithm():
 
 
     def test_createloginchallenge(self):
-        '''
-        Test create login challenge.
+        """Test create login challenge.
         This test requires PED based HSM.
         If performing this test on PWD based HSM return value is CKR_CANCEL.
-        '''
+
+
+        """
         user_type = CKU_CRYPTO_USER
-        challenge_length = CK_ULONG(12)
         challenge = cast(create_string_buffer("password1234", 12), CK_BYTE_PTR)
-        output_data_length = CK_ULONG(0)
-        output_data = (CK_BYTE*1)()
 
         ret = ca_createloginchallenge(self.h_session,
                                       user_type,
-                                      challenge_length,
-                                      challenge,
-                                      output_data_length,
-                                      output_data)
+                                      challenge)
         assert (ret == CKR_OK or ret == CKR_CANCEL), \
             "Return code should be " + ret_vals_dictionary[CKR_OK] + \
             " not " + ret_vals_dictionary[ret]
 
 
     def test_initializeremotepedvector(self):
-        '''
-        Tests to initialize remote ped vector
-        '''
+        """Tests to initialize remote ped vector"""
         ret = ca_initializeremotepedvector(self.h_session)
         # since not SO return value must be CKR_USER_NOT_AUTHORIZED
         assert ret == CKR_USER_NOT_AUTHORIZED, \
@@ -181,9 +167,7 @@ class TestAlgorithm():
 
 
     def test_deleteremotepedvector(self):
-        '''
-        Tests to delete remote ped vector
-        '''
+        """Tests to delete remote ped vector"""
         ret = ca_deleteremotepedvector(self.h_session)
         # since not SO return value must be CKR_USER_NOT_AUTHORIZED
         assert ret == CKR_USER_NOT_AUTHORIZED, \
@@ -192,9 +176,7 @@ class TestAlgorithm():
 
 
     def test_mtkrestore(self):
-        '''
-        Tests MTK restore
-        '''
+        """Tests MTK restore"""
         ret = ca_mtkrestore(self.admin_slot)
         assert ret == CKR_OK, \
             "Return code should be " + ret_vals_dictionary[CKR_OK] + \
@@ -202,9 +184,7 @@ class TestAlgorithm():
 
 
     def test_mtkresplit(self):
-        '''
-        Tests MTK resplit
-        '''
+        """Tests MTK resplit"""
         ret = ca_mtkresplit(self.admin_slot)
         assert ret == CKR_OK, \
             "Return code should be " + ret_vals_dictionary[CKR_OK] + \
@@ -212,9 +192,7 @@ class TestAlgorithm():
 
 
     def test_mtkzeroize(self):
-        '''
-        Tests MTK zeroize
-        '''
+        """Tests MTK zeroize"""
         ret = ca_mtkzeroize(self.admin_slot)
         assert ret == CKR_OK, \
             "Return code should be " + ret_vals_dictionary[CKR_OK] + \

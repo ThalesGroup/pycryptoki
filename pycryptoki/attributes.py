@@ -3,10 +3,11 @@ This module contains a wrapper around the key attributes and the template struct
 generation to make it possible to create templates in python and easily
 convert them into templates in C.
 """
-from cryptoki import CK_ATTRIBUTE, CK_BBOOL, CK_ATTRIBUTE_TYPE, CK_ULONG, \
-    CK_BYTE, C_GetAttributeValue, CK_OBJECT_HANDLE, CK_DATE, CK_CHAR, CK_CHAR_PTR
 from ctypes import cast, c_void_p, create_string_buffer, c_bool, c_char_p, \
     c_ulong, pointer, POINTER, byref, sizeof, c_int, c_ubyte
+
+from cryptoki import CK_ATTRIBUTE, CK_BBOOL, CK_ATTRIBUTE_TYPE, CK_ULONG, \
+    CK_BYTE, C_GetAttributeValue, CK_OBJECT_HANDLE, CK_DATE, CK_CHAR, CK_CHAR_PTR
 from defines import CKA_USAGE_LIMIT, CKA_USAGE_COUNT, CKA_CLASS, CKA_TOKEN, \
     CKA_PRIVATE, CKA_LABEL, CKA_APPLICATION, CKA_VALUE, CKA_CERTIFICATE_TYPE, \
     CKA_ISSUER, CKA_SERIAL_NUMBER, CKA_KEY_TYPE, CKA_SUBJECT, CKA_ID, CKA_SENSITIVE, \
@@ -20,11 +21,10 @@ from defines import CKA_USAGE_LIMIT, CKA_USAGE_COUNT, CKA_CLASS, CKA_TOKEN, \
     CKA_CCM_PRIVATE, CKA_FINGERPRINT_SHA1, CKA_FINGERPRINT_SHA256, CKA_PKC_TCTRUST, CKA_PKC_CITS, \
     CKA_OUID, \
     CKA_X9_31_GENERATED, CKA_PKC_ECC, CKR_OK
-from pycryptoki.cryptoki import CK_ULONG_PTR, CK_ATTRIBUTE_PTR, CK_BYTE_PTR
+from pycryptoki.cryptoki import CK_ULONG_PTR
 from pycryptoki.defines import CKA_EKM_UID, CKA_GENERIC_1, CKA_GENERIC_2, \
     CKA_GENERIC_3
 from pycryptoki.dictionary_handling import CDict
-import logging
 
 '''
 List class for handling attributes with lists of a certain type
@@ -32,6 +32,7 @@ List class for handling attributes with lists of a certain type
 
 
 class CList:
+    """ """
     list_type = None
 
     def __init__(self, list_type):
@@ -39,6 +40,7 @@ class CList:
 
 
 class NonAsciiString:
+    """ """
     data = None
 
     def __init__(self, data):
@@ -46,12 +48,13 @@ class NonAsciiString:
 
 
 def get_byte_list_from_python_list(python_byte_list):
-    '''
-    Helper method to create a C style byte list from a python
+    """Helper method to create a C style byte list from a python
     style list of integers.
-    @param python_byte_list: A list of integers to convert to a C style list of integers
-    @return: The pointer to the C representation of the python byte list
-    '''
+
+    :param python_byte_list: A list of integers to convert to a C style list of integers
+    :returns: The pointer to the C representation of the python byte list
+
+    """
     list_val = create_string_buffer("", len(python_byte_list))
     ptr = cast(pointer(list_val), c_void_p)
     for j in range(0, len(python_byte_list)):
@@ -133,8 +136,7 @@ role_attributes = {}
 
 
 def to_byte_array(val):
-    """
-    Converts an arbitrarily sized integer into a byte array.
+    """Converts an arbitrarily sized integer into a byte array.
 
     It'll zero-pad the bit length so it's a multiple of 8, then convert
     the int to binary, split the binary string into sections of 8, then
@@ -143,6 +145,7 @@ def to_byte_array(val):
 
     :param val: Big Integer to convert.
     :return: c_ubyte array
+
     """
     # Explicitly convert to a long. Python doesn't like X.bit_length() where X is an int
     # and not a variable assigned an int.
@@ -158,20 +161,21 @@ def to_byte_array(val):
 
 
 class Attributes:
-    '''
-    A wrapper around all of the attributes necessary to create a key.
+    """A wrapper around all of the attributes necessary to create a key.
     Has a python dictionary object containing python types, the corresponding
     C struct can then be generated with a simple method call.
-    '''
+
+
+    """
     attributes = {}
 
     def __init__(self, attributes_list=None):
-        '''
+        """
         Initializes a Attributes object, the attributes_list argument is optional
         since the attributes object can be populated from the board later
 
         @param attributes_list: The list of python style attributes to create the class with.
-        '''
+        """
 
         if attributes_list is not None:
             # take either strings or ints as the key to the dictionary (used mainly to accomodate
@@ -190,12 +194,12 @@ class Attributes:
             self.attributes = attributes_list
 
     def add_attribute(self, key, value):
-        '''
-        Add an attribute to the dictionary in place
+        """Add an attribute to the dictionary in place
 
-        @param key: The type of the attribute
-        @param value: The value of the attribute
-        '''
+        :param key: The type of the attribute
+        :param value: The value of the attribute
+
+        """
         if isinstance(key, str):
             # take either strings or ints for the key (used mainly to accomodate xmlrpc easily)
             key = int(key)
@@ -204,29 +208,30 @@ class Attributes:
         self.attributes[key] = value
 
     def _input_check(self, key, value):
-        '''
-        Checks to see if the type is supported (yet)
+        """Checks to see if the type is supported (yet)
 
-        @param key: They key of the attribute to check
-        @param value: The actual value of the input to check
-        @return: Returns true if the variable is a of a type that has been accounted for in the
+        :param key: They key of the attribute to check
+        :param value: The actual value of the input to check
+        :returns: Returns true if the variable is a of a type that has been accounted for in the
         key_attributes dictionary
-        '''
+
+        """
         if isinstance(value, bool) or isinstance(value, int) or isinstance(value,
                                                                            CDict) or isinstance(
-                value, long) or isinstance(value, str) or isinstance(value, list) or isinstance(
-                value, CList) or isinstance(value, NonAsciiString):
+            value, long) or isinstance(value, str) or isinstance(value, list) or isinstance(
+            value, CList) or isinstance(value, NonAsciiString):
             return True
         else:
             raise Exception(
                 "Argument type not supported. <key: " + str(key) + ", value: " + str(value) + ">")
 
     def get_c_struct(self):
-        '''
-        Assembles and returns a proper C struct from the dictionary of python attributes
+        """Assembles and returns a proper C struct from the dictionary of python attributes
 
-        @return: Returns a Ctypes struct representing the python attributes stored in this class
-        '''
+
+        :returns: Returns a Ctypes struct representing the python attributes stored in this class
+
+        """
         c_struct = (CK_ATTRIBUTE * len(self.attributes))()
 
         i = 0
@@ -235,8 +240,8 @@ class Attributes:
             self._input_check(key, value)
 
             # Get the proper type for what your data is, originally I had
-            #this automatically detected from the python type but passing in
-            #int's vs longs was problematic
+            # this automatically detected from the python type but passing in
+            # int's vs longs was problematic
             item_type = lookup_attributes(key)
 
             if item_type == bool:
@@ -294,18 +299,18 @@ class Attributes:
             else:
                 raise Exception("Argument type " + str(item_type) + " not supported. <key: " + str(
                     key) + ", value: " + str(value) + ">")
-            i = i + 1
+            i += 1
 
         return c_struct
 
     def retrieve_key_attributes(self, h_session, h_object):
-        '''
-        Gets all of the key's attributes from the board given the key's handle,
+        """Gets all of the key's attributes from the board given the key's handle,
         and populates the KeyAttribute object with all of those attributes.
 
-        @param h_session: Current session
-        @param h_object: The handle of the object to fetch the attributes for
-        '''
+        :param h_session: Current session
+        :param h_object: The handle of the object to fetch the attributes for
+
+        """
         # Clean before starting
         self.attributes = {}
 
@@ -338,7 +343,7 @@ class Attributes:
                         self.add_attribute(attribute.type, attr_type(string))
                     elif attr_type == long:
                         self.add_attribute(attribute.type, (
-                        attr_type(cast(attribute.pValue, POINTER(c_ulong)).contents.value)))
+                            attr_type(cast(attribute.pValue, POINTER(c_ulong)).contents.value)))
                     elif attr_type == int:
                         self.add_attribute(attribute.type, attr_type(
                             cast(attribute.pValue, POINTER(c_int)).contents.value))
@@ -347,7 +352,7 @@ class Attributes:
                         i = 0
                         while i < attribute.usValueLen:
                             value.append(pb_value[i])
-                            i = i + 1
+                            i += 1
 
                         self.add_attribute(attribute.type, value)
                     elif attr_type == NonAsciiString:
@@ -355,27 +360,30 @@ class Attributes:
                         i = 0
                         while i < attribute.usValueLen:
                             value += '%02x' % cast(pb_value, CK_CHAR_PTR)[i]
-                            i = i + 1
+                            i += 1
 
                         self.add_attribute(attribute.type, value)
-                    elif attr_type == None:
-                        #raise Exception("Attribute of type " + str(attribute.type) + "'s value
+                    elif attr_type is None:
+                        # raise Exception("Attribute of type " + str(attribute.type) + "'s value
                         # type not yet determined") # Add type to all_attributes
                         pass
 
     def get_attributes(self):
-        '''
-        Returns the python dictionary of attributes
-        @return: The python dictionary of attributes
-        '''
+        """Returns the python dictionary of attributes
+
+
+        :returns: The python dictionary of attributes
+
+        """
         return self.attributes
 
     def __eq__(self, other):
-        '''
+        """
         Overriding the == sign to properly compare equality in KeyAttribute objects
-        @param other: Another KeyAttribute to compare against
-        @return: True if the attributes are equal
-        '''
+
+        :param other: Another KeyAttribute to compare against
+        :return: True if the attributes are equal
+        """
         other_attribs = other.get_attributes()
         self_attribs = self.get_attributes()
         for key in self.attributes:
@@ -386,21 +394,19 @@ class Attributes:
         return True
 
     def debug_print(self):
-        '''
-        Simple method to print out all the keys and values in a KeyAttribute object
-        '''
+        """Simple method to print out all the keys and values in a KeyAttribute object"""
         for key in self.attributes:
             print "key: " + str(key) + ", value: " + str(self.attributes[key])
 
 
 def get_attribute_py_value(attribute):
-    '''
-    Gets the python version of the value of a attribute from the
+    """Gets the python version of the value of a attribute from the
     C format
 
-    @param attribute: The ctypes style variable representing the value of an attribute
-    @return: Returns the python version of the ctypes style variable
-    '''
+    :param attribute: The ctypes style variable representing the value of an attribute
+    :returns: Returns the python version of the ctypes style variable
+
+    """
     key = attribute.type
     attr_type = lookup_attributes(key)
     if attr_type == bool:
@@ -442,19 +448,19 @@ def get_attribute_py_value(attribute):
         for i in range(0, attribute.usValueLen / sizeof(CK_CHAR(0))):
             value += '%02x' % cast(attribute.pValue, CK_CHAR_PTR)[i]
         return value
-    elif attr_type == None:
+    elif attr_type is None:
         # raise Exception("Attribute of type " + str(attribute.type) + "'s value type not yet
         # determined") # Add type to all_attributes
         pass
 
 
 def c_struct_to_python(c_struct):
-    '''
-    Converts a struct in C to a dictionary in python.
+    """Converts a struct in C to a dictionary in python.
 
-    @param c_struct: The c struct to convert into a dictionary in python
-    @return: Returns a python dictionary which represents the C struct passed in
-    '''
+    :param c_struct: The c struct to convert into a dictionary in python
+    :returns: Returns a python dictionary which represents the C struct passed in
+
+    """
     py_struct = {}
     for i in range(0, len(c_struct)):
         obj_type = c_struct[i].type
@@ -467,13 +473,13 @@ def c_struct_to_python(c_struct):
 
 
 def lookup_attributes(key):
-    '''
-    Utility function to look through the lists of attributes and figure out
+    """Utility function to look through the lists of attributes and figure out
     the type of variable for a given attribute represented by a key
 
-    @param key: The key representing the attribute
-    @return: The python type that can represent the attribute
-    '''
+    :param key: The key representing the attribute
+    :returns: The python type that can represent the attribute
+
+    """
 
     ret_val = None
     if key in key_attributes:
@@ -485,24 +491,39 @@ def lookup_attributes(key):
 
 
 def convert_string_to_CK_CHAR(string):
-    byte_array = (c_ubyte * len (string))()
+    """
+
+    :param string:
+
+    """
+    byte_array = (c_ubyte * len(string))()
     i = 0
     for char in string:
         byte_array[i] = ord(char)
-        i = i + 1
+        i += 1
 
     return byte_array
 
 
 def convert_CK_CHAR_to_string(byte_array):
+    """
+
+    :param byte_array:
+
+    """
     string = ""
 
     for b in byte_array:
-        string = string + chr(b)
+        string += chr(b)
     return string
 
 
 def convert_ck_char_array_to_string(ck_char_array):
+    """
+
+    :param ck_char_array:
+
+    """
     string = ""
 
     for b in ck_char_array:
@@ -511,10 +532,13 @@ def convert_ck_char_array_to_string(ck_char_array):
 
 
 def convert_CK_BYTE_array_to_string(byte_array):
+    """
+
+    :param byte_array:
+
+    """
     string = ""
 
     for b in byte_array:
-        string = string + "%02x" % (b)
+        string += "%02x" % b
     return string
-
-

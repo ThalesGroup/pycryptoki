@@ -1,13 +1,16 @@
 #!/usr/bin/env python
-'''
+"""
 xmlrpc server daemon that wraps pycryptoki so pycryptoki can be used over
 the network
-'''
+"""
 from ConfigParser import ConfigParser
 from SimpleXMLRPCServer import SimpleXMLRPCServer
-from StringIO import StringIO
 from optparse import OptionParser
 import xmlrpclib
+from _ctypes import pointer
+from ctypes import cast
+import ctypes
+
 from pycryptoki.backup import ca_open_secure_token, ca_close_secure_token, \
     ca_open_secure_token_ex, ca_close_secure_token_ex, ca_extract, ca_extract_ex, \
     ca_insert, ca_insert_ex
@@ -37,12 +40,8 @@ from pycryptoki.token_management import c_init_token, c_init_token_ex, \
     c_get_mechanism_info_ex, get_token_by_label, get_token_by_label_ex
 from pycryptoki.audit_handling import ca_get_time, ca_get_time_ex, ca_init_audit, \
     ca_init_audit_ex, ca_time_sync, ca_time_sync_ex
-from _ctypes import pointer
-from ctypes import cast
-import ctypes
 from pycryptoki.key_generator import _get_mechanism
 from pycryptoki.cryptoki import CK_ULONG, CK_VOID_PTR
-
 
 '''
 All the functions the server supports
@@ -102,7 +101,7 @@ pycryptoki_functions = {"c_wrap_key" : c_wrap_key,
                         "get_token_by_label" : get_token_by_label,
                         "get_token_by_label_ex" : get_token_by_label_ex,
                         "ca_close_secure_token" : ca_close_secure_token,
-                        "ca_close_secure_token" : ca_close_secure_token_ex,
+                        "ca_close_secure_token_ex" : ca_close_secure_token_ex,
                         "ca_open_secure_token" : ca_open_secure_token,
                         "ca_open_secure_token_ex" : ca_open_secure_token_ex,
                         "ca_extract" : ca_extract,
@@ -148,6 +147,12 @@ functions_needing_serialization = {
 
 
 def initialize_server(ip, port):
+    """
+
+    :param ip:
+    :param port:
+
+    """
     print "Initializing Server"
     server = SimpleXMLRPCServer((ip, port))
     server.logRequests = 0
@@ -164,36 +169,72 @@ def initialize_server(ip, port):
 
 
 def serialize_dict(dictionary):
-    '''
-    Helper function to convert a dictionary with <int, value> to <string, value>
+    """Helper function to convert a dictionary with <int, value> to <string, value>
     for xmlrpc
-    '''
+
+    :param dictionary:
+
+    """
     serialized_dictionary = {}
     for key, value in dictionary.iteritems():
         serialized_dictionary[str(key)] = value
     return serialized_dictionary
 
 def c_get_attribute_value_serialize(h_session, h_object, template):
-    ''' returns dictionary with k,v pairs of <string, value> for xmlrpc'''
+    """returns dictionary with k,v pairs of <string, value> for xmlrpc
+
+    :param h_session:
+    :param h_object:
+    :param template:
+
+    """
     ret, dictionary = c_get_attribute_value(h_session, h_object, template)
     return ret, serialize_dict(dictionary)
 
 def c_get_attribute_value_ex_serialize(h_session, h_object, template):
-    ''' returns dictionary with k,v pairs of <string, value> for xmlrpc'''
+    """returns dictionary with k,v pairs of <string, value> for xmlrpc
+
+    :param h_session:
+    :param h_object:
+    :param template:
+
+    """
     dictionary = c_get_attribute_value_ex(h_session, h_object, template)
     return serialize_dict(dictionary)
 
 def c_find_objects_serialize(h_session, h_object, template):
-    ''' returns dictionary with k,v pairs of <string, value> for xmlrpc'''
+    """returns dictionary with k,v pairs of <string, value> for xmlrpc
+
+    :param h_session:
+    :param h_object:
+    :param template:
+
+    """
     ret, dictionary = c_find_objects(h_session, h_object, template)
     return ret, serialize_dict(dictionary)
 
 def c_find_objects_ex_serialize(h_session, h_object, template):
-    ''' returns dictionary with k,v pairs of <string, value> for xmlrpc'''
+    """returns dictionary with k,v pairs of <string, value> for xmlrpc
+
+    :param h_session:
+    :param h_object:
+    :param template:
+
+    """
     dictionary = c_find_objects_ex(h_session, h_object, template)
     return serialize_dict(dictionary)
 
 def c_derive_key_serialize(h_session, h_base_key, h_second_key, template, mech_flavor, mech = None):
+    """
+
+    :param h_session:
+    :param h_base_key:
+    :param h_second_key:
+    :param template:
+    :param mech_flavor:
+    :param mech:  (Default value = None)
+
+    """
     if mech:
         mech = _get_mechanism(mech)
         c_second_key = CK_ULONG(h_second_key)
@@ -203,6 +244,16 @@ def c_derive_key_serialize(h_session, h_base_key, h_second_key, template, mech_f
     return c_derive_key(h_session, h_base_key, template, mech_flavor, mech)
 
 def c_derive_key_ex_serialize(h_session, h_base_key, h_second_key, template, mech_flavor, mech = None):
+    """
+
+    :param h_session:
+    :param h_base_key:
+    :param h_second_key:
+    :param template:
+    :param mech_flavor:
+    :param mech:  (Default value = None)
+
+    """
     if mech:
         mech = _get_mechanism(mech)
         c_second_key = CK_ULONG(h_second_key)
@@ -212,36 +263,110 @@ def c_derive_key_ex_serialize(h_session, h_base_key, h_second_key, template, mec
     return c_derive_key_ex(h_session, h_base_key, template, mech_flavor, mech)
 
 def c_sign_serialize(h_session, sign_flavor, data_to_sign, h_key, mech = None):
+    """
+
+    :param h_session:
+    :param sign_flavor:
+    :param data_to_sign:
+    :param h_key:
+    :param mech:  (Default value = None)
+
+    """
     ret, signature = c_sign(h_session, sign_flavor, data_to_sign, h_key, mech)
     return ret, xmlrpclib.Binary(signature)
 
 def c_sign_ex_serialize(h_session, sign_flavor, data_to_sign, h_key, mech = None):
+    """
+
+    :param h_session:
+    :param sign_flavor:
+    :param data_to_sign:
+    :param h_key:
+    :param mech:  (Default value = None)
+
+    """
     signature = c_sign_ex(h_session, sign_flavor, data_to_sign, h_key, mech)
     return xmlrpclib.Binary(signature)
 
 def c_encrypt_serialize(h_session, encryption_flavor, h_key, data_to_encrypt, mech = None):
+    """
+
+    :param h_session:
+    :param encryption_flavor:
+    :param h_key:
+    :param data_to_encrypt:
+    :param mech:  (Default value = None)
+
+    """
     ret, enc_data = c_encrypt(h_session, encryption_flavor, h_key, data_to_encrypt, mech)
     return ret, xmlrpclib.Binary(enc_data)
 
 def c_encrypt_ex_serialize(h_session, encryption_flavor, h_key, data_to_encrypt, mech = None):
+    """
+
+    :param h_session:
+    :param encryption_flavor:
+    :param h_key:
+    :param data_to_encrypt:
+    :param mech:  (Default value = None)
+
+    """
     enc_data = c_encrypt_ex(h_session, encryption_flavor, h_key, data_to_encrypt, mech)
     return xmlrpclib.Binary(enc_data)
 
 def c_verify_serialize( h_session, h_key, verify_flavor, data_to_verify, signature, mech = None):
+    """
+
+    :param h_session:
+    :param h_key:
+    :param verify_flavor:
+    :param data_to_verify:
+    :param signature:
+    :param mech:  (Default value = None)
+
+    """
     return c_verify(h_session, h_key, verify_flavor, data_to_verify, signature.data, mech)
 
 def c_verify_ex_serialize(h_session, h_key, verify_flavor, data_to_verify, signature, mech = None):
+    """
+
+    :param h_session:
+    :param h_key:
+    :param verify_flavor:
+    :param data_to_verify:
+    :param signature:
+    :param mech:  (Default value = None)
+
+    """
     return c_verify_ex(h_session, h_key, verify_flavor, data_to_verify, signature.data, mech)
 
 def c_decrypt(h_session, decrypt_flavor, h_key, encrypted_data, mech = None):
+    """
+
+    :param h_session:
+    :param decrypt_flavor:
+    :param h_key:
+    :param encrypted_data:
+    :param mech:  (Default value = None)
+
+    """
     return c_decrypt(h_session, decrypt_flavor, h_key, encrypted_data.data, mech)
 
 def c_decrypt_ex(h_session, decrypt_flavor, h_key, encrypted_data, mech = None):
+    """
+
+    :param h_session:
+    :param decrypt_flavor:
+    :param h_key:
+    :param encrypted_data:
+    :param mech:  (Default value = None)
+
+    """
     return c_decrypt_ex(h_session, decrypt_flavor, h_key, encrypted_data.data, mech)
 
 if __name__ == '__main__':
     #Setup argument parser
-    resources_config_parser = ConfigParser();
+    resources_config_parser = ConfigParser()
     parser = OptionParser()
     parser.add_option("-i", "--ip_address", dest="i",
                       help="pycryptoki daemon IP address", metavar="<IP address>")
@@ -250,8 +375,8 @@ if __name__ == '__main__':
     (options, args) = parser.parse_args()
 
     #Default arguments
-    ip = options.i if options.i != None else 'localhost'
-    port = int( options.p if options.p != None else '8001')
+    ip = options.i if options.i is not None else 'localhost'
+    port = int( options.p if options.p is not None else '8001')
     print "Pycryptoki Daemon ip=" + str(ip) + ", port=" + str(port)
 
     server = initialize_server(ip, port)

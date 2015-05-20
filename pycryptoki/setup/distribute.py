@@ -20,7 +20,7 @@ options = vars(args)
 #Create all of the necessary automatically generated source
 xml_output = 'h2xmlout_tmp.xml'
 
-if not (options['dll'] == None):
+if not (options['dll'] is None):
     dll_path = options['dll']
 else:
     if "linux" in sys.platform:

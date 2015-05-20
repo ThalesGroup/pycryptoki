@@ -5,21 +5,22 @@ from pycryptoki.cryptoki import CA_GenerateMofN, CA_ModifyUsageCount, \
     CK_VOID_PTR, CK_ULONG, CA_MOFN_GENERATION, CK_BYTE, CA_MOFN_GENERATION_PTR
 from pycryptoki.test_functions import make_error_handle_function
 
+
 def ca_generatemofn(h_session,
                     m_value,
                     vector_value,
                     vector_count,
                     is_secure_port_used):
-    '''
-    Generates MofN secret information on a token.
+    """Generates MofN secret information on a token.
 
-    @param h_session: the current session
-    @param m_value: m
-    @param vectors: vectors
-    @param vector_count: number of vectors
-    @param is_secure_port_used: is secure port used
-    @return: the result code
-    '''
+    :param h_session: the current session
+    :param m_value: m
+    :param vector_count: number of vectors
+    :param is_secure_port_used: is secure port used
+    :param vector_value:
+    :returns: the result code
+
+    """
     reserved = CK_VOID_PTR(0)
 
     m_value = CK_ULONG(m_value)
@@ -43,19 +44,23 @@ def ca_generatemofn(h_session,
                           is_secure_port_used,
                           reserved)
     return ret
+
+
 ca_generatemofn_ex = make_error_handle_function(ca_generatemofn)
 
 
 def ca_modifyusagecount(h_session, h_object, command_type, value):
-    '''
-    Modifies CKA_USAGE_COUNT attribute of the object.
+    """Modifies CKA_USAGE_COUNT attribute of the object.
 
-    @param h_session: the current session
-    @param h_object: object
-    @param command_type: command type
-    @param value: value
-    @return: the result code
-    '''
+    :param h_session: the current session
+    :param h_object: object
+    :param command_type: command type
+    :param value: value
+    :returns: the result code
+
+    """
     ret = CA_ModifyUsageCount(h_session, h_object, command_type, CK_ULONG(value))
     return ret
+
+
 ca_modifyusagecount_ex = make_error_handle_function(ca_modifyusagecount)
