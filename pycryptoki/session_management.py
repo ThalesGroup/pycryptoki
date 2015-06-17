@@ -74,7 +74,7 @@ def c_open_session(slot_num, flags=(CKF_SERIAL_SESSION | CKF_RW_SESSION)):
 c_open_session_ex = make_error_handle_function(c_open_session)
 
 
-def login(h_session, slot_num=1, password="userpin", user_type=1):
+def login(h_session, slot_num=1, password="", user_type=1):
     """Login to the HSM
 
     :param h_session: Current session
@@ -311,7 +311,7 @@ def c_close_all_sessions(slot):
 c_close_all_sessions_ex = make_error_handle_function(c_close_all_sessions)
 
 
-def ca_create_container(h_session, storage_size, password='userpin', label='Inserted Token'):
+def ca_create_container(h_session, storage_size, password='', label='Inserted Token'):
     """Inserts a token into a slot without a Security Officer on the token
 
     :param h_session: Current session
