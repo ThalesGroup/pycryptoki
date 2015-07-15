@@ -21,10 +21,11 @@ from optparse import OptionParser
 from _ctypes import pointer
 from ctypes import cast
 import ctypes
+import logging
 
 import rpyc
-import pycryptoki
 
+import pycryptoki
 from pycryptoki.backup import (ca_open_secure_token, ca_open_secure_token_ex,
                                ca_close_secure_token, ca_close_secure_token_ex,
                                ca_extract, ca_extract_ex,
@@ -49,7 +50,8 @@ from pycryptoki.object_attr_lookup import (c_find_objects, c_find_objects_ex,
                                            c_get_attribute_value, c_get_attribute_value_ex,
                                            c_set_attribute_value, c_set_attribute_value_ex)
 from pycryptoki.policy_management import (ca_set_hsm_policy, ca_set_hsm_policy_ex,
-                                          ca_set_destructive_hsm_policy, ca_set_destructive_hsm_policy_ex,
+                                          ca_set_destructive_hsm_policy,
+                                          ca_set_destructive_hsm_policy_ex,
                                           ca_set_container_policy, ca_set_container_policy_ex)
 from pycryptoki.session_management import (c_initialize, c_initialize_ex,
                                            c_finalize, c_finalize_ex,
@@ -67,24 +69,29 @@ from pycryptoki.session_management import (c_initialize, c_initialize_ex,
                                            ca_openapplicationID_ex, ca_openapplicationID,
                                            ca_closeapplicationID, ca_closeapplicationID_ex,
                                            ca_restart, ca_restart_ex,
-                                           ca_delete_container_with_handle_ex, ca_delete_container_with_handle,
+                                           ca_delete_container_with_handle_ex,
+                                           ca_delete_container_with_handle,
                                            ca_setapplicationID, ca_setapplicationID_ex)
 from pycryptoki.sign_verify import (c_sign, c_sign_ex,
                                     c_verify, c_verify_ex)
 from pycryptoki.token_management import (c_init_token, c_init_token_ex,
                                          c_get_mechanism_list, c_get_mechanism_list_ex,
                                          c_get_mechanism_info, c_get_mechanism_info_ex,
-                                         get_token_by_label, get_token_by_label_ex)
+                                         get_token_by_label, get_token_by_label_ex,
+                                         ca_get_hsm_policy_set_ex, ca_get_hsm_policy_set,
+                                         ca_get_hsm_capability_set_ex, ca_get_hsm_capability_set)
 from pycryptoki.audit_handling import (ca_get_time, ca_get_time_ex,
                                        ca_init_audit, ca_init_audit_ex,
                                        ca_time_sync, ca_time_sync_ex)
 from pycryptoki.cryptoki import CK_VOID_PTR
 from pycryptoki.key_generator import _get_mechanism
 from pycryptoki.hsm_management import (c_performselftest, c_performselftest_ex,
-                                       ca_settokencertificatesignature, ca_settokencertificatesignature_ex,
+                                       ca_settokencertificatesignature,
+                                       ca_settokencertificatesignature_ex,
                                        ca_hainit, ca_hainit_ex,
                                        ca_createloginchallenge, ca_createloginchallenge_ex,
-                                       ca_initializeremotepedvector, ca_initializeremotepedvector_ex,
+                                       ca_initializeremotepedvector,
+                                       ca_initializeremotepedvector_ex,
                                        ca_deleteremotepedvector, ca_deleteremotepedvector_ex,
                                        ca_mtkrestore, ca_mtkrestore_ex,
                                        ca_mtkresplit, ca_mtkresplit_ex,
@@ -94,7 +101,6 @@ from pycryptoki.key_management import (ca_generatemofn, ca_generatemofn_ex,
 from pycryptoki.key_usage import (ca_clonemofn, ca_clonemofn_ex,
                                   ca_duplicatemofn, ca_duplicatemofn_ex)
 from pycryptoki.cryptoki import *
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -148,6 +154,10 @@ class PycryptokiService(rpyc.SlaveService):
     exposed_c_get_mechanism_list_ex = staticmethod(c_get_mechanism_list_ex)
     exposed_c_get_mechanism_info = staticmethod(c_get_mechanism_info)
     exposed_c_get_mechanism_info_ex = staticmethod(c_get_mechanism_info_ex)
+    exposed_ca_get_hsm_policy_set = staticmethod(ca_get_hsm_policy_set)
+    exposed_ca_get_hsm_policy_set_ex = staticmethod(ca_get_hsm_policy_set_ex)
+    exposed_ca_get_hsm_capability_set = staticmethod(ca_get_hsm_capability_set)
+    exposed_ca_get_hsm_capability_set_ex = staticmethod(ca_get_hsm_capability_set_ex)
 
     # session_management.py
     exposed_c_initialize = staticmethod(c_initialize)
@@ -282,10 +292,12 @@ class PycryptokiService(rpyc.SlaveService):
     exposed_ca_duplicatemofn_ex = staticmethod(ca_duplicatemofn_ex)
 
     @staticmethod
-    def exposed_c_derive_key_ex(h_session, h_base_key, h_second_key, template, mech_flavor, mech=None):
+    def exposed_c_derive_key_ex(h_session, h_base_key, h_second_key, template, mech_flavor,
+                                mech=None):
         """#key_generator.py
 
-        Wrapper around the default c_derive_key_ex. Have to do the mechanism creation on the daemon side
+        Wrapper around the default c_derive_key_ex. Have to do the mechanism creation on the
+        daemon side
         because it involves pointers.
 
         :param h_session:
@@ -308,7 +320,8 @@ class PycryptokiService(rpyc.SlaveService):
     def exposed_c_derive_key(h_session, h_base_key, h_second_key, template, mech_flavor, mech=None):
         """#key_generator.py
 
-        Wrapper around the default c_derive_key_ex. Have to do the mechanism creation on the daemon side
+        Wrapper around the default c_derive_key_ex. Have to do the mechanism creation on the
+        daemon side
         because it involves pointers.
 
         :param h_session:

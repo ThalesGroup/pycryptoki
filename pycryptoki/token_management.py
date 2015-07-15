@@ -6,11 +6,25 @@ Created on Aug 24, 2012
 from ctypes import byref, cast, create_string_buffer
 import logging
 
-from pycryptoki.cryptoki import C_InitToken, CK_ULONG, CK_CHAR_PTR, \
-    C_GetSlotList, CK_BBOOL, CK_SLOT_ID, C_GetMechanismList, CK_MECHANISM_TYPE, \
-    CK_MECHANISM_TYPE_PTR, CK_MECHANISM_INFO, C_GetMechanismInfo
+# Cryptoki Constants
+from pycryptoki.cryptoki import (CK_ULONG,
+                                 CK_CHAR_PTR,
+                                 CK_BBOOL,
+                                 CK_SLOT_ID,
+                                 CK_MECHANISM_TYPE,
+                                 CK_MECHANISM_TYPE_PTR,
+                                 CK_MECHANISM_INFO)
 from pycryptoki.defaults import ADMIN_PARTITION_LABEL, ADMIN_SLOT
 from pycryptoki.defines import CKR_OK
+
+
+# Cryptoki functions.
+from pycryptoki.cryptoki import (C_InitToken,
+                                 C_GetSlotList,
+                                 C_GetMechanismList,
+                                 C_GetMechanismInfo,
+                                 CA_GetHSMCapabilitySet,
+                                 CA_GetHSMPolicySet)
 from pycryptoki.session_management import c_get_token_info
 from pycryptoki.test_functions import make_error_handle_function
 
@@ -36,7 +50,8 @@ def c_init_token(slot_num, password, token_label='Main Token'):
         logger.info("C_InitToken: Initializing token. slot=" + str(
             slot_num) + ", label='" + token_label + "', password='" + password + "'")
         ret = C_InitToken(CK_ULONG(slot_num), cast(create_string_buffer(password), CK_CHAR_PTR),
-                          CK_ULONG(len(password)), cast(create_string_buffer(token_label), CK_CHAR_PTR))
+                          CK_ULONG(len(password)),
+                          cast(create_string_buffer(token_label), CK_CHAR_PTR))
         return ret
 
 
@@ -52,7 +67,8 @@ def get_token_by_label(label):
 
     """
 
-    if label == ADMIN_PARTITION_LABEL:  # XXX the admin partition's label changes depending on the boards state
+    if label == ADMIN_PARTITION_LABEL:  # XXX the admin partition's label changes depending on
+    # the boards state
         #        ret, slot_info = get_slot_info("Viper")
         #        return ret, slot_info.keys()[1]
         return CKR_OK, ADMIN_SLOT
@@ -90,7 +106,8 @@ def c_get_mechanism_list(slot):
     mech_list = (CK_MECHANISM_TYPE * count.value)()
     ret = C_GetMechanismList(CK_SLOT_ID(slot), CK_MECHANISM_TYPE_PTR(mech_list), byref(count))
     if ret != CKR_OK: return ret, None
-    if last_count != count: raise Exception("Mechanism list count was not consistent between function calls")
+    if last_count != count: raise Exception(
+        "Mechanism list count was not consistent between function calls")
 
     ret_list = []
     for i in range(0, count.value):
@@ -115,3 +132,61 @@ def c_get_mechanism_info(slot, mechanism_type):
 
 
 c_get_mechanism_info_ex = make_error_handle_function(c_get_mechanism_info)
+
+
+def ca_get_hsm_capability_set(slot):
+    """
+    Get the capabilities of the given slot.
+
+    :param int slot: Target slot number
+    :return: retcode, {id: val} dict of policies (None if command failed)
+    """
+    slot_id = CK_ULONG(slot)
+    cap_id_count = CK_ULONG()
+    cap_val_count = CK_ULONG()
+    ret = CA_GetHSMCapabilitySet(slot_id, None, byref(cap_id_count),
+                                 None, byref(cap_val_count))
+    if ret != CKR_OK:
+        return ret, None
+
+    c_cap_ids = (CK_ULONG * cap_id_count.value)()
+    c_cap_vals = (CK_ULONG * cap_val_count.value)()
+    ret = CA_GetHSMCapabilitySet(slot_id, c_cap_ids, byref(cap_id_count),
+                                 c_cap_vals, byref(cap_val_count))
+
+    if ret != CKR_OK:
+        return ret, None
+
+    return ret, dict(zip(c_cap_ids, c_cap_vals))
+
+
+ca_get_hsm_capability_set_ex = make_error_handle_function(ca_get_hsm_capability_set)
+
+
+def ca_get_hsm_policy_set(slot):
+    """
+    Get the policies of the given slot.
+
+    :param int slot: Target slot number
+    :return: retcode, {id: val} dict of policies (None if command failed)
+    """
+    slot_id = CK_ULONG(slot)
+    cap_id_count = CK_ULONG()
+    cap_val_count = CK_ULONG()
+    ret = CA_GetHSMPolicySet(slot_id, None, byref(cap_id_count),
+                             None, byref(cap_val_count))
+    if ret != CKR_OK:
+        return ret, None
+
+    c_cap_ids = (CK_ULONG * cap_id_count.value)()
+    c_cap_vals = (CK_ULONG * cap_val_count.value)()
+    ret = CA_GetHSMPolicySet(slot_id, c_cap_ids, byref(cap_id_count),
+                             c_cap_vals, byref(cap_val_count))
+
+    if ret != CKR_OK:
+        return ret, None
+
+    return ret, dict(zip(c_cap_ids, c_cap_vals))
+
+
+ca_get_hsm_policy_set_ex = make_error_handle_function(ca_get_hsm_policy_set)
