@@ -24,7 +24,8 @@ from pycryptoki.cryptoki import (C_InitToken,
                                  C_GetMechanismList,
                                  C_GetMechanismInfo,
                                  CA_GetHSMCapabilitySet,
-                                 CA_GetHSMPolicySet)
+                                 CA_GetHSMPolicySet,
+                                 CA_GetTokenPolicies)
 from pycryptoki.session_management import c_get_token_info
 from pycryptoki.test_functions import make_error_handle_function
 
@@ -190,3 +191,32 @@ def ca_get_hsm_policy_set(slot):
 
 
 ca_get_hsm_policy_set_ex = make_error_handle_function(ca_get_hsm_policy_set)
+
+def ca_get_token_policies(slot):
+    """
+    Get the policies of the given slot.
+
+    :param int slot: Target slot number
+    :return: retcode, {id: val} dict of policies (None if command failed)
+    """
+    slot_id = CK_ULONG(slot)
+    cap_id_count = CK_ULONG()
+    cap_val_count = CK_ULONG()
+    ret = CA_GetTokenPolicies(slot_id, None, byref(cap_id_count),
+                              None, byref(cap_val_count)); 
+
+    if ret != CKR_OK:
+        return ret, None
+
+    c_cap_ids = (CK_ULONG * cap_id_count.value)()
+    c_cap_vals = (CK_ULONG * cap_val_count.value)()
+    ret = CA_GetTokenPolicies(slot_id, c_cap_ids, byref(cap_id_count),
+                             c_cap_vals, byref(cap_val_count))
+
+    if ret != CKR_OK:
+        return ret, None
+
+    return ret, dict(zip(c_cap_ids, c_cap_vals))
+
+
+ca_get_token_policies_ex = make_error_handle_function(ca_get_token_policies)

@@ -79,7 +79,8 @@ from pycryptoki.token_management import (c_init_token, c_init_token_ex,
                                          c_get_mechanism_info, c_get_mechanism_info_ex,
                                          get_token_by_label, get_token_by_label_ex,
                                          ca_get_hsm_policy_set_ex, ca_get_hsm_policy_set,
-                                         ca_get_hsm_capability_set_ex, ca_get_hsm_capability_set)
+                                         ca_get_hsm_capability_set_ex, ca_get_hsm_capability_set,
+                                         ca_get_token_policies_ex, ca_get_token_policies)
 from pycryptoki.audit_handling import (ca_get_time, ca_get_time_ex,
                                        ca_init_audit, ca_init_audit_ex,
                                        ca_time_sync, ca_time_sync_ex)
@@ -100,7 +101,8 @@ from pycryptoki.key_management import (ca_generatemofn, ca_generatemofn_ex,
                                        ca_modifyusagecount, ca_modifyusagecount_ex)
 from pycryptoki.key_usage import (ca_clonemofn, ca_clonemofn_ex,
                                   ca_duplicatemofn, ca_duplicatemofn_ex)
-from pycryptoki.cryptoki import *
+from pycryptoki.cryptoki import CK_ULONG
+CRYPTO_OPS = pycryptoki.cryptoki.__all__.copy()
 
 logger = logging.getLogger(__name__)
 
@@ -125,7 +127,7 @@ class PycryptokiService(rpyc.SlaveService):
         """
         if name.startswith("exposed_"):
             name = name
-        elif name in pycryptoki.cryptoki.__all__:
+        elif name in CRYPTO_OPS:
             return getattr(pycryptoki.cryptoki, name)
         else:
             name = "exposed_" + name
@@ -158,6 +160,8 @@ class PycryptokiService(rpyc.SlaveService):
     exposed_ca_get_hsm_policy_set_ex = staticmethod(ca_get_hsm_policy_set_ex)
     exposed_ca_get_hsm_capability_set = staticmethod(ca_get_hsm_capability_set)
     exposed_ca_get_hsm_capability_set_ex = staticmethod(ca_get_hsm_capability_set_ex)
+    exposed_ca_get_token_policies = staticmethod(ca_get_token_policies)
+    exposed_ca_get_token_policies_ex = staticmethod(ca_get_token_policies_ex)
 
     # session_management.py
     exposed_c_initialize = staticmethod(c_initialize)
