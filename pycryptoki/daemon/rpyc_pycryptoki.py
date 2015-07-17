@@ -102,7 +102,7 @@ from pycryptoki.key_management import (ca_generatemofn, ca_generatemofn_ex,
 from pycryptoki.key_usage import (ca_clonemofn, ca_clonemofn_ex,
                                   ca_duplicatemofn, ca_duplicatemofn_ex)
 from pycryptoki.cryptoki import CK_ULONG
-CRYPTO_OPS = pycryptoki.cryptoki.__all__.copy()
+CRYPTO_OPS = pycryptoki.cryptoki.__all__[:]
 
 logger = logging.getLogger(__name__)
 
