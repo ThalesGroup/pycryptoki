@@ -16,7 +16,8 @@ setup(name='pycryptoki',
       packages=['pycryptoki',
                 'pycryptoki.setup',
                 'pycryptoki.tests',
-                'pycryptoki.daemon'],
+                'pycryptoki.daemon',
+                'pycryptoki.utils'],
       scripts=['pycryptoki/daemon/rpyc_pycryptoki.py',
                'pycryptoki/daemon/pycryptoki_daemon.py']
       )

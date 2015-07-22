@@ -3,16 +3,13 @@ Created on Aug 24, 2012
 
 @author: mhughes
 """
-from ctypes import byref, cast, create_string_buffer
+from ctypes import byref
 import logging
 
 # Cryptoki Constants
 from pycryptoki.cryptoki import (CK_ULONG,
-                                 CK_CHAR_PTR,
                                  CK_BBOOL,
-                                 CK_SLOT_ID,
                                  CK_MECHANISM_TYPE,
-                                 CK_MECHANISM_TYPE_PTR,
                                  CK_MECHANISM_INFO)
 from pycryptoki.defaults import ADMIN_PARTITION_LABEL, ADMIN_SLOT
 from pycryptoki.defines import CKR_OK
@@ -28,8 +25,10 @@ from pycryptoki.cryptoki import (C_InitToken,
                                  CA_GetTokenPolicies)
 from pycryptoki.session_management import c_get_token_info
 from pycryptoki.test_functions import make_error_handle_function
+from pycryptoki.common_utils import AutoCArray
+from pycryptoki.common_utils import refresh_c_arrays
 
-logger = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 def c_init_token(slot_num, password, token_label='Main Token'):
@@ -41,19 +40,18 @@ def c_init_token(slot_num, password, token_label='Main Token'):
     :returns: The result code
 
     """
+    LOG.info("C_InitToken: Initializing token. slot=" + str(
+        slot_num) + ", label='" + token_label + "', password='" + str(password) + "'")
+
     if password == '':
-        logger.info("C_InitToken: Initializing token. slot=" + str(
-            slot_num) + ", label='" + token_label + "', password='" + password + "'")
-        ret = C_InitToken(CK_ULONG(slot_num), None,
-                          CK_ULONG(0), cast(create_string_buffer(token_label), CK_CHAR_PTR))
-        return ret
-    else:
-        logger.info("C_InitToken: Initializing token. slot=" + str(
-            slot_num) + ", label='" + token_label + "', password='" + password + "'")
-        ret = C_InitToken(CK_ULONG(slot_num), cast(create_string_buffer(password), CK_CHAR_PTR),
-                          CK_ULONG(len(password)),
-                          cast(create_string_buffer(token_label), CK_CHAR_PTR))
-        return ret
+        password = None
+    password = AutoCArray(data=password)
+    slot_id = CK_ULONG(slot_num)
+    label = AutoCArray(data=token_label)
+
+    return C_InitToken(slot_id,
+                       password.array, password.size.contents,
+                       label.array)
 
 
 c_init_token_ex = make_error_handle_function(c_init_token)
@@ -68,19 +66,24 @@ def get_token_by_label(label):
 
     """
 
-    if label == ADMIN_PARTITION_LABEL:  # XXX the admin partition's label changes depending on
-    # the boards state
+    if label == ADMIN_PARTITION_LABEL:
+        # XXX the admin partition's label changes depending on
+        # the boards state
         #        ret, slot_info = get_slot_info("Viper")
         #        return ret, slot_info.keys()[1]
         return CKR_OK, ADMIN_SLOT
 
-    us_count = CK_ULONG(0)
-    ret = C_GetSlotList(CK_BBOOL(1), None, byref(us_count))
-    if ret != CKR_OK: return ret, None
-    num_slots = us_count.value
-    slot_list = (CK_SLOT_ID * num_slots)()
-    ret = C_GetSlotList(CK_BBOOL(1), slot_list, byref(us_count))
-    if ret != CKR_OK: return ret, None
+    slot_list = AutoCArray()
+
+    @refresh_c_arrays(1)
+    def _get_slot_list():
+        """Closure
+        """
+        return C_GetSlotList(CK_BBOOL(1), slot_list.array, slot_list.size)
+
+    ret = _get_slot_list()
+    if ret != CKR_OK:
+        return ret, None
 
     for slot in slot_list:
         ret, token_info = c_get_token_info(slot)
@@ -100,20 +103,17 @@ def c_get_mechanism_list(slot):
     :returns: The result code, A python dictionary representing the mechanism list
 
     """
-    count = CK_ULONG()
-    ret = C_GetMechanismList(CK_SLOT_ID(slot), None, byref(count))
-    last_count = count
-    if ret != CKR_OK: return ret, None
-    mech_list = (CK_MECHANISM_TYPE * count.value)()
-    ret = C_GetMechanismList(CK_SLOT_ID(slot), CK_MECHANISM_TYPE_PTR(mech_list), byref(count))
-    if ret != CKR_OK: return ret, None
-    if last_count != count: raise Exception(
-        "Mechanism list count was not consistent between function calls")
+    slot_id = CK_ULONG(slot)
+    mech = AutoCArray(ctype=CK_MECHANISM_TYPE)
 
-    ret_list = []
-    for i in range(0, count.value):
-        ret_list.append(mech_list[i])
-    return ret, ret_list
+    @refresh_c_arrays(1)
+    def _c_get_mech_list():
+        """Closure for retry to work w/ properties.
+        """
+        return C_GetMechanismList(slot_id, mech.array, mech.size)
+
+    ret = _c_get_mech_list()
+    return ret, [x for x in mech]
 
 
 c_get_mechanism_list_ex = make_error_handle_function(c_get_mechanism_list)
@@ -143,22 +143,19 @@ def ca_get_hsm_capability_set(slot):
     :return: retcode, {id: val} dict of policies (None if command failed)
     """
     slot_id = CK_ULONG(slot)
-    cap_id_count = CK_ULONG()
-    cap_val_count = CK_ULONG()
-    ret = CA_GetHSMCapabilitySet(slot_id, None, byref(cap_id_count),
-                                 None, byref(cap_val_count))
-    if ret != CKR_OK:
-        return ret, None
+    cap_ids = AutoCArray()
+    cap_vals = AutoCArray()
 
-    c_cap_ids = (CK_ULONG * cap_id_count.value)()
-    c_cap_vals = (CK_ULONG * cap_val_count.value)()
-    ret = CA_GetHSMCapabilitySet(slot_id, c_cap_ids, byref(cap_id_count),
-                                 c_cap_vals, byref(cap_val_count))
+    @refresh_c_arrays(1)
+    def _get_hsm_caps():
+        """Closer for retries to work w/ properties
+        """
+        return CA_GetHSMCapabilitySet(slot_id, cap_ids.array, cap_ids.size,
+                                      cap_vals.array, cap_vals.size)
 
-    if ret != CKR_OK:
-        return ret, None
+    ret = _get_hsm_caps()
 
-    return ret, dict(zip(c_cap_ids, c_cap_vals))
+    return ret, dict(zip(cap_ids, cap_vals))
 
 
 ca_get_hsm_capability_set_ex = make_error_handle_function(ca_get_hsm_capability_set)
@@ -172,25 +169,23 @@ def ca_get_hsm_policy_set(slot):
     :return: retcode, {id: val} dict of policies (None if command failed)
     """
     slot_id = CK_ULONG(slot)
-    cap_id_count = CK_ULONG()
-    cap_val_count = CK_ULONG()
-    ret = CA_GetHSMPolicySet(slot_id, None, byref(cap_id_count),
-                             None, byref(cap_val_count))
-    if ret != CKR_OK:
-        return ret, None
+    cap_ids = AutoCArray()
+    cap_vals = AutoCArray()
 
-    c_cap_ids = (CK_ULONG * cap_id_count.value)()
-    c_cap_vals = (CK_ULONG * cap_val_count.value)()
-    ret = CA_GetHSMPolicySet(slot_id, c_cap_ids, byref(cap_id_count),
-                             c_cap_vals, byref(cap_val_count))
+    @refresh_c_arrays(1)
+    def _ca_get_hsm_policy_set():
+        """Closure for retries.
+        """
+        return CA_GetHSMPolicySet(slot_id, cap_ids.array, cap_ids.size,
+                                  cap_vals.array, cap_vals.size)
 
-    if ret != CKR_OK:
-        return ret, None
+    ret = _ca_get_hsm_policy_set()
 
-    return ret, dict(zip(c_cap_ids, c_cap_vals))
+    return ret, dict(zip(cap_ids, cap_vals))
 
 
 ca_get_hsm_policy_set_ex = make_error_handle_function(ca_get_hsm_policy_set)
+
 
 def ca_get_token_policies(slot):
     """
@@ -200,23 +195,19 @@ def ca_get_token_policies(slot):
     :return: retcode, {id: val} dict of policies (None if command failed)
     """
     slot_id = CK_ULONG(slot)
-    cap_id_count = CK_ULONG()
-    cap_val_count = CK_ULONG()
-    ret = CA_GetTokenPolicies(slot_id, None, byref(cap_id_count),
-                              None, byref(cap_val_count)); 
+    pol_ids = AutoCArray()
+    pol_vals = AutoCArray()
 
-    if ret != CKR_OK:
-        return ret, None
+    @refresh_c_arrays(1)
+    def _get_token_policies():
+        """Closure for retries to work w/ properties.
+        """
+        return CA_GetTokenPolicies(slot_id, pol_ids.array, pol_ids.size,
+                                   pol_vals.array, pol_vals.size)
 
-    c_cap_ids = (CK_ULONG * cap_id_count.value)()
-    c_cap_vals = (CK_ULONG * cap_val_count.value)()
-    ret = CA_GetTokenPolicies(slot_id, c_cap_ids, byref(cap_id_count),
-                             c_cap_vals, byref(cap_val_count))
+    ret = _get_token_policies()
 
-    if ret != CKR_OK:
-        return ret, None
-
-    return ret, dict(zip(c_cap_ids, c_cap_vals))
+    return ret, dict(zip(pol_ids, pol_vals))
 
 
 ca_get_token_policies_ex = make_error_handle_function(ca_get_token_policies)

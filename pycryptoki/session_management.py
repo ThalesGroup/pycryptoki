@@ -6,19 +6,47 @@ from ctypes import cast, c_char_p, c_void_p, create_string_buffer, \
 import logging
 import re
 
-from cryptoki import C_Initialize, CK_ULONG, C_GetSlotList, CK_BBOOL, CK_SLOT_ID, \
-    CK_SLOT_INFO, C_GetSlotInfo, C_CloseAllSessions, C_GetSessionInfo, CK_SESSION_HANDLE, \
-    CK_SESSION_INFO, C_OpenSession, CK_FLAGS, CK_NOTIFY, C_Login, CK_USER_TYPE, C_Logout, \
-    C_CloseSession, C_InitPIN, CA_FactoryReset, \
-    C_GetTokenInfo, CK_TOKEN_INFO, C_Finalize, C_SetPIN, CA_DeleteContainerWithHandle, CA_OpenApplicationID, \
-    CA_CloseApplicationID, CA_Restart, CA_SetApplicationID
-from defines import CKR_OK
-from pycryptoki.cryptoki import CA_CreateContainer, CK_VOID_PTR, \
-    CK_BYTE_PTR
-from pycryptoki.defines import CKF_RW_SESSION, CKF_SERIAL_SESSION
+# cryptoki constants
+from pycryptoki.cryptoki import (CK_ULONG,
+                                 CK_BBOOL,
+                                 CK_SLOT_ID,
+                                 CK_SLOT_INFO,
+                                 CK_SESSION_HANDLE,
+                                 CK_FLAGS,
+                                 CK_NOTIFY,
+                                 CK_SESSION_INFO,
+                                 CK_USER_TYPE,
+                                 CK_TOKEN_INFO,
+                                 CK_VOID_PTR,
+                                 CK_BYTE)
+
+# Cryptoki Functions
+from pycryptoki.cryptoki import (C_Initialize,
+                                 C_GetSlotList,
+                                 C_GetSlotInfo,
+                                 C_CloseAllSessions,
+                                 C_GetSessionInfo,
+                                 C_OpenSession,
+                                 C_Login,
+                                 C_Logout,
+                                 C_CloseSession,
+                                 C_InitPIN,
+                                 CA_FactoryReset,
+                                 C_GetTokenInfo,
+                                 C_Finalize,
+                                 C_SetPIN,
+                                 CA_DeleteContainerWithHandle,
+                                 CA_OpenApplicationID,
+                                 CA_CloseApplicationID,
+                                 CA_Restart,
+                                 CA_CreateContainer,
+                                 CA_SetApplicationID)
+
+from pycryptoki.common_utils import AutoCArray, refresh_c_arrays
+from pycryptoki.defines import CKR_OK, CKF_RW_SESSION, CKF_SERIAL_SESSION
 from pycryptoki.test_functions import make_error_handle_function
 
-logger = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 def c_initialize():
@@ -29,7 +57,7 @@ def c_initialize():
 
     """
     # INITIALIZE
-    logger.info("C_Initialize: Initializing HSM")
+    LOG.info("C_Initialize: Initializing HSM")
     ret = C_Initialize(0)
     return ret
 
@@ -44,7 +72,7 @@ def c_finalize():
     :returns: The result code
 
     """
-    logger.info("C_Finalize: Finalizing HSM")
+    LOG.info("C_Finalize: Finalizing HSM")
     ret = C_Finalize(0)
     return ret
 
@@ -56,17 +84,20 @@ def c_open_session(slot_num, flags=(CKF_SERIAL_SESSION | CKF_RW_SESSION)):
     """Opens a session on a given slot
 
     :param slot_num: The slot to get a session on
-    :param flags: The flags to open the session with (Default value = (CKF_SERIAL_SESSION | CKF_RW_SESSION)
+    :param flags: The flags to open the session with
+        (Default value = (CKF_SERIAL_SESSION | CKF_RW_SESSION)
     :returns: The result code, the session handle
 
     """
     # OPEN SESSION
     arg3 = create_string_buffer("Application")
     h_session = CK_SESSION_HANDLE()
-    arg3 = cast(arg3, c_void_p)  # CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_NOTIFICATION, CK_VOID_PTR)
-    ret = C_OpenSession(CK_SLOT_ID(slot_num), CK_FLAGS(flags), cast(arg3, CK_VOID_PTR), CK_NOTIFY(0),
+    arg3 = cast(arg3, c_void_p)
+    # CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_NOTIFICATION, CK_VOID_PTR)
+    ret = C_OpenSession(CK_SLOT_ID(slot_num), CK_FLAGS(flags),
+                        cast(arg3, CK_VOID_PTR), CK_NOTIFY(0),
                         pointer(h_session))
-    logger.info("C_OpenSession: Opening Session. slot=" + str(slot_num))
+    LOG.info("C_OpenSession: Opening Session. slot=" + str(slot_num))
 
     return ret, h_session.value
 
@@ -74,7 +105,7 @@ def c_open_session(slot_num, flags=(CKF_SERIAL_SESSION | CKF_RW_SESSION)):
 c_open_session_ex = make_error_handle_function(c_open_session)
 
 
-def login(h_session, slot_num=1, password="", user_type=1):
+def login(h_session, slot_num=1, password=None, user_type=1):
     """Login to the HSM
 
     :param h_session: Current session
@@ -85,11 +116,18 @@ def login(h_session, slot_num=1, password="", user_type=1):
 
     """
     # LOGIN
-    user_type = long(user_type)
-    pb_password = c_char_p(password)
-    logger.info(
-        "C_Login: Logging In. user_type=" + str(user_type) + ", slot=" + str(slot_num) + ", password=" + password)
-    ret = C_Login(h_session, CK_USER_TYPE(user_type), cast(pb_password, CK_BYTE_PTR), CK_ULONG(len(password)))
+    LOG.info("C_Login: "
+             "user_type=%s, "
+             "slot=%s, "
+             "password=%s", user_type, slot_num, password)
+    if password == '':
+        password = None
+
+    user_type = CK_USER_TYPE(long(user_type))
+    password = AutoCArray(data=password, ctype=CK_BYTE)
+
+    ret = C_Login(h_session, user_type, password.array, password.size.contents)
+
     return ret
 
 
@@ -150,14 +188,17 @@ def c_get_token_info(slot_id):
     """
     token_info = {}
     c_token_info = CK_TOKEN_INFO()
-    logger.info("Getting token info. slot=" + str(slot_id))
+    LOG.info("Getting token info. slot=" + str(slot_id))
     ret = C_GetTokenInfo(CK_ULONG(slot_id), byref(c_token_info))
 
     if ret == CKR_OK:
         token_info['label'] = str(cast(c_token_info.label, c_char_p).value)[0:32].strip()
-        token_info['manufacturerID'] = str(cast(c_token_info.manufacturerID, c_char_p).value)[0:32].strip()
-        token_info['model'] = str(cast(c_token_info.model, c_char_p).value)[0:16].strip()
-        token_info['serialNumber'] = int(str(cast(c_token_info.serialNumber, c_char_p).value)[0:16].strip())
+        token_info['manufacturerID'] = str(cast(c_token_info.manufacturerID,
+                                                c_char_p).value)[0:32].strip()
+        token_info['model'] = str(cast(c_token_info.model,
+                                       c_char_p).value)[0:16].strip()
+        token_info['serialNumber'] = int(str(cast(c_token_info.serialNumber,
+                                                  c_char_p).value)[0:16].strip())
         token_info['flags'] = c_token_info.flags
         token_info['ulFreePrivateMemory'] = c_token_info.ulFreePrivateMemory
         token_info['ulTotalPrivateMemory'] = c_token_info.ulTotalPrivateMemory
@@ -186,13 +227,19 @@ def get_slot_dict():
     :returns: A python dictionary of the available slots
 
     """
-    us_count = CK_ULONG(0)
-    ret = C_GetSlotList(CK_BBOOL(0), None, byref(us_count))
-    if ret != CKR_OK: return ret
-    num_slots = (us_count.value + 1)
-    slot_list = (CK_SLOT_ID * num_slots)()
-    ret = C_GetSlotList(CK_BBOOL(0), slot_list, byref(us_count))
-    if ret != CKR_OK: return ret
+    slot_list = AutoCArray()
+
+    @refresh_c_arrays(1)
+    def _get_slot_list():
+        """
+        Closure to refresh properties.
+        """
+        return C_GetSlotList(CK_BBOOL(0), slot_list.array, slot_list.size)
+
+    ret = _get_slot_list()
+    if ret != CKR_OK:
+        return ret, None
+
     slot_info = CK_SLOT_INFO()
     slot_dict = {}
     for slot in slot_list:
@@ -214,7 +261,7 @@ def c_close_session(h_session):
 
     """
     # CLOSE SESSION
-    logger.info("C_CloseSession: Closing session " + str(h_session))
+    LOG.info("C_CloseSession: Closing session " + str(h_session))
     ret = C_CloseSession(h_session)
     return ret
 
@@ -229,7 +276,7 @@ def c_logout(h_session):
     :returns: The result code
 
     """
-    logger.info("C_Logout: Logging out of session " + str(h_session))
+    LOG.info("C_Logout: Logging out of session " + str(h_session))
     ret = C_Logout(h_session)
     return ret
 
@@ -246,11 +293,9 @@ def c_init_pin(h_session, pin):
 
     """
 
-    logger.info("C_InitPIN: Initializing PIN to " + str(pin))
-    if pin == '':
-        ret = C_InitPIN(h_session, None, CK_ULONG(0))
-    else:
-        ret = C_InitPIN(h_session, cast(create_string_buffer(pin), CK_BYTE_PTR), CK_ULONG(len(pin)))
+    LOG.info("C_InitPIN: Initializing PIN to " + str(pin))
+    pin = AutoCArray(data=pin)
+    ret = C_InitPIN(h_session, pin.array, pin.size.contents)
     return ret
 
 
@@ -264,7 +309,7 @@ def ca_factory_reset(slot):
     :returns: The result code
 
     """
-    logger.info("CA_FactoryReset: Factory Reset. slot=" + str(slot))
+    LOG.info("CA_FactoryReset: Factory Reset. slot=" + str(slot))
     ret = CA_FactoryReset(CK_SLOT_ID(slot), CK_ULONG(0))
     return ret
 
@@ -281,15 +326,16 @@ def c_set_pin(h_session, old_pass, new_pass):
     :returns: The result code
 
     """
-    logger.info("C_SetPIN: Changing password. old_pass=" + str(old_pass) + ", new_pass=" + str(new_pass))
-    if old_pass == '' and new_pass == '':
-        ret = C_SetPIN(h_session, None, CK_ULONG(0),
-                       None, CK_ULONG(0))
-        return ret
-    else:
-        ret = C_SetPIN(h_session, cast(create_string_buffer(old_pass), CK_BYTE_PTR), CK_ULONG(len(old_pass)),
-                       cast(create_string_buffer(new_pass), CK_BYTE_PTR), CK_ULONG(len(new_pass)))
-        return ret
+    LOG.info("C_SetPIN: Changing password. "
+             "old_pass=" + str(old_pass) + ", new_pass=" + str(new_pass))
+
+    old_pass = AutoCArray(data=old_pass)
+    new_pass = AutoCArray(data=new_pass)
+
+    ret = C_SetPIN(h_session,
+                   old_pass.array, old_pass.size.contents,
+                   new_pass.array, new_pass.size.contents)
+    return ret
 
 
 c_set_pin_ex = make_error_handle_function(c_set_pin)
@@ -303,7 +349,7 @@ def c_close_all_sessions(slot):
 
     """
 
-    logger.info("C_CloseAllSessions: Closing all sessions. slot=" + str(slot))
+    LOG.info("C_CloseAllSessions: Closing all sessions. slot=" + str(slot))
     ret = C_CloseAllSessions(CK_ULONG(slot))
     return ret
 
@@ -311,7 +357,7 @@ def c_close_all_sessions(slot):
 c_close_all_sessions_ex = make_error_handle_function(c_close_all_sessions)
 
 
-def ca_create_container(h_session, storage_size, password='', label='Inserted Token'):
+def ca_create_container(h_session, storage_size, password=None, label='Inserted Token'):
     """Inserts a token into a slot without a Security Officer on the token
 
     :param h_session: Current session
@@ -321,27 +367,23 @@ def ca_create_container(h_session, storage_size, password='', label='Inserted To
     :returns: The result code, The container number
 
     """
+    container_number = CK_ULONG()
+    LOG.info("CA_CreateContainer: Inserting token with no SO storage_size=" + str(
+        storage_size) + ", pin=" + str(password) + ", label=" + label)
 
     if password == '':
-        container_number = CK_ULONG()
-        logger.info("CA_CreateContainer: Inserting token with no SO storage_size=" + str(
-            storage_size) + ", pin=" + password + ", label=" + label)
-        ret = CA_CreateContainer(h_session, CK_ULONG(0), cast(create_string_buffer(label), CK_BYTE_PTR),
-                                 CK_ULONG(len(label)), None,
-                                 CK_ULONG(0), CK_ULONG(-1), CK_ULONG(-1), CK_ULONG(0), CK_ULONG(0),
-                                 CK_ULONG(storage_size), byref(container_number))
-        logger.info("CA_CreateContainer: Inserted token into slot " + str(container_number.value))
-        return ret, container_number.value
-    else:
-        container_number = CK_ULONG()
-        logger.info("CA_CreateContainer: Inserting token with no SO storage_size=" + str(
-            storage_size) + ", pin=" + password + ", label=" + label)
-        ret = CA_CreateContainer(h_session, CK_ULONG(0), cast(create_string_buffer(label), CK_BYTE_PTR),
-                                 CK_ULONG(len(label)), cast(create_string_buffer(password), CK_BYTE_PTR),
-                                 CK_ULONG(len(password)), CK_ULONG(-1), CK_ULONG(-1), CK_ULONG(0), CK_ULONG(0),
-                                 CK_ULONG(storage_size), byref(container_number))
-        logger.info("CA_CreateContainer: Inserted token into slot " + str(container_number.value))
-        return ret, container_number.value
+        password = None
+
+    password = AutoCArray(data=password)
+    label = AutoCArray(data=label)
+
+    ret = CA_CreateContainer(h_session, CK_ULONG(0),
+                             label.array, label.size.contents,
+                             password.array, password.size.contents,
+                             CK_ULONG(-1), CK_ULONG(-1), CK_ULONG(0), CK_ULONG(0),
+                             CK_ULONG(storage_size), byref(container_number))
+    LOG.info("CA_CreateContainer: Inserted token into slot " + str(container_number.value))
+    return ret, container_number.value
 
 
 ca_create_container_ex = make_error_handle_function(ca_create_container)
@@ -355,12 +397,13 @@ def ca_delete_container_with_handle(h_session, container_handle):
 
     """
     container_number = CK_ULONG(container_handle)
-    logger.info(
-        "CA_DeleteContainerWithHandle: Attempting to delete container with handle: {0}".format(container_handle))
+    LOG.info(
+        "CA_DeleteContainerWithHandle: "
+        "Attempting to delete container with handle: %s", container_handle)
 
     ret = CA_DeleteContainerWithHandle(h_session, container_number)
 
-    logger.info("CA_DeleteContainerWithHandle: Ret Value: {0}".format(ret))
+    LOG.info("CA_DeleteContainerWithHandle: Ret Value: %s", ret)
 
     return ret
 
@@ -379,11 +422,11 @@ def ca_openapplicationID(slot, id_high, id_low):
     uid_high = CK_ULONG(id_high)
     uid_low = CK_ULONG(id_low)
 
-    logger.info("CA_OpenApplicationID: Attempting to open App ID {0}:{1}".format(id_high, id_low))
+    LOG.info("CA_OpenApplicationID: Attempting to open App ID %s:%s", id_high, id_low)
 
     ret = CA_OpenApplicationID(CK_ULONG(slot), uid_high, uid_low)
 
-    logger.info("CA_OpenApplicationID: Ret Value: {0}".format(ret))
+    LOG.info("CA_OpenApplicationID: Ret Value: %s", ret)
 
     return ret
 
@@ -402,11 +445,11 @@ def ca_closeapplicationID(slot, id_high, id_low):
     uid_high = CK_ULONG(id_high)
     uid_low = CK_ULONG(id_low)
 
-    logger.info("CA_CloseApplicationID: Attempting to open App ID {0}:{1}".format(id_high, id_low))
+    LOG.info("CA_CloseApplicationID: Attempting to close App ID %s:%s", id_high, id_low)
 
     ret = CA_CloseApplicationID(CK_ULONG(slot), uid_high, uid_low)
 
-    logger.info("CA_CloseApplicationID: Ret Value: {0}".format(ret))
+    LOG.info("CA_CloseApplicationID: Ret Value: %s", ret)
 
     return ret
 
@@ -424,11 +467,11 @@ def ca_setapplicationID(id_high, id_low):
     uid_high = CK_ULONG(id_high)
     uid_low = CK_ULONG(id_low)
 
-    logger.info("CA_SetApplicationID: Attempting to set App ID {0}:{1}".format(id_high, id_low))
+    LOG.info("CA_SetApplicationID: Attempting to set App ID %s:%s", id_high, id_low)
 
     ret = CA_SetApplicationID(uid_high, uid_low)
 
-    logger.info("CA_SetApplicationID: Ret Value: {0}".format(ret))
+    LOG.info("CA_SetApplicationID: Ret Value: %s", ret)
 
     return ret
 
@@ -442,11 +485,11 @@ def ca_restart(slot):
     :param slot:
 
     """
-    logger.info("CA_Restart: attempting to restart")
+    LOG.info("CA_Restart: attempting to restart")
 
     ret = CA_Restart(CK_ULONG(slot))
 
-    logger.info("CA_Restart: Ret Value: {0}".format(ret))
+    LOG.info("CA_Restart: Ret Value: %s", ret)
 
     return ret
 
