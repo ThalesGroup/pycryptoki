@@ -2,7 +2,8 @@
 Utilities for pycryptoki
 """
 from _ctypes import pointer, POINTER
-from ctypes import c_ulong, cast
+from ctypes import c_ulong, cast, create_string_buffer
+from pycryptoki.cryptoki import CK_CHAR
 from pycryptoki.defines import CKR_OK
 
 
@@ -47,7 +48,11 @@ class AutoCArray(object):
         # name was just for logging.
         if data is not None:
             # Parse out any given data.
-            if isinstance(data, basestring) or isinstance(data, list):
+            if isinstance(data, basestring):
+                self._array = create_string_buffer(data)
+                self._size = c_ulong(len(data))
+                self.ctype = CK_CHAR
+            elif isinstance(data, list):
                 self._array = (ctype * len(data))(*data)
                 self._size = c_ulong(len(data))
             else:
