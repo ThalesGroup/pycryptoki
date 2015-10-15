@@ -19,7 +19,7 @@ from defines import CKA_USAGE_LIMIT, CKA_USAGE_COUNT, CKA_CLASS, CKA_TOKEN, \
     CKA_VALUE_BITS, CKA_VALUE_LEN, CKA_ECDSA_PARAMS, CKA_EC_POINT, CKA_LOCAL, \
     CKA_MODIFIABLE, CKA_EXTRACTABLE, CKA_ALWAYS_SENSITIVE, CKA_NEVER_EXTRACTABLE, \
     CKA_CCM_PRIVATE, CKA_FINGERPRINT_SHA1, CKA_FINGERPRINT_SHA256, CKA_PKC_TCTRUST, CKA_PKC_CITS, \
-    CKA_OUID, \
+    CKA_OUID, CKA_UNWRAP_TEMPLATE, \
     CKA_X9_31_GENERATED, CKA_PKC_ECC, CKR_OK
 from pycryptoki.cryptoki import CK_ULONG_PTR
 from pycryptoki.defines import CKA_EKM_UID, CKA_GENERIC_1, CKA_GENERIC_2, \
@@ -130,7 +130,8 @@ key_attributes = {CKA_USAGE_LIMIT: long,
                   CKA_EKM_UID: None,
                   CKA_GENERIC_1: None,
                   CKA_GENERIC_2: None,
-                  CKA_GENERIC_3: None}
+                  CKA_GENERIC_3: None,
+                  CKA_UNWRAP_TEMPLATE: {}}
 
 role_attributes = {}
 
@@ -219,7 +220,7 @@ class Attributes:
         if isinstance(value, bool) or isinstance(value, int) or isinstance(value,
                                                                            CDict) or isinstance(
             value, long) or isinstance(value, str) or isinstance(value, list) or isinstance(
-            value, CList) or isinstance(value, NonAsciiString):
+            value, CList) or isinstance(value, NonAsciiString) or isinstance(value, dict):
             return True
         else:
             raise Exception(
@@ -296,6 +297,11 @@ class Attributes:
                     list_val[j] = CK_CHAR(ord(value[j]) - 0x30)
                 c_struct[i] = CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE(key), ptr,
                                            CK_ULONG(sizeof(CK_CHAR(0)) * len(value)))
+            elif isinstance(item_type, dict):
+                template = Attributes(attributes_list=value).get_c_struct()
+                c_struct[i] = CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE(key),
+                                           cast(template, c_void_p),
+                                           CK_ULONG(len(template)))
             else:
                 raise Exception("Argument type " + str(item_type) + " not supported. <key: " + str(
                     key) + ", value: " + str(value) + ">")
