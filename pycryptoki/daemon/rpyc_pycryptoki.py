@@ -49,10 +49,7 @@ from pycryptoki.misc import (c_generate_random, c_generate_random_ex,
 from pycryptoki.object_attr_lookup import (c_find_objects, c_find_objects_ex,
                                            c_get_attribute_value, c_get_attribute_value_ex,
                                            c_set_attribute_value, c_set_attribute_value_ex)
-from pycryptoki.policy_management import (ca_set_hsm_policy, ca_set_hsm_policy_ex,
-                                          ca_set_destructive_hsm_policy,
-                                          ca_set_destructive_hsm_policy_ex,
-                                          ca_set_container_policy, ca_set_container_policy_ex)
+from pycryptoki.policy_management import (ca_set_container_policy, ca_set_container_policy_ex)
 from pycryptoki.session_management import (c_initialize, c_initialize_ex,
                                            c_finalize, c_finalize_ex,
                                            c_open_session, c_open_session_ex,
@@ -78,8 +75,6 @@ from pycryptoki.token_management import (c_init_token, c_init_token_ex,
                                          c_get_mechanism_list, c_get_mechanism_list_ex,
                                          c_get_mechanism_info, c_get_mechanism_info_ex,
                                          get_token_by_label, get_token_by_label_ex,
-                                         ca_get_hsm_policy_set_ex, ca_get_hsm_policy_set,
-                                         ca_get_hsm_capability_set_ex, ca_get_hsm_capability_set,
                                          ca_get_token_policies_ex, ca_get_token_policies)
 from pycryptoki.audit_handling import (ca_get_time, ca_get_time_ex,
                                        ca_init_audit, ca_init_audit_ex,
@@ -96,12 +91,21 @@ from pycryptoki.hsm_management import (c_performselftest, c_performselftest_ex,
                                        ca_deleteremotepedvector, ca_deleteremotepedvector_ex,
                                        ca_mtkrestore, ca_mtkrestore_ex,
                                        ca_mtkresplit, ca_mtkresplit_ex,
-                                       ca_mtkzeroize, ca_mtkzeroize_ex)
+                                       ca_mtkzeroize, ca_mtkzeroize_ex, ca_set_hsm_policy,
+                                       ca_set_hsm_policy_ex, ca_set_destructive_hsm_policy,
+                                       ca_set_destructive_hsm_policy_ex, ca_get_hsm_capability_set,
+                                       ca_get_hsm_capability_set_ex, ca_get_hsm_policy_set,
+                                       ca_get_hsm_policy_set_ex, ca_get_hsm_policy_setting,
+                                       ca_get_hsm_policy_setting_ex, ca_get_hsm_capability_setting,
+                                       ca_get_hsm_capability_setting_ex, ca_set_hsm_policies,
+                                       ca_set_hsm_policies_ex, ca_set_destructive_hsm_policies,
+                                       ca_set_destructive_hsm_policies_ex)
 from pycryptoki.key_management import (ca_generatemofn, ca_generatemofn_ex,
                                        ca_modifyusagecount, ca_modifyusagecount_ex)
 from pycryptoki.key_usage import (ca_clonemofn, ca_clonemofn_ex,
                                   ca_duplicatemofn, ca_duplicatemofn_ex)
 from pycryptoki.cryptoki import CK_ULONG
+
 CRYPTO_OPS = pycryptoki.cryptoki.__all__[:]
 
 logger = logging.getLogger(__name__)
@@ -156,10 +160,6 @@ class PycryptokiService(rpyc.SlaveService):
     exposed_c_get_mechanism_list_ex = staticmethod(c_get_mechanism_list_ex)
     exposed_c_get_mechanism_info = staticmethod(c_get_mechanism_info)
     exposed_c_get_mechanism_info_ex = staticmethod(c_get_mechanism_info_ex)
-    exposed_ca_get_hsm_policy_set = staticmethod(ca_get_hsm_policy_set)
-    exposed_ca_get_hsm_policy_set_ex = staticmethod(ca_get_hsm_policy_set_ex)
-    exposed_ca_get_hsm_capability_set = staticmethod(ca_get_hsm_capability_set)
-    exposed_ca_get_hsm_capability_set_ex = staticmethod(ca_get_hsm_capability_set_ex)
     exposed_ca_get_token_policies = staticmethod(ca_get_token_policies)
     exposed_ca_get_token_policies_ex = staticmethod(ca_get_token_policies_ex)
 
@@ -208,10 +208,6 @@ class PycryptokiService(rpyc.SlaveService):
     exposed_ca_delete_container_with_handle_ex = staticmethod(ca_delete_container_with_handle_ex)
 
     # policy_management.py
-    exposed_ca_set_hsm_policy = staticmethod(ca_set_hsm_policy)
-    exposed_ca_set_hsm_policy_ex = staticmethod(ca_set_hsm_policy_ex)
-    exposed_ca_set_destructive_hsm_policy = staticmethod(ca_set_destructive_hsm_policy)
-    exposed_ca_set_destructive_hsm_policy_ex = staticmethod(ca_set_destructive_hsm_policy_ex)
     exposed_ca_set_container_policy = staticmethod(ca_set_container_policy)
     exposed_ca_set_container_policy_ex = staticmethod(ca_set_container_policy_ex)
 
@@ -282,6 +278,22 @@ class PycryptokiService(rpyc.SlaveService):
     exposed_ca_mtkresplit_ex = staticmethod(ca_mtkresplit_ex)
     exposed_ca_mtkzeroize = staticmethod(ca_mtkzeroize)
     exposed_ca_mtkzeroize_ex = staticmethod(ca_mtkzeroize_ex)
+    exposed_ca_get_hsm_policy_set = staticmethod(ca_get_hsm_policy_set)
+    exposed_ca_get_hsm_policy_set_ex = staticmethod(ca_get_hsm_policy_set_ex)
+    exposed_ca_get_hsm_capability_set = staticmethod(ca_get_hsm_capability_set)
+    exposed_ca_get_hsm_capability_set_ex = staticmethod(ca_get_hsm_capability_set_ex)
+    exposed_ca_get_hsm_policy_setting = staticmethod(ca_get_hsm_policy_setting)
+    exposed_ca_get_hsm_policy_setting_ex = staticmethod(ca_get_hsm_policy_setting_ex)
+    exposed_ca_get_hsm_capability_setting = staticmethod(ca_get_hsm_capability_setting)
+    exposed_ca_get_hsm_capability_setting_ex = staticmethod(ca_get_hsm_capability_setting_ex)
+    exposed_ca_set_hsm_policy = staticmethod(ca_set_hsm_policy)
+    exposed_ca_set_hsm_policy_ex = staticmethod(ca_set_hsm_policy_ex)
+    exposed_ca_set_destructive_hsm_policy = staticmethod(ca_set_destructive_hsm_policy)
+    exposed_ca_set_destructive_hsm_policy_ex = staticmethod(ca_set_destructive_hsm_policy_ex)
+    exposed_ca_set_hsm_policies = staticmethod(ca_set_hsm_policies)
+    exposed_ca_set_hsm_policies_ex = staticmethod(ca_set_hsm_policies_ex)
+    exposed_ca_set_destructive_hsm_policies = staticmethod(ca_set_destructive_hsm_policies)
+    exposed_ca_set_destructive_hsm_policies_ex = staticmethod(ca_set_destructive_hsm_policies_ex)
 
     # key_management.py
     exposed_ca_generatemofn = staticmethod(ca_generatemofn)

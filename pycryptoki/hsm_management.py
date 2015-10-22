@@ -1,7 +1,9 @@
 """
 Methods responsible for pycryptoki 'hsm management' set of commands.
 """
+from _ctypes import pointer
 from ctypes import byref, create_string_buffer, cast
+from pycryptoki.common_utils import AutoCArray, refresh_c_arrays
 
 from pycryptoki.cryptoki import (CK_SLOT_ID,
                                  CK_USER_TYPE,
@@ -17,7 +19,10 @@ from pycryptoki.cryptoki import (CK_SLOT_ID,
                                  CK_BYTE_PTR,
                                  CK_BYTE,
                                  CK_CHAR_PTR,
-                                 CK_CHAR)
+                                 CK_CHAR, CA_SetHSMPolicy, CK_SESSION_HANDLE, CA_SetHSMPolicies,
+                                 CA_SetDestructiveHSMPolicy, CA_SetDestructiveHSMPolicies,
+                                 CA_GetHSMCapabilitySet, CA_GetHSMCapabilitySetting,
+                                 CA_GetHSMPolicySet, CA_GetHSMPolicySetting)
 from pycryptoki.attributes import Attributes
 from pycryptoki.test_functions import make_error_handle_function
 
@@ -217,3 +222,165 @@ def ca_mtkzeroize(slot):
 
 
 ca_mtkzeroize_ex = make_error_handle_function(ca_mtkzeroize)
+
+
+def ca_set_hsm_policy(h_session, policy_id, policy_val):
+    """Sets the HSM policies by calling CA_SetHSMPolicy
+
+    :param h_session: The session handle of the administrator setting the HSM policy
+    :param policy_id: The ID of the policy being set
+    :param policy_val: The value of the policy being set
+    :returns: The result code
+
+    """
+    ret = CA_SetHSMPolicy(h_session, CK_ULONG(policy_id), CK_ULONG(policy_val))
+    return ret
+
+
+ca_set_hsm_policy_ex = make_error_handle_function(ca_set_hsm_policy)
+
+
+def ca_set_hsm_policies(h_session, policies):
+    """
+    Set multiple HSM policies.
+
+    :param h_session: session handle
+    :param policies: dict of policy ID ints and value ints
+    :return: result code
+    """
+    h_sess = CK_SESSION_HANDLE(h_session)
+    pol_id_list = policies.keys()
+    pol_val_list = policies.values()
+    pol_ids = AutoCArray(data=pol_id_list, ctype=CK_ULONG)
+    pol_vals = AutoCArray(data=pol_val_list, ctype=CK_ULONG)
+
+    ret = CA_SetHSMPolicies(h_sess, pol_ids.size.contents,
+                            pol_ids.array, pol_vals.array)
+
+    return ret
+
+
+ca_set_hsm_policies_ex = make_error_handle_function(ca_set_hsm_policies)
+
+
+def ca_set_destructive_hsm_policy(h_session, policy_id, policy_val):
+    """Sets the destructive HSM policies by calling CA_SetDestructiveHSMPolicy
+
+    :param h_session: The session handle of the administrator setting the HSM policy
+    :param policy_id: The ID of the policy being set
+    :param policy_val: The value of the policy being set
+    :returns: The result code
+
+    """
+    ret = CA_SetDestructiveHSMPolicy(h_session, CK_ULONG(policy_id), CK_ULONG(policy_val))
+    return ret
+
+
+ca_set_destructive_hsm_policy_ex = make_error_handle_function(ca_set_destructive_hsm_policy)
+
+
+def ca_set_destructive_hsm_policies(h_session, policies):
+    """
+    Set multiple HSM policies.
+
+    :param h_session: session handle
+    :param policies: dict of policy ID ints and value ints
+    :return: result code
+    """
+    h_sess = CK_SESSION_HANDLE(h_session)
+    pol_id_list = policies.keys()
+    pol_val_list = policies.values()
+    pol_ids = AutoCArray(data=pol_id_list, ctype=CK_ULONG)
+    pol_vals = AutoCArray(data=pol_val_list, ctype=CK_ULONG)
+
+    ret = CA_SetDestructiveHSMPolicies(h_sess, pol_ids.size.contents,
+                                       pol_ids.array, pol_vals.array)
+
+    return ret
+
+
+ca_set_destructive_hsm_policies_ex = make_error_handle_function(ca_set_destructive_hsm_policies)
+
+
+def ca_get_hsm_capability_set(slot):
+    """
+    Get the capabilities of the given slot.
+
+    :param int slot: Target slot number
+    :return: retcode, {id: val} dict of policies (None if command failed)
+    """
+    slot_id = CK_ULONG(slot)
+    cap_ids = AutoCArray()
+    cap_vals = AutoCArray()
+
+    @refresh_c_arrays(1)
+    def _get_hsm_caps():
+        """Closer for retries to work w/ properties
+        """
+        return CA_GetHSMCapabilitySet(slot_id, cap_ids.array, cap_ids.size,
+                                      cap_vals.array, cap_vals.size)
+
+    ret = _get_hsm_caps()
+
+    return ret, dict(zip(cap_ids, cap_vals))
+
+
+ca_get_hsm_capability_set_ex = make_error_handle_function(ca_get_hsm_capability_set)
+
+
+def ca_get_hsm_capability_setting(slot, capability_id):
+    """
+    Get the value of a single capability
+
+    :param slot: slot ID of slot to query
+    :param capability_id: capability ID
+    :return: result code, CK_ULONG representing capability active or not
+    """
+    capability_val = CK_ULONG()
+    ret = CA_GetHSMCapabilitySetting(CK_ULONG(slot), CK_ULONG(capability_id), pointer(capability_val))
+    return ret, capability_val.value
+
+
+ca_get_hsm_capability_setting_ex = make_error_handle_function(ca_get_hsm_capability_setting)
+
+
+def ca_get_hsm_policy_set(slot):
+    """
+    Get the policies of the given slot.
+
+    :param int slot: Target slot number
+    :return: retcode, {id: val} dict of policies (None if command failed)
+    """
+    slot_id = CK_ULONG(slot)
+    cap_ids = AutoCArray()
+    cap_vals = AutoCArray()
+
+    @refresh_c_arrays(1)
+    def _ca_get_hsm_policy_set():
+        """Closure for retries.
+        """
+        return CA_GetHSMPolicySet(slot_id, cap_ids.array, cap_ids.size,
+                                  cap_vals.array, cap_vals.size)
+
+    ret = _ca_get_hsm_policy_set()
+
+    return ret, dict(zip(cap_ids, cap_vals))
+
+
+ca_get_hsm_policy_set_ex = make_error_handle_function(ca_get_hsm_policy_set)
+
+
+def ca_get_hsm_policy_setting(slot, policy_id):
+    """
+    Get the value of a single policy
+
+    :param slot: slot ID of slot to query
+    :param policy_id: policy ID
+    :return: result code, CK_ULONG representing policy active or not
+    """
+    policy_val = CK_ULONG()
+    ret = CA_GetHSMPolicySetting(CK_ULONG(slot), CK_ULONG(policy_id), pointer(policy_val))
+    return ret, policy_val.value
+
+
+ca_get_hsm_policy_setting_ex = make_error_handle_function(ca_get_hsm_policy_setting)

@@ -20,8 +20,6 @@ from pycryptoki.cryptoki import (C_InitToken,
                                  C_GetSlotList,
                                  C_GetMechanismList,
                                  C_GetMechanismInfo,
-                                 CA_GetHSMCapabilitySet,
-                                 CA_GetHSMPolicySet,
                                  CA_GetTokenPolicies)
 from pycryptoki.session_management import c_get_token_info
 from pycryptoki.test_functions import make_error_handle_function
@@ -133,58 +131,6 @@ def c_get_mechanism_info(slot, mechanism_type):
 
 
 c_get_mechanism_info_ex = make_error_handle_function(c_get_mechanism_info)
-
-
-def ca_get_hsm_capability_set(slot):
-    """
-    Get the capabilities of the given slot.
-
-    :param int slot: Target slot number
-    :return: retcode, {id: val} dict of policies (None if command failed)
-    """
-    slot_id = CK_ULONG(slot)
-    cap_ids = AutoCArray()
-    cap_vals = AutoCArray()
-
-    @refresh_c_arrays(1)
-    def _get_hsm_caps():
-        """Closer for retries to work w/ properties
-        """
-        return CA_GetHSMCapabilitySet(slot_id, cap_ids.array, cap_ids.size,
-                                      cap_vals.array, cap_vals.size)
-
-    ret = _get_hsm_caps()
-
-    return ret, dict(zip(cap_ids, cap_vals))
-
-
-ca_get_hsm_capability_set_ex = make_error_handle_function(ca_get_hsm_capability_set)
-
-
-def ca_get_hsm_policy_set(slot):
-    """
-    Get the policies of the given slot.
-
-    :param int slot: Target slot number
-    :return: retcode, {id: val} dict of policies (None if command failed)
-    """
-    slot_id = CK_ULONG(slot)
-    cap_ids = AutoCArray()
-    cap_vals = AutoCArray()
-
-    @refresh_c_arrays(1)
-    def _ca_get_hsm_policy_set():
-        """Closure for retries.
-        """
-        return CA_GetHSMPolicySet(slot_id, cap_ids.array, cap_ids.size,
-                                  cap_vals.array, cap_vals.size)
-
-    ret = _ca_get_hsm_policy_set()
-
-    return ret, dict(zip(cap_ids, cap_vals))
-
-
-ca_get_hsm_policy_set_ex = make_error_handle_function(ca_get_hsm_policy_set)
 
 
 def ca_get_token_policies(slot):
