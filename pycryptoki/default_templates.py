@@ -26,7 +26,7 @@ from defines import CKA_CLASS, CKO_SECRET_KEY, CKA_KEY_TYPE, CKK_DES, CKA_SENSIT
     CKM_ECDSA_KEY_PAIR_GEN, CKM_ECDSA_SHA1, CKM_ECDSA_SHA224, CKM_ECDSA_SHA256, \
     CKM_ECDSA_SHA384, CKM_ECDSA_SHA512, CKM_ECDH1_DERIVE, CKM_ECDH1_COFACTOR_DERIVE, \
     CKM_SHA_1_HMAC, CKM_SHA224_HMAC, CKM_SHA256_HMAC, CKM_SHA384_HMAC, CKM_SHA512_HMAC, \
-    CKM_ECDSA
+    CKM_ECDSA, CKO_PUBLIC_KEY, CKO_PRIVATE_KEY, CKK_RSA, CKK_DH, CKK_DSA, CKK_ECDSA
 from pycryptoki.defines import CKO_CERTIFICATE, CKA_CERTIFICATE_TYPE, CKC_X_509, \
     CKA_SUBJECT, CKA_VALUE, CKO_DATA, CKA_TOKEN
 
@@ -120,7 +120,9 @@ CKM_GENERIC_SECRET_KEY_GEN_TEMP = {CKA_CLASS: CKO_SECRET_KEY,
                                    CKA_EXTRACTABLE: True,
                                    CKA_LABEL: "GENERIC SECRET Key"}
 
-CKM_RSA_PKCS_KEY_PAIR_GEN_PUBTEMP = {CKA_TOKEN: True,
+CKM_RSA_PKCS_KEY_PAIR_GEN_PUBTEMP = {CKA_CLASS: CKO_PUBLIC_KEY,
+                                     CKA_KEY_TYPE: CKK_RSA,
+                                     CKA_TOKEN: True,
                                      CKA_PRIVATE: True,
                                      CKA_MODIFIABLE: True,
                                      CKA_ENCRYPT: True,
@@ -129,7 +131,9 @@ CKM_RSA_PKCS_KEY_PAIR_GEN_PUBTEMP = {CKA_TOKEN: True,
                                      CKA_MODULUS_BITS: 1024,  # long 0 - MAX_RSA_KEY_NBITS
                                      CKA_PUBLIC_EXPONENT: 3,  # byte
                                      CKA_LABEL: "RSA Public Key"}
-CKM_RSA_PKCS_KEY_PAIR_GEN_PRIVTEMP = {CKA_TOKEN: True,
+CKM_RSA_PKCS_KEY_PAIR_GEN_PRIVTEMP = {CKA_CLASS: CKO_PRIVATE_KEY,
+                                      CKA_KEY_TYPE: CKK_RSA,
+                                      CKA_TOKEN: True,
                                       CKA_PRIVATE: True,
                                       CKA_SENSITIVE: True,
                                       CKA_MODIFIABLE: True,
@@ -138,7 +142,6 @@ CKM_RSA_PKCS_KEY_PAIR_GEN_PRIVTEMP = {CKA_TOKEN: True,
                                       CKA_SIGN: True,
                                       CKA_UNWRAP: True,
                                       CKA_LABEL: "RSA Private Key"}
-
 dsa_prime_1024_160 = [0xfc, 0xec, 0x61, 0x82, 0xeb, 0x20, 0x6b, 0x43, 0xc0, 0x3e, 0x36, 0xc0, 0xea, 0xda, 0xbf, 0xf5,
                       0x6a, 0x0c, 0x2e, 0x79, 0xde, 0xf4, 0x4b, 0xc8, 0xf2, 0xe5, 0x36, 0x99, 0x09, 0x6d, 0x1f, 0xf2,
                       0x70, 0xf1, 0x59, 0x78, 0x5d, 0x75, 0x69, 0x21, 0xdb, 0xff, 0x97, 0x73, 0xae, 0x08, 0x48, 0x3b,
@@ -312,7 +315,9 @@ CKM_DSA_KEY_PAIR_GEN_PUBTEMP_2048_256 = {CKA_TOKEN: True,
                                          CKA_SUBPRIME: dsa_sub_prime_2048_256,
                                          CKA_BASE: dsa_base_2048_256,
                                          CKA_LABEL: "DSA 2048_256 Public Key"}
-CKM_DSA_KEY_PAIR_GEN_PUBTEMP_3072_256 = {CKA_TOKEN: True,
+CKM_DSA_KEY_PAIR_GEN_PUBTEMP_3072_256 = {CKA_CLASS: CKO_PUBLIC_KEY,
+                                         CKA_KEY_TYPE: CKK_DSA,
+                                         CKA_TOKEN: True,
                                          CKA_PRIVATE: True,
                                          CKA_ENCRYPT: True,
                                          CKA_VERIFY: True,
@@ -321,7 +326,9 @@ CKM_DSA_KEY_PAIR_GEN_PUBTEMP_3072_256 = {CKA_TOKEN: True,
                                          CKA_SUBPRIME: dsa_sub_prime_3072_256,
                                          CKA_BASE: dsa_base_3072_256,
                                          CKA_LABEL: "DSA 3072_256 Public Key"}
-CKM_DSA_KEY_PAIR_GEN_PRIVTEMP = {CKA_TOKEN: True,
+CKM_DSA_KEY_PAIR_GEN_PRIVTEMP = {CKA_CLASS: CKO_PRIVATE_KEY,
+                                 CKA_KEY_TYPE: CKK_DSA,
+                                 CKA_TOKEN: True,
                                  CKA_PRIVATE: True,
                                  CKA_SENSITIVE: True,
                                  CKA_DECRYPT: True,
@@ -354,13 +361,17 @@ dh_prime_2048 = [0xF1, 0x20, 0xB5, 0x5B, 0x3A, 0xE4, 0xD0, 0xF6, 0xEF, 0xA4, 0xF
                  0xAE, 0x41, 0x9B, 0xCB, 0x6E, 0x78, 0x92, 0x0B, 0x60, 0x17, 0x4B, 0xE8, 0x15, 0x40, 0x30, 0xD5,
                  0x06, 0xFD, 0xA3, 0x9C, 0xA1, 0xA9, 0xC2, 0xA6, 0x46, 0xF5, 0xEA, 0xE6, 0x4E, 0xF4, 0x19, 0x49,
                  0x4A, 0x5C, 0x90, 0xE4, 0x6B, 0xF8, 0x04, 0xF5, 0xB6, 0xB7, 0xF9, 0x92, 0x3D, 0x5F, 0x05, 0x9B]
-CKM_DH_PKCS_KEY_PAIR_GEN_PUBTEMP = {CKA_TOKEN: True,
+CKM_DH_PKCS_KEY_PAIR_GEN_PUBTEMP = {CKA_CLASS: CKO_PUBLIC_KEY,
+                                    CKA_KEY_TYPE: CKK_DH,
+                                    CKA_TOKEN: True,
                                     CKA_PRIVATE: True,
                                     CKA_DERIVE: True,
                                     CKA_PRIME: dh_prime,
                                     CKA_BASE: [0x02],
                                     CKA_LABEL: "DH Public Key"}
-CKM_DH_PKCS_KEY_PAIR_GEN_PRIVTEMP = {CKA_VALUE_BITS: len(dh_prime) * 8,  # long
+CKM_DH_PKCS_KEY_PAIR_GEN_PRIVTEMP = {CKA_CLASS: CKO_PRIVATE_KEY,
+                                     CKA_KEY_TYPE: CKK_DH,
+                                     CKA_VALUE_BITS: len(dh_prime) * 8,  # long
                                      CKA_TOKEN: True,
                                      CKA_PRIVATE: True,
                                      CKA_SENSITIVE: True,
@@ -412,7 +423,7 @@ CKM_RC4_KEY_GEN_TEMP = {CKA_CLASS: CKO_SECRET_KEY,
                         CKA_WRAP: True,
                         CKA_UNWRAP: True,
                         CKA_DERIVE: True,
-                        CKA_VALUE_LEN: 256,  # 1-256
+                        CKA_VALUE_LEN: 8,  # 1-256
                         CKA_EXTRACTABLE: True,
                         CKA_LABEL: "RC4 Key"}
 
@@ -428,7 +439,7 @@ CKM_RC5_KEY_GEN_TEMP = {CKA_CLASS: CKO_SECRET_KEY,
                         CKA_WRAP: True,
                         CKA_UNWRAP: True,
                         CKA_DERIVE: True,
-                        CKA_VALUE_LEN: 255,  # 1-255
+                        CKA_VALUE_LEN: 16,  # 1-255
                         CKA_EXTRACTABLE: True,
                         CKA_LABEL: "RC5 Key"}
 
@@ -536,14 +547,18 @@ curve_list = {
                               0xec, 0x14, 0x90, 0x44, 0x28, 0xc2, 0xa6, 0x75]
 }
 
-CKM_ECDSA_KEY_PAIR_GEN_PUBTEMP = {CKA_TOKEN: True,
+CKM_ECDSA_KEY_PAIR_GEN_PUBTEMP = {CKA_CLASS: CKO_PUBLIC_KEY,
+                                  CKA_KEY_TYPE: CKK_ECDSA,
+                                  CKA_TOKEN: True,
                                   CKA_PRIVATE: True,
                                   CKA_ENCRYPT: True,
                                   CKA_VERIFY: True,
                                   CKA_DERIVE: True,
                                   CKA_ECDSA_PARAMS: curve_list['secp112r1'],
                                   CKA_LABEL: "ECDSA Public Key"}
-CKM_ECDSA_KEY_PAIR_GEN_PRIVTEMP = {CKA_TOKEN: True,
+CKM_ECDSA_KEY_PAIR_GEN_PRIVTEMP = {CKA_CLASS: CKO_PRIVATE_KEY,
+                                   CKA_KEY_TYPE: CKK_ECDSA,
+                                   CKA_TOKEN: True,
                                    CKA_PRIVATE: True,
                                    CKA_SENSITIVE: True,
                                    CKA_DECRYPT: True,
@@ -680,7 +695,9 @@ CKM_KCDSA_PARAMETER_GEN_TEMP = {CKA_TOKEN: True,  # primelength 0-4096, subprime
                                 CKA_SUBPRIME_BITS: 256,  # 0-512
                                 CKA_LABEL: "KCDSA Parameter Key"}
 
-CKM_RSA_X9_31_KEY_PAIR_GEN_PUBTEMP = {CKA_TOKEN: True,
+CKM_RSA_X9_31_KEY_PAIR_GEN_PUBTEMP = {CKA_CLASS: CKO_PUBLIC_KEY,
+                                      CKA_KEY_TYPE: CKK_RSA,
+                                      CKA_TOKEN: True,
                                       CKA_PRIVATE: True,
                                       CKA_MODIFIABLE: True,
                                       CKA_ENCRYPT: True,
@@ -689,7 +706,9 @@ CKM_RSA_X9_31_KEY_PAIR_GEN_PUBTEMP = {CKA_TOKEN: True,
                                       CKA_MODULUS_BITS: 1024,  # long 1-MAX_RSA_KEY_NBITS
                                       CKA_PUBLIC_EXPONENT: 3,  # byte
                                       CKA_LABEL: "RSA Public Key"}
-CKM_RSA_X9_31_KEY_PAIR_GEN_PRIVTEMP = {CKA_TOKEN: True,
+CKM_RSA_X9_31_KEY_PAIR_GEN_PRIVTEMP = {CKA_CLASS: CKO_PRIVATE_KEY,
+                                       CKA_KEY_TYPE: CKK_RSA,
+                                       CKA_TOKEN: True,
                                        CKA_PRIVATE: True,
                                        CKA_SENSITIVE: True,
                                        CKA_MODIFIABLE: True,
