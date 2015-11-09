@@ -25,9 +25,9 @@ from pycryptoki.misc import c_generate_random, c_generate_random_ex, \
     c_create_object_ex
 from pycryptoki.object_attr_lookup import c_find_objects, c_find_objects_ex, \
     c_get_attribute_value, c_get_attribute_value_ex, c_set_attribute_value, c_set_attribute_value_ex
-from pycryptoki.policy_management import ca_set_hsm_policy, ca_set_hsm_policy_ex, \
-    ca_set_destructive_hsm_policy, ca_set_destructive_hsm_policy_ex, \
-    ca_set_container_policy, ca_set_container_policy_ex
+from pycryptoki.policy_management import ca_set_container_policy, ca_set_container_policy_ex
+from pycryptoki.hsm_management import ca_set_hsm_policy, ca_set_hsm_policy_ex, \
+    ca_set_destructive_hsm_policy, ca_set_destructive_hsm_policy_ex
 from pycryptoki.session_management import c_initialize, c_initialize_ex, \
     c_finalize, c_finalize_ex, c_open_session, c_open_session_ex, c_get_token_info, \
     c_get_token_info_ex, c_close_session, c_close_session_ex, c_logout, c_logout_ex, \
