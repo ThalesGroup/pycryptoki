@@ -49,7 +49,6 @@ from pycryptoki.misc import (c_generate_random, c_generate_random_ex,
 from pycryptoki.object_attr_lookup import (c_find_objects, c_find_objects_ex,
                                            c_get_attribute_value, c_get_attribute_value_ex,
                                            c_set_attribute_value, c_set_attribute_value_ex)
-from pycryptoki.policy_management import (ca_set_container_policy, ca_set_container_policy_ex)
 from pycryptoki.session_management import (c_initialize, c_initialize_ex,
                                            c_finalize, c_finalize_ex,
                                            c_open_session, c_open_session_ex,
@@ -61,13 +60,10 @@ from pycryptoki.session_management import (c_initialize, c_initialize_ex,
                                            ca_factory_reset, ca_factory_reset_ex,
                                            c_set_pin, c_set_pin_ex,
                                            c_close_all_sessions, c_close_all_sessions_ex,
-                                           ca_create_container, ca_create_container_ex,
                                            login, login_ex,
                                            ca_openapplicationID_ex, ca_openapplicationID,
                                            ca_closeapplicationID, ca_closeapplicationID_ex,
                                            ca_restart, ca_restart_ex,
-                                           ca_delete_container_with_handle_ex,
-                                           ca_delete_container_with_handle,
                                            ca_setapplicationID, ca_setapplicationID_ex)
 from pycryptoki.sign_verify import (c_sign, c_sign_ex,
                                     c_verify, c_verify_ex)
@@ -100,6 +96,32 @@ from pycryptoki.hsm_management import (c_performselftest, c_performselftest_ex,
                                        ca_get_hsm_capability_setting_ex, ca_set_hsm_policies,
                                        ca_set_hsm_policies_ex, ca_set_destructive_hsm_policies,
                                        ca_set_destructive_hsm_policies_ex)
+from pycryptoki.partition_management import (ca_create_container,
+                                             ca_create_container_ex,
+                                             ca_delete_container_with_handle_ex,
+                                             ca_delete_container_with_handle,
+                                             ca_set_container_policy,
+                                             ca_set_container_policy_ex,
+                                             ca_get_container_capability_set,
+                                             ca_get_container_capability_set_ex,
+                                             ca_get_container_capability_setting,
+                                             ca_get_container_capability_setting_ex,
+                                             ca_get_container_list,
+                                             ca_get_container_list_ex,
+                                             ca_get_container_name,
+                                             ca_get_container_name_ex,
+                                             ca_get_container_policy_set,
+                                             ca_get_container_policy_set_ex,
+                                             ca_get_container_policy_setting,
+                                             ca_get_container_policy_setting_ex,
+                                             ca_get_container_status,
+                                             ca_get_container_status_ex,
+                                             ca_get_container_storage_information,
+                                             ca_get_container_storage_information_ex,
+                                             ca_set_container_policies,
+                                             ca_set_container_policies_ex,
+                                             ca_set_container_size,
+                                             ca_set_container_size_ex)
 from pycryptoki.key_management import (ca_generatemofn, ca_generatemofn_ex,
                                        ca_modifyusagecount, ca_modifyusagecount_ex)
 from pycryptoki.key_usage import (ca_clonemofn, ca_clonemofn_ex,
@@ -194,8 +216,6 @@ class PycryptokiService(rpyc.SlaveService):
     exposed_ca_open_secure_token_ex = staticmethod(ca_open_secure_token_ex)
     exposed_c_close_all_sessions = staticmethod(c_close_all_sessions)
     exposed_c_close_all_sessions_ex = staticmethod(c_close_all_sessions_ex)
-    exposed_ca_create_container = staticmethod(ca_create_container)
-    exposed_ca_create_container_ex = staticmethod(ca_create_container_ex)
     exposed_ca_openapplicationID_ex = staticmethod(ca_openapplicationID_ex)
     exposed_ca_openapplicationID = staticmethod(ca_openapplicationID)
     exposed_ca_closeapplicationID_ex = staticmethod(ca_closeapplicationID_ex)
@@ -204,12 +224,6 @@ class PycryptokiService(rpyc.SlaveService):
     exposed_ca_setapplicationID = staticmethod(ca_setapplicationID)
     exposed_ca_restart_ex = staticmethod(ca_restart_ex)
     exposed_ca_restart = staticmethod(ca_restart)
-    exposed_ca_delete_container_with_handle = staticmethod(ca_delete_container_with_handle)
-    exposed_ca_delete_container_with_handle_ex = staticmethod(ca_delete_container_with_handle_ex)
-
-    # policy_management.py
-    exposed_ca_set_container_policy = staticmethod(ca_set_container_policy)
-    exposed_ca_set_container_policy_ex = staticmethod(ca_set_container_policy_ex)
 
     # object_attr_lookup.py
     exposed_c_find_objects = staticmethod(c_find_objects)
@@ -294,6 +308,34 @@ class PycryptokiService(rpyc.SlaveService):
     exposed_ca_set_hsm_policies_ex = staticmethod(ca_set_hsm_policies_ex)
     exposed_ca_set_destructive_hsm_policies = staticmethod(ca_set_destructive_hsm_policies)
     exposed_ca_set_destructive_hsm_policies_ex = staticmethod(ca_set_destructive_hsm_policies_ex)
+
+    # partition_management.py
+    exposed_ca_create_container = staticmethod(ca_create_container)
+    exposed_ca_create_container_ex = staticmethod(ca_create_container_ex)
+    exposed_ca_delete_container_with_handle = staticmethod(ca_delete_container_with_handle)
+    exposed_ca_delete_container_with_handle_ex = staticmethod(ca_delete_container_with_handle_ex)
+    exposed_ca_set_container_policy = staticmethod(ca_set_container_policy)
+    exposed_ca_set_container_policy_ex = staticmethod(ca_set_container_policy_ex)
+    exposed_ca_get_container_capability_set = staticmethod(ca_get_container_capability_set)
+    exposed_ca_get_container_capability_set_ex = staticmethod(ca_get_container_capability_set_ex)
+    exposed_ca_get_container_capability_setting = staticmethod(ca_get_container_capability_setting)
+    exposed_ca_get_container_capability_setting_ex = staticmethod(ca_get_container_capability_setting_ex)
+    exposed_ca_get_container_list = staticmethod(ca_get_container_list)
+    exposed_ca_get_container_list_ex = staticmethod(ca_get_container_list_ex)
+    exposed_ca_get_container_name = staticmethod(ca_get_container_name)
+    exposed_ca_get_container_name_ex = staticmethod(ca_get_container_name_ex)
+    exposed_ca_get_container_policy_set = staticmethod(ca_get_container_policy_set)
+    exposed_ca_get_container_policy_set_ex = staticmethod(ca_get_container_policy_set_ex)
+    exposed_ca_get_container_policy_setting = staticmethod(ca_get_container_policy_setting)
+    exposed_ca_get_container_policy_setting_ex = staticmethod(ca_get_container_policy_setting_ex)
+    exposed_ca_get_container_status = staticmethod(ca_get_container_status)
+    exposed_ca_get_container_status_ex = staticmethod(ca_get_container_status_ex)
+    exposed_ca_get_container_storage_information = staticmethod(ca_get_container_storage_information)
+    exposed_ca_get_container_storage_information_ex = staticmethod(ca_get_container_storage_information_ex)
+    exposed_ca_set_container_policies = staticmethod(ca_set_container_policies)
+    exposed_ca_set_container_policies_ex = staticmethod(ca_set_container_policies_ex)
+    exposed_ca_set_container_size = staticmethod(ca_set_container_size)
+    exposed_ca_set_container_size_ex = staticmethod(ca_set_container_size_ex)
 
     # key_management.py
     exposed_ca_generatemofn = staticmethod(ca_generatemofn)
