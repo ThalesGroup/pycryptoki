@@ -5,8 +5,7 @@ import logging
 
 import rpyc
 
-from pycryptoki.daemon.pycryptoki_daemon import pycryptoki_functions, \
-    functions_needing_serialization
+from pycryptoki.daemon import rpyc_pycryptoki
 from pycryptoki.session_management import c_finalize, c_initialize_ex, c_initialize
 
 log = logging.getLogger(__name__)
@@ -95,24 +94,7 @@ class LocalPycryptokiClient(object):
         functions in pycryptoki if they're listed in the daemon
         """
         log.info("Running local pycryptoki command: {0}".format(name))
-        if pycryptoki_functions.has_key(name):
-            if 'c_initialize' in name:
-                return object.__getattribute__(self, name)
-            return pycryptoki_functions[name]
-        elif functions_needing_serialization.has_key(name):
-            return functions_needing_serialization[name]
-        else:
-            return object.__getattribute__(self, name)
-
-    def c_initialize_ex(self):
-        """ """
-        c_finalize()
-        return c_initialize_ex()
-
-    def c_initialize(self):
-        """ """
-        c_finalize()
-        return c_initialize()
+        return getattr(rpyc_pycryptoki, name)
 
     def kill(self):
         """ """
