@@ -357,6 +357,60 @@ def c_close_all_sessions(slot):
 c_close_all_sessions_ex = make_error_handle_function(c_close_all_sessions)
 
 
+def ca_create_container(h_session, storage_size, password=None, label='Inserted Token'):
+    """Inserts a token into a slot without a Security Officer on the token
+
+    :param h_session: Current session
+    :param storage_size: The storage size of the token (0 for undefined/unlimited)
+    :param password: The password associated with the token (Default value = 'userpin')
+    :param label: The label associated with the token (Default value = 'Inserted Token')
+    :returns: The result code, The container number
+
+    """
+    container_number = CK_ULONG()
+    LOG.info("CA_CreateContainer: Inserting token with no SO storage_size=" + str(
+        storage_size) + ", pin=" + str(password) + ", label=" + label)
+
+    if password == '':
+        password = None
+
+    password = AutoCArray(data=password)
+    label = AutoCArray(data=label)
+
+    ret = CA_CreateContainer(h_session, CK_ULONG(0),
+                             label.array, label.size.contents,
+                             password.array, password.size.contents,
+                             CK_ULONG(-1), CK_ULONG(-1), CK_ULONG(0), CK_ULONG(0),
+                             CK_ULONG(storage_size), byref(container_number))
+    LOG.info("CA_CreateContainer: Inserted token into slot " + str(container_number.value))
+    return ret, container_number.value
+
+
+ca_create_container_ex = make_error_handle_function(ca_create_container)
+
+
+def ca_delete_container_with_handle(h_session, container_handle):
+    """
+
+    :param h_session:
+    :param container_handle:
+
+    """
+    container_number = CK_ULONG(container_handle)
+    LOG.info(
+        "CA_DeleteContainerWithHandle: "
+        "Attempting to delete container with handle: %s", container_handle)
+
+    ret = CA_DeleteContainerWithHandle(h_session, container_number)
+
+    LOG.info("CA_DeleteContainerWithHandle: Ret Value: %s", ret)
+
+    return ret
+
+
+ca_delete_container_with_handle_ex = make_error_handle_function(ca_delete_container_with_handle)
+
+
 def ca_openapplicationID(slot, id_high, id_low):
     """
 

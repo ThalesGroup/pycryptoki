@@ -307,9 +307,9 @@ def ca_get_hsm_capability_set(slot):
     Get the capabilities of the given slot.
 
     :param int slot: Target slot number
-    :return: retcode, {id: val} dict of capabilities (None if command failed)
+    :return: retcode, {id: val} dict of policies (None if command failed)
     """
-    slot_id = CK_SLOT_ID(slot)
+    slot_id = CK_ULONG(slot)
     cap_ids = AutoCArray()
     cap_vals = AutoCArray()
 
@@ -336,11 +336,9 @@ def ca_get_hsm_capability_setting(slot, capability_id):
     :param capability_id: capability ID
     :return: result code, CK_ULONG representing capability active or not
     """
-    slot_id = CK_SLOT_ID(slot)
-    cap_id = CK_ULONG(capability_id)
-    cap_val = CK_ULONG()
-    ret = CA_GetHSMCapabilitySetting(slot_id, cap_id, pointer(cap_val))
-    return ret, cap_val.value
+    capability_val = CK_ULONG()
+    ret = CA_GetHSMCapabilitySetting(CK_ULONG(slot), CK_ULONG(capability_id), pointer(capability_val))
+    return ret, capability_val.value
 
 
 ca_get_hsm_capability_setting_ex = make_error_handle_function(ca_get_hsm_capability_setting)
@@ -353,20 +351,20 @@ def ca_get_hsm_policy_set(slot):
     :param int slot: Target slot number
     :return: retcode, {id: val} dict of policies (None if command failed)
     """
-    slot_id = CK_SLOT_ID(slot)
-    pol_ids = AutoCArray()
-    pol_vals = AutoCArray()
+    slot_id = CK_ULONG(slot)
+    cap_ids = AutoCArray()
+    cap_vals = AutoCArray()
 
     @refresh_c_arrays(1)
     def _ca_get_hsm_policy_set():
         """Closure for retries.
         """
-        return CA_GetHSMPolicySet(slot_id, pol_ids.array, pol_ids.size,
-                                  pol_vals.array, pol_vals.size)
+        return CA_GetHSMPolicySet(slot_id, cap_ids.array, cap_ids.size,
+                                  cap_vals.array, cap_vals.size)
 
     ret = _ca_get_hsm_policy_set()
 
-    return ret, dict(zip(pol_ids, pol_vals))
+    return ret, dict(zip(cap_ids, cap_vals))
 
 
 ca_get_hsm_policy_set_ex = make_error_handle_function(ca_get_hsm_policy_set)
@@ -380,11 +378,9 @@ def ca_get_hsm_policy_setting(slot, policy_id):
     :param policy_id: policy ID
     :return: result code, CK_ULONG representing policy active or not
     """
-    slot_id = CK_SLOT_ID(slot)
-    pol_id = CK_ULONG(policy_id)
-    pol_val = CK_ULONG()
-    ret = CA_GetHSMPolicySetting(slot_id, pol_id, pointer(pol_val))
-    return ret, pol_val.value
+    policy_val = CK_ULONG()
+    ret = CA_GetHSMPolicySetting(CK_ULONG(slot), CK_ULONG(policy_id), pointer(policy_val))
+    return ret, policy_val.value
 
 
 ca_get_hsm_policy_setting_ex = make_error_handle_function(ca_get_hsm_policy_setting)
