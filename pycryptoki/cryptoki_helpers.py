@@ -128,9 +128,9 @@ def _search_for_dll_in_chrystoki_conf(conf_path, chrystoki_conf_text):
         for line in chrystoki2:
             is_64bits = sys.maxsize > 2 ** 32
             if is_64bits:
-                lib_unix_line = re.findall("^\s*LibUNIX64\s*=\s*([^\n]+)", line)
+                lib_unix_line = re.findall("^\s*Lib(?:UNIX64|HPUX)\s*=\s*([^\n]+)", line)
             else:
-                lib_unix_line = re.findall("^\s*LibUNIX\s*=\s*([^\n]+)", line)
+                lib_unix_line = re.findall("^\s*Lib(?:UNIX|HPUX)\s*=\s*([^\n]+)", line)
 
             if len(lib_unix_line) > 1:
                 raise Exception("Found more than one LibUNIX pattern on the same line")
