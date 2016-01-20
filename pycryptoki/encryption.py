@@ -27,7 +27,7 @@ from pycryptoki.test_functions import make_error_handle_function
 logger = logging.getLogger(__name__)
 
 
-def get_encryption_mechanism(encryption_flavor):
+def get_encryption_mechanism(encryption_flavor, external_iv=None):
     """Returns the CK_MECHANISM() object associated with a given encryption flavor
     #TODO: Only works with one kind of encryption mechanism currently.
 
@@ -98,8 +98,12 @@ def get_encryption_mechanism(encryption_flavor):
                           CKM_RSA_PKCS_OAEP: OAEP_params_required,
                           CKM_ECIES: ECIES_params_required}
 
-    iv = [0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38]
-    iv16 = [1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8]
+    if external_iv:
+        iv = external_iv
+        iv16 = external_iv
+    else:
+        iv = [0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38]
+        iv16 = [1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8]
 
     params = encryption_flavors.get(encryption_flavor)
     if params == iv_required:
@@ -146,7 +150,7 @@ def get_encryption_mechanism(encryption_flavor):
     return mech
 
 
-def c_encrypt(h_session, encryption_flavor, h_key, data_to_encrypt, mech=None):
+def c_encrypt(h_session, encryption_flavor, h_key, data_to_encrypt, mech=None, external_iv=None):
     """Encrypts data with a given key and encryption flavor
     encryption flavors
 
@@ -157,13 +161,12 @@ def c_encrypt(h_session, encryption_flavor, h_key, data_to_encrypt, mech=None):
         a multipart operation will be used
     :param mech: The mechanism to use, if None will try to look up a
         default mechanism based on the encryption flavor
-    :param h_session:
+    :param external_iv: The new Integrity Value to be used.
     :returns: Returns the result code of the operation, a python string representing the encrypted data
 
     """
-
     if mech is None:
-        mech = get_encryption_mechanism(encryption_flavor)
+        mech = get_encryption_mechanism(encryption_flavor, external_iv)
 
     # if a list is passed out do an encrypt operation on each string in the list, otherwise just do one encrypt operation
     is_multi_part_operation = isinstance(data_to_encrypt, list) or isinstance(data_to_encrypt, tuple)
@@ -232,7 +235,7 @@ def _get_string_from_list(list_of_strings):
     return large_string
 
 
-def c_decrypt(h_session, decryption_flavor, h_key, encrypted_data, mech=None):
+def c_decrypt(h_session, decryption_flavor, h_key, encrypted_data, mech=None, external_iv=None):
     """Decrypts some data
 
     :param h_session: The session to use
@@ -248,7 +251,7 @@ def c_decrypt(h_session, decryption_flavor, h_key, encrypted_data, mech=None):
 
     # Get the mechanism
     if mech is None:
-        mech = get_encryption_mechanism(decryption_flavor)
+        mech = get_encryption_mechanism(decryption_flavor, external_iv)
 
     # Initialize Decrypt
     ret = C_DecryptInit(h_session, mech, CK_ULONG(h_key))
