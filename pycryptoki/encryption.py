@@ -16,7 +16,7 @@ from defines import CKM_DES_CBC, CKM_DES3_CBC, CKM_CAST3_CBC, CKM_DES_ECB, \
     CKM_RSA_PKCS, CKM_DES_CFB8, CKM_DES_CFB64, CKM_DES_OFB64, CKM_AES_CFB8, \
     CKM_AES_CFB128, CKM_AES_OFB, CKM_ARIA_CFB8, CKM_ARIA_CFB128, CKM_ARIA_OFB, \
     CKM_AES_GCM, CKM_XOR_BASE_AND_DATA_W_KDF, CKM_RSA_PKCS_OAEP, CKM_ECIES, CKR_OK, \
-    CKM_SHA_1, CKG_MGF1_SHA1, CKZ_DATA_SPECIFIED
+    CKM_SHA_1, CKG_MGF1_SHA1, CKZ_DATA_SPECIFIED, CKM_AES_KW, CKM_AES_KWP
 from pycryptoki.attributes import get_byte_list_from_python_list, \
     convert_ck_char_array_to_string, Attributes
 from pycryptoki.cryptoki import C_Decrypt, C_DecryptInit, CK_OBJECT_HANDLE, \
@@ -77,6 +77,8 @@ def get_encryption_mechanism(encryption_flavor, external_iv=None):
                           CKM_SEED_CBC: IV16_required,
                           CKM_SEED_CBC_PAD: IV16_required,
                           CKM_AES_ECB: 0,
+                          CKM_AES_KW: iv_required,
+                          CKM_AES_KWP: iv_required,
                           CKM_AES_CBC: IV16_required,
                           CKM_AES_CBC_PAD: IV16_required,
                           CKM_AES_CBC_PAD_IPSEC: IV16_required,
@@ -352,7 +354,7 @@ def do_multipart_operation(h_session, c_update_function, c_finalize_function, in
     return python_string
 
 
-def c_wrap_key(h_session, h_wrapping_key, h_key, encryption_flavor, mech=None):
+def c_wrap_key(h_session, h_wrapping_key, h_key, encryption_flavor, mech=None, external_iv=None):
     """Function which wraps a key
 
     :param h_session: The session to use
@@ -366,7 +368,7 @@ def c_wrap_key(h_session, h_wrapping_key, h_key, encryption_flavor, mech=None):
 
     """
     if mech is None:
-        mech = get_encryption_mechanism(encryption_flavor)
+        mech = get_encryption_mechanism(encryption_flavor, external_iv)
 
     # Get the size of the key
     wrapped_key_length = CK_ULONG()
@@ -386,7 +388,7 @@ def c_wrap_key(h_session, h_wrapping_key, h_key, encryption_flavor, mech=None):
 c_wrap_key_ex = make_error_handle_function(c_wrap_key)
 
 
-def c_unwrap_key(h_session, h_unwrapping_key, wrapped_key, key_template, encryption_flavor, mech=None):
+def c_unwrap_key(h_session, h_unwrapping_key, wrapped_key, key_template, encryption_flavor, mech=None, external_iv=None):
     """Function which unwraps a key
 
     :param h_session: The session to use
@@ -402,7 +404,7 @@ def c_unwrap_key(h_session, h_unwrapping_key, wrapped_key, key_template, encrypt
 
     """
     if mech is None:
-        mech = get_encryption_mechanism(encryption_flavor)
+        mech = get_encryption_mechanism(encryption_flavor, external_iv)
 
     c_template = Attributes(key_template).get_c_struct()
     byte_wrapped_key = cast(wrapped_key, CK_BYTE_PTR)
