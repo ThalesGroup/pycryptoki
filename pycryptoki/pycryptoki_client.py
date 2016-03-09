@@ -2,13 +2,83 @@
 Contains both a local and remote pycryptoki client
 """
 import logging
+import socket
+from functools import wraps
 
 import rpyc
+import time
+
+from rpyc.core.protocol import PingError
 
 from pycryptoki.daemon import rpyc_pycryptoki
-from pycryptoki.session_management import c_finalize, c_initialize_ex, c_initialize
 
 log = logging.getLogger(__name__)
+
+
+# from https://github.com/saltycrane/retry-decorator/blob/master/decorators.py
+def retry(ExceptionToCheck, tries=4, delay=3, backoff=2, logger=None):
+    """Retry calling the decorated function using an exponential backoff.
+
+    http://www.saltycrane.com/blog/2009/11/trying-out-retry-decorator-python/
+    original from: http://wiki.python.org/moin/PythonDecoratorLibrary#Retry
+
+    :param ExceptionToCheck: the exception to check. may be a tuple of
+        exceptions to check
+    :type ExceptionToCheck: Exception or tuple
+    :param tries: number of times to try (not retry) before giving up
+    :type tries: int
+    :param delay: initial delay between retries in seconds
+    :type delay: int
+    :param backoff: backoff multiplier e.g. value of 2 will double the delay
+        each retry
+    :type backoff: int
+    :param logger: logger to use. If None, print
+    :type logger: logging.Logger instance
+    """
+
+    def deco_retry(f):
+
+        @wraps(f)
+        def f_retry(*args, **kwargs):
+            mtries, mdelay = tries, delay
+            while mtries > 1:
+                try:
+                    return f(*args, **kwargs)
+                except ExceptionToCheck, e:
+                    msg = "%s, Retrying in %d seconds..." % (str(e), mdelay)
+                    if logger:
+                        logger.warning(msg)
+                    else:
+                        print msg
+                    time.sleep(mdelay)
+                    mtries -= 1
+                    mdelay *= backoff
+            return f(*args, **kwargs)
+
+        return f_retry  # true decorator
+
+    return deco_retry
+
+
+def connection_test(func):
+    """
+    Decorator to check that the underlying rpyc connection is alive before
+    sending commands across it.
+
+    :param func:
+    :return:
+    """
+    @wraps(func)
+    def wrapper(self, *args, **kwargs):
+        """
+        Inner closure.
+        """
+        if not self.started:
+            self.start()
+
+        return func(self, *args, **kwargs)
+
+    return wrapper
 
 
 class RemotePycryptokiClient:
@@ -25,8 +95,8 @@ class RemotePycryptokiClient:
     def __init__(self, ip=None, port=None):
         self.ip = ip
         self.port = port
-        self.started = False
-        self.start()
+        self.connection = None
+        self.server = None
 
     def kill(self):
         """
@@ -36,8 +106,8 @@ class RemotePycryptokiClient:
         if self.started and not self.connection.closed:
             log.info("Stopping remote pycryptoki connection.")
             self.connection.close()
-            self.started = False
 
+    @retry((socket.error, EOFError, PingError), logger=log)
     def start(self):
         """
         Start the connection to the remote RPYC daemon.
@@ -45,31 +115,50 @@ class RemotePycryptokiClient:
         if not self.started:
             log.info("Starting remote pycryptoki connection")
             self.connection = rpyc.classic.connect(self.ip, port=self.port)
+            self.connection.ping()
             self.server = self.connection.root
-            self.started = True
 
     def cleanup(self):
         """ """
         pass
 
+    @property
+    def started(self):
+        """
+        Check if the RPYC connection is alive.
+
+        :return: boolean
+        """
+        try:
+            return (self.connection is not None and
+                    self.server is not None and
+                    self.connection.ping() is None)
+        except (PingError, EOFError):
+            self.connection = None
+            self.server = None
+            return False
+
+    @connection_test
     def __getattr__(self, name):
         """
         This is the python default attribute handler, if an attribute
         is not found it's probably a pycryptoki call that we forward
         automagically to the server
         """
-        if not self.started:
-            self.start()
         if hasattr(self.server, name):
             def wrapper(*args, **kwargs):
                 """
-
-                :param *args:
-                :param **kwargs:
-
+                Closer to allow us to log the full args & keyword argument list
+                of all calls.
                 """
+                masked_args = args
+                masked_kwargs = kwargs
+                if any(x in name for x in ("login", "create_container")):
+                    masked_args = tuple("*" for _ in args)
+                    masked_kwargs = {key: "*" for key, _ in kwargs.items()}
+
                 log.info("Running remote pycryptoki command: "
-                         "{0}(args={1}, kwargs={2})".format(name, args, kwargs))
+                         "{0}(args={1}, kwargs={2})".format(name, masked_args, masked_kwargs))
                 return getattr(self.server, name)(*args, **kwargs)
 
             return wrapper

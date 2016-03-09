@@ -17,66 +17,34 @@ just returning the second part of the regular return tuple::
     c_open_session_ex()  # Returns: session_handle, raises exception if ret_code != CKR_OK
 
 """
-from optparse import OptionParser
-from _ctypes import pointer
-from ctypes import cast
+import os
+import signal
 import ctypes
 import logging
+import multiprocessing
+from _ctypes import pointer
+from ctypes import cast
+from optparse import OptionParser
 
 import rpyc
+import time
+
+import sys
 
 import pycryptoki
+from pycryptoki.audit_handling import (ca_get_time, ca_get_time_ex,
+                                       ca_init_audit, ca_init_audit_ex,
+                                       ca_time_sync, ca_time_sync_ex)
 from pycryptoki.backup import (ca_open_secure_token, ca_open_secure_token_ex,
                                ca_close_secure_token, ca_close_secure_token_ex,
                                ca_extract, ca_extract_ex,
                                ca_insert, ca_insert_ex)
+from pycryptoki.cryptoki import CK_ULONG
+from pycryptoki.cryptoki import CK_VOID_PTR
 from pycryptoki.encryption import (c_encrypt, c_encrypt_ex,
                                    c_decrypt, c_decrypt_ex,
                                    c_wrap_key, c_wrap_key_ex,
                                    c_unwrap_key, c_unwrap_key_ex)
-from pycryptoki.key_generator import (c_destroy_object, c_destroy_object_ex,
-                                      c_generate_key_pair, c_generate_key_pair_ex,
-                                      c_generate_key, c_generate_key_ex,
-                                      c_derive_key, c_derive_key_ex,
-                                      c_copy_object_ex, c_copy_object)
-from pycryptoki.misc import (c_generate_random, c_generate_random_ex,
-                             c_seed_random, c_seed_random_ex,
-                             c_digest, c_digest_ex,
-                             c_set_ped_id, c_set_ped_id_ex,
-                             c_get_ped_id, c_get_ped_id_ex,
-                             c_create_object, c_create_object_ex,
-                             c_digestkey, c_digestkey_ex)
-from pycryptoki.object_attr_lookup import (c_find_objects, c_find_objects_ex,
-                                           c_get_attribute_value, c_get_attribute_value_ex,
-                                           c_set_attribute_value, c_set_attribute_value_ex)
-from pycryptoki.session_management import (c_initialize, c_initialize_ex,
-                                           c_finalize, c_finalize_ex,
-                                           c_open_session, c_open_session_ex,
-                                           c_get_session_info, c_get_session_info_ex,
-                                           c_get_token_info, c_get_token_info_ex,
-                                           c_close_session, c_close_session_ex,
-                                           c_logout, c_logout_ex,
-                                           c_init_pin, c_init_pin_ex,
-                                           ca_factory_reset, ca_factory_reset_ex,
-                                           c_set_pin, c_set_pin_ex,
-                                           c_close_all_sessions, c_close_all_sessions_ex,
-                                           login, login_ex,
-                                           ca_openapplicationID_ex, ca_openapplicationID,
-                                           ca_closeapplicationID, ca_closeapplicationID_ex,
-                                           ca_restart, ca_restart_ex,
-                                           ca_setapplicationID, ca_setapplicationID_ex)
-from pycryptoki.sign_verify import (c_sign, c_sign_ex,
-                                    c_verify, c_verify_ex)
-from pycryptoki.token_management import (c_init_token, c_init_token_ex,
-                                         c_get_mechanism_list, c_get_mechanism_list_ex,
-                                         c_get_mechanism_info, c_get_mechanism_info_ex,
-                                         get_token_by_label, get_token_by_label_ex,
-                                         ca_get_token_policies_ex, ca_get_token_policies)
-from pycryptoki.audit_handling import (ca_get_time, ca_get_time_ex,
-                                       ca_init_audit, ca_init_audit_ex,
-                                       ca_time_sync, ca_time_sync_ex)
-from pycryptoki.cryptoki import CK_VOID_PTR
-from pycryptoki.key_generator import _get_mechanism
 from pycryptoki.hsm_management import (c_performselftest, c_performselftest_ex,
                                        ca_settokencertificatesignature,
                                        ca_settokencertificatesignature_ex,
@@ -96,6 +64,26 @@ from pycryptoki.hsm_management import (c_performselftest, c_performselftest_ex,
                                        ca_get_hsm_capability_setting_ex, ca_set_hsm_policies,
                                        ca_set_hsm_policies_ex, ca_set_destructive_hsm_policies,
                                        ca_set_destructive_hsm_policies_ex)
+from pycryptoki.key_generator import _get_mechanism
+from pycryptoki.key_generator import (c_destroy_object, c_destroy_object_ex,
+                                      c_generate_key_pair, c_generate_key_pair_ex,
+                                      c_generate_key, c_generate_key_ex,
+                                      c_derive_key, c_derive_key_ex,
+                                      c_copy_object_ex, c_copy_object)
+from pycryptoki.key_management import (ca_generatemofn, ca_generatemofn_ex,
+                                       ca_modifyusagecount, ca_modifyusagecount_ex)
+from pycryptoki.key_usage import (ca_clonemofn, ca_clonemofn_ex,
+                                  ca_duplicatemofn, ca_duplicatemofn_ex)
+from pycryptoki.misc import (c_generate_random, c_generate_random_ex,
+                             c_seed_random, c_seed_random_ex,
+                             c_digest, c_digest_ex,
+                             c_set_ped_id, c_set_ped_id_ex,
+                             c_get_ped_id, c_get_ped_id_ex,
+                             c_create_object, c_create_object_ex,
+                             c_digestkey, c_digestkey_ex)
+from pycryptoki.object_attr_lookup import (c_find_objects, c_find_objects_ex,
+                                           c_get_attribute_value, c_get_attribute_value_ex,
+                                           c_set_attribute_value, c_set_attribute_value_ex)
 from pycryptoki.partition_management import (ca_create_container,
                                              ca_create_container_ex,
                                              ca_delete_container_with_handle_ex,
@@ -122,11 +110,29 @@ from pycryptoki.partition_management import (ca_create_container,
                                              ca_set_container_policies_ex,
                                              ca_set_container_size,
                                              ca_set_container_size_ex)
-from pycryptoki.key_management import (ca_generatemofn, ca_generatemofn_ex,
-                                       ca_modifyusagecount, ca_modifyusagecount_ex)
-from pycryptoki.key_usage import (ca_clonemofn, ca_clonemofn_ex,
-                                  ca_duplicatemofn, ca_duplicatemofn_ex)
-from pycryptoki.cryptoki import CK_ULONG
+from pycryptoki.session_management import (c_initialize, c_initialize_ex,
+                                           c_finalize, c_finalize_ex,
+                                           c_open_session, c_open_session_ex,
+                                           c_get_session_info, c_get_session_info_ex,
+                                           c_get_token_info, c_get_token_info_ex,
+                                           c_close_session, c_close_session_ex,
+                                           c_logout, c_logout_ex,
+                                           c_init_pin, c_init_pin_ex,
+                                           ca_factory_reset, ca_factory_reset_ex,
+                                           c_set_pin, c_set_pin_ex,
+                                           c_close_all_sessions, c_close_all_sessions_ex,
+                                           login, login_ex,
+                                           ca_openapplicationID_ex, ca_openapplicationID,
+                                           ca_closeapplicationID, ca_closeapplicationID_ex,
+                                           ca_restart, ca_restart_ex,
+                                           ca_setapplicationID, ca_setapplicationID_ex)
+from pycryptoki.sign_verify import (c_sign, c_sign_ex,
+                                    c_verify, c_verify_ex)
+from pycryptoki.token_management import (c_init_token, c_init_token_ex,
+                                         c_get_mechanism_list, c_get_mechanism_list_ex,
+                                         c_get_mechanism_info, c_get_mechanism_info_ex,
+                                         get_token_by_label, get_token_by_label_ex,
+                                         ca_get_token_policies_ex, ca_get_token_policies)
 
 CRYPTO_OPS = pycryptoki.cryptoki.__all__[:]
 
@@ -319,7 +325,8 @@ class PycryptokiService(rpyc.SlaveService):
     exposed_ca_get_container_capability_set = staticmethod(ca_get_container_capability_set)
     exposed_ca_get_container_capability_set_ex = staticmethod(ca_get_container_capability_set_ex)
     exposed_ca_get_container_capability_setting = staticmethod(ca_get_container_capability_setting)
-    exposed_ca_get_container_capability_setting_ex = staticmethod(ca_get_container_capability_setting_ex)
+    exposed_ca_get_container_capability_setting_ex = staticmethod(
+        ca_get_container_capability_setting_ex)
     exposed_ca_get_container_list = staticmethod(ca_get_container_list)
     exposed_ca_get_container_list_ex = staticmethod(ca_get_container_list_ex)
     exposed_ca_get_container_name = staticmethod(ca_get_container_name)
@@ -330,8 +337,10 @@ class PycryptokiService(rpyc.SlaveService):
     exposed_ca_get_container_policy_setting_ex = staticmethod(ca_get_container_policy_setting_ex)
     exposed_ca_get_container_status = staticmethod(ca_get_container_status)
     exposed_ca_get_container_status_ex = staticmethod(ca_get_container_status_ex)
-    exposed_ca_get_container_storage_information = staticmethod(ca_get_container_storage_information)
-    exposed_ca_get_container_storage_information_ex = staticmethod(ca_get_container_storage_information_ex)
+    exposed_ca_get_container_storage_information = staticmethod(
+        ca_get_container_storage_information)
+    exposed_ca_get_container_storage_information_ex = staticmethod(
+        ca_get_container_storage_information_ex)
     exposed_ca_set_container_policies = staticmethod(ca_set_container_policies)
     exposed_ca_set_container_policies_ex = staticmethod(ca_set_container_policies_ex)
     exposed_ca_set_container_size = staticmethod(ca_set_container_size)
@@ -399,28 +408,98 @@ class PycryptokiService(rpyc.SlaveService):
         return c_derive_key(h_session, h_base_key, template, mech_flavor, mech)
 
 
+def server_launch(service, ip, port, config):
+    """
+    Target for the multiprocessing Pycryptoki service.
+
+    :param service:
+    :param ip:
+    :param port:
+    :param config:
+    :return:
+    """
+    t = ThreadedServer(service,
+                       hostname=ip,
+                       port=port,
+                       protocol_config=config)
+    t.start()
+
+
+def create_server_subprocess(target, args):
+    """
+    Create the subprocess, set it as a daemon, setup a signal handler
+    in case the parent process is killed, the child process should also be killed, then return
+    the subprocess.
+
+    :param target: Target function to run in a subprocess
+    :param args: Args to pass to the function
+    :return: `multiprocessing.Process`
+    """
+    server = multiprocessing.Process(target=target,
+                                     args=args)
+    server.daemon = True
+    server.start()
+
+    logger.info("Created subprocess w/ PID %s", server.pid)
+
+    def sighandler():
+        print "Caught SIGTERM, closing subprocess"
+        server.terminate()
+    signal.signal(signal.SIGTERM, sighandler)
+    return server
+
+
 if __name__ == '__main__':
     from rpyc.utils.server import ThreadedServer
+
+    logging.basicConfig(stream=sys.stdout,
+                        level=logging.DEBUG,
+                        format='%(asctime)s:%(name)s:%(levelname)s: %(message)s')
+    logger = logging.getLogger(__name__)
 
     parser = OptionParser()
     parser.add_option("-i", "--ip_address", dest="i",
                       help="pycryptoki daemon IP address", metavar="<IP address>")
     parser.add_option("-p", "--port", dest="p",
                       help="pycryptoki daemon IP port", metavar="<number>")
+    parser.add_option("-f", "--forked", dest="forked",
+                      help="Fork the daemon from the parent process so we can recover from "
+                           "segfaults", default=False, action="store_true")
     (options, args) = parser.parse_args()
 
     # Default arguments
     ip = options.i if options.i is not None else 'localhost'
     port = int(options.p if options.p is not None else '8001')
-    print "Pycryptoki Daemon ip=" + str(ip) + ", port=" + str(port)
+    logger.info("Pycryptoki Daemon ip=" + str(ip) + ", port=" +
+                str(port) + ", PID=" + str(os.getpid()))
 
-    t = ThreadedServer(PycryptokiService,
-                       hostname=ip,
-                       port=port,
-                       protocol_config={'allow_public_attrs': True,
-                                        'allow_all_attrs': True,
-                                        'allow_getattr': True,
-                                        'allow_setattr': True,
-                                        'allow_delattr': True})
-    print "Starting Server"
-    t.start()
+    server_config = {'allow_public_attrs': True,
+                     'allow_all_attrs': True,
+                     'allow_getattr': True,
+                     'allow_setattr': True,
+                     'allow_delattr': True}
+
+    server_kwargs = dict(target=server_launch,
+                         args=(PycryptokiService,
+                               ip, port,
+                               server_config))
+
+    if options.forked:
+        logger.info("Starting PycryptokiServer in a separate process...")
+        server = create_server_subprocess(**server_kwargs)
+        if server.exitcode is not None and not server.is_alive():
+            logger.error("Failed to start PycryptokiServer!")
+            exit(-1)
+
+        while True:
+            if server.exitcode not in (1, None) and not server.is_alive():
+                logger.error("PycryptokiServer died w/ exit code %s! Possible segfault",
+                             server.exitcode)
+                logger.info("Restarting Pycryptoki server")
+                server.terminate()
+                server = create_server_subprocess(**server_kwargs)
+
+            time.sleep(0.5)
+
+    else:
+        server_launch(PycryptokiService, ip, port, server_config)
