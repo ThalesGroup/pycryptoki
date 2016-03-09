@@ -178,7 +178,7 @@ def c_encrypt(h_session, encryption_flavor, h_key, data_to_encrypt, mech=None, e
     if ret != CKR_OK: return ret, None
 
     if is_multi_part_operation:
-        encrypted_python_string = do_multipart_operation(h_session, C_EncryptUpdate, C_EncryptFinal, data_to_encrypt)
+        ret, encrypted_python_string = do_multipart_operation(h_session, C_EncryptUpdate, C_EncryptFinal, data_to_encrypt)
     else:
         plain_data_length = len(data_to_encrypt)
         plain_data = get_c_data_to_sign_or_encrypt(data_to_encrypt)
@@ -263,7 +263,7 @@ def c_decrypt(h_session, decryption_flavor, h_key, encrypted_data, mech=None, ex
     is_multi_part_operation = isinstance(encrypted_data, list) or isinstance(encrypted_data, tuple)
 
     if is_multi_part_operation:
-        python_string = do_multipart_operation(h_session, C_DecryptUpdate, C_DecryptFinal, encrypted_data)
+        ret, python_string = do_multipart_operation(h_session, C_DecryptUpdate, C_DecryptFinal, encrypted_data)
     else:
 
         # Get the length of the final data
@@ -345,13 +345,13 @@ def do_multipart_operation(h_session, c_update_function, c_finalize_function, in
     out_data_len = CK_ULONG(max_data_chunk_size)
     output = cast(create_string_buffer("", out_data_len.value), CK_BYTE_PTR)
     ret = c_finalize_function(h_session, output, byref(out_data_len))
-
+    if ret != CKR_OK: return ret, None
     # Get output
     ck_char_array = output._objects.values()[0]
     if out_data_len.value > 0:
         python_string += convert_ck_char_array_to_string(ck_char_array)[0:out_data_len.value]
 
-    return python_string
+    return ret, python_string
 
 
 def c_wrap_key(h_session, h_wrapping_key, h_key, encryption_flavor, mech=None, external_iv=None):
