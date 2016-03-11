@@ -430,6 +430,7 @@ def get_c_data_to_sign_or_encrypt(python_data):
         c_data_to_sign = create_string_buffer(python_data)
         c_data_to_sign = cast(c_data_to_sign, CK_BYTE_PTR)
     else:
-        raise Exception("Please extend this function to support the type of data " + type(python_data))
+        raise Exception("Please extend this function to support the type of data " +
+                        str(type(python_data)))
 
     return c_data_to_sign
