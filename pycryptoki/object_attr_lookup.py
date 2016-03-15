@@ -70,10 +70,7 @@ def c_set_attribute_value(h_session, h_object, template):
     """
     c_struct = Attributes(template).get_c_struct()
     ret = C_SetAttributeValue(h_session, h_object, c_struct, CK_ULONG(len(template)))
-    if ret != CKR_OK:
-        return ret, None
-
-    return ret, c_struct_to_python(c_struct)
+    return ret
 
 
 c_set_attribute_value_ex = make_error_handle_function(c_set_attribute_value)
