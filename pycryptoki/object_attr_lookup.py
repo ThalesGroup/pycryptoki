@@ -1,13 +1,16 @@
 """
 Functions for dealing with object attributes
 """
-from ctypes import byref
+import logging
+from ctypes import byref, cast, c_void_p
 
-from pycryptoki.attributes import Attributes, c_struct_to_python
+from pycryptoki.attributes import Attributes, c_struct_to_python, KEY_TRANSFORMS
 from pycryptoki.cryptoki import CK_OBJECT_HANDLE, C_FindObjectsInit, CK_ULONG, \
     C_FindObjects, C_FindObjectsFinal, C_GetAttributeValue, C_SetAttributeValue
 from pycryptoki.defines import CKR_OK
 from pycryptoki.test_functions import make_error_handle_function
+
+LOG = logging.getLogger(__name__)
 
 
 def c_find_objects(h_session, template, num_entries):
@@ -49,6 +52,26 @@ def c_get_attribute_value(h_session, h_object, template):
 
     """
     c_struct = Attributes(template).get_c_struct()
+    unknown_key_vals = [key for key, value in template.iteritems() if value is None]
+    if unknown_key_vals:
+        LOG.debug("Retrieving Attribute Length for keys %s", unknown_key_vals)
+        # We need to get the size of the target memory area first, then
+        # we can allocate the mem size.
+        ret = C_GetAttributeValue(h_session, h_object, c_struct, CK_ULONG(len(template)))
+        if ret != CKR_OK:
+            return ret, None
+
+        for index in range(0, len(c_struct)):
+            key_type = c_struct[index].type
+            if any(key_type == unknown_key_type for unknown_key_type in unknown_key_vals):
+                LOG.debug("Allocating memory len(%s) for key %s",
+                          c_struct[index].usValueLen,
+                          key_type)
+                # Allocate memory for the type.
+                c_obj_type = KEY_TRANSFORMS[key_type].ctype
+                mem = (c_obj_type * c_struct[index].usValueLen)()
+                c_struct[index].pValue = cast(mem, c_void_p)
+
     ret = C_GetAttributeValue(h_session, h_object, c_struct, CK_ULONG(len(template)))
     if ret != CKR_OK:
         return ret, None

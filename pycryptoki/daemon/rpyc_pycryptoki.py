@@ -17,19 +17,19 @@ just returning the second part of the regular return tuple::
     c_open_session_ex()  # Returns: session_handle, raises exception if ret_code != CKR_OK
 
 """
-import os
-import signal
 import ctypes
 import logging
 import multiprocessing
+import os
+import signal
+import sys
+import time
 from _ctypes import pointer
 from ctypes import cast
 from optparse import OptionParser
 
 import rpyc
-import time
-
-import sys
+from rpyc.utils.server import ThreadedServer
 
 import pycryptoki
 from pycryptoki.audit_handling import (ca_get_time, ca_get_time_ex,
@@ -442,15 +442,16 @@ def create_server_subprocess(target, args):
 
     logger.info("Created subprocess w/ PID %s", server.pid)
 
-    def sighandler():
+    def sighandler(signum, frame):
         print "Caught SIGTERM, closing subprocess"
         server.terminate()
+        exit(0)
+
     signal.signal(signal.SIGTERM, sighandler)
     return server
 
 
 if __name__ == '__main__':
-    from rpyc.utils.server import ThreadedServer
 
     logging.basicConfig(stream=sys.stdout,
                         level=logging.DEBUG,
@@ -492,7 +493,7 @@ if __name__ == '__main__':
             exit(-1)
 
         while True:
-            if server.exitcode not in (1, None) and not server.is_alive():
+            if server.exitcode not in (1, None, -15) and not server.is_alive():
                 logger.error("PycryptokiServer died w/ exit code %s! Possible segfault",
                              server.exitcode)
                 logger.info("Restarting Pycryptoki server")

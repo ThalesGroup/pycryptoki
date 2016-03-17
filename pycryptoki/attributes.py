@@ -3,48 +3,32 @@ This module contains a wrapper around the key attributes and the template struct
 generation to make it possible to create templates in python and easily
 convert them into templates in C.
 """
+import datetime
+import logging
+from collections import defaultdict
 from ctypes import cast, c_void_p, create_string_buffer, c_bool, c_char_p, \
-    c_ulong, pointer, POINTER, byref, sizeof, c_int, c_ubyte
+    c_ulong, pointer, POINTER, sizeof, c_char
+from functools import wraps
 
 from cryptoki import CK_ATTRIBUTE, CK_BBOOL, CK_ATTRIBUTE_TYPE, CK_ULONG, \
-    CK_BYTE, C_GetAttributeValue, CK_OBJECT_HANDLE, CK_DATE, CK_CHAR, CK_CHAR_PTR
+    CK_BYTE
 from defines import CKA_USAGE_LIMIT, CKA_USAGE_COUNT, CKA_CLASS, CKA_TOKEN, \
-    CKA_PRIVATE, CKA_LABEL, CKA_APPLICATION, CKA_VALUE, CKA_CERTIFICATE_TYPE, \
+    CKA_PRIVATE, CKA_LABEL, CKA_APPLICATION, CKA_CERTIFICATE_TYPE, \
     CKA_ISSUER, CKA_SERIAL_NUMBER, CKA_KEY_TYPE, CKA_SUBJECT, CKA_ID, CKA_SENSITIVE, \
     CKA_ENCRYPT, CKA_DECRYPT, CKA_WRAP, CKA_UNWRAP, CKA_SIGN, CKA_SIGN_RECOVER, \
     CKA_VERIFY, CKA_VERIFY_RECOVER, CKA_DERIVE, CKA_START_DATE, CKA_END_DATE, \
     CKA_MODULUS, CKA_MODULUS_BITS, CKA_PUBLIC_EXPONENT, CKA_PRIVATE_EXPONENT, \
     CKA_PRIME_1, CKA_PRIME_2, CKA_EXPONENT_1, CKA_EXPONENT_2, CKA_COEFFICIENT, \
     CKA_PRIME, CKA_SUBPRIME, CKA_BASE, CKA_PRIME_BITS, CKA_SUBPRIME_BITS, \
-    CKA_VALUE_BITS, CKA_VALUE_LEN, CKA_ECDSA_PARAMS, CKA_EC_POINT, CKA_LOCAL, \
+    CKA_VALUE_BITS, CKA_VALUE_LEN, CKA_LOCAL, \
     CKA_MODIFIABLE, CKA_EXTRACTABLE, CKA_ALWAYS_SENSITIVE, CKA_NEVER_EXTRACTABLE, \
-    CKA_CCM_PRIVATE, CKA_FINGERPRINT_SHA1, CKA_FINGERPRINT_SHA256, CKA_PKC_TCTRUST, CKA_PKC_CITS, \
-    CKA_OUID, CKA_UNWRAP_TEMPLATE, CKA_DERIVE_TEMPLATE, \
-    CKA_X9_31_GENERATED, CKA_PKC_ECC, CKR_OK
-from pycryptoki.cryptoki import CK_ULONG_PTR
+    CKA_CCM_PRIVATE, CKA_FINGERPRINT_SHA1, CKA_FINGERPRINT_SHA256, CKA_OUID, CKA_UNWRAP_TEMPLATE, \
+    CKA_DERIVE_TEMPLATE, \
+    CKA_X9_31_GENERATED, CKA_VALUE
 from pycryptoki.defines import CKA_EKM_UID, CKA_GENERIC_1, CKA_GENERIC_2, \
     CKA_GENERIC_3
-from pycryptoki.dictionary_handling import CDict
 
-'''
-List class for handling attributes with lists of a certain type
-'''
-
-
-class CList:
-    """ """
-    list_type = None
-
-    def __init__(self, list_type):
-        self.list_type = list_type
-
-
-class NonAsciiString:
-    """ """
-    data = None
-
-    def __init__(self, data):
-        self.data = data
+LOG = logging.getLogger(__name__)
 
 
 def get_byte_list_from_python_list(python_byte_list):
@@ -62,490 +46,376 @@ def get_byte_list_from_python_list(python_byte_list):
         return ptr
 
 
-date_attrb = {'year': str,
-              'month': str,
-              'day': str}
+def ret_type(c_type):
+    """
+    Decorator to set a returned C Type so we can determine what type to use
+    for an AutoCArray
 
-'''
-A mapping of attributes to what type they have. This is used when converting
-a python dictionary to a C struct or vice versa
-'''
-key_attributes = {CKA_USAGE_LIMIT: long,
-                  CKA_USAGE_COUNT: long,
-                  CKA_CLASS: long,
-                  CKA_TOKEN: bool,
-                  CKA_PRIVATE: bool,
-                  CKA_LABEL: str,
-                  CKA_APPLICATION: None,
-                  CKA_VALUE: CList(str),
-                  CKA_CERTIFICATE_TYPE: long,  # TODO guessing
-                  CKA_ISSUER: None,
-                  CKA_SERIAL_NUMBER: None,
-                  CKA_KEY_TYPE: long,
-                  CKA_SUBJECT: str,
-                  CKA_ID: str,
-                  CKA_SENSITIVE: bool,
-                  CKA_ENCRYPT: bool,
-                  CKA_DECRYPT: bool,
-                  CKA_WRAP: bool,
-                  CKA_UNWRAP: bool,
-                  CKA_SIGN: bool,
-                  CKA_SIGN_RECOVER: None,
-                  CKA_VERIFY: bool,
-                  CKA_VERIFY_RECOVER: None,
-                  CKA_DERIVE: bool,
-                  CKA_START_DATE: CDict(date_attrb),
-                  CKA_END_DATE: CDict(date_attrb),
-                  CKA_MODULUS: None,
-                  CKA_MODULUS_BITS: long,
-                  CKA_PUBLIC_EXPONENT: int,  # Python has no concept of byte
-                  CKA_PRIVATE_EXPONENT: None,
-                  CKA_PRIME_1: None,
-                  CKA_PRIME_2: None,
-                  CKA_EXPONENT_1: None,
-                  CKA_EXPONENT_2: None,
-                  CKA_COEFFICIENT: None,
-                  CKA_PRIME: CList(str),
-                  CKA_SUBPRIME: CList(str),
-                  CKA_BASE: CList(str),
-                  CKA_PRIME_BITS: long,
-                  CKA_SUBPRIME_BITS: long,
-                  CKA_VALUE_BITS: long,
-                  CKA_VALUE_LEN: long,
-                  CKA_ECDSA_PARAMS: CList(str),
-                  CKA_EC_POINT: None,
-                  CKA_LOCAL: None,
-                  CKA_MODIFIABLE: bool,
-                  CKA_EXTRACTABLE: bool,
-                  CKA_ALWAYS_SENSITIVE: bool,
-                  CKA_NEVER_EXTRACTABLE: bool,
-                  CKA_CCM_PRIVATE: None,
-                  CKA_FINGERPRINT_SHA1: NonAsciiString,
-                  CKA_FINGERPRINT_SHA256: NonAsciiString,
-                  CKA_PKC_TCTRUST: None,
-                  CKA_PKC_CITS: None,
-                  CKA_OUID: NonAsciiString,
-                  CKA_X9_31_GENERATED: None,
-                  CKA_PKC_ECC: None,
-                  CKA_EKM_UID: None,
-                  CKA_GENERIC_1: None,
-                  CKA_GENERIC_2: None,
-                  CKA_GENERIC_3: None,
-                  CKA_UNWRAP_TEMPLATE: {},
-                  CKA_DERIVE_TEMPLATE: {}}
+    :param c_type: Default return-type of the transform function.
+    """
 
-role_attributes = {}
+    def func_wrapper(func):
+        """
+        Set the ctype on the function.
+
+        :param func:
+        :return:
+        """
+        func.ctype = c_type
+
+        @wraps(func)
+        def wrapped(*args, **kwargs):
+            """
+            Run the actual function.
+
+            :param args:
+            :param kwargs:
+            :return:
+            """
+            return func(*args, **kwargs)
+
+        return wrapped
+
+    return func_wrapper
 
 
-def to_byte_array(val):
-    """Converts an arbitrarily sized integer into a byte array.
+@ret_type(CK_ULONG)
+def to_long(val, reverse=False):
+    """Convert a integer/long value to a pValue, ulValueLen tuple
+
+    :param val: Value to convert
+    :param reverse: Whether to convert from C -> Python
+    :return: (:class:`ctypes.c_void_p` ptr to :class:`ctypes.c_ulong`, :class:`ctypes.c_ulong`
+    size of long value)
+    """
+    if reverse:
+        return long(cast(val.pValue, POINTER(c_ulong)).contents.value)
+    if not isinstance(val, (int, long)):
+        raise TypeError("Invalid conversion {} to CK_ULONG!".format(type(val)))
+    long_val = CK_ULONG(val)
+    return cast(pointer(long_val), c_void_p), CK_ULONG(sizeof(long_val))
+
+
+@ret_type(CK_BBOOL)
+def to_bool(val, reverse=False):
+    """Convert a boolean-ish value to a pValue, ulValueLen tuple.
+
+    :param val: Value to convert
+    :param reverse: Whether to convert from C -> Python
+    :return: (:class:`ctypes.c_void_p` ptr to :class:`pycryptoki.cryptoki.CK_BBOOL`,
+    :class:`ctypes.c_ulong` size of bool value)
+    """
+    if reverse:
+        return bool(cast(val.pValue, POINTER(c_bool)).contents.value)
+
+    if not isinstance(val, (int, bool)):
+        raise TypeError("Invalid conversion {} to CK_BBOOL!".format(type(val)))
+    # Convert to 0 | 1
+    byte_val = CK_BBOOL(int(bool(val)))
+    return cast(pointer(byte_val), c_void_p), CK_ULONG(sizeof(byte_val))
+
+
+@ret_type(c_char)
+def to_char_array(val, reverse=False):
+    """Convert the given string or list of string values into a char array.
+
+    This is slightly different than to_byte_array, which has different assumptions as
+    to the format of the input.
+
+    :param val: Value to convert
+    :param reverse: Whether to convert from C -> Python
+    :return: (:class:`ctypes.c_void_p` ptr to :class:`pycryptoki.cryptoki.CK_CHAR` array,
+    :class:`ctypes.c_ulong` size of array)
+    """
+    if reverse:
+        return str(cast(val.pValue, c_char_p).value[0:val.usValueLen])
+
+    if not isinstance(val, (str, list)):
+        raise TypeError("Invalid conversion {} to CK_CHAR*!".format(type(val)))
+
+    if isinstance(val, str):
+        string_val = create_string_buffer(val)
+    else:
+        # TODO: Figure out what, if anything we want to do with a list.
+        string_val = bytearray(val)
+    return cast(pointer(string_val), c_void_p), CK_ULONG(sizeof(string_val))
+
+
+@ret_type(c_char)
+def to_ck_date(val, reverse=False):
+    """Transform a date string, date dictionary, or date object into
+    a PKCS11 readable form (YYYYMMDD)
+
+    :param val: Value to convert
+    :param reverse: Whether to convert from C -> Python
+    :return: (:class:`ctypes.c_void_p` ptr to :class:`pycryptoki.cryptoki.CK_CHAR` array,
+    :class:`ctypes.c_ulong` size of array)
+    """
+    if reverse:
+        return str(cast(val.pValue, c_char_p).value[0:val.usValueLen])
+
+    if isinstance(val, str):
+        if len(val) != 8:
+            raise TypeError("Invalid date string passed! Should be of type YYYYMMDD")
+        date_val = create_string_buffer(val)
+    elif isinstance(val, dict):
+        date_str = val['year'] + val['month'] + val['day']
+        date_val = create_string_buffer(date_str)
+    elif isinstance(val, datetime.date):
+        date_val = create_string_buffer(val.strftime("%Y%m%d"))
+    else:
+        raise TypeError("Invalid conversion {} to CK_DATE!".format(type(val)))
+
+    return cast(pointer(date_val), c_void_p), CK_ULONG(sizeof(date_val))
+
+
+@ret_type(CK_BYTE)
+def to_byte_array(val, reverse=False):
+    """Converts an arbitrarily sized integer, list, or hex string
+    into a byte array.
 
     It'll zero-pad the bit length so it's a multiple of 8, then convert
     the int to binary, split the binary string into sections of 8, then
-    place each section into a slot in a c_ubyte array (converting to small
+    place each section into a slot in a :class:`ctypes.c_ubyte` array (converting to small
     int).
 
-    :param val: Big Integer to convert.
-    :return: c_ubyte array
+    :param val: Value to convert
+    :param reverse: Whether to convert from C -> Python
+    :return: (:class:`ctypes.c_void_p` ptr to :class:`pycryptoki.cryptoki.CK_BYTE` array,
+    :class:`ctypes.c_ulong` size of array)
+    """
+    if reverse:
+        return cast(val.pValue, c_char_p).value[0:val.usValueLen]
+
+    if isinstance(val, list):
+        py_bytes = bytearray(val)
+        byte_array = (CK_BYTE * len(py_bytes))(*py_bytes)
+    elif isinstance(val, (int, long)):
+        # Explicitly convert to a long. Python doesn't like X.bit_length() where X is an int
+        # and not a variable assigned an int.
+        width = long(val).bit_length()
+        width += 8 - ((width % 8) or 8)
+
+        fmt = "{:0%sb}" % width
+        str_val = fmt.format(val)
+        n = 8
+        str_array = [str_val[i:i + n] for i in range(0, len(str_val), n)]
+        byte_array = (CK_BYTE * len(str_array))(*[int(x, 2) for x in str_array])
+
+    elif isinstance(val, str):
+        # Can be Hex string ('01e4') or a bytestring (ex '\x8p\xb26\x12'G\xa3T\x84\x17\x89')
+        try:
+            # Would prefer to use bytearray.fromhex(), but a few testcases use ' ' * 80 or the like,
+            # which is converted into a zero-length bytearray.
+            hex_array = [val[i:i + 2] for i in range(0, len(val), 2)]
+            byte_array = (CK_BYTE * len(val))(*[int(x, 16) for x in hex_array])
+        except ValueError:
+            # Assume a byte array?
+            py_bytes = bytearray(val)
+            byte_array = (CK_BYTE * len(py_bytes))(*py_bytes)
+    else:
+        raise TypeError("Invalid conversion {} to byte array!".format(type(val)))
+
+    return cast(pointer(byte_array), c_void_p), CK_ULONG(sizeof(byte_array))
+
+
+def to_sub_attributes(val, reverse=False):
+    """
+    Convert to another Attributes class & return the struct.
+
+    :param val: Value to convert
+    :param reverse: Whether to convert from C -> Python
+    :return: (:class:`ctypes.c_void_p` ptr to :class:`pycryptoki.cryptoki.CK_ATTRIBUTE` array,
+    :class:`ctypes.c_ulong` size of array)
+    """
+    if reverse:
+        return c_struct_to_python(cast(val.pValue, POINTER(CK_ATTRIBUTE)))
+    if not isinstance(val, dict):
+        raise TypeError("Invalid conversion {} to Template!".format(type(val)))
+
+    attrs = Attributes(**val).get_c_struct()
+
+    return cast(pointer(attrs), c_void_p), CK_ULONG(len(attrs))
+
+
+# Default any unset transform to :func:`to_byte_array`
+KEY_TRANSFORMS = defaultdict(lambda: to_byte_array)
+
+KEY_TRANSFORMS.update({
+    # int, long
+    CKA_CLASS: to_long,
+    CKA_CERTIFICATE_TYPE: to_long,
+    CKA_KEY_TYPE: to_long,
+    CKA_VALUE_LEN: to_long,
+    CKA_MODULUS_BITS: to_long,
+    CKA_PRIME_BITS: to_long,
+    CKA_SUBPRIME_BITS: to_long,
+    CKA_VALUE_BITS: to_long,
+
+    # int, bool
+    CKA_TOKEN: to_bool,
+    CKA_PRIVATE: to_bool,
+    CKA_SENSITIVE: to_bool,
+    CKA_ENCRYPT: to_bool,
+    CKA_DECRYPT: to_bool,
+    CKA_WRAP: to_bool,
+    CKA_UNWRAP: to_bool,
+    CKA_SIGN: to_bool,
+    CKA_SIGN_RECOVER: to_bool,
+    CKA_VERIFY: to_bool,
+    CKA_VERIFY_RECOVER: to_bool,
+    CKA_DERIVE: to_bool,
+    CKA_CCM_PRIVATE: to_bool,
+    CKA_LOCAL: to_bool,
+    CKA_MODIFIABLE: to_bool,
+    CKA_EXTRACTABLE: to_bool,
+    CKA_ALWAYS_SENSITIVE: to_bool,
+    CKA_NEVER_EXTRACTABLE: to_bool,
+    CKA_X9_31_GENERATED: to_bool,
+
+    # str, list(?)
+    CKA_LABEL: to_char_array,
+    CKA_APPLICATION: to_char_array,
+    CKA_ISSUER: to_char_array,
+    CKA_SUBJECT: to_char_array,
+    CKA_ID: to_char_array,
+    CKA_EKM_UID: to_char_array,
+    CKA_GENERIC_1: to_char_array,
+    CKA_GENERIC_2: to_char_array,
+    CKA_GENERIC_3: to_char_array,
+
+    # str, dict, datetime
+    CKA_START_DATE: to_ck_date,
+    CKA_END_DATE: to_ck_date,
+
+    # Generic data.
+    CKA_VALUE: to_byte_array,
+    CKA_SERIAL_NUMBER: to_byte_array,
+    CKA_MODULUS: to_byte_array,
+    CKA_PUBLIC_EXPONENT: to_byte_array,
+    CKA_PRIVATE_EXPONENT: to_byte_array,
+    CKA_PRIME_1: to_byte_array,
+    CKA_PRIME_2: to_byte_array,
+    CKA_EXPONENT_1: to_byte_array,
+    CKA_EXPONENT_2: to_byte_array,
+    CKA_COEFFICIENT: to_byte_array,
+    CKA_PRIME: to_byte_array,
+    CKA_SUBPRIME: to_byte_array,
+    CKA_BASE: to_byte_array,
+    CKA_FINGERPRINT_SHA1: to_byte_array,
+    CKA_FINGERPRINT_SHA256: to_byte_array,
+    CKA_USAGE_COUNT: to_byte_array,
+    CKA_USAGE_LIMIT: to_byte_array,
+    CKA_OUID: to_byte_array,
+
+    # Dict
+    CKA_UNWRAP_TEMPLATE: to_sub_attributes,
+    CKA_DERIVE_TEMPLATE: to_sub_attributes,
+})
+
+
+class Attributes(dict):
+    """
+    Python container for handling PKCS11 Attributes.
+
+    Provides :func:`get_c_struct`, that would returns a list of C Structs, each with
+    the following structure::
+
+        class CK_ATTRIBUTE(Structure):
+            '''
+            Defines type, value and length of an attribute:
+
+            c_ulong type;
+            c_void_p pValue;
+            c_ulong ulValueLen;
+            '''
+            pass
+
+
+    This list of structs can be used with :func:`~pycryptoki.cryptoki.C_GetAttributeValue` to get
+    the length of the value that will be placed
+    in ``pValue`` (will be set to ``ulValueLen``), or if you already know the
+    length required you can 'blank fill' ``pValue`` for direct use.
+
+    You can also provide new transformations in the form of a dictionary that will be preferred
+    to the :const:`~pycryptoki.attributes.KEY_TRANSFORMS` dictionary. This is passed in only as a
+    keyword argument::
+
+        transform = {1L: lambda x: return x**2}`
+        attrs = Attributes({...}, new_transforms=transform)
+        # attrs.get_c_struct will use the lambda expression in the transform dictionary
+        # for key 1L
 
     """
-    # Explicitly convert to a long. Python doesn't like X.bit_length() where X is an int
-    # and not a variable assigned an int.
-    width = long(val).bit_length()
-    width += 8 - ((width % 8) or 8)
 
-    fmt = "{:0%sb}" % width
-    str_val = fmt.format(val)
-    n = 8
-    str_array = [str_val[i:i + n] for i in range(0, len(str_val), n)]
-
-    return (CK_BYTE * len(str_array))(*[int(x, 2) for x in str_array])
-
-
-class Attributes:
-    """A wrapper around all of the attributes necessary to create a key.
-    Has a python dictionary object containing python types, the corresponding
-    C struct can then be generated with a simple method call.
-
-
-    """
-    attributes = {}
-
-    def __init__(self, attributes_list=None):
-        """
-        Initializes a Attributes object, the attributes_list argument is optional
-        since the attributes object can be populated from the board later
-
-        @param attributes_list: The list of python style attributes to create the class with.
-        """
-
-        if attributes_list is not None:
-            # take either strings or ints as the key to the dictionary (used mainly to accomodate
-            #  xmlrpc easily)
-            attributes_list_new = {}
-            for key, value in attributes_list.iteritems():
-                if isinstance(key, str):
-                    attributes_list_new[int(key)] = value
-                else:
-                    break
-            if len(attributes_list_new) > 0:
-                attributes_list = attributes_list_new
-
-            for key in attributes_list:
-                self._input_check(key, attributes_list[key])
-            self.attributes = attributes_list
-
-    def add_attribute(self, key, value):
-        """Add an attribute to the dictionary in place
-
-        :param key: The type of the attribute
-        :param value: The value of the attribute
-
-        """
-        if isinstance(key, str):
-            # take either strings or ints for the key (used mainly to accomodate xmlrpc easily)
-            key = int(key)
-
-        self._input_check(key, value)
-        self.attributes[key] = value
-
-    def _input_check(self, key, value):
-        """Checks to see if the type is supported (yet)
-
-        :param key: They key of the attribute to check
-        :param value: The actual value of the input to check
-        :returns: Returns true if the variable is a of a type that has been accounted for in the
-        key_attributes dictionary
-
-        """
-        if isinstance(value, bool) or isinstance(value, int) or isinstance(value,
-                                                                           CDict) or isinstance(
-            value, long) or isinstance(value, str) or isinstance(value, list) or isinstance(
-            value, CList) or isinstance(value, NonAsciiString) or isinstance(value, dict):
-            return True
+    def __init__(self, *args, **kwargs):
+        if 'new_transforms' in kwargs:
+            self.new_transforms = kwargs.pop('new_transforms')
         else:
-            raise Exception(
-                "Argument type not supported. <key: " + str(key) + ", value: " + str(value) + ">")
+            self.new_transforms = {}
+        super(Attributes, self).__init__(*args, **kwargs)
 
     def get_c_struct(self):
-        """Assembles and returns a proper C struct from the dictionary of python attributes
-
-
-        :returns: Returns a Ctypes struct representing the python attributes stored in this class
-
         """
-        c_struct = (CK_ATTRIBUTE * len(self.attributes))()
+        Build an array of :class:`~pycryptoki.cryptoki.CK_ATTRIBUTE` Structs & return it.
 
-        i = 0
-        for key in self.attributes:
-            value = self.attributes[key]
-            self._input_check(key, value)
+        :return: :class:`~pycryptoki.cryptoki.CK_ATTRIBUTE` array
+        """
+        ret_struct = (CK_ATTRIBUTE * len(self.keys()))()
 
-            # Get the proper type for what your data is, originally I had
-            # this automatically detected from the python type but passing in
-            # int's vs longs was problematic
-            item_type = lookup_attributes(key)
-
-            if item_type == bool:
-                byte_val = CK_BBOOL(value)
-                c_struct[i] = CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE(key),
-                                           cast(pointer(byte_val), c_void_p),
-                                           CK_ULONG(sizeof(byte_val)))
-            elif item_type == long:
-                long_val = CK_ULONG(value)
-                c_struct[i] = CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE(key),
-                                           cast(pointer(long_val), c_void_p),
-                                           CK_ULONG(sizeof(long_val)))
-            elif item_type == int:
-                ck_byte_array = to_byte_array(value)
-                c_struct[i] = CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE(key),
-                                           cast(pointer(ck_byte_array), c_void_p),
-                                           CK_ULONG(sizeof(ck_byte_array)))
-            elif item_type == str:
-                string_val = create_string_buffer(value)
-                c_struct[i] = CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE(key), cast(string_val, c_void_p),
-                                           CK_ULONG(len(string_val)))
-            elif isinstance(item_type, CDict):
-                date = CK_DATE()
-
-                date.year = convert_string_to_CK_CHAR(value.dict_val['year'])
-                date.month = convert_string_to_CK_CHAR(value.dict_val['month'])
-                date.day = convert_string_to_CK_CHAR(value.dict_val['day'])
-
-                c_struct[i] = CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE(key), cast(pointer(date), c_void_p),
-                                           CK_ULONG(sizeof(date)))
-            elif isinstance(item_type, CList):
-                if item_type.list_type == str:
-                    list_val = create_string_buffer("", len(value))
-
-                    ptr = cast(pointer(list_val), c_void_p)
-                    for j in range(0, len(value)):
-                        list_val[j] = chr(value[j])
-
-                    c_struct[i] = CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE(key), ptr, CK_ULONG(len(value)))
-                elif item_type.list_type == long:
-                    list_val = (CK_ULONG * len(value))()
-                    ptr = cast(pointer(list_val), c_void_p)
-                    for j in range(0, len(value)):
-                        list_val[j] = CK_ULONG(value[j])
-
-                    c_struct[i] = CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE(key), ptr,
-                                               CK_ULONG(sizeof(CK_ULONG(0)) * len(value)))
-            elif item_type == NonAsciiString:
-                list_val = (CK_CHAR * len(value))()
-                ptr = cast(pointer(list_val), c_void_p)
-                for j in range(0, len(value)):
-                    list_val[j] = CK_CHAR(ord(value[j]) - 0x30)
-                c_struct[i] = CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE(key), ptr,
-                                           CK_ULONG(sizeof(CK_CHAR(0)) * len(value)))
-            elif isinstance(item_type, dict):
-                template = Attributes(attributes_list=value).get_c_struct()
-                c_struct[i] = CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE(key),
-                                           cast(template, c_void_p),
-                                           CK_ULONG(len(template)))
+        for index, key in enumerate(self.iterkeys()):
+            value = self[key]
+            if value is None:
+                # Create an empty CK_ATTRIBUTE struct so it can be overwritten with length
+                # data by the C_GetAttributeValue call.
+                blank_attr = CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE(key), None, CK_ULONG(0))
+                ret_struct[index] = blank_attr
+            elif key in self.new_transforms:
+                p_value, ul_length = self.new_transforms[key](value)
+                ret_struct[index] = CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE(key),
+                                                 p_value,
+                                                 ul_length)
             else:
-                raise Exception("Argument type " + str(item_type) + " not supported. <key: " + str(
-                    key) + ", value: " + str(value) + ">")
-            i += 1
+                if key not in KEY_TRANSFORMS:
+                    LOG.warning("Using default `to_byte_array` transformation for key %s "
+                                "and data %s", key, value)
+                p_value, ul_length = KEY_TRANSFORMS[key](value)
+                ret_struct[index] = CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE(key),
+                                                 p_value,
+                                                 ul_length)
+        return ret_struct
 
-        return c_struct
-
-    def retrieve_key_attributes(self, h_session, h_object):
-        """Gets all of the key's attributes from the board given the key's handle,
-        and populates the KeyAttribute object with all of those attributes.
-
-        :param h_session: Current session
-        :param h_object: The handle of the object to fetch the attributes for
-
+    @staticmethod
+    def from_c_struct(c_struct):
         """
-        # Clean before starting
-        self.attributes = {}
+        Build out a dictionary from a c_struct.
 
-        for key in key_attributes:
-            attribute = CK_ATTRIBUTE()
-            attribute.type = CK_ULONG(key)
-            attribute.pValue = c_void_p(0)
-            retCode = C_GetAttributeValue(h_session, CK_OBJECT_HANDLE(h_object), byref(attribute),
-                                          CK_ULONG(1))
-            if retCode == CKR_OK:
-                attr_type = lookup_attributes(key)
-
-                if isinstance(attr_type, CList):
-                    if attr_type.list_type == str:
-                        pb_value = (CK_BYTE * attribute.usValueLen)()
-                    elif attr_type.list_type == long:
-                        pb_value = (CK_ULONG * attribute.usValueLen)()
-                else:
-                    pb_value = create_string_buffer(attribute.usValueLen)
-
-                attribute.pValue = cast(pb_value, c_void_p)
-                retCode = C_GetAttributeValue(h_session, CK_OBJECT_HANDLE(h_object),
-                                              byref(attribute), CK_ULONG(1))
-                if retCode == CKR_OK:
-                    if attr_type == bool:
-                        self.add_attribute(attribute.type, attr_type(
-                            cast(attribute.pValue, POINTER(c_bool)).contents.value))
-                    elif attr_type == str:
-                        string = cast(attribute.pValue, c_char_p).value[0:attribute.usValueLen]
-                        self.add_attribute(attribute.type, attr_type(string))
-                    elif attr_type == long:
-                        self.add_attribute(attribute.type, (
-                            attr_type(cast(attribute.pValue, POINTER(c_ulong)).contents.value)))
-                    elif attr_type == int:
-                        self.add_attribute(attribute.type, attr_type(
-                            cast(attribute.pValue, POINTER(c_int)).contents.value))
-                    elif isinstance(attr_type, CList):
-                        value = []
-                        i = 0
-                        while i < attribute.usValueLen:
-                            value.append(pb_value[i])
-                            i += 1
-
-                        self.add_attribute(attribute.type, value)
-                    elif attr_type == NonAsciiString:
-                        value = ''
-                        i = 0
-                        while i < attribute.usValueLen:
-                            value += '%02x' % cast(pb_value, CK_CHAR_PTR)[i]
-                            i += 1
-
-                        self.add_attribute(attribute.type, value)
-                    elif attr_type is None:
-                        # raise Exception("Attribute of type " + str(attribute.type) + "'s value
-                        # type not yet determined") # Add type to all_attributes
-                        pass
-
-    def get_attributes(self):
-        """Returns the python dictionary of attributes
-
-
-        :returns: The python dictionary of attributes
-
+        :param c_struct: Pointer to an array of :class:`~pycryptoki.cryptoki.CK_ATTRIBUTE` structs
+        :return: dict
         """
-        return self.attributes
-
-    def __eq__(self, other):
-        """
-        Overriding the == sign to properly compare equality in KeyAttribute objects
-
-        :param other: Another KeyAttribute to compare against
-        :return: True if the attributes are equal
-        """
-        other_attribs = other.get_attributes()
-        self_attribs = self.get_attributes()
-        for key in self.attributes:
-            if key in self_attribs and key in other_attribs:  # TODO we are only checking if the
-                # key exists in both, maybe this is a bad idea
-                if self_attribs[key] != other_attribs[key]:
-                    return False
-        return True
-
-    def debug_print(self):
-        """Simple method to print out all the keys and values in a KeyAttribute object"""
-        for key in self.attributes:
-            print "key: " + str(key) + ", value: " + str(self.attributes[key])
-
-
-def get_attribute_py_value(attribute):
-    """Gets the python version of the value of a attribute from the
-    C format
-
-    :param attribute: The ctypes style variable representing the value of an attribute
-    :returns: Returns the python version of the ctypes style variable
-
-    """
-    key = attribute.type
-    attr_type = lookup_attributes(key)
-    if attr_type == bool:
-        return attr_type(cast(attribute.pValue, POINTER(c_bool)).contents.value)
-    elif attr_type == str:
-        string = cast(attribute.pValue, c_char_p).value[0:attribute.usValueLen]
-        return attr_type(string)
-    elif attr_type == long:
-        return attr_type(cast(attribute.pValue, POINTER(c_ulong)).contents.value)
-    elif attr_type == int:
-        return attr_type(cast(attribute.pValue, POINTER(c_int)).contents.value)
-    elif isinstance(attr_type, CDict):
-        py_date = {}
-
-        c_date = cast(attribute.pValue, POINTER(CK_DATE))
-
-        py_date['year'] = convert_CK_CHAR_to_string(cast(c_date.year, CK_CHAR_PTR))
-        py_date['month'] = convert_CK_CHAR_to_string(cast(c_date.month, CK_CHAR_PTR))
-        py_date['day'] = convert_CK_CHAR_to_string(cast(c_date.day, CK_CHAR_PTR))
-        return py_date
-
-    elif isinstance(attr_type, CList):
-        if attr_type.list_type == str:
-            value = []
-            try:
-                for i in range(0, attribute.usValueLen):
-                    value.append(attribute.pValue[i])
-                return value
-            except OverflowError:
-                return value
-
-        elif attr_type.list_type == long:
-            value = []
-            for i in range(0, attribute.usValueLen / sizeof(CK_ULONG(0))):
-                value.append(cast(attribute.pValue, CK_ULONG_PTR)[i])
-            return value
-    elif attr_type == NonAsciiString:
-        value = ''
-        for i in range(0, attribute.usValueLen / sizeof(CK_CHAR(0))):
-            value += '%02x' % cast(attribute.pValue, CK_CHAR_PTR)[i]
-        return value
-    elif attr_type is None:
-        # raise Exception("Attribute of type " + str(attribute.type) + "'s value type not yet
-        # determined") # Add type to all_attributes
-        pass
+        return c_struct_to_python(c_struct)
 
 
 def c_struct_to_python(c_struct):
-    """Converts a struct in C to a dictionary in python.
+    """Converts a C struct to a python dictionary.
 
     :param c_struct: The c struct to convert into a dictionary in python
     :returns: Returns a python dictionary which represents the C struct passed in
-
     """
-    py_struct = {}
+    py_data = {}
     for i in range(0, len(c_struct)):
         obj_type = c_struct[i].type
+        if c_struct[i].pValue is None:
+            py_data[obj_type] = None
+        else:
+            py_data[obj_type] = KEY_TRANSFORMS[obj_type](c_struct[i], reverse=True)
 
-        value = get_attribute_py_value(c_struct[i])
-
-        py_struct[obj_type] = value
-
-    return py_struct
-
-
-def lookup_attributes(key):
-    """Utility function to look through the lists of attributes and figure out
-    the type of variable for a given attribute represented by a key
-
-    :param key: The key representing the attribute
-    :returns: The python type that can represent the attribute
-
-    """
-
-    ret_val = None
-    if key in key_attributes:
-        ret_val = key_attributes[key]
-    elif key in role_attributes:
-        ret_val = role_attributes[key]
-
-    return ret_val
+    return py_data
 
 
-def convert_string_to_CK_CHAR(string):
-    """
-
-    :param string:
-
-    """
-    byte_array = (c_ubyte * len(string))()
-    i = 0
-    for char in string:
-        byte_array[i] = ord(char)
-        i += 1
-
-    return byte_array
-
-
-def convert_CK_CHAR_to_string(byte_array):
-    """
+def convert_c_ubyte_array_to_string(byte_array):
+    """Converts a ctypes unsigned byte array into a string.
 
     :param byte_array:
-
     """
-    string = ""
-
-    for b in byte_array:
-        string += chr(b)
-    return string
-
-
-def convert_ck_char_array_to_string(ck_char_array):
-    """
-
-    :param ck_char_array:
-
-    """
-    string = ""
-
-    for b in ck_char_array:
-        string = string + b
-    return string
-
-
-def convert_CK_BYTE_array_to_string(byte_array):
-    """
-
-    :param byte_array:
-
-    """
-    string = ""
-
-    for b in byte_array:
-        string += "%02x" % b
-    return string
+    return "".join("%02x" % b for b in byte_array)

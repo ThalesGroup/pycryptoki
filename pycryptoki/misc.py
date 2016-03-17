@@ -1,7 +1,6 @@
-from ctypes import create_string_buffer, cast, byref
+from ctypes import create_string_buffer, cast, byref, string_at
 
-from pycryptoki.attributes import convert_ck_char_array_to_string, \
-    convert_string_to_CK_CHAR, Attributes
+from pycryptoki.attributes import Attributes
 from pycryptoki.cryptoki import C_GenerateRandom, CK_BYTE_PTR, CK_ULONG, \
     C_SeedRandom, C_DigestInit, C_DigestUpdate, C_DigestFinal, C_Digest, C_CreateObject, \
     CA_SetPedId, CK_SLOT_ID, CA_GetPedId, C_DigestKey
@@ -23,7 +22,7 @@ def c_generate_random(h_session, length):
     random_data = cast(create_string_buffer("", length), CK_BYTE_PTR)
     ret = C_GenerateRandom(h_session, random_data, CK_ULONG(length))
 
-    random_string = convert_ck_char_array_to_string(random_data._objects.values()[0])
+    random_string = string_at(random_data._objects.values()[0])
     return ret, random_string
 
 
@@ -38,7 +37,7 @@ def c_seed_random(h_session, seed):
     :returns: The result code
 
     """
-    seed_bytes = cast(convert_string_to_CK_CHAR(seed), CK_BYTE_PTR)
+    seed_bytes = cast(create_string_buffer(seed), CK_BYTE_PTR)
     seed_length = CK_ULONG(len(seed))
     ret = C_SeedRandom(h_session, seed_bytes, seed_length)
     return ret
@@ -93,7 +92,7 @@ def c_digest(h_session, data_to_digest, digest_flavor, mech=None):
 
         # Convert Digested data into a python string
         ck_char_array = digested_data._objects.values()[0]
-        digested_python_string = convert_ck_char_array_to_string(ck_char_array)
+        digested_python_string = string_at(ck_char_array)
 
     return ret, digested_python_string
 

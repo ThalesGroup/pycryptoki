@@ -1,12 +1,11 @@
 from cryptoki import CK_MECHANISM, CK_MECHANISM_TYPE, CK_VOID_PTR, CK_ULONG, \
     CK_BYTE_PTR, C_SignInit, C_Sign
-from ctypes import create_string_buffer, cast, byref, sizeof, pointer, c_void_p
+from ctypes import create_string_buffer, cast, byref, sizeof, pointer, c_void_p, string_at
 from defines import CKR_OK, CKM_RSA_PKCS_PSS, CKM_SHA1_RSA_PKCS_PSS, \
     CKM_SHA224_RSA_PKCS_PSS, CKM_SHA256_RSA_PKCS_PSS, CKM_SHA384_RSA_PKCS_PSS, \
     CKM_SHA512_RSA_PKCS_PSS, CKM_SHA_1, CKM_SHA224, CKM_SHA256, CKM_SHA384, \
     CKM_SHA512, CKG_MGF1_SHA1, CKG_MGF1_SHA224, CKG_MGF1_SHA256, CKG_MGF1_SHA384, \
     CKG_MGF1_SHA512
-from pycryptoki.attributes import convert_ck_char_array_to_string
 from pycryptoki.cryptoki import C_VerifyInit, C_Verify, C_SignUpdate, \
     C_SignFinal, C_VerifyUpdate, C_VerifyFinal, CK_RSA_PKCS_PSS_PARAMS
 from pycryptoki.encryption import _get_string_from_list, \
@@ -179,7 +178,7 @@ def c_sign(h_session, sign_flavor, data_to_sign, h_key, mech=None, algorithm=Non
         ck_char_array = signature._objects.values()[0]
         signature_string = ''
         if sign_len.value > 0:
-            signature_string = convert_ck_char_array_to_string(ck_char_array)[0:sign_len.value]
+            signature_string = string_at(ck_char_array)[0:sign_len.value]
 
     return ret, signature_string
 c_sign_ex = make_error_handle_function(c_sign)
@@ -227,7 +226,7 @@ def do_multipart_sign_or_digest(h_session, c_update_function, c_final_function, 
     #Get output
     ck_char_array = output._objects.values()[0]
     if out_data_len.value > 0:
-        python_string += convert_ck_char_array_to_string(ck_char_array)[0:out_data_len.value]
+        python_string += string_at(ck_char_array)[0:out_data_len.value]
 
     return ret, python_string
 

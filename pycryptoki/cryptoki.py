@@ -1,9 +1,4 @@
 """
-THIS FILE WAS CREATED AUTOMATICALLY AND CONTAINS AUTOMATICALLY GENERATED CODE
-This file should NOT be checked into MKS or modified in any way, this file was
-created by setup/initialize.py. Any changes to this file will be wiped out when
-it is regenerated.
-
 This file contains all of the ctypes definitions for the cryptoki library.
 The ctypes definitions outline the structures for the cryptoki C API.
 """

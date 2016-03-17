@@ -1,7 +1,7 @@
 """
 Methods related to encrypting data/files.
 """
-from ctypes import c_char, create_string_buffer, cast, c_void_p, byref, sizeof, pointer
+from ctypes import c_char, create_string_buffer, cast, c_void_p, byref, sizeof, pointer, string_at
 import logging
 
 from cryptoki import CK_MECHANISM, CK_MECHANISM_TYPE, CK_VOID_PTR, CK_ULONG, \
@@ -17,8 +17,7 @@ from defines import CKM_DES_CBC, CKM_DES3_CBC, CKM_CAST3_CBC, CKM_DES_ECB, \
     CKM_AES_CFB128, CKM_AES_OFB, CKM_ARIA_CFB8, CKM_ARIA_CFB128, CKM_ARIA_OFB, \
     CKM_AES_GCM, CKM_XOR_BASE_AND_DATA_W_KDF, CKM_RSA_PKCS_OAEP, CKM_ECIES, CKR_OK, \
     CKM_SHA_1, CKG_MGF1_SHA1, CKZ_DATA_SPECIFIED, CKM_AES_KW, CKM_AES_KWP
-from pycryptoki.attributes import get_byte_list_from_python_list, \
-    convert_ck_char_array_to_string, Attributes
+from pycryptoki.attributes import get_byte_list_from_python_list, Attributes
 from pycryptoki.cryptoki import C_Decrypt, C_DecryptInit, CK_OBJECT_HANDLE, \
     C_WrapKey, C_UnwrapKey, C_EncryptUpdate, C_EncryptFinal, CK_BYTE_PTR, \
     C_DecryptUpdate, C_DecryptFinal
@@ -197,7 +196,7 @@ def c_encrypt(h_session, encryption_flavor, h_key, data_to_encrypt, mech=None, e
 
         # Convert encrypted data into a python string
         ck_char_array = encrypted_data._objects.values()[0]
-        encrypted_python_string = convert_ck_char_array_to_string(ck_char_array)
+        encrypted_python_string = string_at(ck_char_array)
 
     return ret, encrypted_python_string
 
@@ -289,7 +288,7 @@ def c_decrypt(h_session, decryption_flavor, h_key, encrypted_data, mech=None, ex
 
         # Convert the decrypted data to a python readable format
         ck_char_array = plain_data._objects.values()[0]
-        python_string = convert_ck_char_array_to_string(ck_char_array)
+        python_string = string_at(ck_char_array)
         # Adjust the string based on the updated plain_data_len
         python_string = python_string[:plain_data_len.value]
 
@@ -338,7 +337,7 @@ def do_multipart_operation(h_session, c_update_function, c_finalize_function, in
 
         # Get the output
         ck_char_array = out_data._objects.values()[0]
-        python_string += convert_ck_char_array_to_string(ck_char_array)[0:out_data_len.value]
+        python_string += string_at(ck_char_array)[0:out_data_len.value]
         i += 1
 
     # Finalizing multipart decrypt operation
@@ -349,7 +348,7 @@ def do_multipart_operation(h_session, c_update_function, c_finalize_function, in
     # Get output
     ck_char_array = output._objects.values()[0]
     if out_data_len.value > 0:
-        python_string += convert_ck_char_array_to_string(ck_char_array)[0:out_data_len.value]
+        python_string += string_at(ck_char_array)[0:out_data_len.value]
 
     return ret, python_string
 
