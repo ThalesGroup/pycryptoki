@@ -38,11 +38,10 @@ def c_copy_object(h_session, h_object, template=None):
     :return: Handle to the new cloned object.
 
     """
-    attributes = Attributes(template)
     if template is None:
-        template_size = CK_ULONG(0)
-    else:
-        template_size = CK_ULONG(len(template))
+        template = {}
+    attributes = Attributes(template)
+    template_size = CK_ULONG(len(template))
 
     h_new_object = CK_OBJECT_HANDLE()
 

@@ -349,6 +349,10 @@ class Attributes(dict):
     """
 
     def __init__(self, *args, **kwargs):
+        if args is None:
+            args = []
+        if kwargs is None:
+            kwargs = {}
         if 'new_transforms' in kwargs:
             self.new_transforms = kwargs.pop('new_transforms')
         else:

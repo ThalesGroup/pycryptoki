@@ -22,7 +22,8 @@ def c_generate_random(h_session, length):
     random_data = cast(create_string_buffer("", length), CK_BYTE_PTR)
     ret = C_GenerateRandom(h_session, random_data, CK_ULONG(length))
 
-    random_string = string_at(random_data._objects.values()[0])
+    char_array = random_data._objects.values()[0]
+    random_string = string_at(char_array, len(char_array))
     return ret, random_string
 
 
@@ -92,7 +93,7 @@ def c_digest(h_session, data_to_digest, digest_flavor, mech=None):
 
         # Convert Digested data into a python string
         ck_char_array = digested_data._objects.values()[0]
-        digested_python_string = string_at(ck_char_array)
+        digested_python_string = string_at(ck_char_array, len(ck_char_array))
 
     return ret, digested_python_string
 

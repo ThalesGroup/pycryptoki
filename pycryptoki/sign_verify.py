@@ -178,7 +178,7 @@ def c_sign(h_session, sign_flavor, data_to_sign, h_key, mech=None, algorithm=Non
         ck_char_array = signature._objects.values()[0]
         signature_string = ''
         if sign_len.value > 0:
-            signature_string = string_at(ck_char_array)[0:sign_len.value]
+            signature_string = string_at(ck_char_array, len(ck_char_array))[0:sign_len.value]
 
     return ret, signature_string
 c_sign_ex = make_error_handle_function(c_sign)
@@ -226,7 +226,7 @@ def do_multipart_sign_or_digest(h_session, c_update_function, c_final_function, 
     #Get output
     ck_char_array = output._objects.values()[0]
     if out_data_len.value > 0:
-        python_string += string_at(ck_char_array)[0:out_data_len.value]
+        python_string += string_at(ck_char_array, len(ck_char_array))[0:out_data_len.value]
 
     return ret, python_string
 

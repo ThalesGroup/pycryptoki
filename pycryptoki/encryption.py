@@ -196,7 +196,7 @@ def c_encrypt(h_session, encryption_flavor, h_key, data_to_encrypt, mech=None, e
 
         # Convert encrypted data into a python string
         ck_char_array = encrypted_data._objects.values()[0]
-        encrypted_python_string = string_at(ck_char_array)
+        encrypted_python_string = string_at(ck_char_array, len(ck_char_array))
 
     return ret, encrypted_python_string
 
@@ -288,7 +288,7 @@ def c_decrypt(h_session, decryption_flavor, h_key, encrypted_data, mech=None, ex
 
         # Convert the decrypted data to a python readable format
         ck_char_array = plain_data._objects.values()[0]
-        python_string = string_at(ck_char_array)
+        python_string = string_at(ck_char_array, len(ck_char_array))
         # Adjust the string based on the updated plain_data_len
         python_string = python_string[:plain_data_len.value]
 
@@ -337,7 +337,7 @@ def do_multipart_operation(h_session, c_update_function, c_finalize_function, in
 
         # Get the output
         ck_char_array = out_data._objects.values()[0]
-        python_string += string_at(ck_char_array)[0:out_data_len.value]
+        python_string += string_at(ck_char_array, len(ck_char_array))[0:out_data_len.value]
         i += 1
 
     # Finalizing multipart decrypt operation
@@ -348,7 +348,7 @@ def do_multipart_operation(h_session, c_update_function, c_finalize_function, in
     # Get output
     ck_char_array = output._objects.values()[0]
     if out_data_len.value > 0:
-        python_string += string_at(ck_char_array)[0:out_data_len.value]
+        python_string += string_at(ck_char_array, len(ck_char_array))[0:out_data_len.value]
 
     return ret, python_string
 
