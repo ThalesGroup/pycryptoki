@@ -6,14 +6,14 @@ convert them into templates in C.
 import datetime
 import logging
 from collections import defaultdict
-from ctypes import cast, c_void_p, create_string_buffer, c_bool, c_char_p, \
+from ctypes import cast, c_void_p, create_string_buffer, c_bool, \
     c_ulong, pointer, POINTER, sizeof, c_char, string_at, c_ubyte
 from functools import wraps
 
 import binascii
 
 from cryptoki import CK_ATTRIBUTE, CK_BBOOL, CK_ATTRIBUTE_TYPE, CK_ULONG, \
-    CK_BYTE, CK_CHAR_PTR, CK_CHAR
+    CK_BYTE, CK_CHAR
 from defines import CKA_USAGE_LIMIT, CKA_USAGE_COUNT, CKA_CLASS, CKA_TOKEN, \
     CKA_PRIVATE, CKA_LABEL, CKA_APPLICATION, CKA_CERTIFICATE_TYPE, \
     CKA_ISSUER, CKA_SERIAL_NUMBER, CKA_KEY_TYPE, CKA_SUBJECT, CKA_ID, CKA_SENSITIVE, \
@@ -134,7 +134,7 @@ def to_char_array(val, reverse=False):
                   "back to ascii string",
                   val.usValueLen, val.pValue, val.type)
 
-        data = cast(val.pValue, c_char_p).value
+        data = cast(val.pValue, POINTER(CK_CHAR))
         ret_data = string_at(data, val.usValueLen)
         LOG.debug("Converted to : %s", ret_data)
         return ret_data
@@ -143,7 +143,7 @@ def to_char_array(val, reverse=False):
         raise TypeError("Invalid conversion {} to CK_CHAR*!".format(type(val)))
 
     if isinstance(val, str):
-        string_val = create_string_buffer(val)
+        string_val = create_string_buffer(val, len(val))
     else:
         # TODO: Figure out what, if anything we want to do with a list.
         string_val = bytearray(val)
@@ -161,17 +161,18 @@ def to_ck_date(val, reverse=False):
     :class:`ctypes.c_ulong` size of array)
     """
     if reverse:
-        return str(cast(val.pValue, c_char_p).value[0:val.usValueLen])
+        return string_at(cast(val.pValue, POINTER(c_char)), val.usValueLen)
 
     if isinstance(val, str):
         if len(val) != 8:
             raise TypeError("Invalid date string passed! Should be of type YYYYMMDD")
-        date_val = create_string_buffer(val)
+        date_val = create_string_buffer(val, len(val))
     elif isinstance(val, dict):
         date_str = val['year'] + val['month'] + val['day']
-        date_val = create_string_buffer(date_str)
+        date_val = create_string_buffer(date_str, len(date_str))
     elif isinstance(val, datetime.date):
-        date_val = create_string_buffer(val.strftime("%Y%m%d"))
+        data = val.strftime("%Y%m%d")
+        date_val = create_string_buffer(data, len(data))
     else:
         raise TypeError("Invalid conversion {} to CK_DATE!".format(type(val)))
 

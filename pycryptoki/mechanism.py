@@ -1,5 +1,5 @@
 from ctypes import c_void_p, cast, pointer, POINTER, sizeof, c_char_p, \
-    create_string_buffer
+    create_string_buffer, c_char
 
 from pycryptoki.cryptoki import CK_AES_CBC_PAD_EXTRACT_PARAMS, CK_MECHANISM, \
     CK_ULONG, CK_ULONG_PTR, CK_AES_CBC_PAD_INSERT_PARAMS, CK_BYTE, CK_BYTE_PTR
@@ -118,7 +118,7 @@ def get_python_dict_from_c_mechanism(c_mechanism, params_type_string):
         if params_struct.pBuffer is None:
             bufferString = None
         else:
-            char_p_string = cast(params_struct.pBuffer, c_char_p).value
+            char_p_string = cast(params_struct.pBuffer, POINTER(c_char))
             if char_p_string is not None:
                 bufferString = char_p_string[0:bufferLength]
             else:
