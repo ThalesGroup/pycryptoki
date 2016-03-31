@@ -7,11 +7,13 @@ import datetime
 import logging
 from collections import defaultdict
 from ctypes import cast, c_void_p, create_string_buffer, c_bool, c_char_p, \
-    c_ulong, pointer, POINTER, sizeof, c_char
+    c_ulong, pointer, POINTER, sizeof, c_char, string_at, c_ubyte
 from functools import wraps
 
+import binascii
+
 from cryptoki import CK_ATTRIBUTE, CK_BBOOL, CK_ATTRIBUTE_TYPE, CK_ULONG, \
-    CK_BYTE
+    CK_BYTE, CK_CHAR_PTR, CK_CHAR
 from defines import CKA_USAGE_LIMIT, CKA_USAGE_COUNT, CKA_CLASS, CKA_TOKEN, \
     CKA_PRIVATE, CKA_LABEL, CKA_APPLICATION, CKA_CERTIFICATE_TYPE, \
     CKA_ISSUER, CKA_SERIAL_NUMBER, CKA_KEY_TYPE, CKA_SUBJECT, CKA_ID, CKA_SENSITIVE, \
@@ -128,7 +130,14 @@ def to_char_array(val, reverse=False):
     :class:`ctypes.c_ulong` size of array)
     """
     if reverse:
-        return str(cast(val.pValue, c_char_p).value[0:val.usValueLen])
+        LOG.debug("Attempting to convert CK_ATTRIBUTE(len:%s, data:%s, type:%s) "
+                  "back to ascii string",
+                  val.usValueLen, val.pValue, val.type)
+
+        data = cast(val.pValue, c_char_p).value
+        ret_data = string_at(data, val.usValueLen)
+        LOG.debug("Converted to : %s", ret_data)
+        return ret_data
 
     if not isinstance(val, (str, list)):
         raise TypeError("Invalid conversion {} to CK_CHAR*!".format(type(val)))
@@ -185,7 +194,12 @@ def to_byte_array(val, reverse=False):
     :class:`ctypes.c_ulong` size of array)
     """
     if reverse:
-        return cast(val.pValue, c_char_p).value[0:val.usValueLen]
+        LOG.debug("Attempting to convert CK_ATTRIBUTE(len:%s, data:%s, type:%s) back to hex",
+                  val.usValueLen, val.pValue, val.type)
+        data_list = list(cast(val.pValue, POINTER(c_ubyte))[0:val.usValueLen])
+        fin = binascii.hexlify(bytearray(data_list))
+        LOG.debug("Final hex data: %s", fin)
+        return fin
 
     if isinstance(val, list):
         py_bytes = bytearray(val)
