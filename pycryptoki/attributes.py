@@ -247,7 +247,7 @@ def to_sub_attributes(val, reverse=False):
     if not isinstance(val, dict):
         raise TypeError("Invalid conversion {} to Template!".format(type(val)))
 
-    attrs = Attributes(**val).get_c_struct()
+    attrs = Attributes(val).get_c_struct()
 
     return cast(pointer(attrs), c_void_p), CK_ULONG(len(attrs))
 
