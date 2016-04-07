@@ -80,7 +80,7 @@ class AutoCArray(object):
         if self._array is None:
             # If we get to this point, we have a specified size, a ctype,
             # And our array is still none, but we're trying to access it.
-            # Therefore, we go ahead & allocate the memory for
+            # Therefore, we go ahead & allocate the memory
             self._array = (self.ctype * self._size.value)()
         return cast(self._array, POINTER(self.ctype))
 

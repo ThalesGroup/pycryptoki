@@ -85,7 +85,9 @@ def c_generate_key(h_session, flavor=CKM_DES_KEY_GEN, template=CKM_DES_KEY_GEN_T
 
     # ACTUALLY GENERATE KEY
     h_key = CK_OBJECT_HANDLE()
-    ret = C_GenerateKey(h_session, byref(mech), key_attributes.get_c_struct(), us_public_template_size, byref(h_key))
+    ret = C_GenerateKey(h_session,
+                        byref(mech), key_attributes.get_c_struct(),
+                        us_public_template_size, byref(h_key))
 
     return ret, h_key.value
 
@@ -120,8 +122,10 @@ def c_generate_key_pair(h_session, flavor=CKM_RSA_PKCS_KEY_PAIR_GEN,
 
     h_pbkey = CK_OBJECT_HANDLE()
     h_prkey = CK_OBJECT_HANDLE()
-    ret = C_GenerateKeyPair(h_session, byref(mech), pbkey_attributes.get_c_struct(), pbkey_template_size,
-                            prkey_attributes.get_c_struct(), prkey_template_size, byref(h_pbkey), byref(h_prkey))
+    ret = C_GenerateKeyPair(h_session, byref(mech),
+                            pbkey_attributes.get_c_struct(), pbkey_template_size,
+                            prkey_attributes.get_c_struct(), prkey_template_size,
+                            byref(h_pbkey), byref(h_prkey))
 
     return ret, h_pbkey.value, h_prkey.value
 
@@ -146,7 +150,10 @@ def c_derive_key(h_session, h_base_key, template, mech_flavor, mech=None):
 
     h_key = CK_OBJECT_HANDLE()
     c_template = Attributes(template).get_c_struct()
-    ret = C_DeriveKey(h_session, mech, CK_OBJECT_HANDLE(h_base_key), c_template, CK_ULONG(len(template)), byref(h_key))
+    ret = C_DeriveKey(h_session, mech,
+                      CK_OBJECT_HANDLE(h_base_key),
+                      c_template, CK_ULONG(len(template)),
+                      byref(h_key))
     return ret, h_key.value
 
 

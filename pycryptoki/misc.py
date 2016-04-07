@@ -1,11 +1,23 @@
-from ctypes import create_string_buffer, cast, byref, string_at
+"""
+PKCS11 Interface to the following functions:
 
-from pycryptoki.attributes import Attributes
+* c_generate_random
+* c_seed_random
+* c_digest
+* c_digestkey
+* c_create_object
+* c_set_ped_id (CA_ function)
+* c_get_ped_id (CA_ function)
+"""
+from _ctypes import POINTER
+from ctypes import create_string_buffer, cast, byref, string_at, c_ubyte
+
+from pycryptoki.attributes import Attributes, to_char_array
+from pycryptoki.common_utils import refresh_c_arrays, AutoCArray
 from pycryptoki.cryptoki import C_GenerateRandom, CK_BYTE_PTR, CK_ULONG, \
     C_SeedRandom, C_DigestInit, C_DigestUpdate, C_DigestFinal, C_Digest, C_CreateObject, \
     CA_SetPedId, CK_SLOT_ID, CA_GetPedId, C_DigestKey
 from pycryptoki.defines import CKR_OK
-from pycryptoki.encryption import get_c_data_to_sign_or_encrypt
 from pycryptoki.key_generator import _get_mechanism
 from pycryptoki.sign_verify import do_multipart_sign_or_digest
 from pycryptoki.test_functions import make_error_handle_function
@@ -51,8 +63,8 @@ def c_digest(h_session, data_to_digest, digest_flavor, mech=None):
     """Digests some data
 
     :param h_session: Current session
-    :param data_to_digest: The data to digest, either a string or a list of strings. If this is a list
-        a multipart operation will be used
+    :param data_to_digest: The data to digest, either a string or a list of strings. If this is a
+    list a multipart operation will be used
     :param digest_flavor: The flavour of the mechanism to digest (MD2, SHA-1, HAS-160,
         SHA224, SHA256, SHA384, SHA512)
     :param mech: The mechanism to be used. If None a blank one with the
@@ -67,33 +79,38 @@ def c_digest(h_session, data_to_digest, digest_flavor, mech=None):
 
     # Initialize Digestion
     ret = C_DigestInit(h_session, mech)
-    if ret != CKR_OK: return ret
+    if ret != CKR_OK:
+        return ret
 
-    # if a list is passed out do an digest operation on each string in the list, otherwise just do one digest operation
-    is_multi_part_operation = isinstance(data_to_digest, list) or isinstance(data_to_digest, tuple)
+    # if a list is passed out do an digest operation on each string in the list, otherwise just
+    # do one digest operation
+    is_multi_part_operation = isinstance(data_to_digest, (list, tuple))
 
     if is_multi_part_operation:
-        ret, digested_python_string = do_multipart_sign_or_digest(h_session, C_DigestUpdate, C_DigestFinal,
+        ret, digested_python_string = do_multipart_sign_or_digest(h_session, C_DigestUpdate,
+                                                                  C_DigestFinal,
                                                                   data_to_digest)
     else:
         # Get arguments
-        digest_data_length = len(data_to_digest)
-        c_data_to_digest = get_c_data_to_sign_or_encrypt(data_to_digest)
+        c_data_to_digest, c_digest_data_len = to_char_array(data_to_digest)
+        c_data_to_digest = cast(c_data_to_digest, POINTER(c_ubyte))
 
-        # Get the length of the digested data
-        digest_length = CK_ULONG()
-        ret = C_Digest(h_session, c_data_to_digest, CK_ULONG(digest_data_length), None, byref(digest_length))
-        if ret != CKR_OK: return ret, None
+        digested_data = AutoCArray(ctype=c_ubyte)
 
-        output = create_string_buffer("", digest_length.value)
-        digested_data = cast(output, CK_BYTE_PTR)
+        @refresh_c_arrays(1)
+        def _digest():
+            """ Perform the digest operations
+            """
+            return C_Digest(h_session,
+                            c_data_to_digest, c_digest_data_len,
+                            digested_data.array, digested_data.size)
 
-        # Digest data
-        ret = C_Digest(h_session, c_data_to_digest, CK_ULONG(digest_data_length), digested_data, byref(digest_length))
+        ret = _digest()
+        if ret != CKR_OK:
+            return ret, None
 
         # Convert Digested data into a python string
-        ck_char_array = digested_data._objects.values()[0]
-        digested_python_string = string_at(ck_char_array, len(ck_char_array))
+        digested_python_string = string_at(digested_data.array, len(digested_data))
 
     return ret, digested_python_string
 
@@ -107,7 +124,8 @@ def c_digestkey(h_session, h_key, digest_flavor, mech=None):
     :param h_session: Logged in session handle
     :param h_key: Key to digest
     :param digest_flavor: Digest flavor
-    :param mech: Mechanism to use for digest. Defaults to using the flavor mechanism. (Default value = None)
+    :param mech: Mechanism to use for digest. Defaults to using the flavor mechanism. (Default
+    value = None)
     """
     # Get mechanism if none provided
     if mech is None:
@@ -115,7 +133,8 @@ def c_digestkey(h_session, h_key, digest_flavor, mech=None):
 
     # Initialize Digestion
     ret = C_DigestInit(h_session, mech)
-    if ret != CKR_OK: return ret
+    if ret != CKR_OK:
+        return ret
 
     ret = C_DigestKey(h_session, h_key)
 

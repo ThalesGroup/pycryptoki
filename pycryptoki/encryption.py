@@ -1,8 +1,10 @@
 """
 Methods related to encrypting data/files.
 """
-from ctypes import c_char, create_string_buffer, cast, c_void_p, byref, sizeof, pointer, string_at
 import logging
+from _ctypes import POINTER
+from ctypes import c_char, create_string_buffer, cast, c_void_p, byref, sizeof, pointer, \
+    string_at, c_ubyte
 
 from cryptoki import CK_MECHANISM, CK_MECHANISM_TYPE, CK_VOID_PTR, CK_ULONG, \
     C_EncryptInit, C_Encrypt, CK_RSA_PKCS_OAEP_PARAMS
@@ -17,13 +19,14 @@ from defines import CKM_DES_CBC, CKM_DES3_CBC, CKM_CAST3_CBC, CKM_DES_ECB, \
     CKM_AES_CFB128, CKM_AES_OFB, CKM_ARIA_CFB8, CKM_ARIA_CFB128, CKM_ARIA_OFB, \
     CKM_AES_GCM, CKM_XOR_BASE_AND_DATA_W_KDF, CKM_RSA_PKCS_OAEP, CKM_ECIES, CKR_OK, \
     CKM_SHA_1, CKG_MGF1_SHA1, CKZ_DATA_SPECIFIED, CKM_AES_KW, CKM_AES_KWP
-from pycryptoki.attributes import get_byte_list_from_python_list, Attributes
+from pycryptoki.attributes import Attributes, to_byte_array, to_char_array
+from pycryptoki.common_utils import AutoCArray, refresh_c_arrays
 from pycryptoki.cryptoki import C_Decrypt, C_DecryptInit, CK_OBJECT_HANDLE, \
     C_WrapKey, C_UnwrapKey, C_EncryptUpdate, C_EncryptFinal, CK_BYTE_PTR, \
     C_DecryptUpdate, C_DecryptFinal
 from pycryptoki.test_functions import make_error_handle_function
 
-logger = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 def get_encryption_mechanism(encryption_flavor, external_iv=None):
@@ -103,13 +106,15 @@ def get_encryption_mechanism(encryption_flavor, external_iv=None):
         iv = external_iv
         iv16 = external_iv
     else:
+        LOG.warning("Using static IVs can be insecure! ")
         iv = [0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38]
         iv16 = [1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8]
 
     params = encryption_flavors.get(encryption_flavor)
     if params == iv_required:
-        mech.pParameter = get_byte_list_from_python_list(iv)
-        mech.usParameterLen = CK_ULONG(len(iv))
+        iv_ba, iv_len = to_byte_array(iv)
+        mech.pParameter = iv_ba
+        mech.usParameterLen = iv_len
     elif params == RC2_params_required:
         num_of_effective_bits = 0
         rc2_params = (c_char * 2)()
@@ -118,33 +123,30 @@ def get_encryption_mechanism(encryption_flavor, external_iv=None):
         rc2_params = create_string_buffer("", 2)
         mech.pParameter = cast(rc2_params, c_void_p)
         mech.usParameterLen = CK_ULONG(len(rc2_params))
-        pass
     elif params == RC2CBC_params_required:
         num_of_effective_bits = 0
-        pass
     elif params == RC5_params_required:
         num_rounds = 0
-        pass
     elif params == RC5CBC_params_required:
         num_rounds = 0
-        pass
     elif params == IV16_required:
-        mech.pParameter = get_byte_list_from_python_list(iv16)
-        mech.usParameterLen = CK_ULONG(len(iv16))
+        iv_ba, iv_len = to_byte_array(iv16)
+        mech.pParameter = iv_ba
+        mech.usParameterLen = iv_len
     elif params == GCM_params_required:
         pass
     elif params == xorkdf_params_required:
         pass
     elif params == OAEP_params_required:
-        p = CK_RSA_PKCS_OAEP_PARAMS()
-        p.hashAlg = CK_ULONG(CKM_SHA_1)
-        p.mgf = CK_ULONG(CKG_MGF1_SHA1)
-        p.source = CK_ULONG(CKZ_DATA_SPECIFIED)
-        p.pSourceData = 0
-        p.ulSourceDataLen = 0
+        oaep_params = CK_RSA_PKCS_OAEP_PARAMS()
+        oaep_params.hashAlg = CK_ULONG(CKM_SHA_1)
+        oaep_params.mgf = CK_ULONG(CKG_MGF1_SHA1)
+        oaep_params.source = CK_ULONG(CKZ_DATA_SPECIFIED)
+        oaep_params.pSourceData = 0
+        oaep_params.ulSourceDataLen = 0
 
-        mech.pParameter = cast(pointer(p), CK_VOID_PTR)
-        mech.usParameterLen = CK_ULONG(sizeof(p))
+        mech.pParameter = cast(pointer(oaep_params), CK_VOID_PTR)
+        mech.usParameterLen = CK_ULONG(sizeof(oaep_params))
     elif params == ECIES_params_required:
         pass
 
@@ -158,45 +160,49 @@ def c_encrypt(h_session, encryption_flavor, h_key, data_to_encrypt, mech=None, e
     :param h_session: Current session
     :param encryption_flavor: The flavor of encryption to use
     :param h_key: The key handle to encrypt the data with
-    :param data_to_encrypt: The data to encrypt, either a string or a list of strings. If this is a list
+    :param data_to_encrypt: The data to encrypt, either a string or a list of strings. If this is
+    a list
         a multipart operation will be used
     :param mech: The mechanism to use, if None will try to look up a
         default mechanism based on the encryption flavor
     :param external_iv: The new Integrity Value to be used.
-    :returns: Returns the result code of the operation, a python string representing the encrypted data
+    :returns: Returns the result code of the operation, a python string representing the
+    encrypted data
 
     """
     if mech is None:
         mech = get_encryption_mechanism(encryption_flavor, external_iv)
 
-    # if a list is passed out do an encrypt operation on each string in the list, otherwise just do one encrypt operation
-    is_multi_part_operation = isinstance(data_to_encrypt, list) or isinstance(data_to_encrypt, tuple)
+    # if a list is passed out do an encrypt operation on each string in the list, otherwise just
+    # do one encrypt operation
+    is_multi_part_operation = isinstance(data_to_encrypt, (list, tuple))
 
     # Initialize encryption
     ret = C_EncryptInit(h_session, byref(mech), CK_ULONG(h_key))
-    if ret != CKR_OK: return ret, None
+    if ret != CKR_OK:
+        return ret, None
 
     if is_multi_part_operation:
-        ret, encrypted_python_string = do_multipart_operation(h_session, C_EncryptUpdate, C_EncryptFinal, data_to_encrypt)
+        ret, encrypted_python_string = do_multipart_operation(h_session, C_EncryptUpdate,
+                                                              C_EncryptFinal, data_to_encrypt)
     else:
-        plain_data_length = len(data_to_encrypt)
-        plain_data = get_c_data_to_sign_or_encrypt(data_to_encrypt)
+        plain_data, plain_data_length = to_char_array(data_to_encrypt)
+        plain_data = cast(plain_data, POINTER(c_ubyte))
 
-        # Get the length of the encrypted data
-        encrypted_data_length = CK_ULONG()
-        ret = C_Encrypt(h_session, plain_data, CK_ULONG(plain_data_length), None, byref(encrypted_data_length))
-        if ret != CKR_OK: return ret, None
+        enc_data = AutoCArray(ctype=c_ubyte)
 
-        output = create_string_buffer("", encrypted_data_length.value)
-        encrypted_data = cast(output, CK_BYTE_PTR)
+        @refresh_c_arrays(1)
+        def _encrypt():
+            return C_Encrypt(h_session,
+                             plain_data, plain_data_length,
+                             enc_data.array, enc_data.size)
 
-        # Encrypt data
-        ret = C_Encrypt(h_session, plain_data, CK_ULONG(plain_data_length), encrypted_data,
-                        byref(encrypted_data_length))
+        ret = _encrypt()
+        if ret != CKR_OK:
+            return ret, None
 
         # Convert encrypted data into a python string
-        ck_char_array = encrypted_data._objects.values()[0]
-        encrypted_python_string = string_at(ck_char_array, len(ck_char_array))
+        encrypted_python_string = string_at(enc_data.array, len(enc_data))
 
     return ret, encrypted_python_string
 
@@ -256,13 +262,16 @@ def c_decrypt(h_session, decryption_flavor, h_key, encrypted_data, mech=None, ex
 
     # Initialize Decrypt
     ret = C_DecryptInit(h_session, mech, CK_ULONG(h_key))
-    if ret != CKR_OK: return ret, None
+    if ret != CKR_OK:
+        return ret, None
 
-    # if a list is passed out do a decrypt operation on each string in the list, otherwise just do one decrypt operation
-    is_multi_part_operation = isinstance(encrypted_data, list) or isinstance(encrypted_data, tuple)
+    # if a list is passed out do a decrypt operation on each string in the list, otherwise just
+    # do one decrypt operation
+    is_multi_part_operation = isinstance(encrypted_data, (list, tuple))
 
     if is_multi_part_operation:
-        ret, python_string = do_multipart_operation(h_session, C_DecryptUpdate, C_DecryptFinal, encrypted_data)
+        ret, python_string = do_multipart_operation(h_session, C_DecryptUpdate, C_DecryptFinal,
+                                                    encrypted_data)
     else:
 
         # Get the length of the final data
@@ -272,25 +281,24 @@ def c_decrypt(h_session, decryption_flavor, h_key, encrypted_data, mech=None, ex
         # number of bytes needed. So the python string that's returned in the
         # end needs to be adjusted based on the second called to C_Decrypt
         # which will have the right length
-        plain_data_len = CK_ULONG()
-        c_encrypted_data = get_c_data_to_sign_or_encrypt(encrypted_data)
-        encrypted_data_len = len(encrypted_data)
-        ret = C_Decrypt(h_session, c_encrypted_data, CK_ULONG(encrypted_data_len), None, byref(plain_data_len))
+        c_enc_data, c_enc_data_len = to_char_array(encrypted_data)
+        c_enc_data = cast(c_enc_data, POINTER(c_ubyte))
 
-        if ret != CKR_OK: return ret, None
+        decrypted_data = AutoCArray(ctype=c_ubyte)
 
-        output = create_string_buffer("", plain_data_len.value)
-        plain_data = cast(output, CK_BYTE_PTR)
+        @refresh_c_arrays(1)
+        def _decrypt():
+            """ Perform the decryption ops"""
+            return C_Decrypt(h_session,
+                             c_enc_data, c_enc_data_len,
+                             decrypted_data.array, decrypted_data.size)
 
-        # Decrypt data
-        ret = C_Decrypt(h_session, c_encrypted_data, CK_ULONG(encrypted_data_len), plain_data, byref(plain_data_len))
-        if ret != CKR_OK: return ret, None
+        ret = _decrypt()
+        if ret != CKR_OK:
+            return ret, None
 
         # Convert the decrypted data to a python readable format
-        ck_char_array = plain_data._objects.values()[0]
-        python_string = string_at(ck_char_array, len(ck_char_array))
-        # Adjust the string based on the updated plain_data_len
-        python_string = python_string[:plain_data_len.value]
+        python_string = string_at(decrypted_data.array, len(decrypted_data))
 
     return ret, python_string
 
@@ -322,16 +330,18 @@ def do_multipart_operation(h_session, c_update_function, c_finalize_function, in
 
         if current_chunk_len > max_data_chunk_size:
             raise Exception(
-                "chunk_sizes variable too large, the maximum size of a chunk is " + str(max_data_chunk_size))
+                "chunk_sizes variable too large, the maximum size of a chunk is " + str(
+                    max_data_chunk_size))
 
         out_data = create_string_buffer('', max_data_chunk_size)
         out_data_len = CK_ULONG(max_data_chunk_size)
-        if out_data_len.value > 0:
-            data_chunk = get_c_data_to_sign_or_encrypt(current_chunk)
+        data_chunk, data_chunk_len = to_char_array(data_chunk)
 
-        ret = c_update_function(h_session, data_chunk, CK_ULONG(current_chunk_len), cast(out_data, CK_BYTE_PTR),
+        ret = c_update_function(h_session, data_chunk, data_chunk_len,
+                                cast(out_data, CK_BYTE_PTR),
                                 byref(out_data_len))
-        if ret != CKR_OK: return ret, None
+        if ret != CKR_OK:
+            return ret, None
 
         remaining_length -= current_chunk_len
 
@@ -344,7 +354,8 @@ def do_multipart_operation(h_session, c_update_function, c_finalize_function, in
     out_data_len = CK_ULONG(max_data_chunk_size)
     output = cast(create_string_buffer("", out_data_len.value), CK_BYTE_PTR)
     ret = c_finalize_function(h_session, output, byref(out_data_len))
-    if ret != CKR_OK: return ret, None
+    if ret != CKR_OK:
+        return ret, None
     # Get output
     ck_char_array = output._objects.values()[0]
     if out_data_len.value > 0:
@@ -369,25 +380,27 @@ def c_wrap_key(h_session, h_wrapping_key, h_key, encryption_flavor, mech=None, e
     if mech is None:
         mech = get_encryption_mechanism(encryption_flavor, external_iv)
 
-    # Get the size of the key
-    wrapped_key_length = CK_ULONG()
-    ret = C_WrapKey(h_session, mech, CK_OBJECT_HANDLE(h_wrapping_key), CK_OBJECT_HANDLE(h_key), None,
-                    byref(wrapped_key_length))
-    if ret != CKR_OK: return ret, None
+    wrapped_key = AutoCArray(ctype=c_ubyte)
 
-    # Actually wrap the key
-    output = create_string_buffer("", wrapped_key_length.value)
-    wrapped_key_output = cast(output, CK_BYTE_PTR)
-    ret = C_WrapKey(h_session, mech, CK_OBJECT_HANDLE(h_wrapping_key), CK_OBJECT_HANDLE(h_key), wrapped_key_output,
-                    byref(wrapped_key_length))
+    @refresh_c_arrays(1)
+    def _wrap():
+        """  Perform the Wrapping operation"""
+        return C_WrapKey(h_session, mech,
+                         CK_OBJECT_HANDLE(h_wrapping_key), CK_OBJECT_HANDLE(h_key),
+                         wrapped_key.array, wrapped_key.size)
 
-    return ret, wrapped_key_output._objects.values()[0]
+    ret = _wrap()
+    if ret != CKR_OK:
+        return ret, None
+
+    return ret, string_at(wrapped_key.array, len(wrapped_key))
 
 
 c_wrap_key_ex = make_error_handle_function(c_wrap_key)
 
 
-def c_unwrap_key(h_session, h_unwrapping_key, wrapped_key, key_template, encryption_flavor, mech=None, external_iv=None):
+def c_unwrap_key(h_session, h_unwrapping_key, wrapped_key, key_template, encryption_flavor,
+                 mech=None, external_iv=None):
     """Function which unwraps a key
 
     :param h_session: The session to use
@@ -396,7 +409,8 @@ def c_unwrap_key(h_session, h_unwrapping_key, wrapped_key, key_template, encrypt
     :param key_template: The python template representing the new key's template
     :param encryption_flavor: If the mechanism is not specified it will create a
         default one based on the encryption flavor
-    :param mech: The mechanism to use, if null a default one will be created based on the encryption_flavor
+    :param mech: The mechanism to use, if null a default one will be created based on the
+    encryption_flavor
     :param h_unwrapping_key:
     :param wrapped_key:
     :returns: The result code, the handle of the unwrapped key
@@ -408,28 +422,11 @@ def c_unwrap_key(h_session, h_unwrapping_key, wrapped_key, key_template, encrypt
     c_template = Attributes(key_template).get_c_struct()
     byte_wrapped_key = cast(wrapped_key, CK_BYTE_PTR)
     h_output_key = CK_ULONG()
-    ret = C_UnwrapKey(h_session, mech, CK_OBJECT_HANDLE(h_unwrapping_key), byte_wrapped_key, CK_ULONG(len(wrapped_key)),
+    ret = C_UnwrapKey(h_session, mech, CK_OBJECT_HANDLE(h_unwrapping_key), byte_wrapped_key,
+                      CK_ULONG(len(wrapped_key)),
                       c_template, CK_ULONG(len(key_template)), byref(h_output_key))
 
     return ret, h_output_key.value
 
 
 c_unwrap_key_ex = make_error_handle_function(c_unwrap_key)
-
-
-def get_c_data_to_sign_or_encrypt(python_data):
-    """Function which gets the C data representation of some python data
-
-    :param python_data: The python data to get a c representation of
-    :returns: A C byte pointer pointing to the C representation of the python data
-    """
-
-    c_data_to_sign = None
-    if isinstance(python_data, str):
-        c_data_to_sign = create_string_buffer(python_data)
-        c_data_to_sign = cast(c_data_to_sign, CK_BYTE_PTR)
-    else:
-        raise Exception("Please extend this function to support the type of data " +
-                        str(type(python_data)))
-
-    return c_data_to_sign

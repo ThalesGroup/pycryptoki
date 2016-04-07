@@ -33,21 +33,6 @@ from pycryptoki.defines import CKA_EKM_UID, CKA_GENERIC_1, CKA_GENERIC_2, \
 LOG = logging.getLogger(__name__)
 
 
-def get_byte_list_from_python_list(python_byte_list):
-    """Helper method to create a C style byte list from a python
-    style list of integers.
-
-    :param python_byte_list: A list of integers to convert to a C style list of integers
-    :returns: The pointer to the C representation of the python byte list
-
-    """
-    list_val = create_string_buffer("", len(python_byte_list))
-    ptr = cast(pointer(list_val), c_void_p)
-    for j in range(0, len(python_byte_list)):
-        list_val[j] = chr(python_byte_list[j])
-        return ptr
-
-
 def ret_type(c_type):
     """
     Decorator to set a returned C Type so we can determine what type to use
