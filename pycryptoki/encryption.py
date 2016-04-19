@@ -335,7 +335,8 @@ def do_multipart_operation(h_session, c_update_function, c_finalize_function, in
 
         out_data = create_string_buffer('', max_data_chunk_size)
         out_data_len = CK_ULONG(max_data_chunk_size)
-        data_chunk, data_chunk_len = to_char_array(data_chunk)
+        data_chunk, data_chunk_len = to_char_array(current_chunk)
+        data_chunk = cast(data_chunk, POINTER(c_ubyte))
 
         ret = c_update_function(h_session, data_chunk, data_chunk_len,
                                 cast(out_data, CK_BYTE_PTR),
