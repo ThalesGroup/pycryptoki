@@ -35,6 +35,7 @@ def get_encryption_mechanism(encryption_flavor, external_iv=None):
 
     :param encryption_flavor: The flavor of the encryption that the mechanism needs
     to encrypt for.
+    :param external_iv: External IV to insert into the mechanism struct.
     :returns: Returns a CTypes CK_Mechanism given the encryption flavour that you have passed in
 
     """
@@ -102,15 +103,17 @@ def get_encryption_mechanism(encryption_flavor, external_iv=None):
                           CKM_RSA_PKCS_OAEP: OAEP_params_required,
                           CKM_ECIES: ECIES_params_required}
 
-    if external_iv:
-        iv = external_iv
-        iv16 = external_iv
-    else:
-        LOG.warning("Using static IVs can be insecure! ")
-        iv = [0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38]
-        iv16 = [1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8]
-
     params = encryption_flavors.get(encryption_flavor)
+
+    if params in (iv_required, IV16_required):
+        if external_iv:
+            iv = external_iv
+            iv16 = external_iv
+        else:
+            LOG.warning("Using static IVs can be insecure! ")
+            iv = [0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38]
+            iv16 = [1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8]
+
     if params == iv_required:
         iv_ba, iv_len = to_byte_array(iv)
         mech.pParameter = iv_ba
@@ -124,19 +127,19 @@ def get_encryption_mechanism(encryption_flavor, external_iv=None):
         mech.pParameter = cast(rc2_params, c_void_p)
         mech.usParameterLen = CK_ULONG(len(rc2_params))
     elif params == RC2CBC_params_required:
-        num_of_effective_bits = 0
+        raise NotImplementedError("RC2 CBC params not yet implemented")
     elif params == RC5_params_required:
-        num_rounds = 0
+        raise NotImplementedError("RC5 params not yet implemented")
     elif params == RC5CBC_params_required:
-        num_rounds = 0
+        raise NotImplementedError("RC5 CBC params not yet implemented")
     elif params == IV16_required:
         iv_ba, iv_len = to_byte_array(iv16)
         mech.pParameter = iv_ba
         mech.usParameterLen = iv_len
     elif params == GCM_params_required:
-        pass
+        raise NotImplementedError("GCM params not yet implemented")
     elif params == xorkdf_params_required:
-        pass
+        raise NotImplementedError("xorkdf params not yet implemented")
     elif params == OAEP_params_required:
         oaep_params = CK_RSA_PKCS_OAEP_PARAMS()
         oaep_params.hashAlg = CK_ULONG(CKM_SHA_1)
@@ -148,7 +151,10 @@ def get_encryption_mechanism(encryption_flavor, external_iv=None):
         mech.pParameter = cast(pointer(oaep_params), CK_VOID_PTR)
         mech.usParameterLen = CK_ULONG(sizeof(oaep_params))
     elif params == ECIES_params_required:
-        pass
+        raise NotImplementedError("ECIES params not yet implemented")
+    else:
+        raise NotImplementedError("Encryption flavor {} is not "
+                                  "implemented!".format(encryption_flavor))
 
     return mech
 
@@ -193,6 +199,7 @@ def c_encrypt(h_session, encryption_flavor, h_key, data_to_encrypt, mech=None, e
 
         @refresh_c_arrays(1)
         def _encrypt():
+            """Closure for getting the buffer size with encrypt."""
             return C_Encrypt(h_session,
                              plain_data, plain_data_length,
                              enc_data.array, enc_data.size)
@@ -218,14 +225,8 @@ def _split_string_into_list(python_string, block_size):
     :returns: A list of strings of block_size
 
     """
-    return_list = []
     total_length = len(python_string)
-    for index in range(0, (total_length / block_size)):
-        start_index = index * block_size
-        end_index = min(start_index + block_size, total_length)
-        return_list.append(python_string[start_index: end_index])
-
-    return return_list
+    return [python_string[x:x + block_size] for x in xrange(0, total_length, block_size)]
 
 
 def _get_string_from_list(list_of_strings):
@@ -235,11 +236,7 @@ def _get_string_from_list(list_of_strings):
     :returns: Single string representing the concatenated list
 
     """
-    large_string = ''
-    for substring in list_of_strings:
-        large_string += substring
-
-    return large_string
+    return "".join(list_of_strings)
 
 
 def c_decrypt(h_session, decryption_flavor, h_key, encrypted_data, mech=None, external_iv=None):

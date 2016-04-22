@@ -1,7 +1,7 @@
-from ctypes import byref
-from functools import wraps
 import inspect
 import logging
+from ctypes import byref
+from functools import wraps
 
 from defines import CKR_OK
 from pycryptoki.attributes import Attributes
@@ -9,12 +9,14 @@ from pycryptoki.cryptoki import CK_OBJECT_HANDLE, CK_ULONG, C_GetObjectSize
 from pycryptoki.defines import CKR_OBJECT_HANDLE_INVALID
 from return_values import ret_vals_dictionary
 
-logger = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 def assert_test_return_value(value, expected_value, message, print_on_success=True):
-    """Asserts a pass or fail based on whether the value parameter is equal to the expected_value parameter.
-    Used to test the results of pkcs11 functions and looks up human readable strings for the various error codes.
+    """Asserts a pass or fail based on whether the value parameter is equal to the expected_value
+    parameter.
+    Used to test the results of pkcs11 functions and looks up human readable strings for the
+    various error codes.
     Prints out results in a consistent format.
 
     :param value: The return value of the pkcs11 function
@@ -33,10 +35,10 @@ def assert_test_return_value(value, expected_value, message, print_on_success=Tr
     else:
         exp_code = "Unknown Code=" + str(hex(value))
 
-    assert value == expected_value, "\nERROR: " + message + "\n\tExpected: " + exp_code + "\n\tFound: " + code
-
+    assert value == expected_value, "\nERROR: " + message + "\n\tExpected: " + exp_code + \
+                                    "\n\tFound: " + code
     if print_on_success:
-        logger.info(exp_code + ": " + message)
+        LOG.info(exp_code + ": " + message)
 
 
 def assert_test_case(result, message, print_on_success=False):
@@ -49,7 +51,7 @@ def assert_test_case(result, message, print_on_success=False):
     """
     assert result, "\nERROR: " + message
     if print_on_success:
-        logger.info("PASSED: " + message)
+        LOG.info("PASSED: " + message)
 
 
 class LunaException(Exception):
@@ -75,11 +77,18 @@ class LunaException(Exception):
             self.error_string = "Unknown Code=" + str(hex(self.error_code))
 
     def __str__(self):
-        return "\n\tFunction: " + str(self.function_name) + "\n\tError: " + str(self.error_string) \
-               + "\n\tError Code: " + str(hex(self.error_code)) + "\n\tArguments: " + str(self.arguments)
+        data = ("\n\tFunction: {func_name}"
+                "\n\tError: {err_string}"
+                "\n\tError Code: {err_code}"
+                "\n\tArguments: {args}").format(func_name=self.function_name,
+                                                err_string=self.error_string,
+                                                err_code=hex(self.error_code),
+                                                args=self.arguments)
+
+        return data
 
 
-class LunaReturn:
+class LunaReturn(object):
     """ """
 
     def __init__(self, return_code, return_data):
@@ -102,7 +111,8 @@ def verify_object_attributes(h_session, h_object, expected_template):
     us_size = CK_ULONG()
     ret = C_GetObjectSize(h_session, h_object, byref(us_size))
     assert_test_case(ret == CKR_OK, "Object " + str(h_object) + " exists")
-    assert_test_case(us_size.value > 0, "Object " + str(h_object.value) + " size is greater than zero.")
+    assert_test_case(us_size.value > 0,
+                     "Object " + str(h_object.value) + " size is greater than zero.")
 
     # VERIFY ATTRIBUTES are the same as the ones passed in
     attr = Attributes()
@@ -140,50 +150,51 @@ def verify_object_exists(h_session, h_object, should_exist=True):
         assert_test_case(ret == expected_ret, out)
 
     if should_exist:
-        assert_test_return_value(ret, CKR_OK, "Getting object " + str(h_object.value) + "'s size", True)
-        assert_test_case(us_size.value > 0, "Object " + str(h_object.value) + " size is greater than zero.", False)
-    else:
-        assert_test_return_value(ret, CKR_OBJECT_HANDLE_INVALID, "Getting object " + str(h_object.value) + "'s size",
+        assert_test_return_value(ret, CKR_OK, "Getting object " + str(h_object.value) + "'s size",
                                  True)
-        assert_test_case(us_size.value <= 0, "Object " + str(h_object.value) + " size is greater than zero.", False)
+        assert_test_case(us_size.value > 0,
+                         "Object " + str(h_object.value) + " size is greater than zero.", False)
+    else:
+        assert_test_return_value(ret, CKR_OBJECT_HANDLE_INVALID,
+                                 "Getting object " + str(h_object.value) + "'s size",
+                                 True)
+        assert_test_case(us_size.value <= 0,
+                         "Object " + str(h_object.value) + " size is greater than zero.", False)
 
 
-def check_luna_exception(ret, luna_function, *args):
+def check_luna_exception(ret, luna_function, args):
     """
+    Check the return code from cryptoki.dll, and if it's non-zero raise an
+    exception with the error code looked up.
 
-    :param ret:
-    :param luna_function:
-    :param *args:
-
+    :param ret: Return code from the C call
+    :param luna_function: pycryptoki function that was called
+    :param args: Arguments passed to the pycryptoki function.
     """
     arg_spec = inspect.getargspec(luna_function).args
-    arg_string = "("
-    i = 0
-    if len(arg_spec) > 0:
-        for argument in args:
-            arg_string = arg_string + arg_spec[i] + "=" + str(argument)
+    nice_args = [x if len(str(x)) < 20 else "{}...{}".format(str(x)[:10], str(x)[-10:])
+                 for x in args]
+    arg_string = ", ".join("{}={}".format(key, value) for key, value in zip(arg_spec, nice_args))
 
-            if i != (len(args) - 1):
-                arg_string += ", "
-            i += 1
-
-    arg_string += ")"
-    if ret != CKR_OK: raise LunaException(ret, luna_function.__name__, arg_string)
+    arg_string = "({})".format(arg_string)
+    if ret != CKR_OK:
+        raise LunaException(ret, luna_function.__name__, arg_string)
 
 
 def make_error_handle_function(luna_function):
     """This function is a helper function that creates a new function which checks the
-    result code returned from a function in luna. It is called by calling:
+    result code returned from a function in luna. It is called by calling::
 
-    c_generate_key_pair_ex = make_error_handle_function(c_generate_key_pair)
+        c_generate_key_pair_ex = make_error_handle_function(c_generate_key_pair)
 
     This code will create a c_generate_key_pair_ex which will call c_generate_key_pair and check the
     first argument. The first argument is the return code of c_generate_key_pair. If the return
-    code != CKR_OK then c_generate_key_pair_ex will raise a LunaException. You can call c_generate_key_pair_ex
-    as if it is c_generate_key_pair:
+    code != CKR_OK then c_generate_key_pair_ex will raise a LunaException. You can call
+    c_generate_key_pair_ex as if it is c_generate_key_pair::
 
-    c_generate_key_pair_ex(h_session, CKM_RSA_PKCS_KEY_PAIR_GEN, CKM_RSA_PKCS_KEY_PAIR_GEN_PUBTEMP,
-                        CKM_RSA_PKCS_KEY_PAIR_GEN_PRIVTEMP)
+        c_generate_key_pair_ex(h_session, CKM_RSA_PKCS_KEY_PAIR_GEN,
+                               CKM_RSA_PKCS_KEY_PAIR_GEN_PUBTEMP,
+                               CKM_RSA_PKCS_KEY_PAIR_GEN_PRIVTEMP)
 
     The return values of c_generate_pair are (ret, public_key_handle, private_key_handle)
 
@@ -192,12 +203,15 @@ def make_error_handle_function(luna_function):
     This lets you create two versions of a function. One version is for setup and
     the other version is for testing the result.
 
-    Directly testing the result:
-    ret = c_initialize()
-    assert ret == CKR_SOME_ERROR_CODE, "This test case will fail if this condition is not met"
+    Directly testing the result::
 
-    Expecting the call to go through without error. The test case should have an error (not a failure):
-    c_initialize_ex()
+        ret = c_initialize()
+        assert ret == CKR_SOME_ERROR_CODE, "This test case will fail if this condition is not met"
+
+    Expecting the call to go through without error. The test case should have an error (not a
+    failure)::
+
+        c_initialize_ex()
 
     This should therefore make for shorter test cases
 
@@ -229,7 +243,8 @@ def make_error_handle_function(luna_function):
             return_data = return_tuple
         else:
             raise Exception(
-                "Functions wrapped by the exception handler should return a tuple or just the long representing Luna's return code.")
+                "Functions wrapped by the exception handler should return a tuple or just the "
+                "long representing Luna's return code.")
 
         check_luna_exception(ret, luna_function, args)
         return return_data
