@@ -152,9 +152,6 @@ def get_encryption_mechanism(encryption_flavor, external_iv=None):
         mech.usParameterLen = CK_ULONG(sizeof(oaep_params))
     elif params == ECIES_params_required:
         raise NotImplementedError("ECIES params not yet implemented")
-    else:
-        raise NotImplementedError("Encryption flavor {} is not "
-                                  "implemented!".format(encryption_flavor))
 
     return mech
 
