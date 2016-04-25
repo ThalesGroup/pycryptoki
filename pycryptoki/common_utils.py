@@ -3,6 +3,7 @@ Utilities for pycryptoki
 """
 from _ctypes import pointer, POINTER
 from ctypes import c_ulong, cast, create_string_buffer
+
 from pycryptoki.cryptoki import CK_CHAR
 from pycryptoki.defines import CKR_OK
 
@@ -19,6 +20,7 @@ class AutoCArray(object):
     An attempt to provide automatic resolution of C-style arrays.
 
     """
+
     def __init__(self, data=None, ctype=c_ulong, size=None):
         """
         Initialize the Array.
@@ -112,6 +114,14 @@ class AutoCArray(object):
             for i in self._array:
                 yield i
 
+    def __str__(self):
+        """
+        Return a legible version of the array.
+        """
+        return "AutoCArray = ({ctype} * {size})({data})".format(ctype=self.ctype,
+                                                                size=len(self),
+                                                                data=self._array)
+
 
 def refresh_c_arrays(retries=1):
     """
@@ -131,6 +141,7 @@ def refresh_c_arrays(retries=1):
     :param func: Function to decorate.
     :return: closure.
     """
+
     def wrap(func):
         """
         Inner decorator.
@@ -138,6 +149,7 @@ def refresh_c_arrays(retries=1):
         :param func: Original function decorated.
         :return:
         """
+
         def wrapped_func(*args, **kwargs):
             """
             Runs the wrapped function the given number of times,
@@ -156,5 +168,7 @@ def refresh_c_arrays(retries=1):
                     return ret
                 tries += 1
             return ret
+
         return wrapped_func
+
     return wrap

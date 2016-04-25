@@ -157,6 +157,8 @@ class RemotePycryptokiClient:
                     masked_args = tuple("*" for _ in args)
                     masked_kwargs = {key: "*" for key, _ in kwargs.items()}
 
+                masked_args = ["{:.10}".format(str(arg)) for arg in masked_args]
+                masked_kwargs = ["{:.10}".format(str(kwarg)) for kwarg in masked_kwargs]
                 log.info("Running remote pycryptoki command: "
                          "{0}(args={1}, kwargs={2})".format(name, masked_args, masked_kwargs))
                 return getattr(self.server, name)(*args, **kwargs)
