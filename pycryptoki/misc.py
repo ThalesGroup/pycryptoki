@@ -51,7 +51,10 @@ def c_seed_random(h_session, seed):
 
     """
     seed_bytes = cast(create_string_buffer(seed), CK_BYTE_PTR)
-    seed_length = CK_ULONG(len(seed))
+    if isinstance(seed, (int, float, long)):
+        seed_length = seed
+    else:
+        seed_length = CK_ULONG(len(seed))
     ret = C_SeedRandom(h_session, seed_bytes, seed_length)
     return ret
 
