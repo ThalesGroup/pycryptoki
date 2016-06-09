@@ -3,17 +3,17 @@ import sys
 import threading
 import time
 
-from pycryptoki.default_templates import CKM_DES_KEY_GEN_TEMP, \
+from .default_templates import CKM_DES_KEY_GEN_TEMP, \
     CKM_RSA_PKCS_KEY_PAIR_GEN_PUBTEMP, CKM_RSA_PKCS_KEY_PAIR_GEN_PRIVTEMP
-from pycryptoki.defaults import ADMIN_PARTITION_LABEL, MANUFACTURER_ID, MODEL
-from pycryptoki.defines import CKM_DES_KEY_GEN, CKM_RSA_PKCS_KEY_PAIR_GEN, \
+from .defaults import ADMIN_PARTITION_LABEL, MANUFACTURER_ID, MODEL
+from .defines import CKM_DES_KEY_GEN, CKM_RSA_PKCS_KEY_PAIR_GEN, \
     CKR_OK
-from pycryptoki.key_generator import c_generate_key_ex, c_generate_key_pair_ex
-from pycryptoki.return_values import ret_vals_dictionary
-from pycryptoki.session_management import c_open_session_ex, c_get_token_info_ex, \
+from .key_generator import c_generate_key_ex, c_generate_key_pair_ex
+from .return_values import ret_vals_dictionary
+from .session_management import c_open_session_ex, c_get_token_info_ex, \
     c_open_session, c_close_session
-from pycryptoki.test_functions import verify_object_attributes
-from pycryptoki.token_management import get_token_by_label_ex, \
+from .test_functions import verify_object_attributes
+from .token_management import get_token_by_label_ex, \
     c_get_mechanism_list_ex, c_get_mechanism_info_ex
 
 logger = logging.getLogger(__name__)
@@ -26,7 +26,8 @@ GET_MECHANISM_INFO = 5
 
 class TestThread(threading.Thread):
     """A member of the threading class which, when given the proper parameters, will
-    perform some functions on the HSM in it's own thread. If one of the tests fails it will be reported when all the
+    perform some functions on the HSM in it's own thread. If one of the tests fails it will be
+    reported when all the
     threads finish.
 
 
@@ -38,7 +39,8 @@ class TestThread(threading.Thread):
         to the queue that the task is done
         @param thread_name: The name of the thread for debug printing purposes
         @param token_label: The token label to perform multithreaded operations on
-        @param thread_type: The a numeric value specifyingoperation the thread will do, see the variables
+        @param thread_type: The a numeric value specifyingoperation the thread will do,
+        see the variables
         described above the TestThread class declaration ex. GET_TOKEN_INFO
         @param max_time: The amount of time to spend doing the test in seconds
         """
@@ -59,7 +61,8 @@ class TestThread(threading.Thread):
             # For a given amount of time run the operations in a separate thread
             start_time = time.time()
             while ((time.time() - start_time) < self.max_time) and (
-                (not self.starting_slot >= self.ending_slot) or (self.starting_slot == -1 and self.ending_slot == -1)):
+                        (not self.starting_slot >= self.ending_slot) or (
+                            self.starting_slot == -1 and self.ending_slot == -1)):
                 if self.thread_type == CREATE_AND_REMOVE_KEYS:
                     self.create_and_remove_keys()
                 elif self.thread_type == OPEN_AND_CLOSE_SESSIONS:
@@ -116,7 +119,8 @@ class TestThread(threading.Thread):
 
         logger.debug(self.thread_name + " Generating keys")
         key_handle = c_generate_key_ex(h_session, CKM_DES_KEY_GEN, CKM_DES_KEY_GEN_TEMP)
-        key_handle_public, key_handle_private = c_generate_key_pair_ex(h_session, CKM_RSA_PKCS_KEY_PAIR_GEN,
+        key_handle_public, key_handle_private = c_generate_key_pair_ex(h_session,
+                                                                       CKM_RSA_PKCS_KEY_PAIR_GEN,
                                                                        CKM_RSA_PKCS_KEY_PAIR_GEN_PUBTEMP,
                                                                        CKM_RSA_PKCS_KEY_PAIR_GEN_PRIVTEMP)
 
@@ -144,4 +148,5 @@ class TestThread(threading.Thread):
         for mechanism in mechanism_list:
             mech_info = c_get_mechanism_info_ex(slot, mechanism)
             assert (
-                   mech_info.ulMinKeySize > 0 or mech_info.ulMaxKeySize > 0 or mech_info.flags > 0) and mech_info.ulMinKeySize <= mech_info.ulMaxKeySize, "Verifing that all fields are not 0 should be good enough for now"
+                       mech_info.ulMinKeySize > 0 or mech_info.ulMaxKeySize > 0 or
+                       mech_info.flags > 0) and mech_info.ulMinKeySize <= mech_info.ulMaxKeySize, "Verifing that all fields are not 0 should be good enough for now"

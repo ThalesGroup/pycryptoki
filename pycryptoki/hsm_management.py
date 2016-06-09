@@ -3,28 +3,28 @@ Methods responsible for pycryptoki 'hsm management' set of commands.
 """
 from _ctypes import pointer
 from ctypes import byref, create_string_buffer, cast
-from pycryptoki.common_utils import AutoCArray, refresh_c_arrays
 
-from pycryptoki.cryptoki import (CK_SLOT_ID,
-                                 CK_USER_TYPE,
-                                 CA_SetTokenCertificateSignature,
-                                 CA_HAInit,
-                                 CA_CreateLoginChallenge,
-                                 CA_InitializeRemotePEDVector,
-                                 CA_DeleteRemotePEDVector,
-                                 CA_MTKRestore,
-                                 CA_MTKResplit,
-                                 CA_MTKZeroize,
-                                 CK_ULONG,
-                                 CK_BYTE_PTR,
-                                 CK_BYTE,
-                                 CK_CHAR_PTR,
-                                 CK_CHAR, CA_SetHSMPolicy, CK_SESSION_HANDLE, CA_SetHSMPolicies,
-                                 CA_SetDestructiveHSMPolicy, CA_SetDestructiveHSMPolicies,
-                                 CA_GetHSMCapabilitySet, CA_GetHSMCapabilitySetting,
-                                 CA_GetHSMPolicySet, CA_GetHSMPolicySetting)
-from pycryptoki.attributes import Attributes
-from pycryptoki.test_functions import make_error_handle_function
+from .attributes import Attributes
+from .common_utils import AutoCArray, refresh_c_arrays
+from .cryptoki import (CK_SLOT_ID,
+                       CK_USER_TYPE,
+                       CA_SetTokenCertificateSignature,
+                       CA_HAInit,
+                       CA_CreateLoginChallenge,
+                       CA_InitializeRemotePEDVector,
+                       CA_DeleteRemotePEDVector,
+                       CA_MTKRestore,
+                       CA_MTKResplit,
+                       CA_MTKZeroize,
+                       CK_ULONG,
+                       CK_BYTE_PTR,
+                       CK_BYTE,
+                       CK_CHAR_PTR,
+                       CK_CHAR, CA_SetHSMPolicy, CK_SESSION_HANDLE, CA_SetHSMPolicies,
+                       CA_SetDestructiveHSMPolicy, CA_SetDestructiveHSMPolicies,
+                       CA_GetHSMCapabilitySet, CA_GetHSMCapabilitySetting,
+                       CA_GetHSMPolicySet, CA_GetHSMPolicySetting)
+from .test_functions import make_error_handle_function
 
 
 def c_performselftest(slot,
@@ -45,13 +45,13 @@ def c_performselftest(slot,
 
     test_type = CK_ULONG(test_type)
     input_length = CK_ULONG(input_data_len)
-    input_data = (CK_BYTE * input_data)()
+    input_data = (CK_BYTE * input_data_len)(*input_data)
     output_data = cast(create_string_buffer('', input_data_len), CK_BYTE_PTR)
     output_data_len = CK_ULONG()
     try:
-        from pycryptoki.cryptoki import CA_PerformSelfTest as selftest
+        from .cryptoki import CA_PerformSelfTest as selftest
     except ImportError:
-        from pycryptoki.cryptoki import C_PerformSelftest as selftest
+        from .cryptoki import C_PerformSelftest as selftest
 
     ret = selftest(slot,
                    test_type,
@@ -91,7 +91,7 @@ def ca_settokencertificatesignature(h_session,
 
     key_attributes = Attributes(pub_template)
     pub_template_len = CK_ULONG(len(pub_template))
-    signature = (CK_BYTE * signature)()
+    signature = (CK_BYTE * signature_len)(*signature)
     signature_length = CK_ULONG(signature_len)
     ret = CA_SetTokenCertificateSignature(h_session,
                                           access_level,

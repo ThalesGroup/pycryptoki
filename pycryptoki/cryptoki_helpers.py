@@ -3,7 +3,7 @@ import os
 import re
 import sys
 
-from pycryptoki.defaults import CHRYSTOKI_DLL_FILE, CHRYSTOKI_CONFIG_FILE
+from .defaults import CHRYSTOKI_DLL_FILE, CHRYSTOKI_CONFIG_FILE
 
 
 def parse_chrystoki_conf():

@@ -1,9 +1,9 @@
 """
 Methods responsible for key usage
 """
-from pycryptoki.cryptoki import CA_CloneMofN, CA_DuplicateMofN, \
+from .cryptoki import CA_CloneMofN, CA_DuplicateMofN, \
     CK_VOID_PTR, CK_SESSION_HANDLE
-from pycryptoki.test_functions import make_error_handle_function
+from .test_functions import make_error_handle_function
 
 
 def ca_clonemofn(h_session):

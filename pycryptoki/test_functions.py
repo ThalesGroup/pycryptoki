@@ -4,10 +4,10 @@ from ctypes import byref
 from functools import wraps
 
 from defines import CKR_OK
-from pycryptoki.attributes import Attributes
-from pycryptoki.cryptoki import CK_OBJECT_HANDLE, CK_ULONG, C_GetObjectSize
-from pycryptoki.defines import CKR_OBJECT_HANDLE_INVALID
 from return_values import ret_vals_dictionary
+from .attributes import Attributes
+from .cryptoki import CK_OBJECT_HANDLE, CK_ULONG, C_GetObjectSize
+from .defines import CKR_OBJECT_HANDLE_INVALID
 
 LOG = logging.getLogger(__name__)
 
@@ -39,19 +39,6 @@ def assert_test_return_value(value, expected_value, message, print_on_success=Tr
                                     "\n\tFound: " + code
     if print_on_success:
         LOG.info(exp_code + ": " + message)
-
-
-def assert_test_case(result, message, print_on_success=False):
-    """Simple wrapper around assert that allows for a consistent way to report successes/failures
-
-    :param result: A boolean representing the result of the test
-    :param message: The message to print on test failure
-    :param print_on_success:  (Default value = False)
-
-    """
-    assert result, "\nERROR: " + message
-    if print_on_success:
-        LOG.info("PASSED: " + message)
 
 
 class LunaException(Exception):
@@ -105,21 +92,20 @@ def verify_object_attributes(h_session, h_object, expected_template):
     :param expected_template: The expected template to compare against
 
     """
+    from .object_attr_lookup import c_get_attribute_value_ex
 
     # VERIFY OBJECT EXISTS
     h_object = CK_OBJECT_HANDLE(h_object)
     us_size = CK_ULONG()
     ret = C_GetObjectSize(h_session, h_object, byref(us_size))
-    assert_test_case(ret == CKR_OK, "Object " + str(h_object) + " exists")
-    assert_test_case(us_size.value > 0,
-                     "Object " + str(h_object.value) + " size is greater than zero.")
+    assert ret == CKR_OK, "Object " + str(h_object) + " exists"
+    assert us_size.value > 0, \
+        "Object " + str(h_object.value) + " size is greater than zero."
 
     # VERIFY ATTRIBUTES are the same as the ones passed in
-    attr = Attributes()
-    attr.retrieve_key_attributes(h_session, h_object.value)
-    expected_attributes = Attributes(expected_template)
-    assert_test_case(attr == expected_attributes,
-                     "Object " + str(h_object.value) + " attributes match expected attributes")
+    desired_attrs = {x: None for x in expected_template.keys()}
+    attr = c_get_attribute_value_ex(h_session, h_object, template=desired_attrs)
+    assert attr == expected_template
 
 
 def verify_object_exists(h_session, h_object, should_exist=True):
@@ -145,21 +131,21 @@ def verify_object_exists(h_session, h_object, should_exist=True):
     try:
         ret = C_GetObjectSize(h_session, h_object, byref(us_size))
     except LunaException as e:
-        assert_test_case(e.error_code == expected_ret, out)
+        assert e.error_code == expected_ret, out
     else:
-        assert_test_case(ret == expected_ret, out)
+        assert ret == expected_ret, out
 
     if should_exist:
         assert_test_return_value(ret, CKR_OK, "Getting object " + str(h_object.value) + "'s size",
                                  True)
-        assert_test_case(us_size.value > 0,
-                         "Object " + str(h_object.value) + " size is greater than zero.", False)
+        assert us_size.value > 0, \
+            "Object " + str(h_object.value) + " size is greater than zero."
     else:
         assert_test_return_value(ret, CKR_OBJECT_HANDLE_INVALID,
                                  "Getting object " + str(h_object.value) + "'s size",
                                  True)
-        assert_test_case(us_size.value <= 0,
-                         "Object " + str(h_object.value) + " size is greater than zero.", False)
+        assert us_size.value <= 0, \
+            "Object " + str(h_object.value) + " size is greater than zero."
 
 
 def check_luna_exception(ret, luna_function, args):

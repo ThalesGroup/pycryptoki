@@ -1,4 +1,12 @@
+import argparse
+import logging
+import os
+import sys
+import threading
 from ctypes import *
+from pycryptoki.utils.common_utils import setLogFile
+from random import randint
+
 from pycryptoki.cryptoki import CK_SLOT_ID, CA_GetObjectUID, \
     CA_GetUserContainerNumber, CA_GetObjectHandle, \
     CK_ULONG, CK_BYTE
@@ -8,31 +16,23 @@ from pycryptoki.default_templates import CKM_DES_KEY_GEN_TEMP, \
     CKM_CAST5_KEY_GEN_TEMP, CKM_RC2_KEY_GEN_TEMP, CKM_RC4_KEY_GEN_TEMP, \
     CKM_RC5_KEY_GEN_TEMP, CKM_AES_KEY_GEN_TEMP, CKM_SEED_KEY_GEN_TEMP, \
     CKM_ARIA_KEY_GEN_TEMP, CKM_DH_PKCS_PARAMETER_GEN_TEMP
+from pycryptoki.defaults import DEFAULT_PASSWORD, DEFAULT_LABEL
+from pycryptoki.defaults import DEFAULT_UTILS_PATH, FORMAT
+from pycryptoki.defines import CKF_SERIAL_SESSION, CKF_RW_SESSION, \
+    CKF_SO_SESSION
 from pycryptoki.defines import CKM_DES_KEY_GEN, CKM_DES2_KEY_GEN, \
     CKM_DES3_KEY_GEN, CKM_CAST3_KEY_GEN, CKM_GENERIC_SECRET_KEY_GEN, \
     CKM_CAST5_KEY_GEN, CKM_RC2_KEY_GEN, CKM_RC4_KEY_GEN, CKM_RC5_KEY_GEN, \
     CKM_AES_KEY_GEN, CKM_SEED_KEY_GEN, \
     CKM_ARIA_KEY_GEN, CKM_DH_PKCS_PARAMETER_GEN, CKR_OK, \
     CKR_DEVICE_ERROR, CK_CRYPTOKI_ELEMENT
-from pycryptoki.defaults import DEFAULT_PASSWORD, DEFAULT_LABEL
-from pycryptoki.defines import CKF_SERIAL_SESSION, CKF_RW_SESSION, \
-    CKF_SO_SESSION
 from pycryptoki.key_generator import  c_destroy_object, c_generate_key
 from pycryptoki.session_management import c_initialize, c_finalize, \
     c_close_all_sessions_ex, ca_factory_reset_ex, c_open_session_ex, login_ex, \
     c_get_token_info_ex, c_init_pin_ex, c_logout_ex, c_close_session_ex, c_finalize_ex
-from pycryptoki.token_management import  get_token_by_label_ex, c_init_token_ex
 from pycryptoki.test_functions import verify_object_attributes, verify_object_exists
-from pycryptoki.utils.common_utils import setLogFile
-from pycryptoki.tests.stress.vreset_thread import ResetThread
-from pycryptoki.defaults import DEFAULT_UTILS_PATH, FORMAT
-from random import randint
-import logging
-import os
-import threading
-import argparse
-import sys
-
+from pycryptoki.tests import ResetThread
+from pycryptoki.token_management import  get_token_by_label_ex, c_init_token_ex
 
 #Global Scope
 logger = logging.getLogger(__name__)

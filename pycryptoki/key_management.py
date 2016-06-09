@@ -1,9 +1,9 @@
 """
 Methods responsible for key management
 """
-from pycryptoki.cryptoki import CA_GenerateMofN, CA_ModifyUsageCount, \
+from .cryptoki import CA_GenerateMofN, CA_ModifyUsageCount, \
     CK_VOID_PTR, CK_ULONG, CA_MOFN_GENERATION, CK_BYTE, CA_MOFN_GENERATION_PTR
-from pycryptoki.test_functions import make_error_handle_function
+from .test_functions import make_error_handle_function
 
 
 def ca_generatemofn(h_session,

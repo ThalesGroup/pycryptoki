@@ -4,8 +4,8 @@ Utilities for pycryptoki
 from _ctypes import pointer, POINTER
 from ctypes import c_ulong, cast, create_string_buffer
 
-from pycryptoki.cryptoki import CK_CHAR
-from pycryptoki.defines import CKR_OK
+from .cryptoki import CK_CHAR
+from .defines import CKR_OK
 
 
 class CException(Exception):

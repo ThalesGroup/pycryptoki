@@ -1,44 +1,44 @@
 """
 Functions for managing partitions
 """
+import logging
 from _ctypes import pointer
 from ctypes import byref, c_ubyte
-import logging
-from pycryptoki.cryptoki import (CK_SLOT_ID,
-                                 CK_ULONG,
-                                 CK_SESSION_HANDLE,
-                                 CA_CreateContainer,
-                                 CA_DeleteContainerWithHandle,
-                                 CA_GetContainerList,
-                                 CA_GetContainerCapabilitySet,
-                                 CA_GetContainerCapabilitySetting,
-                                 CA_GetContainerPolicySet,
-                                 CA_GetContainerPolicySetting,
-                                 CA_GetContainerName,
-                                 CA_GetContainerStorageInformation,
-                                 CA_GetContainerStatus,
-                                 CA_SetContainerPolicy,
-                                 CA_SetContainerPolicies,
-                                 CA_SetContainerSize)
-from pycryptoki.defines import (LUNA_PARTITION_TYPE_STANDALONE,
-                                LUNA_CF_CONTAINER_ENABLED,
-                                LUNA_CF_KCV_CREATED,
-                                LUNA_CF_LKCV_CREATED,
-                                LUNA_CF_HA_INITIALIZED,
-                                LUNA_CF_PARTITION_INITIALIZED,
-                                LUNA_CF_CONTAINER_ACTIVATED,
-                                LUNA_CF_CONTAINER_LUSR_ACTIVATED,
-                                LUNA_CF_USER_PIN_INITIALIZED,
-                                LUNA_CF_SO_PIN_LOCKED,
-                                LUNA_CF_SO_PIN_TO_BE_CHANGED,
-                                LUNA_CF_USER_PIN_LOCKED,
-                                LUNA_CF_LIMITED_USER_PIN_LOCKED,
-                                LUNA_CF_LIMITED_USER_CREATED,
-                                LUNA_CF_USER_PIN_TO_BE_CHANGED,
-                                LUNA_CF_LIMITED_USER_PIN_TO_BE_CHANGED)
-from pycryptoki.common_utils import AutoCArray, refresh_c_arrays
-from pycryptoki.test_functions import make_error_handle_function
 
+from .common_utils import AutoCArray, refresh_c_arrays
+from .cryptoki import (CK_SLOT_ID,
+                       CK_ULONG,
+                       CK_SESSION_HANDLE,
+                       CA_CreateContainer,
+                       CA_DeleteContainerWithHandle,
+                       CA_GetContainerList,
+                       CA_GetContainerCapabilitySet,
+                       CA_GetContainerCapabilitySetting,
+                       CA_GetContainerPolicySet,
+                       CA_GetContainerPolicySetting,
+                       CA_GetContainerName,
+                       CA_GetContainerStorageInformation,
+                       CA_GetContainerStatus,
+                       CA_SetContainerPolicy,
+                       CA_SetContainerPolicies,
+                       CA_SetContainerSize)
+from .defines import (LUNA_PARTITION_TYPE_STANDALONE,
+                      LUNA_CF_CONTAINER_ENABLED,
+                      LUNA_CF_KCV_CREATED,
+                      LUNA_CF_LKCV_CREATED,
+                      LUNA_CF_HA_INITIALIZED,
+                      LUNA_CF_PARTITION_INITIALIZED,
+                      LUNA_CF_CONTAINER_ACTIVATED,
+                      LUNA_CF_CONTAINER_LUSR_ACTIVATED,
+                      LUNA_CF_USER_PIN_INITIALIZED,
+                      LUNA_CF_SO_PIN_LOCKED,
+                      LUNA_CF_SO_PIN_TO_BE_CHANGED,
+                      LUNA_CF_USER_PIN_LOCKED,
+                      LUNA_CF_LIMITED_USER_PIN_LOCKED,
+                      LUNA_CF_LIMITED_USER_CREATED,
+                      LUNA_CF_USER_PIN_TO_BE_CHANGED,
+                      LUNA_CF_LIMITED_USER_PIN_TO_BE_CHANGED)
+from .test_functions import make_error_handle_function
 
 LOG = logging.getLogger(__name__)
 
@@ -181,7 +181,8 @@ def ca_get_container_capability_setting(slot, h_container, capability_id):
     return ret, cap_val.value
 
 
-ca_get_container_capability_setting_ex = make_error_handle_function(ca_get_container_capability_setting)
+ca_get_container_capability_setting_ex = make_error_handle_function(
+    ca_get_container_capability_setting)
 
 
 def ca_get_container_policy_set(slot, h_container):
@@ -257,6 +258,7 @@ def ca_get_container_name(slot, h_container):
                                    cont_id,
                                    name_arr.array,
                                    name_arr.size)
+
     ret = _ca_get_container_name()
 
     return ret, ''.join(map(chr, name_arr.array))
@@ -295,7 +297,8 @@ def ca_get_container_storage_information(slot, h_container):
                  'object_count': obj_count.value}
 
 
-ca_get_container_storage_information_ex = make_error_handle_function(ca_get_container_storage_information)
+ca_get_container_storage_information_ex = make_error_handle_function(
+    ca_get_container_storage_information)
 
 
 def ca_get_container_status(slot, h_container):
@@ -342,7 +345,7 @@ def ca_get_container_status(slot, h_container):
     if status_flags.value ^ mask != 0:
         unknown_flags = []
         for i in range(status_flags.value.bit_length()):
-            if((status_flags.value ^ mask) >> i) & 1:
+            if ((status_flags.value ^ mask) >> i) & 1:
                 unknown_flags.append(2 ** i)
         raise Exception("Found unknown flags! {}".format(' '.join(unknown_flags)))
     for key, flag in flags_dict.iteritems():

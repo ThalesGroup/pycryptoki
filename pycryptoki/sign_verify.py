@@ -3,129 +3,23 @@ PKCS11 Operations related to Signing and Verifying data
 """
 import logging
 from _ctypes import POINTER
-from ctypes import create_string_buffer, cast, byref, sizeof, pointer, c_void_p, string_at, c_ubyte
+from ctypes import create_string_buffer, cast, byref, string_at, c_ubyte
 
-from cryptoki import CK_MECHANISM, CK_MECHANISM_TYPE, CK_VOID_PTR, CK_ULONG, \
+from cryptoki import CK_ULONG, \
     CK_BYTE_PTR, C_SignInit, C_Sign
-from defines import CKR_OK, CKM_RSA_PKCS_PSS, CKM_SHA1_RSA_PKCS_PSS, \
-    CKM_SHA224_RSA_PKCS_PSS, CKM_SHA256_RSA_PKCS_PSS, CKM_SHA384_RSA_PKCS_PSS, \
-    CKM_SHA512_RSA_PKCS_PSS, CKM_SHA_1, CKM_SHA224, CKM_SHA256, CKM_SHA384, \
-    CKM_SHA512, CKG_MGF1_SHA1, CKG_MGF1_SHA224, CKG_MGF1_SHA256, CKG_MGF1_SHA384, \
-    CKG_MGF1_SHA512
-from pycryptoki.attributes import to_char_array
-from pycryptoki.common_utils import refresh_c_arrays, AutoCArray
-from pycryptoki.cryptoki import C_VerifyInit, C_Verify, C_SignUpdate, \
-    C_SignFinal, C_VerifyUpdate, C_VerifyFinal, CK_RSA_PKCS_PSS_PARAMS
-from pycryptoki.encryption import _get_string_from_list
-from pycryptoki.test_functions import make_error_handle_function
+from defines import CKR_OK
+from .attributes import to_char_array
+from .common_utils import refresh_c_arrays, AutoCArray
+from .cryptoki import C_VerifyInit, C_Verify, C_SignUpdate, \
+    C_SignFinal, C_VerifyUpdate, C_VerifyFinal
+from .encryption import _get_string_from_list
+from .mechanism import Mechanism, NullMech
+from .test_functions import make_error_handle_function
 
 LOG = logging.getLogger(__name__)
 
 
-def get_custom_mech_for_sigver(sigver_mech, algorithm, mask=None, salt_len=8):
-    """
-    Generate a mechanism for signing/verifying operations with RSA PKCS PSS
-    variants. Use the specified algorithm in the returned CK_MECHANISM object.
-
-    Note:
-
-    PKCS #1 recommends using a mask generation algorithm based on the hash
-    algorithm used for hashing. I.e., if CKM_SHA224 is used to hash,
-    CKG_MGF1_SHA224 _should_ be used for mask generation.
-
-    Algorithm must be one of:
-    CKM_SHA_1, CKM_SHA224, CKM_SHA256, CKM_SHA384, CKM_SHA512
-
-    Mask must be one of:
-    CKG_MGF1_SHA1, CKG_MGF1_SHA224, CKG_MGF1_SHA256, CKG_MGF1_SHA384, CKG_MGF1_SHA512
-
-    :param sigver_mech: signing/verifying mechanism
-    :param algorithm: hashing algorithm
-    :param mask: mask generation function; if None, use matching
-    :param salt_len: length of salt
-    :return: CK_MECHANISM with PSS parameters configured
-    """
-    if mask is None:
-        masks = {CKM_SHA_1: CKG_MGF1_SHA1,
-                 CKM_SHA224: CKG_MGF1_SHA224,
-                 CKM_SHA256: CKG_MGF1_SHA256,
-                 CKM_SHA384: CKG_MGF1_SHA384,
-                 CKM_SHA512: CKG_MGF1_SHA512}
-        mask = masks[algorithm]
-
-    mech = CK_MECHANISM()
-    mech.mechanism = CK_MECHANISM_TYPE(sigver_mech)
-
-    params = CK_RSA_PKCS_PSS_PARAMS()
-    params.hashAlg = CK_ULONG(algorithm)
-    params.mgf = CK_ULONG(mask)
-    params.usSaltLen = CK_ULONG(salt_len)
-
-    mech.pParameter = cast(pointer(params), c_void_p)
-    mech.usParameterLen = CK_ULONG(sizeof(params))
-    return mech
-
-
-def get_mechanism_for_sigver(flavour):
-    """
-    Try to build a default mechanism if none is provided,
-    most mechanisms just need the .pParameter field to be null.
-    If they don't the mechanism can be instantiated here.
-
-    :param flavour: signing/verifying mechanism
-    :return: CK_MECHANISM with PSS parameters configured
-    """
-    mech = CK_MECHANISM()
-    mech.mechanism = CK_MECHANISM_TYPE(flavour)
-
-    default_salt_len = 8
-    if flavour == CKM_RSA_PKCS_PSS or flavour == CKM_SHA1_RSA_PKCS_PSS:
-        params = CK_RSA_PKCS_PSS_PARAMS()
-        params.hashAlg = CK_ULONG(CKM_SHA_1)
-        params.mgf = CK_ULONG(CKG_MGF1_SHA1)
-        params.usSaltLen = CK_ULONG(default_salt_len)
-
-        mech.pParameter = cast(pointer(params), c_void_p)
-        mech.usParameterLen = CK_ULONG(sizeof(params))
-    elif flavour == CKM_SHA224_RSA_PKCS_PSS:
-        params = CK_RSA_PKCS_PSS_PARAMS()
-        params.hashAlg = CK_ULONG(CKM_SHA224)
-        params.mgf = CK_ULONG(CKG_MGF1_SHA224)
-        params.usSaltLen = CK_ULONG(default_salt_len)
-
-        mech.pParameter = cast(pointer(params), c_void_p)
-        mech.usParameterLen = CK_ULONG(sizeof(params))
-    elif flavour == CKM_SHA256_RSA_PKCS_PSS:
-        params = CK_RSA_PKCS_PSS_PARAMS()
-        params.hashAlg = CK_ULONG(CKM_SHA256)
-        params.mgf = CK_ULONG(CKG_MGF1_SHA256)
-        params.usSaltLen = CK_ULONG(default_salt_len)
-
-        mech.pParameter = cast(pointer(params), c_void_p)
-        mech.usParameterLen = CK_ULONG(sizeof(params))
-    elif flavour == CKM_SHA384_RSA_PKCS_PSS:
-        params = CK_RSA_PKCS_PSS_PARAMS()
-        params.hashAlg = CK_ULONG(CKM_SHA384)
-        params.mgf = CK_ULONG(CKG_MGF1_SHA384)
-        params.usSaltLen = CK_ULONG(default_salt_len)
-
-        mech.pParameter = cast(pointer(params), c_void_p)
-        mech.usParameterLen = CK_ULONG(sizeof(params))
-    elif flavour == CKM_SHA512_RSA_PKCS_PSS:
-        params = CK_RSA_PKCS_PSS_PARAMS()
-        params.hashAlg = CK_ULONG(CKM_SHA512)
-        params.mgf = CK_ULONG(CKG_MGF1_SHA512)
-        params.usSaltLen = CK_ULONG(default_salt_len)
-
-        mech.pParameter = cast(pointer(params), c_void_p)
-        mech.usParameterLen = CK_ULONG(sizeof(params))
-    else:
-        mech.pParameter = CK_VOID_PTR(0)
-        mech.usParameterLen = CK_ULONG(0)
-    return mech
-
-
-def c_sign(h_session, sign_flavor, data_to_sign, h_key, mech=None, algorithm=None):
+def c_sign(h_session, sign_flavor, data_to_sign, h_key, mech=None, extra_params=None):
     """
     Performs a C_SignInit and C_Sign operation on some data
 
@@ -143,16 +37,17 @@ def c_sign(h_session, sign_flavor, data_to_sign, h_key, mech=None, algorithm=Non
     :param h_key: The key to sign the data with
     :param mech: The mechanism to use, if None a blank mechanism will be created based on the
                  sign_flavor
-    :param algorithm: The hash algorithm used on data_to_sign; only necessary for RSA PKCS PSS
+    :param extra_params: Parameters to be passed to the mechanism creation. If None, blank mechanism
+    will be used.
     :return: The result code, A python string representing the signature
     """
 
     # Get the mechanism
     if mech is None:
-        mech = get_mechanism_for_sigver(sign_flavor)
-
-    if algorithm is not None:
-        mech = get_custom_mech_for_sigver(sign_flavor, algorithm)
+        if extra_params is None:
+            mech = NullMech(sign_flavor).to_c_mech()
+        else:
+            mech = Mechanism(sign_flavor, params=extra_params).to_c_mech()
 
     # Initialize the sign operation
     ret = C_SignInit(h_session, byref(mech), CK_ULONG(h_key))
@@ -287,7 +182,8 @@ def do_multipart_verify(h_session, input_data_list, signature):
     return ret
 
 
-def c_verify(h_session, h_key, verify_flavor, data_to_verify, signature, mech=None, algorithm=None):
+def c_verify(h_session, h_key, verify_flavor, data_to_verify, signature, mech=None,
+             extra_params=None):
     """
     Return the result code of C_Verify which indicates whether or not the signature is
     valid.
@@ -314,10 +210,10 @@ def c_verify(h_session, h_key, verify_flavor, data_to_verify, signature, mech=No
 
     # Get the mechanism
     if mech is None:
-        mech = get_mechanism_for_sigver(verify_flavor)
-
-    if algorithm is not None:
-        mech = get_custom_mech_for_sigver(verify_flavor, algorithm)
+        if extra_params is None:
+            mech = NullMech(verify_flavor).to_c_mech()
+        else:
+            mech = Mechanism(verify_flavor, extra_params).to_c_mech()
 
     # Initialize the verify operation
     ret = C_VerifyInit(h_session, mech, CK_ULONG(h_key))

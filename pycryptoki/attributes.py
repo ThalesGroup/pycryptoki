@@ -3,14 +3,13 @@ This module contains a wrapper around the key attributes and the template struct
 generation to make it possible to create templates in python and easily
 convert them into templates in C.
 """
+import binascii
 import datetime
 import logging
 from collections import defaultdict
 from ctypes import cast, c_void_p, create_string_buffer, c_bool, \
     c_ulong, pointer, POINTER, sizeof, c_char, string_at, c_ubyte
 from functools import wraps
-
-import binascii
 
 from cryptoki import CK_ATTRIBUTE, CK_BBOOL, CK_ATTRIBUTE_TYPE, CK_ULONG, \
     CK_BYTE, CK_CHAR
@@ -27,7 +26,7 @@ from defines import CKA_USAGE_LIMIT, CKA_USAGE_COUNT, CKA_CLASS, CKA_TOKEN, \
     CKA_CCM_PRIVATE, CKA_FINGERPRINT_SHA1, CKA_FINGERPRINT_SHA256, CKA_OUID, CKA_UNWRAP_TEMPLATE, \
     CKA_DERIVE_TEMPLATE, \
     CKA_X9_31_GENERATED, CKA_VALUE
-from pycryptoki.defines import CKA_EKM_UID, CKA_GENERIC_1, CKA_GENERIC_2, \
+from .defines import CKA_EKM_UID, CKA_GENERIC_1, CKA_GENERIC_2, \
     CKA_GENERIC_3
 
 LOG = logging.getLogger(__name__)
@@ -251,6 +250,8 @@ KEY_TRANSFORMS.update({
     CKA_PRIME_BITS: to_long,
     CKA_SUBPRIME_BITS: to_long,
     CKA_VALUE_BITS: to_long,
+    CKA_USAGE_COUNT: to_long,
+    CKA_USAGE_LIMIT: to_long,
 
     # int, bool
     CKA_TOKEN: to_bool,
@@ -304,14 +305,18 @@ KEY_TRANSFORMS.update({
     CKA_BASE: to_byte_array,
     CKA_FINGERPRINT_SHA1: to_byte_array,
     CKA_FINGERPRINT_SHA256: to_byte_array,
-    CKA_USAGE_COUNT: to_byte_array,
-    CKA_USAGE_LIMIT: to_byte_array,
     CKA_OUID: to_byte_array,
 
     # Dict
     CKA_UNWRAP_TEMPLATE: to_sub_attributes,
     CKA_DERIVE_TEMPLATE: to_sub_attributes,
 })
+
+CONVERSIONS = {CK_ULONG: to_long,
+               CK_BBOOL: to_bool,
+               c_char: to_char_array,
+               CK_BYTE: to_byte_array
+               }
 
 
 class Attributes(dict):

@@ -3,28 +3,27 @@ Created on Aug 24, 2012
 
 @author: mhughes
 """
-from ctypes import byref
 import logging
+from ctypes import byref
 
 # Cryptoki Constants
-from pycryptoki.cryptoki import (CK_ULONG,
-                                 CK_BBOOL,
-                                 CK_MECHANISM_TYPE,
-                                 CK_MECHANISM_INFO)
-from pycryptoki.defaults import ADMIN_PARTITION_LABEL, ADMIN_SLOT
-from pycryptoki.defines import CKR_OK
-
+from .cryptoki import (CK_ULONG,
+                       CK_BBOOL,
+                       CK_MECHANISM_TYPE,
+                       CK_MECHANISM_INFO)
+from .defaults import ADMIN_PARTITION_LABEL, ADMIN_SLOT
+from .defines import CKR_OK
 
 # Cryptoki functions.
-from pycryptoki.cryptoki import (C_InitToken,
-                                 C_GetSlotList,
-                                 C_GetMechanismList,
-                                 C_GetMechanismInfo,
-                                 CA_GetTokenPolicies)
-from pycryptoki.session_management import c_get_token_info
-from pycryptoki.test_functions import make_error_handle_function
-from pycryptoki.common_utils import AutoCArray
-from pycryptoki.common_utils import refresh_c_arrays
+from .cryptoki import (C_InitToken,
+                       C_GetSlotList,
+                       C_GetMechanismList,
+                       C_GetMechanismInfo,
+                       CA_GetTokenPolicies)
+from .session_management import c_get_token_info
+from .test_functions import make_error_handle_function
+from .common_utils import AutoCArray
+from .common_utils import refresh_c_arrays
 
 LOG = logging.getLogger(__name__)
 

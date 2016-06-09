@@ -4,14 +4,16 @@ Methods used to generate keys.
 
 from ctypes import byref
 
-from cryptoki import C_DestroyObject, CK_OBJECT_HANDLE, CK_ULONG, CK_MECHANISM, \
-    CK_MECHANISM_TYPE, CK_VOID_PTR, C_GenerateKey, C_GenerateKeyPair, C_CopyObject
+from cryptoki import C_DestroyObject, CK_OBJECT_HANDLE, CK_ULONG, C_GenerateKey, \
+    C_GenerateKeyPair, \
+    C_CopyObject
 from default_templates import CKM_DES_KEY_GEN_TEMP, \
     CKM_RSA_PKCS_KEY_PAIR_GEN_PUBTEMP, CKM_RSA_PKCS_KEY_PAIR_GEN_PRIVTEMP
 from defines import CKM_DES_KEY_GEN, CKM_RSA_PKCS_KEY_PAIR_GEN
-from pycryptoki.attributes import Attributes
-from pycryptoki.cryptoki import C_DeriveKey
-from pycryptoki.test_functions import make_error_handle_function
+from .attributes import Attributes
+from .cryptoki import C_DeriveKey
+from .mechanism import NullMech
+from .test_functions import make_error_handle_function
 
 
 def c_destroy_object(h_session, h_object_value):
@@ -60,11 +62,7 @@ def _get_mechanism(flavor):
     :returns: Returns a blank mechanism of type flavor
 
     """
-    mech = CK_MECHANISM()
-    mech.mechanism = CK_MECHANISM_TYPE(flavor)
-    mech.pParameter = CK_VOID_PTR(0)
-    mech.usParameterLen = CK_ULONG(0)
-    return mech
+    return NullMech(flavor).to_c_mech()
 
 
 def c_generate_key(h_session, flavor=CKM_DES_KEY_GEN, template=CKM_DES_KEY_GEN_TEMP):

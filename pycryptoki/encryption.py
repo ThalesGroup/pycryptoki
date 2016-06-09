@@ -3,160 +3,23 @@ Methods related to encrypting data/files.
 """
 import logging
 from _ctypes import POINTER
-from ctypes import c_char, create_string_buffer, cast, c_void_p, byref, sizeof, pointer, \
-    string_at, c_ubyte
+from ctypes import create_string_buffer, cast, byref, string_at, c_ubyte
 
-from cryptoki import CK_MECHANISM, CK_MECHANISM_TYPE, CK_VOID_PTR, CK_ULONG, \
-    C_EncryptInit, C_Encrypt, CK_RSA_PKCS_OAEP_PARAMS
-from defines import CKM_DES_CBC, CKM_DES3_CBC, CKM_CAST3_CBC, CKM_DES_ECB, \
-    CKM_DES3_ECB, CKM_CAST3_ECB, CKM_RC2_ECB, CKM_RC2_CBC, CKM_CAST5_ECB, \
-    CKM_CAST5_CBC, CKM_RC4, CKM_RC5_ECB, CKM_RC5_CBC, CKM_RSA_X_509, CKM_DES_CBC_PAD, \
-    CKM_DES3_CBC_PAD, CKM_DES3_CBC_PAD_IPSEC, CKM_RC2_CBC_PAD, CKM_RC5_CBC_PAD, \
-    CKM_CAST3_CBC_PAD, CKM_CAST5_CBC_PAD, CKM_SEED_ECB, CKM_SEED_CBC, \
-    CKM_SEED_CBC_PAD, CKM_AES_ECB, CKM_AES_CBC, CKM_AES_CBC_PAD, \
-    CKM_AES_CBC_PAD_IPSEC, CKM_ARIA_ECB, CKM_ARIA_CBC, CKM_ARIA_CBC_PAD, \
-    CKM_RSA_PKCS, CKM_DES_CFB8, CKM_DES_CFB64, CKM_DES_OFB64, CKM_AES_CFB8, \
-    CKM_AES_CFB128, CKM_AES_OFB, CKM_ARIA_CFB8, CKM_ARIA_CFB128, CKM_ARIA_OFB, \
-    CKM_AES_GCM, CKM_XOR_BASE_AND_DATA_W_KDF, CKM_RSA_PKCS_OAEP, CKM_ECIES, CKR_OK, \
-    CKM_SHA_1, CKG_MGF1_SHA1, CKZ_DATA_SPECIFIED, CKM_AES_KW, CKM_AES_KWP
-from pycryptoki.attributes import Attributes, to_byte_array, to_char_array
-from pycryptoki.common_utils import AutoCArray, refresh_c_arrays
-from pycryptoki.cryptoki import C_Decrypt, C_DecryptInit, CK_OBJECT_HANDLE, \
+from cryptoki import CK_ULONG, \
+    C_EncryptInit, C_Encrypt
+from defines import CKR_OK
+from .attributes import Attributes, to_char_array
+from .common_utils import AutoCArray, refresh_c_arrays
+from .cryptoki import C_Decrypt, C_DecryptInit, CK_OBJECT_HANDLE, \
     C_WrapKey, C_UnwrapKey, C_EncryptUpdate, C_EncryptFinal, CK_BYTE_PTR, \
     C_DecryptUpdate, C_DecryptFinal
-from pycryptoki.test_functions import make_error_handle_function
+from .mechanism import Mechanism
+from .test_functions import make_error_handle_function
 
 LOG = logging.getLogger(__name__)
 
 
-def get_encryption_mechanism(encryption_flavor, external_iv=None):
-    """Returns the CK_MECHANISM() object associated with a given encryption flavor
-    #TODO: Only works with one kind of encryption mechanism currently.
-
-    :param encryption_flavor: The flavor of the encryption that the mechanism needs
-    to encrypt for.
-    :param external_iv: External IV to insert into the mechanism struct.
-    :returns: Returns a CTypes CK_Mechanism given the encryption flavour that you have passed in
-
-    """
-    mech = CK_MECHANISM()
-    mech.mechanism = CK_MECHANISM_TYPE(encryption_flavor)
-    mech.pParameter = 0
-    mech.usParameterLen = CK_ULONG(0)
-
-    iv_required = 1
-    RC2_params_required = 2
-    RC2CBC_params_required = 3
-    RC5_params_required = 4
-    RC5CBC_params_required = 5
-    IV16_required = 6
-    GCM_params_required = 7
-    xorkdf_params_required = 8
-    OAEP_params_required = 9
-    ECIES_params_required = 10
-
-    encryption_flavors = {CKM_DES_CBC: iv_required,
-                          CKM_DES3_CBC: iv_required,
-                          CKM_CAST3_CBC: iv_required,
-                          CKM_DES_ECB: 0,
-                          CKM_DES3_ECB: 0,
-                          CKM_CAST3_ECB: 0,
-                          CKM_RC2_ECB: RC2_params_required,
-                          CKM_RC2_CBC: RC2CBC_params_required,
-                          CKM_CAST5_ECB: 0,
-                          CKM_CAST5_CBC: iv_required,
-                          CKM_RC4: 0,
-                          CKM_RC5_ECB: RC5_params_required,
-                          CKM_RC5_CBC: RC5CBC_params_required,
-                          CKM_RSA_X_509: 0,
-                          CKM_DES_CBC_PAD: iv_required,
-                          CKM_DES3_CBC_PAD: iv_required,
-                          CKM_DES3_CBC_PAD_IPSEC: iv_required,
-                          CKM_RC2_CBC_PAD: RC2CBC_params_required,
-                          CKM_RC5_CBC_PAD: RC5CBC_params_required,
-                          CKM_CAST3_CBC_PAD: iv_required,
-                          CKM_CAST5_CBC_PAD: iv_required,
-                          CKM_SEED_ECB: 0,
-                          CKM_SEED_CBC: IV16_required,
-                          CKM_SEED_CBC_PAD: IV16_required,
-                          CKM_AES_ECB: 0,
-                          CKM_AES_KW: iv_required,
-                          CKM_AES_KWP: iv_required,
-                          CKM_AES_CBC: IV16_required,
-                          CKM_AES_CBC_PAD: IV16_required,
-                          CKM_AES_CBC_PAD_IPSEC: IV16_required,
-                          CKM_ARIA_ECB: IV16_required,
-                          CKM_ARIA_CBC: IV16_required,
-                          CKM_ARIA_CBC_PAD: IV16_required,
-                          CKM_RSA_PKCS: 0,
-                          CKM_DES_CFB8: iv_required,
-                          CKM_DES_CFB64: iv_required,
-                          CKM_DES_OFB64: iv_required,
-                          CKM_AES_CFB8: iv_required,
-                          CKM_AES_CFB128: iv_required,
-                          CKM_AES_OFB: iv_required,
-                          CKM_ARIA_CFB8: iv_required,
-                          CKM_ARIA_CFB128: iv_required,
-                          CKM_ARIA_OFB: iv_required,
-                          CKM_AES_GCM: GCM_params_required,
-                          CKM_XOR_BASE_AND_DATA_W_KDF: xorkdf_params_required,
-                          CKM_RSA_PKCS_OAEP: OAEP_params_required,
-                          CKM_ECIES: ECIES_params_required}
-
-    params = encryption_flavors.get(encryption_flavor)
-
-    if params in (iv_required, IV16_required):
-        if external_iv:
-            iv = external_iv
-            iv16 = external_iv
-        else:
-            LOG.warning("Using static IVs can be insecure! ")
-            iv = [0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38]
-            iv16 = [1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8]
-
-    if params == iv_required:
-        iv_ba, iv_len = to_byte_array(iv)
-        mech.pParameter = iv_ba
-        mech.usParameterLen = iv_len
-    elif params == RC2_params_required:
-        num_of_effective_bits = 0
-        rc2_params = (c_char * 2)()
-        rc2_params[0] = c_char(int(num_of_effective_bits, 8) & 0xff)
-        rc2_params[1] = c_char(int((num_of_effective_bits >> 8), 8) & 0xff)
-        rc2_params = create_string_buffer("", 2)
-        mech.pParameter = cast(rc2_params, c_void_p)
-        mech.usParameterLen = CK_ULONG(len(rc2_params))
-    elif params == RC2CBC_params_required:
-        raise NotImplementedError("RC2 CBC params not yet implemented")
-    elif params == RC5_params_required:
-        raise NotImplementedError("RC5 params not yet implemented")
-    elif params == RC5CBC_params_required:
-        raise NotImplementedError("RC5 CBC params not yet implemented")
-    elif params == IV16_required:
-        iv_ba, iv_len = to_byte_array(iv16)
-        mech.pParameter = iv_ba
-        mech.usParameterLen = iv_len
-    elif params == GCM_params_required:
-        raise NotImplementedError("GCM params not yet implemented")
-    elif params == xorkdf_params_required:
-        raise NotImplementedError("xorkdf params not yet implemented")
-    elif params == OAEP_params_required:
-        oaep_params = CK_RSA_PKCS_OAEP_PARAMS()
-        oaep_params.hashAlg = CK_ULONG(CKM_SHA_1)
-        oaep_params.mgf = CK_ULONG(CKG_MGF1_SHA1)
-        oaep_params.source = CK_ULONG(CKZ_DATA_SPECIFIED)
-        oaep_params.pSourceData = 0
-        oaep_params.ulSourceDataLen = 0
-
-        mech.pParameter = cast(pointer(oaep_params), CK_VOID_PTR)
-        mech.usParameterLen = CK_ULONG(sizeof(oaep_params))
-    elif params == ECIES_params_required:
-        raise NotImplementedError("ECIES params not yet implemented")
-
-    return mech
-
-
-def c_encrypt(h_session, encryption_flavor, h_key, data_to_encrypt, mech=None, external_iv=None):
+def c_encrypt(h_session, encryption_flavor, h_key, data_to_encrypt, mech=None, extra_params=None):
     """Encrypts data with a given key and encryption flavor
     encryption flavors
 
@@ -168,13 +31,14 @@ def c_encrypt(h_session, encryption_flavor, h_key, data_to_encrypt, mech=None, e
         a multipart operation will be used
     :param mech: The mechanism to use, if None will try to look up a
         default mechanism based on the encryption flavor
-    :param external_iv: The new Integrity Value to be used.
+    :param extra_params: Parameters to be passed to mechanism generation.
     :returns: Returns the result code of the operation, a python string representing the
     encrypted data
 
     """
     if mech is None:
-        mech = get_encryption_mechanism(encryption_flavor, external_iv)
+        py_mech = Mechanism(mech_type=encryption_flavor, params=extra_params)
+        mech = py_mech.to_c_mech()
 
     # if a list is passed out do an encrypt operation on each string in the list, otherwise just
     # do one encrypt operation
@@ -236,7 +100,7 @@ def _get_string_from_list(list_of_strings):
     return "".join(list_of_strings)
 
 
-def c_decrypt(h_session, decryption_flavor, h_key, encrypted_data, mech=None, external_iv=None):
+def c_decrypt(h_session, decryption_flavor, h_key, encrypted_data, mech=None, extra_params=None):
     """Decrypts some data
 
     :param h_session: The session to use
@@ -245,14 +109,16 @@ def c_decrypt(h_session, decryption_flavor, h_key, encrypted_data, mech=None, ex
     :param h_key: The handle of the key to use to decrypt
     :param mech: The mechanism, if none is provided a blank one will be
         provided based on the decryption_flavor (Default value = None)
-    :param encrypted_data:
+    :param encrypted_data: Data to be decrypted
+    :param extra_params: Parameters to be passed to mechanism generation.
     :returns: The result code, a python string of the decrypted data
 
     """
 
     # Get the mechanism
     if mech is None:
-        mech = get_encryption_mechanism(decryption_flavor, external_iv)
+        py_mech = Mechanism(mech_type=decryption_flavor, params=extra_params)
+        mech = py_mech.to_c_mech()
 
     # Initialize Decrypt
     ret = C_DecryptInit(h_session, mech, CK_ULONG(h_key))
@@ -359,7 +225,7 @@ def do_multipart_operation(h_session, c_update_function, c_finalize_function, in
     return ret, python_string
 
 
-def c_wrap_key(h_session, h_wrapping_key, h_key, encryption_flavor, mech=None, external_iv=None):
+def c_wrap_key(h_session, h_wrapping_key, h_key, encryption_flavor, mech=None, extra_params=None):
     """Function which wraps a key
 
     :param h_session: The session to use
@@ -369,11 +235,13 @@ def c_wrap_key(h_session, h_wrapping_key, h_key, encryption_flavor, mech=None, e
         is provided
     :param mech: The mechanism, if none is provided a blank one will be provided
         based on the encryption flavor (Default value = None)
+    :param extra_params: Parameters to be passed to mechanism generation.
     :returns: The result code, a ctypes byte array representing the new key
 
     """
     if mech is None:
-        mech = get_encryption_mechanism(encryption_flavor, external_iv)
+        py_mech = Mechanism(mech_type=encryption_flavor, params=extra_params)
+        mech = py_mech.to_c_mech()
 
     wrapped_key = AutoCArray(ctype=c_ubyte)
 
@@ -395,7 +263,7 @@ c_wrap_key_ex = make_error_handle_function(c_wrap_key)
 
 
 def c_unwrap_key(h_session, h_unwrapping_key, wrapped_key, key_template, encryption_flavor,
-                 mech=None, external_iv=None):
+                 mech=None, extra_params=None):
     """Function which unwraps a key
 
     :param h_session: The session to use
@@ -406,13 +274,15 @@ def c_unwrap_key(h_session, h_unwrapping_key, wrapped_key, key_template, encrypt
         default one based on the encryption flavor
     :param mech: The mechanism to use, if null a default one will be created based on the
     encryption_flavor
-    :param h_unwrapping_key:
-    :param wrapped_key:
+    :param h_unwrapping_key: Key to do the unwrapping
+    :param wrapped_key: Key to be decrypted (unwrapped)
+    :param extra_params: Parameters to be passed to mechanism generation.
     :returns: The result code, the handle of the unwrapped key
 
     """
     if mech is None:
-        mech = get_encryption_mechanism(encryption_flavor, external_iv)
+        py_mech = Mechanism(mech_type=encryption_flavor, params=extra_params)
+        mech = py_mech.to_c_mech()
 
     c_template = Attributes(key_template).get_c_struct()
     byte_wrapped_key = cast(wrapped_key, CK_BYTE_PTR)

@@ -10,7 +10,7 @@ import time
 
 from rpyc.core.protocol import PingError
 
-from pycryptoki.daemon import rpyc_pycryptoki
+from .daemon import rpyc_pycryptoki
 
 log = logging.getLogger(__name__)
 

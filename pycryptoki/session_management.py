@@ -1,50 +1,48 @@
 """
 Methods responsible for managing a user's session and login/c_logout
 """
-from ctypes import cast, c_char_p, c_void_p, create_string_buffer, \
-    byref, pointer
 import logging
 import re
+from ctypes import cast, c_char_p, c_void_p, create_string_buffer, \
+    byref, pointer
 
 # cryptoki constants
-from pycryptoki.cryptoki import (CK_ULONG,
-                                 CK_BBOOL,
-                                 CK_SLOT_ID,
-                                 CK_SLOT_INFO,
-                                 CK_SESSION_HANDLE,
-                                 CK_FLAGS,
-                                 CK_NOTIFY,
-                                 CK_SESSION_INFO,
-                                 CK_USER_TYPE,
-                                 CK_TOKEN_INFO,
-                                 CK_VOID_PTR,
-                                 CK_BYTE)
+from .cryptoki import (CK_ULONG,
+                       CK_BBOOL,
+                       CK_SLOT_ID,
+                       CK_SLOT_INFO,
+                       CK_SESSION_HANDLE,
+                       CK_FLAGS,
+                       CK_NOTIFY,
+                       CK_SESSION_INFO,
+                       CK_USER_TYPE,
+                       CK_TOKEN_INFO,
+                       CK_VOID_PTR,
+                       CK_BYTE)
 
 # Cryptoki Functions
-from pycryptoki.cryptoki import (C_Initialize,
-                                 C_GetSlotList,
-                                 C_GetSlotInfo,
-                                 C_CloseAllSessions,
-                                 C_GetSessionInfo,
-                                 C_OpenSession,
-                                 C_Login,
-                                 C_Logout,
-                                 C_CloseSession,
-                                 C_InitPIN,
-                                 CA_FactoryReset,
-                                 C_GetTokenInfo,
-                                 C_Finalize,
-                                 C_SetPIN,
-                                 CA_DeleteContainerWithHandle,
-                                 CA_OpenApplicationID,
-                                 CA_CloseApplicationID,
-                                 CA_Restart,
-                                 CA_CreateContainer,
-                                 CA_SetApplicationID)
+from .cryptoki import (C_Initialize,
+                       C_GetSlotList,
+                       C_GetSlotInfo,
+                       C_CloseAllSessions,
+                       C_GetSessionInfo,
+                       C_OpenSession,
+                       C_Login,
+                       C_Logout,
+                       C_CloseSession,
+                       C_InitPIN,
+                       CA_FactoryReset,
+                       C_GetTokenInfo,
+                       C_Finalize,
+                       C_SetPIN,
+                       CA_OpenApplicationID,
+                       CA_CloseApplicationID,
+                       CA_Restart,
+                       CA_SetApplicationID)
 
-from pycryptoki.common_utils import AutoCArray, refresh_c_arrays
-from pycryptoki.defines import CKR_OK, CKF_RW_SESSION, CKF_SERIAL_SESSION
-from pycryptoki.test_functions import make_error_handle_function
+from .common_utils import AutoCArray, refresh_c_arrays
+from .defines import CKR_OK, CKF_RW_SESSION, CKF_SERIAL_SESSION
+from .test_functions import make_error_handle_function
 
 LOG = logging.getLogger(__name__)
 
