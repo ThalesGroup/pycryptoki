@@ -6,7 +6,7 @@ import logging
 from ctypes import c_void_p, cast, pointer, POINTER, sizeof, create_string_buffer, c_char
 
 from . import cryptoki
-from .attributes import to_byte_array, CONVERSIONS
+from .attributes import to_byte_array, to_char_array, CONVERSIONS
 from .cryptoki import CK_AES_CBC_PAD_EXTRACT_PARAMS, CK_MECHANISM, \
     CK_ULONG, CK_ULONG_PTR, CK_AES_CBC_PAD_INSERT_PARAMS, CK_BYTE, CK_BYTE_PTR, CK_RC2_CBC_PARAMS, \
     CK_RC5_PARAMS, CK_RC5_CBC_PARAMS, CK_MECHANISM_TYPE, CK_AES_XTS_PARAMS, \
@@ -295,7 +295,7 @@ class AESGCMMechanism(Mechanism):
         gcm_params.ulIvLen = ivlen
         # Assuming 8 bits per entry in IV.
         gcm_params.ulIvBits = CK_ULONG(len(self.params['iv']) * 8)
-        aad, aadlen = to_byte_array(self.params['AAD'])
+        aad, aadlen = to_char_array(self.params['AAD'])
         gcm_params.pAAD = cast(aad, CK_BYTE_PTR)
         gcm_params.ulAADLen = aadlen
         gcm_params.ulTagBits = CK_ULONG(self.params['ulTagBits'])

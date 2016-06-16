@@ -128,11 +128,12 @@ def to_char_array(val, reverse=False):
     if not isinstance(val, (str, bytes, list)):
         raise TypeError("Invalid conversion {} to CK_CHAR*!".format(type(val)))
 
+    if isinstance(val, list):
+        val = str("".join(val))
+
     if isinstance(val, (str, bytes)):
         string_val = create_string_buffer(val, len(val))
-    else:
-        # TODO: Figure out what, if anything we want to do with a list.
-        string_val = bytearray(val)
+
     return cast(pointer(string_val), c_void_p), CK_ULONG(sizeof(string_val))
 
 
@@ -149,16 +150,18 @@ def to_ck_date(val, reverse=False):
     if reverse:
         return string_at(cast(val.pValue, POINTER(c_char)), val.usValueLen)
 
+    if isinstance(val, dict):
+        val = datetime.date(year=val['year'], month=val['month'], day=val['day'])
+
     if isinstance(val, (str, bytes)):
         if len(val) != 8:
             raise TypeError("Invalid date string passed! Should be of type YYYYMMDD")
         date_val = create_string_buffer(val, len(val))
-    elif isinstance(val, dict):
-        date_str = val['year'] + val['month'] + val['day']
-        date_val = create_string_buffer(date_str, len(date_str))
+
     elif isinstance(val, datetime.date):
         data = val.strftime("%Y%m%d")
         date_val = create_string_buffer(data, len(data))
+
     else:
         raise TypeError("Invalid conversion {} to CK_DATE!".format(type(val)))
 
@@ -167,7 +170,7 @@ def to_ck_date(val, reverse=False):
 
 @ret_type(CK_BYTE)
 def to_byte_array(val, reverse=False):
-    """Converts an arbitrarily sized integer, list, or hex string
+    """Converts an arbitrarily sized integer, list, or byte array
     into a byte array.
 
     It'll zero-pad the bit length so it's a multiple of 8, then convert
@@ -187,19 +190,13 @@ def to_byte_array(val, reverse=False):
         fin = binascii.hexlify(bytearray(data_list))
         LOG.debug("Final hex data: %s", fin)
         return fin
-
-    if isinstance(val, (str, bytes)):
-        # Can be Hex string ('01e4') or a bytestring (ex '\x8p\xb26\x12'G\xa3T\x84\x17\x89')
-        try:
-            # Would prefer to use bytearray.fromhex(), but a few testcases use ' ' * 80 or the like,
-            # which is converted into a zero-length bytearray.
-            hex_array = [val[i:i + 2] for i in range(0, len(val), 2)]
-            byte_array = (CK_BYTE * len(val))(*[int(x, 16) for x in hex_array])
-        except ValueError:
-            # Assume a byte array?
-            py_bytes = bytearray(val)
-            byte_array = (CK_BYTE * len(py_bytes))(*py_bytes)
-    elif isinstance(val, collections.Iterable):
+    if isinstance(val, bytearray):
+        # Convert to list of ints, and use int-list case
+        val = [int(x) for x in val]
+    elif isinstance(val, (str, bytes)):
+        # Hex-string in form '01e4'
+        val = int(val, 16)
+    if isinstance(val, collections.Iterable):
         py_bytes = bytearray(val)
         byte_array = (CK_BYTE * len(py_bytes))(*py_bytes)
     elif isinstance(val, integer_types):
