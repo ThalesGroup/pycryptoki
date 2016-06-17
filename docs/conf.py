@@ -14,6 +14,7 @@
 
 import sys
 import os
+import sphinx_rtd_theme
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -34,6 +35,7 @@ extensions = [
     'sphinx.ext.intersphinx',
     'sphinx.ext.todo',
     'sphinx.ext.viewcode',
+    'sphinxcontrib.napoleon',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -50,7 +52,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Pycryptoki'
-copyright = u'2015, Gemalto (Michael Hughes/Ashley Straw)'
+copyright = u'2016, Gemalto'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -104,7 +106,7 @@ pygments_style = 'sphinx'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'default'
+html_theme = 'sphinx_rtd_theme'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -203,7 +205,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
   ('index', 'Pycryptoki.tex', u'Pycryptoki Documentation',
-   u'Gemalto (Michael Hughes/Ashley Straw)', 'manual'),
+   u'Gemalto', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -233,7 +235,7 @@ latex_documents = [
 # (source start file, name, description, authors, manual section).
 man_pages = [
     ('index', 'pycryptoki', u'Pycryptoki Documentation',
-     [u'Gemalto (Michael Hughes/Ashley Straw)'], 1)
+     [u'Gemalto'], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -247,8 +249,8 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
   ('index', 'Pycryptoki', u'Pycryptoki Documentation',
-   u'Gemalto (Michael Hughes/Ashley Straw)', 'Pycryptoki', 'One line description of project.',
-   'Miscellaneous'),
+   u'Gemalto', 'Pycryptoki', 'Python wrapper for C Cryptoki library',
+   'Cryptography'),
 ]
 
 # Documents to append as an appendix to all manuals.
@@ -265,4 +267,5 @@ texinfo_documents = [
 
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'http://docs.python.org/': None}
+intersphinx_mapping = {'ctypes': ("https://docs.python.org/2",
+                                  None)}
