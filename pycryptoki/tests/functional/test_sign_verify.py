@@ -104,8 +104,3 @@ class TestSignVerify(object):
         ret = c_verify(self.h_session, h_pub_key, sign_flavor, data_to_sign, signature)
         assert ret == CKR_OK, "The result code of the verify operation should be CKR_OK not " + \
                               ret_vals_dictionary[ret]
-
-
-if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG)
-    pytest.cmdline.main(args=['-v', os.path.abspath(__file__)])

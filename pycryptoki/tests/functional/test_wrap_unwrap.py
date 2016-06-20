@@ -82,8 +82,3 @@ class TestWrappingKeys(object):
         assert decrypted_string == data_to_encrypt, \
             "The decrypted data should be the same as the data that was encrypted. " \
             "Instead found " + str(decrypted_string)
-
-
-if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG)
-    pytest.cmdline.main(args=['-v', os.path.abspath(__file__)])

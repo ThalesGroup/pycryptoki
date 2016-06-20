@@ -20,8 +20,6 @@ from ...return_values import ret_vals_dictionary
 
 class TestAlgorithm(object):
     """Test algorithm class"""
-    h_session = 0
-    admin_slot = 0
 
     @pytest.fixture(autouse=True)
     def setup_teardown(self, auth_session):
@@ -77,8 +75,3 @@ class TestAlgorithm(object):
         assert ret == CKR_OK, \
             "Return code should be " + ret_vals_dictionary[CKR_OK] + \
             " not " + ret_vals_dictionary[ret]
-
-
-if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG)
-    pytest.cmdline.main(args=['-v', os.path.abspath(__file__)])

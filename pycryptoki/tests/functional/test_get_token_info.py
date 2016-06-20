@@ -41,6 +41,7 @@ def reset_to_defaults():
     c_close_all_sessions_ex(slot)
 
 
+@pytest.mark.skipif("config.getoption('user') != 'SO'")
 class TestGetTokenInfo(object):
     """ """
 
@@ -75,8 +76,3 @@ class TestGetTokenInfo(object):
         logger.info("After initialization found flags " + str(
             hex(flags)) + " on admin partition should match expected flags" + str(
             hex(expected_flags)))
-
-
-if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG)
-    pytest.cmdline.main(args=['-s', os.path.abspath(__file__)])

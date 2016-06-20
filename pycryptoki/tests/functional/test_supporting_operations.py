@@ -51,8 +51,3 @@ class TestSupportingOperations(object):
                               ret_vals_dictionary[ret]
 
         random_string_two = c_generate_random_ex(self.h_session, 10)
-
-
-if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG)
-    pytest.cmdline.main(args=['-vs', os.path.abspath(__file__)])

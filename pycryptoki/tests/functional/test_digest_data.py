@@ -1,5 +1,4 @@
 import logging
-import os
 
 import pytest
 
@@ -37,8 +36,3 @@ class TestDigestData(object):
         assert _get_string_from_list(
             data_to_digest) != digested_data, "The digested data should not be the same as the " \
                                               "original string"
-
-
-if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG)
-    pytest.cmdline.main(args=['-vs', os.path.abspath(__file__)])

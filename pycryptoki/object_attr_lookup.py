@@ -64,9 +64,6 @@ def c_get_attribute_value(h_session, h_object, template):
         for index in range(0, len(c_struct)):
             key_type = c_struct[index].type
             if any(key_type == unknown_key_type for unknown_key_type in unknown_key_vals):
-                LOG.debug("Allocating memory len(%s) for key %s",
-                          c_struct[index].usValueLen,
-                          key_type)
                 # Allocate memory for the type.
                 c_obj_type = KEY_TRANSFORMS[key_type].ctype
                 mem = (c_obj_type * c_struct[index].usValueLen)()

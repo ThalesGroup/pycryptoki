@@ -13,7 +13,7 @@ from ...test_functions import verify_object_attributes
 logger = logging.getLogger(__name__)
 
 
-@pytest.mark.xfail("Waiting on LA-1860")
+@pytest.mark.xfail(reason="Attributes do not convert 1-to-1 back to python")
 class TestObjectCloning(object):
     """ """
 
@@ -48,7 +48,3 @@ class TestObjectCloning(object):
 
         verify_object_attributes(self.h_session, h_object, DATA_TEMPLATE)
 
-
-if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG)
-    pytest.cmdline.main(args=['-v', os.path.abspath(__file__)])

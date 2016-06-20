@@ -1,13 +1,8 @@
-import ctypes
 import logging
-import os
-from ctypes import cast, pointer
 
 import pytest
 
-from ...mechanism import NullMech
 from . import config as hsm_config
-from ...cryptoki import CK_VOID_PTR, CK_ULONG
 from ...default_templates import CKM_DES_KEY_GEN_TEMP, \
     CKM_DES2_KEY_GEN_TEMP, CKM_DES3_KEY_GEN_TEMP, CKM_CAST3_KEY_GEN_TEMP, \
     CKM_GENERIC_SECRET_KEY_GEN_TEMP, CKM_CAST5_KEY_GEN_TEMP, CKM_RC2_KEY_GEN_TEMP, \
@@ -29,9 +24,13 @@ from ...defines import CKM_DES_KEY_GEN, CKR_OK, \
     CKM_ARIA_KEY_GEN, \
     CKM_RSA_PKCS_KEY_PAIR_GEN, CKM_DSA_KEY_PAIR_GEN, \
     CKM_DH_PKCS_KEY_PAIR_GEN, CKM_ECDSA_KEY_PAIR_GEN, CKM_KCDSA_KEY_PAIR_GEN, \
-    CKM_RSA_X9_31_KEY_PAIR_GEN, CKM_CONCATENATE_BASE_AND_KEY, CKA_ECDSA_PARAMS
+    CKM_RSA_X9_31_KEY_PAIR_GEN, CKA_ECDSA_PARAMS, \
+    CKM_SHA224_KEY_DERIVATION, CKM_SHA256_KEY_DERIVATION, CKM_SHA1_KEY_DERIVATION, \
+    CKM_SHA384_KEY_DERIVATION, CKM_SHA512_KEY_DERIVATION, CKM_MD5_KEY_DERIVATION, \
+    CKM_MD2_KEY_DERIVATION, CKA_VALUE_LEN, CKR_KEY_SIZE_RANGE
 from ...key_generator import c_generate_key, c_generate_key_pair, \
-    c_derive_key, c_generate_key_ex, _get_mechanism
+    c_derive_key, c_generate_key_ex, c_destroy_object
+from ...mechanism import NullMech
 from ...return_values import ret_vals_dictionary
 from ...test_functions import verify_object_attributes
 
@@ -56,13 +55,9 @@ class TestKeys(object):
         (CKM_RC2_KEY_GEN, CKM_RC2_KEY_GEN_TEMP),
         (CKM_RC4_KEY_GEN, CKM_RC4_KEY_GEN_TEMP),
         (CKM_RC5_KEY_GEN, CKM_RC5_KEY_GEN_TEMP),
-        #          (CKM_SSL3_PRE_MASTER_KEY_GEN, CKM_SSL3_PRE_MASTER_KEY_GEN_TEMP), XXX
         (CKM_AES_KEY_GEN, CKM_AES_KEY_GEN_TEMP),
         (CKM_SEED_KEY_GEN, CKM_SEED_KEY_GEN_TEMP),
-        #          (CKM_DSA_PARAMETER_GEN, CKM_DSA_PARAMETER_GEN_TEMP), XXX
-        #          (CKM_KCDSA_PARAMETER_GEN, CKM_KCDSA_PARAMETER_GEN_TEMP), XXX
         (CKM_ARIA_KEY_GEN, CKM_ARIA_KEY_GEN_TEMP)
-        #          (CKM_DH_PKCS_PARAMETER_GEN, CKM_DH_PKCS_PARAMETER_GEN_TEMP) XXX
     ])
     def test_generate_key(self, key_type, key_template):
         """Tests generating a key, asserts that the operation returns correctly with key handles
@@ -138,36 +133,43 @@ class TestKeys(object):
         :param curve_type:
 
         """
-        print curve_list.keys()
         CKM_ECDSA_KEY_PAIR_GEN_PUBTEMP[CKA_ECDSA_PARAMS] = curve_list[curve_type]
         ret, public_key_handle, private_key_handle = c_generate_key_pair(self.h_session,
                                                                          CKM_ECDSA_KEY_PAIR_GEN,
                                                                          CKM_ECDSA_KEY_PAIR_GEN_PUBTEMP,
                                                                          CKM_ECDSA_KEY_PAIR_GEN_PRIVTEMP)
-        assert ret == CKR_OK, "Return code should be " + ret_vals_dictionary[CKR_OK] + " not " + \
-                              ret_vals_dictionary[ret]
-        assert public_key_handle > 0, "The public key handle returned should be non zero"
-        assert private_key_handle > 0, "The private key handle returned should be non zero"
+        try:
+            assert ret == CKR_OK, "Return code should be " + ret_vals_dictionary[CKR_OK] + " not " \
+                                                                                           "" + \
+                                  ret_vals_dictionary[ret]
+            assert public_key_handle > 0, "The public key handle returned should be non zero"
+            assert private_key_handle > 0, "The private key handle returned should be non zero"
+        finally:
+            if public_key_handle:
+                c_destroy_object(self.h_session, public_key_handle)
+            if private_key_handle:
+                c_destroy_object(self.h_session, private_key_handle)
 
+    @pytest.mark.parametrize("derive_type", [CKM_SHA1_KEY_DERIVATION,
+                                             CKM_SHA224_KEY_DERIVATION,
+                                             CKM_SHA256_KEY_DERIVATION,
+                                             CKM_SHA384_KEY_DERIVATION,
+                                             CKM_SHA512_KEY_DERIVATION,
+                                             CKM_MD5_KEY_DERIVATION,
+                                             CKM_MD2_KEY_DERIVATION],
+                             ids=["SHA1", "SHA224", "SHA256", "SHA384", "SHA512",
+                                  "MD5", "MD2"])
     @pytest.mark.parametrize(("key_type", "key_template"), [
         (CKM_DES_KEY_GEN, CKM_DES_KEY_GEN_TEMP),
         (CKM_DES2_KEY_GEN, CKM_DES2_KEY_GEN_TEMP),
-        (CKM_DES3_KEY_GEN, CKM_DES3_KEY_GEN_TEMP),
         (CKM_CAST3_KEY_GEN, CKM_CAST3_KEY_GEN_TEMP),
         (CKM_GENERIC_SECRET_KEY_GEN, CKM_GENERIC_SECRET_KEY_GEN_TEMP),
         (CKM_CAST5_KEY_GEN, CKM_CAST5_KEY_GEN_TEMP),
-        (CKM_RC2_KEY_GEN, CKM_RC2_KEY_GEN_TEMP),
-        (CKM_RC4_KEY_GEN, CKM_RC4_KEY_GEN_TEMP),
-        (CKM_RC5_KEY_GEN, CKM_RC5_KEY_GEN_TEMP),
-        #          (CKM_SSL3_PRE_MASTER_KEY_GEN, CKM_SSL3_PRE_MASTER_KEY_GEN_TEMP), XXX
-        (CKM_AES_KEY_GEN, CKM_AES_KEY_GEN_TEMP),
         (CKM_SEED_KEY_GEN, CKM_SEED_KEY_GEN_TEMP),
-        #          (CKM_DSA_PARAMETER_GEN, CKM_DSA_PARAMETER_GEN_TEMP), XXX
-        #          (CKM_KCDSA_PARAMETER_GEN, CKM_KCDSA_PARAMETER_GEN_TEMP), XXX
-        (CKM_ARIA_KEY_GEN, CKM_ARIA_KEY_GEN_TEMP)
-        #          (CKM_DH_PKCS_PARAMETER_GEN, CKM_DH_PKCS_PARAMETER_GEN_TEMP) XXX
-    ])
-    def test_derive_key(self, key_type, key_template):
+    ],
+                             ids=["DES", "DES2", 'CAST3',
+                                  'GENERIC', 'CAST5', "SEED", ])
+    def test_derive_key(self, key_type, key_template, derive_type):
         """Tests deriving a key
 
         :param key_type:
@@ -175,24 +177,102 @@ class TestKeys(object):
 
         """
         h_base_key = c_generate_key_ex(self.h_session, key_type, key_template)
-        h_second_key = c_generate_key_ex(self.h_session, key_type, key_template)
+        mech = NullMech(derive_type).to_c_mech()
 
-        mech = NullMech(CKM_CONCATENATE_BASE_AND_KEY).to_c_mech()
-        c_second_key = CK_ULONG(h_second_key)
-        mech.pParameter = cast(pointer(c_second_key), CK_VOID_PTR)
-        mech.usParameterLen = ctypes.sizeof(c_second_key)
+        derived_key_template = key_template.copy()
+        del derived_key_template[CKA_VALUE_LEN]
 
         ret, h_derived_key = c_derive_key(self.h_session,
                                           h_base_key,
                                           key_template,
-                                          CKM_CONCATENATE_BASE_AND_KEY,
-                                          mech)
-        assert ret == CKR_OK, "Deriving a key should not fail, instead it failed with " + \
-                              ret_vals_dictionary[ret]
+                                          mech_flavor=derive_type,
+                                          mech=mech)
+        try:
+            assert ret == CKR_OK, "Deriving a key should not fail, instead it failed with " + \
+                                  ret_vals_dictionary[ret]
 
-        verify_object_attributes(self.h_session, h_derived_key, key_template)
+            verify_object_attributes(self.h_session, h_derived_key, key_template)
+        finally:
+            if h_base_key:
+                c_destroy_object(self.h_session, h_base_key)
+            if h_derived_key:
+                c_destroy_object(self.h_session, h_derived_key)
 
+    @pytest.mark.parametrize("derive_type", [CKM_SHA1_KEY_DERIVATION,
+                                             CKM_MD5_KEY_DERIVATION,
+                                             CKM_MD2_KEY_DERIVATION],
+                             ids=["SHA1", "MD5", "MD2"])
+    @pytest.mark.parametrize(("key_type", "key_template"), [
+        (CKM_DES3_KEY_GEN, CKM_DES3_KEY_GEN_TEMP),
+        (CKM_AES_KEY_GEN, CKM_AES_KEY_GEN_TEMP),
+        (CKM_ARIA_KEY_GEN, CKM_ARIA_KEY_GEN_TEMP)
+    ],
+                             ids=['DES3', 'AES', 'ARIA'])
+    def test_too_long_length_derives(self, key_type, key_template, derive_type):
+        """
+        Verify that trying to derive a key that is too long for the given derivation function
+        will return CKR_KEY_SIZE_RANGE
 
-if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG)
-    pytest.cmdline.main(args=['-v', os.path.abspath(__file__)])
+        :param key_type:
+        :param key_template:
+        :param derive_type:
+        :return:
+        """
+        h_base_key = c_generate_key_ex(self.h_session, key_type, key_template)
+        mech = NullMech(derive_type).to_c_mech()
+
+        derived_key_template = key_template.copy()
+        del derived_key_template[CKA_VALUE_LEN]
+
+        ret, h_derived_key = c_derive_key(self.h_session,
+                                          h_base_key,
+                                          key_template,
+                                          mech_flavor=derive_type,
+                                          mech=mech)
+        try:
+            assert ret == CKR_KEY_SIZE_RANGE
+        finally:
+            if h_base_key:
+                c_destroy_object(self.h_session, h_base_key)
+            if h_derived_key:
+                c_destroy_object(self.h_session, h_derived_key)
+
+    @pytest.mark.parametrize("derive_type", [CKM_SHA224_KEY_DERIVATION,
+                                             CKM_SHA256_KEY_DERIVATION,
+                                             CKM_SHA384_KEY_DERIVATION,
+                                             CKM_SHA512_KEY_DERIVATION],
+                             ids=["SHA224", "SHA256", "SHA384", "SHA512"])
+    @pytest.mark.parametrize(("key_type", "key_template"), [
+        (CKM_DES3_KEY_GEN, CKM_DES3_KEY_GEN_TEMP),
+        (CKM_AES_KEY_GEN, CKM_AES_KEY_GEN_TEMP),
+        (CKM_ARIA_KEY_GEN, CKM_ARIA_KEY_GEN_TEMP)
+    ],
+                             ids=['DES3', 'AES', 'ARIA'])
+    def test_long_length_derive_key(self, key_type, key_template, derive_type):
+        """Tests deriving a key
+
+        :param key_type:
+        :param key_template:
+
+        """
+        h_base_key = c_generate_key_ex(self.h_session, key_type, key_template)
+        mech = NullMech(derive_type).to_c_mech()
+
+        derived_key_template = key_template.copy()
+        del derived_key_template[CKA_VALUE_LEN]
+
+        ret, h_derived_key = c_derive_key(self.h_session,
+                                          h_base_key,
+                                          key_template,
+                                          mech_flavor=derive_type,
+                                          mech=mech)
+        try:
+            assert ret == CKR_OK, "Deriving a key should not fail, instead it failed with " + \
+                                  ret_vals_dictionary[ret]
+
+            verify_object_attributes(self.h_session, h_derived_key, key_template)
+        finally:
+            if h_base_key:
+                c_destroy_object(self.h_session, h_base_key)
+            if h_derived_key:
+                c_destroy_object(self.h_session, h_derived_key)

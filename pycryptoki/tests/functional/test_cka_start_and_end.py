@@ -29,9 +29,6 @@ logger = logging.getLogger(__name__)
 class TestCKAStartEndDate(object):
     """ """
 
-    h_session = 0
-    admin_slot = 0
-
     @pytest.fixture(autouse=True)
     def setup_teardown(self, auth_session):
         self.admin_slot = hsm_config["test_slot"]
@@ -342,8 +339,3 @@ class TestCKAStartEndDate(object):
         return_val, sig = c_sign(h_session, CKM_DSA_SHA1, "Some data to sign", h_prkey)
         logger.info("Called C_Sign, return code: " + str(return_val))
         assert return_val == CKR_KEY_NOT_ACTIVE, "Expected return code is CKR_KEY_NOT_ACTIVE"
-
-
-if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG)
-    pytest.cmdline.main(args=['-v', os.path.abspath(__file__)])

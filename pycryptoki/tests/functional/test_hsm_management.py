@@ -1,8 +1,6 @@
 """
 Test methods for pycryptoki 'hsm management' set of commands.
 """
-import logging
-import os
 
 import pytest
 
@@ -25,9 +23,6 @@ from ...return_values import ret_vals_dictionary
 
 class TestAlgorithm(object):
     """Test algorithm class"""
-    h_session = 0
-    admin_slot = 0
-
     @pytest.fixture(autouse=True)
     def setup_teardown(self, auth_session):
         self.h_session = auth_session
@@ -111,23 +106,6 @@ class TestAlgorithm(object):
             "Return code should be " + ret_vals_dictionary[CKR_OK] + \
             " not " + ret_vals_dictionary[ret]
 
-    def test_createloginchallenge(self):
-        """Test create login challenge.
-        This test requires PED based HSM.
-        If performing this test on PWD based HSM return value is CKR_CANCEL.
-
-
-        """
-        user_type = CKU_CRYPTO_USER
-        challenge = "password1234"
-
-        ret, data = ca_createloginchallenge(self.h_session,
-                                            user_type,
-                                            challenge)
-        assert (ret == CKR_OK or ret == CKR_CANCEL), \
-            "Return code should be " + ret_vals_dictionary[CKR_OK] + \
-            " not " + ret_vals_dictionary[ret]
-
     @pytest.mark.xfail(reason="Not valid on PWD auth")
     def test_initializeremotepedvector(self):
         """Tests to initialize remote ped vector"""
@@ -166,8 +144,3 @@ class TestAlgorithm(object):
         assert ret == CKR_OK, \
             "Return code should be " + ret_vals_dictionary[CKR_OK] + \
             " not " + ret_vals_dictionary[ret]
-
-
-if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG)
-    pytest.cmdline.main(args=['-v', os.path.abspath(__file__)])

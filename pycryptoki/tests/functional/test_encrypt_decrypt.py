@@ -63,8 +63,3 @@ class TestEncryptData(object):
             data_to_encrypt) == decrypted_data, "The data before encryption should match the data " \
                                                 "" \
                                                 "after encryption"
-
-
-if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG)
-    pytest.cmdline.main(args=['-vs', os.path.abspath(__file__)])
