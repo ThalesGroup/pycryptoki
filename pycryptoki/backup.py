@@ -2,20 +2,10 @@ import logging
 from ctypes import byref
 
 from .cryptoki import CA_OpenSecureToken, CA_CloseSecureToken, CA_Extract, CA_Insert, CK_ULONG
-from .mechanism import get_c_struct_from_mechanism, \
-    get_python_dict_from_c_mechanism, Mechanism
+from .mechanism import Mechanism
 from .test_functions import make_error_handle_function
 
 logger = logging.getLogger(__name__)
-
-'''
-CK_SESSION_HANDLE hSession,
-                                  CK_ULONG storagePath,
-                                  CK_ULONG devID,
-                                  CK_ULONG mode,
-                                  CK_ULONG_PTR numberOfElems,
-                                  CK_ULONG_PTR phID
-'''
 
 
 def ca_open_secure_token(h_session, storage_path, dev_ID, mode):
@@ -36,10 +26,6 @@ def ca_open_secure_token(h_session, storage_path, dev_ID, mode):
 
 
 ca_open_secure_token_ex = make_error_handle_function(ca_open_secure_token)
-
-'''
-CK_SESSION_HANDLE hSession, CK_ULONG hID
-'''
 
 
 def ca_close_secure_token(h_session, h_ID):
@@ -75,9 +61,6 @@ def ca_extract(h_session, mech_type, mech_params):
 
 ca_extract_ex = make_error_handle_function(ca_extract)
 
-
-# CA_Insert( CK_SESSION_HANDLE hSession,
-#                           CK_MECHANISM_PTR pMechanism )
 
 def ca_insert(h_session, mech_type, mech_params):
     """

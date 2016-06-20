@@ -4,12 +4,12 @@ Methods used to generate keys.
 
 from ctypes import byref
 
-from cryptoki import C_DestroyObject, CK_OBJECT_HANDLE, CK_ULONG, C_GenerateKey, \
+from .cryptoki import C_DestroyObject, CK_OBJECT_HANDLE, CK_ULONG, C_GenerateKey, \
     C_GenerateKeyPair, \
     C_CopyObject
-from default_templates import CKM_DES_KEY_GEN_TEMP, \
+from .default_templates import CKM_DES_KEY_GEN_TEMP, \
     CKM_RSA_PKCS_KEY_PAIR_GEN_PUBTEMP, CKM_RSA_PKCS_KEY_PAIR_GEN_PRIVTEMP
-from defines import CKM_DES_KEY_GEN, CKM_RSA_PKCS_KEY_PAIR_GEN
+from .defines import CKM_DES_KEY_GEN, CKM_RSA_PKCS_KEY_PAIR_GEN
 from .attributes import Attributes
 from .cryptoki import C_DeriveKey
 from .mechanism import NullMech

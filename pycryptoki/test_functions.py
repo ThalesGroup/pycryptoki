@@ -1,13 +1,16 @@
+"""
+Functions used for testing, or verifying return values.
+"""
+
 import inspect
 import logging
 from ctypes import byref
 from functools import wraps
 
-from defines import CKR_OK
-from return_values import ret_vals_dictionary
-from .attributes import Attributes
 from .cryptoki import CK_OBJECT_HANDLE, CK_ULONG, C_GetObjectSize
 from .defines import CKR_OBJECT_HANDLE_INVALID
+from .defines import CKR_OK
+from .return_values import ret_vals_dictionary
 
 LOG = logging.getLogger(__name__)
 

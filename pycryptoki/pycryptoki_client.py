@@ -196,16 +196,3 @@ class LocalPycryptokiClient(object):
         """ """
         # nothing to do here
         pass
-
-
-def deserialize_dict(dictionary):
-    """Helper function to convert a dictionary with <string, value> to <int, value>
-    for xmlrpc
-
-    :param dictionary:
-
-    """
-    deserialized_dictionary = {}
-    for key, value in dictionary.iteritems():
-        deserialized_dictionary[int(key)] = value
-    return deserialized_dictionary

@@ -13,7 +13,6 @@ setup(name='pycryptoki',
       url='https://github.com/gemalto/pycryptoki',
       version='1.0',
       packages=['pycryptoki',
-                'pycryptoki.tests',
                 'pycryptoki.daemon',
                 'pycryptoki.utils'],
       scripts=['pycryptoki/daemon/rpyc_pycryptoki.py']
