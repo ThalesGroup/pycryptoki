@@ -2,6 +2,7 @@
 Functions for managing partitions
 """
 import logging
+from functools import reduce
 from _ctypes import pointer
 from ctypes import byref, c_ubyte
 
@@ -155,7 +156,7 @@ def ca_get_container_capability_set(slot, h_container):
 
     ret = _get_container_caps()
 
-    return ret, dict(zip(cap_ids, cap_vals))
+    return ret, dict(list(zip(cap_ids, cap_vals)))
 
 
 ca_get_container_capability_set_ex = make_error_handle_function(ca_get_container_capability_set)
@@ -211,7 +212,7 @@ def ca_get_container_policy_set(slot, h_container):
 
     ret = _ca_get_container_policy_set()
 
-    return ret, dict(zip(pol_ids, pol_vals))
+    return ret, dict(list(zip(pol_ids, pol_vals)))
 
 
 ca_get_container_policy_set_ex = make_error_handle_function(ca_get_container_policy_set)
@@ -348,7 +349,7 @@ def ca_get_container_status(slot, h_container):
             if ((status_flags.value ^ mask) >> i) & 1:
                 unknown_flags.append(2 ** i)
         raise Exception("Found unknown flags! {}".format(' '.join(unknown_flags)))
-    for key, flag in flags_dict.iteritems():
+    for key, flag in flags_dict.items():
         flags_dict[key] = 1 if key & status_flags.value else 0
 
     failed_logins_dict = {
@@ -356,9 +357,9 @@ def ca_get_container_status(slot, h_container):
         'failed_user_logins': failed_user_logins.value,
         'failed_limited_user_logins': failed_limited_user_logins.value
     }
-    for key, val in failed_logins_dict.iteritems():
+    for key, val in failed_logins_dict.items():
         if not val ^ int('1' * 64, 2) or not val ^ int('1' * 32, 2):
-            failed_logins_dict[key] = -1L
+            failed_logins_dict[key] = -1
     return ret, flags_dict, failed_logins_dict
 
 
@@ -399,8 +400,8 @@ def ca_set_container_policies(h_session, h_container, policies):
     """
     h_sess = CK_SESSION_HANDLE(h_session)
     container_id = CK_ULONG(h_container)
-    pol_id_list = policies.keys()
-    pol_val_list = policies.values()
+    pol_id_list = list(policies.keys())
+    pol_val_list = list(policies.values())
     pol_ids = AutoCArray(data=pol_id_list, ctype=CK_ULONG)
     pol_vals = AutoCArray(data=pol_val_list, ctype=CK_ULONG)
 

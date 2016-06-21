@@ -5,19 +5,18 @@ Created on Aug 15, 2012
 """
 
 import logging
-import os
 
 import pytest
 
 from . import config as hsm_config
-from ...default_templates import CKM_DES_KEY_GEN_TEMP, CKM_DES3_KEY_GEN_TEMP, \
+from pycryptoki.default_templates import CKM_DES_KEY_GEN_TEMP, CKM_DES3_KEY_GEN_TEMP, \
     CKM_RSA_PKCS_KEY_PAIR_GEN_PUBTEMP, CKM_RSA_PKCS_KEY_PAIR_GEN_PRIVTEMP, CKM_AES_KEY_GEN_TEMP
-from ...defines import CKM_DES_KEY_GEN, CKM_AES_KEY_GEN, CKM_DES3_KEY_GEN, \
+from pycryptoki.defines import CKM_DES_KEY_GEN, CKM_AES_KEY_GEN, CKM_DES3_KEY_GEN, \
     CKA_USAGE_LIMIT, CKA_USAGE_COUNT, CKM_RSA_PKCS_KEY_PAIR_GEN, CKM_DES3_ECB, \
     CKM_DES_ECB, CKM_RSA_PKCS, CKR_KEY_NOT_ACTIVE, CKM_AES_ECB
-from ...encryption import c_encrypt, c_encrypt_ex
-from ...key_generator import c_generate_key_ex, c_generate_key_pair_ex
-from ...object_attr_lookup import c_get_attribute_value_ex, c_set_attribute_value_ex
+from pycryptoki.encryption import c_encrypt, c_encrypt_ex
+from pycryptoki.key_generator import c_generate_key_ex, c_generate_key_pair_ex
+from pycryptoki.object_attr_lookup import c_get_attribute_value_ex, c_set_attribute_value_ex
 
 LOG = logging.getLogger(__name__)
 
@@ -85,9 +84,9 @@ class TestUsageLimitAndCount(object):
         c_set_attribute_value_ex(self.h_session,
                                  h_key, usage_lim_template)
 
-        c_encrypt_ex(self.h_session, CKM_DES_ECB, h_key, 'a' * 2048)
+        c_encrypt_ex(self.h_session, CKM_DES_ECB, h_key, b'a' * 2048)
 
-        c_encrypt_ex(self.h_session, CKM_DES_ECB, h_key, 'a' * 2048)
+        c_encrypt_ex(self.h_session, CKM_DES_ECB, h_key, b'a' * 2048)
 
         py_template = c_get_attribute_value_ex(self.h_session, h_key,
                                                template={CKA_USAGE_COUNT: None})
@@ -120,9 +119,9 @@ class TestUsageLimitAndCount(object):
 
         c_set_attribute_value_ex(self.h_session,
                                  h_key, usage_lim_template)
-        c_encrypt_ex(self.h_session, CKM_AES_ECB, h_key, 'a' * 2048)
+        c_encrypt_ex(self.h_session, CKM_AES_ECB, h_key, b'a' * 2048)
 
-        c_encrypt_ex(self.h_session, CKM_AES_ECB, h_key, 'a' * 2048)
+        c_encrypt_ex(self.h_session, CKM_AES_ECB, h_key, b'a' * 2048)
 
         py_template = c_get_attribute_value_ex(self.h_session, h_key,
                                                template={CKA_USAGE_COUNT: None})
@@ -194,9 +193,9 @@ class TestUsageLimitAndCount(object):
 
         c_set_attribute_value_ex(self.h_session,
                                  h_pbkey, usage_lim_template)
-        c_encrypt_ex(self.h_session, CKM_RSA_PKCS, h_pbkey, 'a' * 20)
+        c_encrypt_ex(self.h_session, CKM_RSA_PKCS, h_pbkey, b'a' * 20)
 
-        c_encrypt_ex(self.h_session, CKM_RSA_PKCS, h_pbkey, 'a' * 20)
+        c_encrypt_ex(self.h_session, CKM_RSA_PKCS, h_pbkey, b'a' * 20)
 
         py_template = c_get_attribute_value_ex(self.h_session, h_pbkey,
                                                template={CKA_USAGE_COUNT: None})
@@ -227,11 +226,11 @@ class TestUsageLimitAndCount(object):
         c_set_attribute_value_ex(self.h_session,
                                  h_key, usage_lim_template)
 
-        c_encrypt_ex(self.h_session, CKM_DES3_ECB, h_key, 'a' * 2048)
+        c_encrypt_ex(self.h_session, CKM_DES3_ECB, h_key, b'a' * 2048)
 
-        c_encrypt_ex(self.h_session, CKM_DES3_ECB, h_key, 'a' * 2048)
+        c_encrypt_ex(self.h_session, CKM_DES3_ECB, h_key, b'a' * 2048)
 
-        return_val, data = c_encrypt(self.h_session, CKM_DES3_ECB, h_key, 'a' * 2048)
+        return_val, data = c_encrypt(self.h_session, CKM_DES3_ECB, h_key, b'a' * 2048)
         LOG.info("Called C_Encrypt, return code: " + str(return_val))
 
         py_template = c_get_attribute_value_ex(self.h_session, h_key,
@@ -267,11 +266,11 @@ class TestUsageLimitAndCount(object):
         c_set_attribute_value_ex(self.h_session,
                                  h_pbkey, usage_lim_template)
 
-        c_encrypt_ex(self.h_session, CKM_RSA_PKCS, h_pbkey, 'a' * 20)
+        c_encrypt_ex(self.h_session, CKM_RSA_PKCS, h_pbkey, b'a' * 20)
 
-        c_encrypt_ex(self.h_session, CKM_RSA_PKCS, h_pbkey, 'a' * 20)
+        c_encrypt_ex(self.h_session, CKM_RSA_PKCS, h_pbkey, b'a' * 20)
 
-        return_val, data = c_encrypt(self.h_session, CKM_RSA_PKCS, h_pbkey, 'a' * 20)
+        return_val, data = c_encrypt(self.h_session, CKM_RSA_PKCS, h_pbkey, b'a' * 20)
         LOG.info("Called C_Encrypt, return code: " + str(return_val))
         py_template = c_get_attribute_value_ex(self.h_session, h_pbkey,
                                                template={CKA_USAGE_COUNT: None})

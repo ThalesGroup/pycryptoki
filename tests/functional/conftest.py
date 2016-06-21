@@ -1,21 +1,33 @@
 """
 Fixtures for pycryptoki functional tests
 """
+import logging
 import os
+import sys
+
+# From http://stackoverflow.com/a/7759927
+if sys.version_info < (3,):
+    def b(x):
+        return x
+else:
+    import codecs
+
+    def b(x):
+        return codecs.latin_1_encode(x)[0]
 
 import pytest
-import logging
-from ...attributes import Attributes
-from ...key_generator import c_destroy_object
-from ...object_attr_lookup import c_find_objects_ex
+
 from . import config as hsm_config
-from ...defaults import ADMINISTRATOR_PASSWORD, ADMIN_PARTITION_LABEL, CO_PASSWORD
-from ...defines import CKF_RW_SESSION, CKF_SERIAL_SESSION, CKF_PROTECTED_AUTHENTICATION_PATH, CKR_OK
-from ...defines import CKF_SO_SESSION
-from ...session_management import c_initialize_ex, c_close_all_sessions_ex, \
+from pycryptoki.attributes import Attributes
+from pycryptoki.defaults import ADMINISTRATOR_PASSWORD, ADMIN_PARTITION_LABEL, CO_PASSWORD
+from pycryptoki.defines import CKF_RW_SESSION, CKF_SERIAL_SESSION, CKF_PROTECTED_AUTHENTICATION_PATH, CKR_OK
+from pycryptoki.defines import CKF_SO_SESSION
+from pycryptoki.key_generator import c_destroy_object
+from pycryptoki.object_attr_lookup import c_find_objects_ex
+from pycryptoki.session_management import c_initialize_ex, c_close_all_sessions_ex, \
     ca_factory_reset_ex, c_open_session_ex, login_ex, c_finalize_ex, \
     c_close_session, c_logout, c_get_token_info_ex
-from ...token_management import c_init_token_ex
+from pycryptoki.token_management import c_init_token_ex
 
 LOG = logging.getLogger(__name__)
 
@@ -46,20 +58,34 @@ def pytest_addoption(parser):
     optiongroup.addoption("--copassword",
                           help="Password for the Crypto Officer user/slot. Can be None for "
                                "PED-authentication.",
-                          action="store")
+                          action="store",
+                          type=str)
     optiongroup.addoption("--user",
                           help="User type to test with. Defaults to SO. Can also test w/ "
                                "Crypto Officer",
                           choices=["SO", "CO"],
                           default="SO",
                           action="store")
+    optiongroup.addoption("--loglevel",
+                          help="Specify what level of logging to run the tests ",
+                          choices=["debug", "info", "warning", "error"],
+                          default="warning")
 
 
 def pytest_configure(config):
     """
     Set up the globals for this test run.
     """
+    if config.getoption("loglevel", None):
+        logger = logging.getLogger()
+        log_formatter = logging.Formatter('%(asctime)s:%(name)s:%(levelname)s: %(message)s')
+        console_handler = logging.StreamHandler(sys.stdout)
+        console_handler.setFormatter(log_formatter)
+        logger.addHandler(console_handler)
+        logger.setLevel(config.getoption("loglevel").upper())
+
     hsm_config["test_slot"] = config.getoption("test_slot")
+    hsm_config["user"] = config.getoption("user")
     c_initialize_ex()
     try:
         # Factory Reset
@@ -76,6 +102,11 @@ def pytest_configure(config):
         else:
             admin_pwd = config.getoption("password")
             co_pwd = config.getoption("copassword", default=CO_PASSWORD)
+
+        if admin_pwd:
+            admin_pwd = b(admin_pwd)
+        if co_pwd:
+            co_pwd = b(co_pwd)
 
         hsm_config['admin_pwd'] = admin_pwd
         hsm_config['co_pwd'] = co_pwd

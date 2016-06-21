@@ -43,12 +43,12 @@ def ca_close_secure_token(h_session, h_ID):
 ca_close_secure_token_ex = make_error_handle_function(ca_close_secure_token)
 
 
+# noinspection PyIncorrectDocstring
 def ca_extract(h_session, mech_type, mech_params):
     """
 
+    :param mech_params:
     :param h_session:
-    :param py_mechanism_dict:
-    :param params_type_string:
     """
 
     mech = Mechanism(mech_type, params=mech_params)

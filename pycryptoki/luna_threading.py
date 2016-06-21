@@ -78,7 +78,7 @@ class TestThread(threading.Thread):
         except Exception as e:
             self._return = e
             self.queue.task_done()
-            print sys.exc_info()[0]
+            print(sys.exc_info()[0])
             raise
 
         if self._return == True:

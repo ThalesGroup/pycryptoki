@@ -6,7 +6,9 @@ from ctypes import c_void_p, c_ulong, cast
 
 from hypothesis import given
 from hypothesis.strategies import integers
-from ...attributes import to_long
+
+from pycryptoki.test_functions import integer_types
+from pycryptoki.attributes import to_long
 
 
 class TestAttributes(object):
@@ -15,6 +17,7 @@ class TestAttributes(object):
     def test_to_long(self, testval):
         pointer, len = to_long(testval)
         assert isinstance(pointer, c_void_p)
-        assert isinstance(len, (long, int, c_ulong))
+
+        assert isinstance(len, (integer_types, c_ulong))
         finval = cast(pointer, POINTER(c_ulong)).contents
-        assert finval >= 0
+        assert finval.value >= 0

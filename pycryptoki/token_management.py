@@ -152,7 +152,7 @@ def ca_get_token_policies(slot):
 
     ret = _get_token_policies()
 
-    return ret, dict(zip(pol_ids, pol_vals))
+    return ret, dict(list(zip(pol_ids, pol_vals)))
 
 
 ca_get_token_policies_ex = make_error_handle_function(ca_get_token_policies)

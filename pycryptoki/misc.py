@@ -21,7 +21,7 @@ from .defines import CKR_OK
 from .mechanism import Mechanism
 from .mechanism import NullMech
 from .sign_verify import do_multipart_sign_or_digest
-from .test_functions import make_error_handle_function
+from .test_functions import make_error_handle_function, integer_types
 
 
 def c_generate_random(h_session, length):
@@ -32,11 +32,12 @@ def c_generate_random(h_session, length):
     :returns: The result code, A string of random data
 
     """
-    random_data = cast(create_string_buffer("", length), CK_BYTE_PTR)
-    ret = C_GenerateRandom(h_session, random_data, CK_ULONG(length))
 
-    char_array = random_data._objects.values()[0]
-    random_string = string_at(char_array, len(char_array))
+    random_data = create_string_buffer(b"", length)
+    data_ptr = cast(random_data, CK_BYTE_PTR)
+    ret = C_GenerateRandom(h_session, data_ptr, CK_ULONG(length))
+
+    random_string = random_data.value
     return ret, random_string
 
 
@@ -52,7 +53,7 @@ def c_seed_random(h_session, seed):
 
     """
     seed_bytes = cast(create_string_buffer(seed), CK_BYTE_PTR)
-    if isinstance(seed, (int, float, long)):
+    if isinstance(seed, (integer_types, float)):
         seed_length = seed
     else:
         seed_length = CK_ULONG(len(seed))
@@ -87,7 +88,7 @@ def c_digest(h_session, data_to_digest, digest_flavor, mech=None, extra_params=N
     # Initialize Digestion
     ret = C_DigestInit(h_session, mech)
     if ret != CKR_OK:
-        return ret
+        return ret, None
 
     # if a list is passed out do an digest operation on each string in the list, otherwise just
     # do one digest operation

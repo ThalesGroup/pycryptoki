@@ -17,6 +17,7 @@ just returning the second part of the regular return tuple::
     c_open_session_ex()  # Returns: session_handle, raises exception if ret_code != CKR_OK
 
 """
+from __future__ import print_function
 import ctypes
 import logging
 import multiprocessing
@@ -443,7 +444,7 @@ def create_server_subprocess(target, args):
     logger.info("Created subprocess w/ PID %s", server.pid)
 
     def sighandler(signum, frame):
-        print "Caught SIGTERM, closing subprocess"
+        print("Caught SIGTERM, closing subprocess")
         server.terminate()
         exit(0)
 

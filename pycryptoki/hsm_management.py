@@ -46,7 +46,7 @@ def c_performselftest(slot,
     test_type = CK_ULONG(test_type)
     input_length = CK_ULONG(input_data_len)
     input_data = (CK_BYTE * input_data_len)(*input_data)
-    output_data = cast(create_string_buffer('', input_data_len), CK_BYTE_PTR)
+    output_data = cast(create_string_buffer(b'', input_data_len), CK_BYTE_PTR)
     output_data_len = CK_ULONG()
     try:
         from .cryptoki import CA_PerformSelfTest as selftest
@@ -249,8 +249,8 @@ def ca_set_hsm_policies(h_session, policies):
     :return: result code
     """
     h_sess = CK_SESSION_HANDLE(h_session)
-    pol_id_list = policies.keys()
-    pol_val_list = policies.values()
+    pol_id_list = list(policies.keys())
+    pol_val_list = list(policies.values())
     pol_ids = AutoCArray(data=pol_id_list, ctype=CK_ULONG)
     pol_vals = AutoCArray(data=pol_val_list, ctype=CK_ULONG)
 
@@ -288,8 +288,8 @@ def ca_set_destructive_hsm_policies(h_session, policies):
     :return: result code
     """
     h_sess = CK_SESSION_HANDLE(h_session)
-    pol_id_list = policies.keys()
-    pol_val_list = policies.values()
+    pol_id_list = list(policies.keys())
+    pol_val_list = list(policies.values())
     pol_ids = AutoCArray(data=pol_id_list, ctype=CK_ULONG)
     pol_vals = AutoCArray(data=pol_val_list, ctype=CK_ULONG)
 
@@ -322,7 +322,7 @@ def ca_get_hsm_capability_set(slot):
 
     ret = _get_hsm_caps()
 
-    return ret, dict(zip(cap_ids, cap_vals))
+    return ret, dict(list(zip(cap_ids, cap_vals)))
 
 
 ca_get_hsm_capability_set_ex = make_error_handle_function(ca_get_hsm_capability_set)
@@ -366,7 +366,7 @@ def ca_get_hsm_policy_set(slot):
 
     ret = _ca_get_hsm_policy_set()
 
-    return ret, dict(zip(pol_ids, pol_vals))
+    return ret, dict(list(zip(pol_ids, pol_vals)))
 
 
 ca_get_hsm_policy_set_ex = make_error_handle_function(ca_get_hsm_policy_set)

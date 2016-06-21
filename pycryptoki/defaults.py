@@ -12,21 +12,21 @@ CHRYSTOKI_CONFIG_FILE = None
 # the Chrystoki config file specified be the variable CHRYSTOKI_CONFIG_FILE
 CHRYSTOKI_DLL_FILE = None
 
-ADMIN_PARTITION_LABEL = 'no label'
-AUDITOR_LABEL = 'auditorlabel'
+ADMIN_PARTITION_LABEL = b'no label'
+AUDITOR_LABEL = b'auditorlabel'
 
-ADMINISTRATOR_USERNAME = 'Administrator'
-ADMINISTRATOR_PASSWORD = '1q@W3e$R'
+ADMINISTRATOR_USERNAME = b'Administrator'
+ADMINISTRATOR_PASSWORD = b'1q@W3e$R'
 
-AUDITOR_USERNAME = 'Auditor'
-AUDITOR_PASSWORD = 'W3e$R'
+AUDITOR_USERNAME = b'Auditor'
+AUDITOR_PASSWORD = b'W3e$R'
 
-CO_USERNAME = 'Crypto Officer'
-CO_PASSWORD = 'userpin'
+CO_USERNAME = b'Crypto Officer'
+CO_PASSWORD = b'userpin'
 
-DEFAULT_USERNAME = 'default_user'
-DEFAULT_LABEL = 'default_label'
-DEFAULT_PASSWORD = 'userpin'
+DEFAULT_USERNAME = b'default_user'
+DEFAULT_LABEL = b'default_label'
+DEFAULT_PASSWORD = b'userpin'
 
 DEFAULT_UTILS_PATH = '/usr/safenet/lunaclient/sbin'
 FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
@@ -38,7 +38,7 @@ user_credentials = {ADMINISTRATOR_USERNAME: ADMINISTRATOR_PASSWORD,
 
 DES3_KEY_SIZE = 120
 
-MANUFACTURER_ID = "SafeNet Inc."
-MODEL = "Luna K6"
+MANUFACTURER_ID = b"SafeNet Inc."
+MODEL = b"Luna K6"
 
 ADMIN_SLOT = int(os.environ.get("ADMIN_SLOT", 1))

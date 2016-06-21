@@ -3,15 +3,15 @@ import logging
 import pytest
 
 from . import config as hsm_config
-from ...default_templates import CKM_RSA_PKCS_KEY_PAIR_GEN_PUBTEMP, \
+from pycryptoki.default_templates import CKM_RSA_PKCS_KEY_PAIR_GEN_PUBTEMP, \
     CKM_RSA_PKCS_KEY_PAIR_GEN_PRIVTEMP, CKM_DSA_KEY_PAIR_GEN_PUBTEMP_1024_160, \
     CKM_DSA_KEY_PAIR_GEN_PRIVTEMP, CKM_DSA_KEY_PAIR_GEN_PUBTEMP_2048_224, \
     CKM_DSA_KEY_PAIR_GEN_PUBTEMP_2048_256, CKM_DSA_KEY_PAIR_GEN_PUBTEMP_3072_256
-from ...defines import CKR_OK, CKM_RSA_PKCS, \
+from pycryptoki.defines import CKR_OK, CKM_RSA_PKCS, \
     CKM_RSA_PKCS_KEY_PAIR_GEN, CKM_DSA_KEY_PAIR_GEN, CKM_DSA
-from ...key_generator import c_generate_key_pair_ex
-from ...return_values import ret_vals_dictionary
-from ...sign_verify import c_sign, c_verify
+from pycryptoki.key_generator import c_generate_key_pair_ex
+from pycryptoki.return_values import ret_vals_dictionary
+from pycryptoki.sign_verify import c_sign, c_verify
 
 logger = logging.getLogger(__name__)
 
@@ -60,7 +60,7 @@ class TestSignVerify(object):
         h_pub_key, h_priv_key = c_generate_key_pair_ex(self.h_session, key_type, pub_key_template,
                                                        priv_key_template)
 
-        data_to_sign = "This is some test string to sign."
+        data_to_sign = b"This is some test string to sign."
         ret, signature = c_sign(self.h_session, sign_flavor, data_to_sign, h_priv_key)
         assert ret == CKR_OK, "The result code of the sign operation should be CKR_OK not " + \
                               ret_vals_dictionary[ret]
@@ -95,7 +95,7 @@ class TestSignVerify(object):
         h_pub_key, h_priv_key = c_generate_key_pair_ex(self.h_session, key_type, pub_key_template,
                                                        priv_key_template)
 
-        data_to_sign = ["a" * 1024, "b" * 1024]
+        data_to_sign = [b"a" * 1024, b"b" * 1024]
         ret, signature = c_sign(self.h_session, sign_flavor, data_to_sign, h_priv_key)
         assert ret == CKR_OK, "The result code of the sign operation should be CKR_OK not " + \
                               ret_vals_dictionary[ret]

@@ -5,10 +5,10 @@ Test methods for .. 'hsm usage' set of commands.
 import pytest
 
 from . import config as hsm_config
-from ...defines import CKR_SESSION_HANDLE_INVALID, \
+from pycryptoki.defines import CKR_SESSION_HANDLE_INVALID, \
     CKR_USER_NOT_AUTHORIZED
-from ...key_usage import ca_clonemofn, ca_duplicatemofn
-from ...return_values import ret_vals_dictionary
+from pycryptoki.key_usage import ca_clonemofn, ca_duplicatemofn
+from pycryptoki.return_values import ret_vals_dictionary
 
 
 class TestAlgorithm(object):

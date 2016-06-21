@@ -5,9 +5,9 @@ import logging
 from _ctypes import POINTER
 from ctypes import create_string_buffer, cast, byref, string_at, c_ubyte
 
-from cryptoki import CK_ULONG, \
+from .cryptoki import CK_ULONG, \
     C_EncryptInit, C_Encrypt
-from defines import CKR_OK
+from .defines import CKR_OK
 from .attributes import Attributes, to_char_array
 from .common_utils import AutoCArray, refresh_c_arrays
 from .cryptoki import C_Decrypt, C_DecryptInit, CK_OBJECT_HANDLE, \
@@ -87,7 +87,7 @@ def _split_string_into_list(python_string, block_size):
 
     """
     total_length = len(python_string)
-    return [python_string[x:x + block_size] for x in xrange(0, total_length, block_size)]
+    return [python_string[x:x + block_size] for x in range(0, total_length, block_size)]
 
 
 def _get_string_from_list(list_of_strings):
@@ -97,7 +97,7 @@ def _get_string_from_list(list_of_strings):
     :returns: Single string representing the concatenated list
 
     """
-    return "".join(list_of_strings)
+    return b"".join(list_of_strings)
 
 
 def c_decrypt(h_session, decryption_flavor, h_key, encrypted_data, mech=None, extra_params=None):
@@ -180,7 +180,7 @@ def do_multipart_operation(h_session, c_update_function, c_finalize_function, in
     plain_data_len = len(_get_string_from_list(input_data_list))
 
     remaining_length = plain_data_len
-    python_string = ''
+    python_string = b''
     i = 0
     while remaining_length > 0:
         current_chunk = input_data_list[i]
@@ -193,34 +193,32 @@ def do_multipart_operation(h_session, c_update_function, c_finalize_function, in
                 "chunk_sizes variable too large, the maximum size of a chunk is " + str(
                     max_data_chunk_size))
 
-        out_data = create_string_buffer('', max_data_chunk_size)
+        out_data = create_string_buffer(b'', max_data_chunk_size)
         out_data_len = CK_ULONG(max_data_chunk_size)
         data_chunk, data_chunk_len = to_char_array(current_chunk)
         data_chunk = cast(data_chunk, POINTER(c_ubyte))
 
-        ret = c_update_function(h_session, data_chunk, data_chunk_len,
-                                cast(out_data, CK_BYTE_PTR),
-                                byref(out_data_len))
+        ret = c_update_function(h_session,
+                                data_chunk, data_chunk_len,
+                                cast(out_data, CK_BYTE_PTR), byref(out_data_len))
         if ret != CKR_OK:
             return ret, None
 
         remaining_length -= current_chunk_len
 
         # Get the output
-        ck_char_array = out_data._objects.values()[0]
-        python_string += string_at(ck_char_array, len(ck_char_array))[0:out_data_len.value]
+        python_string += out_data.raw[0:int(out_data_len.value)]
         i += 1
 
     # Finalizing multipart decrypt operation
     out_data_len = CK_ULONG(max_data_chunk_size)
-    output = cast(create_string_buffer("", out_data_len.value), CK_BYTE_PTR)
+    out_data = create_string_buffer(b"", out_data_len.value)
+    output = cast(out_data, CK_BYTE_PTR)
     ret = c_finalize_function(h_session, output, byref(out_data_len))
     if ret != CKR_OK:
         return ret, None
-    # Get output
-    ck_char_array = output._objects.values()[0]
-    if out_data_len.value > 0:
-        python_string += string_at(ck_char_array, len(ck_char_array))[0:out_data_len.value]
+
+    python_string += out_data.value
 
     return ret, python_string
 

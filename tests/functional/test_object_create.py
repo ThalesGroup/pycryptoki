@@ -1,14 +1,13 @@
 import logging
-import os
 
 import pytest
 
 from . import config as hsm_config
-from ...default_templates import CERTIFICATE_TEMPLATE, DATA_TEMPLATE
-from ...defines import CKR_OK
-from ...misc import c_create_object
-from ...return_values import ret_vals_dictionary
-from ...test_functions import verify_object_attributes
+from pycryptoki.default_templates import CERTIFICATE_TEMPLATE, DATA_TEMPLATE
+from pycryptoki.defines import CKR_OK
+from pycryptoki.misc import c_create_object
+from pycryptoki.return_values import ret_vals_dictionary
+from pycryptoki.test_functions import verify_object_attributes
 
 logger = logging.getLogger(__name__)
 

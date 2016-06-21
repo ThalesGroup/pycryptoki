@@ -4,7 +4,7 @@ Methods responsible for managing a user's session and login/c_logout
 import logging
 from ctypes import cast, c_ulong, byref
 
-from cryptoki import CK_ULONG, CA_TimeSync, CA_InitAudit, CK_SLOT_ID, CA_GetTime, CK_CHAR_PTR
+from .cryptoki import CK_ULONG, CA_TimeSync, CA_InitAudit, CK_SLOT_ID, CA_GetTime, CK_CHAR_PTR
 from .test_functions import make_error_handle_function
 
 logger = logging.getLogger(__name__)

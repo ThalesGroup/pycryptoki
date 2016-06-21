@@ -4,6 +4,7 @@ generation to make it possible to create templates in python and easily
 convert them into templates in C.
 """
 import binascii
+import collections
 import datetime
 import logging
 from collections import defaultdict
@@ -11,9 +12,11 @@ from ctypes import cast, c_void_p, create_string_buffer, c_bool, \
     c_ulong, pointer, POINTER, sizeof, c_char, string_at, c_ubyte
 from functools import wraps
 
-from cryptoki import CK_ATTRIBUTE, CK_BBOOL, CK_ATTRIBUTE_TYPE, CK_ULONG, \
+from .cryptoki import CK_ATTRIBUTE, CK_BBOOL, CK_ATTRIBUTE_TYPE, CK_ULONG, \
     CK_BYTE, CK_CHAR
-from defines import CKA_USAGE_LIMIT, CKA_USAGE_COUNT, CKA_CLASS, CKA_TOKEN, \
+from .defines import CKA_EKM_UID, CKA_GENERIC_1, CKA_GENERIC_2, \
+    CKA_GENERIC_3
+from .defines import CKA_USAGE_LIMIT, CKA_USAGE_COUNT, CKA_CLASS, CKA_TOKEN, \
     CKA_PRIVATE, CKA_LABEL, CKA_APPLICATION, CKA_CERTIFICATE_TYPE, \
     CKA_ISSUER, CKA_SERIAL_NUMBER, CKA_KEY_TYPE, CKA_SUBJECT, CKA_ID, CKA_SENSITIVE, \
     CKA_ENCRYPT, CKA_DECRYPT, CKA_WRAP, CKA_UNWRAP, CKA_SIGN, CKA_SIGN_RECOVER, \
@@ -26,8 +29,7 @@ from defines import CKA_USAGE_LIMIT, CKA_USAGE_COUNT, CKA_CLASS, CKA_TOKEN, \
     CKA_CCM_PRIVATE, CKA_FINGERPRINT_SHA1, CKA_FINGERPRINT_SHA256, CKA_OUID, CKA_UNWRAP_TEMPLATE, \
     CKA_DERIVE_TEMPLATE, \
     CKA_X9_31_GENERATED, CKA_VALUE
-from .defines import CKA_EKM_UID, CKA_GENERIC_1, CKA_GENERIC_2, \
-    CKA_GENERIC_3
+from .test_functions import integer_types
 
 LOG = logging.getLogger(__name__)
 
@@ -75,8 +77,8 @@ def to_long(val, reverse=False):
     size of long value)
     """
     if reverse:
-        return long(cast(val.pValue, POINTER(c_ulong)).contents.value)
-    if not isinstance(val, (int, long)):
+        return int(cast(val.pValue, POINTER(c_ulong)).contents.value)
+    if not isinstance(val, integer_types):
         raise TypeError("Invalid conversion {} to CK_ULONG!".format(type(val)))
     long_val = CK_ULONG(val)
     return cast(pointer(long_val), c_void_p), CK_ULONG(sizeof(long_val))
@@ -123,10 +125,10 @@ def to_char_array(val, reverse=False):
         LOG.debug("Converted to : %s", ret_data)
         return ret_data
 
-    if not isinstance(val, (str, list)):
+    if not isinstance(val, (str, bytes, list)):
         raise TypeError("Invalid conversion {} to CK_CHAR*!".format(type(val)))
 
-    if isinstance(val, str):
+    if isinstance(val, (str, bytes)):
         string_val = create_string_buffer(val, len(val))
     else:
         # TODO: Figure out what, if anything we want to do with a list.
@@ -147,7 +149,7 @@ def to_ck_date(val, reverse=False):
     if reverse:
         return string_at(cast(val.pValue, POINTER(c_char)), val.usValueLen)
 
-    if isinstance(val, str):
+    if isinstance(val, (str, bytes)):
         if len(val) != 8:
             raise TypeError("Invalid date string passed! Should be of type YYYYMMDD")
         date_val = create_string_buffer(val, len(val))
@@ -186,22 +188,7 @@ def to_byte_array(val, reverse=False):
         LOG.debug("Final hex data: %s", fin)
         return fin
 
-    if isinstance(val, list):
-        py_bytes = bytearray(val)
-        byte_array = (CK_BYTE * len(py_bytes))(*py_bytes)
-    elif isinstance(val, (int, long)):
-        # Explicitly convert to a long. Python doesn't like X.bit_length() where X is an int
-        # and not a variable assigned an int.
-        width = long(val).bit_length()
-        width += 8 - ((width % 8) or 8)
-
-        fmt = "{:0%sb}" % width
-        str_val = fmt.format(val)
-        n = 8
-        str_array = [str_val[i:i + n] for i in range(0, len(str_val), n)]
-        byte_array = (CK_BYTE * len(str_array))(*[int(x, 2) for x in str_array])
-
-    elif isinstance(val, str):
+    if isinstance(val, (str, bytes)):
         # Can be Hex string ('01e4') or a bytestring (ex '\x8p\xb26\x12'G\xa3T\x84\x17\x89')
         try:
             # Would prefer to use bytearray.fromhex(), but a few testcases use ' ' * 80 or the like,
@@ -212,6 +199,21 @@ def to_byte_array(val, reverse=False):
             # Assume a byte array?
             py_bytes = bytearray(val)
             byte_array = (CK_BYTE * len(py_bytes))(*py_bytes)
+    elif isinstance(val, collections.Iterable):
+        py_bytes = bytearray(val)
+        byte_array = (CK_BYTE * len(py_bytes))(*py_bytes)
+    elif isinstance(val, integer_types):
+        # Explicitly convert to a long. Python doesn't like X.bit_length() where X is an int
+        # and not a variable assigned an int.
+        x = val
+        width = x.bit_length()
+        width += 8 - ((width % 8) or 8)
+
+        fmt = "{:0%sb}" % width
+        str_val = fmt.format(val)
+        n = 8
+        str_array = [str_val[i:i + n] for i in range(0, len(str_val), n)]
+        byte_array = (CK_BYTE * len(str_array))(*[int(x, 2) for x in str_array])
     else:
         raise TypeError("Invalid conversion {} to byte array!".format(type(val)))
 
@@ -370,9 +372,9 @@ class Attributes(dict):
 
         :return: :class:`~pycryptoki.cryptoki.CK_ATTRIBUTE` array
         """
-        ret_struct = (CK_ATTRIBUTE * len(self.keys()))()
+        ret_struct = (CK_ATTRIBUTE * len(list(self.keys())))()
 
-        for index, key in enumerate(self.iterkeys()):
+        for index, key in enumerate(self.keys()):
             value = self[key]
             if value is None:
                 # Create an empty CK_ATTRIBUTE struct so it can be overwritten with length

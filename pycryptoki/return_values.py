@@ -10,7 +10,7 @@ a return value for the cryptoki C API.
 
 """
 
-from defines import *
+from .defines import *
 
 ret_vals_dictionary = {
     CKR_OK: 'CKR_OK',

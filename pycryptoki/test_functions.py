@@ -1,11 +1,16 @@
 """
 Functions used for testing, or verifying return values.
 """
-
+import sys
 import inspect
 import logging
 from ctypes import byref
 from functools import wraps
+
+if sys.version_info < (3,):
+    integer_types = (int, long,)
+else:
+    integer_types = (int,)
 
 from .cryptoki import CK_OBJECT_HANDLE, CK_ULONG, C_GetObjectSize
 from .defines import CKR_OBJECT_HANDLE_INVALID
@@ -227,7 +232,7 @@ def make_error_handle_function(luna_function):
             else:
                 return_data = return_tuple[0]
                 ret = return_tuple[0]
-        elif isinstance(return_tuple, long):
+        elif isinstance(return_tuple, integer_types):
             ret = return_tuple
             return_data = return_tuple
         else:

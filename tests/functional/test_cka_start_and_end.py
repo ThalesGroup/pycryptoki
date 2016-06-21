@@ -1,26 +1,25 @@
 import logging
-import os
 from datetime import datetime
 
 import pytest
 
 from . import config as hsm_config
-from ...audit_handling import ca_init_audit_ex, ca_time_sync_ex, ca_get_time_ex
-from ...default_templates import dsa_prime_1024_160, dsa_sub_prime_1024_160, dsa_base_1024_160
-from ...defaults import CO_PASSWORD, AUDITOR_PASSWORD, AUDITOR_LABEL
-from ...defines import CKA_CLASS, CKO_SECRET_KEY, CKA_KEY_TYPE, CKK_DES, CKA_TOKEN, \
+from pycryptoki.audit_handling import ca_init_audit_ex, ca_time_sync_ex, ca_get_time_ex
+from pycryptoki.default_templates import dsa_prime_1024_160, dsa_sub_prime_1024_160, dsa_base_1024_160
+from pycryptoki.defaults import CO_PASSWORD, AUDITOR_PASSWORD, AUDITOR_LABEL
+from pycryptoki.defines import CKA_CLASS, CKO_SECRET_KEY, CKA_KEY_TYPE, CKK_DES, CKA_TOKEN, \
     CKA_SENSITIVE, CKA_PRIVATE, CKA_ENCRYPT, CKA_DECRYPT, CKA_SIGN, CKA_VERIFY, \
     CKA_WRAP, CKA_UNWRAP, CKA_DERIVE, CKA_VALUE_LEN, CKA_EXTRACTABLE, CKA_LABEL, \
     CKA_MODIFIABLE, CKA_MODULUS_BITS, CKA_PUBLIC_EXPONENT, CKA_PRIME, CKA_SUBPRIME, CKA_BASE, \
     CKK_AES, CKM_DES_ECB, CKR_KEY_NOT_ACTIVE, CKM_RSA_PKCS_KEY_PAIR_GEN, \
     CKM_RSA_PKCS, CKM_AES_ECB, CKM_AES_KEY_GEN, CKM_DSA_KEY_PAIR_GEN, CKM_DSA_SHA1
-from ...defines import CKF_SERIAL_SESSION, CKM_DES_KEY_GEN, CKU_USER, \
+from pycryptoki.defines import CKF_SERIAL_SESSION, CKM_DES_KEY_GEN, CKU_USER, \
     CKA_END_DATE, CKU_AUDIT, CKF_AUDIT_SESSION
-from ...encryption import c_encrypt, c_encrypt_ex
-from ...key_generator import c_generate_key_ex, c_generate_key_pair_ex
-from ...session_management import login, c_open_session_ex, login_ex, \
+from pycryptoki.encryption import c_encrypt, c_encrypt_ex
+from pycryptoki.key_generator import c_generate_key_ex, c_generate_key_pair_ex
+from pycryptoki.session_management import login, c_open_session_ex, login_ex, \
     c_logout_ex, c_close_session_ex
-from ...sign_verify import c_sign_ex, c_sign
+from pycryptoki.sign_verify import c_sign_ex, c_sign
 
 logger = logging.getLogger(__name__)
 
@@ -50,10 +49,7 @@ class TestCKAStartEndDate(object):
                     "specified in \
                     CKA_END_DATE attribute")
 
-        end_d = {}
-        end_d['year'] = "2013"
-        end_d['month'] = "12"
-        end_d['day'] = "31"
+        end_d = {'year': b"2013", 'month': b"12", 'day': b"31"}
 
         CKM_KEY_GEN_TEMP = {CKA_CLASS: CKO_SECRET_KEY,
                             CKA_KEY_TYPE: CKK_DES,
@@ -69,13 +65,13 @@ class TestCKAStartEndDate(object):
                             CKA_DERIVE: True,
                             CKA_VALUE_LEN: 8,
                             CKA_EXTRACTABLE: True,
-                            CKA_LABEL: "DES Key",
+                            CKA_LABEL: b"DES Key",
                             CKA_END_DATE: end_d}
 
         h_key = c_generate_key_ex(self.h_session, flavor=CKM_DES_KEY_GEN, template=CKM_KEY_GEN_TEMP)
         logger.info("Called c-generate: Key handle -" + str(h_key))
 
-        c_encrypt_ex(self.h_session, CKM_DES_ECB, h_key, "a" * 512)
+        c_encrypt_ex(self.h_session, CKM_DES_ECB, h_key, b"a" * 512)
 
         c_logout_ex(self.h_session)
         c_close_session_ex(self.h_session)
@@ -102,7 +98,7 @@ class TestCKAStartEndDate(object):
         h_session = c_open_session_ex(slot_num=self.admin_slot)
         login_ex(h_session, self.admin_slot, CO_PASSWORD, CKU_USER)
 
-        return_val = c_encrypt(h_session, CKM_DES_ECB, h_key, "This is some data to sign ..   ")
+        return_val = c_encrypt(h_session, CKM_DES_ECB, h_key, b"This is some data to sign ..   ")
 
         assert return_val == CKR_KEY_NOT_ACTIVE, "return value should be CKR_KEY_NOT_ACTIVE"
         c_logout_ex(h_session)
@@ -124,10 +120,7 @@ class TestCKAStartEndDate(object):
         logger.info("Test: Verify that user is not able to use the symmetric aes object after "
                     "date specified in \
                     CKA_END_DATE attribute")
-        end_d = {}
-        end_d['year'] = "2013"
-        end_d['month'] = "12"
-        end_d['day'] = "31"
+        end_d = {'year': b"2013", 'month': b"12", 'day': b"31"}
 
         CKM_KEY_GEN_TEMP = {CKA_CLASS: CKO_SECRET_KEY,
                             CKA_KEY_TYPE: CKK_AES,
@@ -143,13 +136,13 @@ class TestCKAStartEndDate(object):
                             CKA_DERIVE: True,
                             CKA_VALUE_LEN: 16,
                             CKA_EXTRACTABLE: True,
-                            CKA_LABEL: "AES Key",
+                            CKA_LABEL: b"AES Key",
                             CKA_END_DATE: end_d}
 
         h_key = c_generate_key_ex(self.h_session, flavor=CKM_AES_KEY_GEN, template=CKM_KEY_GEN_TEMP)
         logger.info("Called c-generate: Key handle -" + str(h_key))
 
-        c_encrypt_ex(self.h_session, CKM_AES_ECB, h_key, "This is some data to sign ..   ")
+        c_encrypt_ex(self.h_session, CKM_AES_ECB, h_key, b"This is some data to sign ..   ")
 
         c_logout_ex(self.h_session)
         c_close_session_ex(self.h_session)
@@ -175,7 +168,7 @@ class TestCKAStartEndDate(object):
         h_session = c_open_session_ex(slot_num=self.admin_slot)
         login_ex(h_session, self.admin_slot, CO_PASSWORD, CKU_USER)
 
-        return_val = c_encrypt(h_session, CKM_AES_ECB, h_key, "This is some data to sign ..   ")
+        return_val = c_encrypt(h_session, CKM_AES_ECB, h_key, b"This is some data to sign ..   ")
         logger.info("Called C_Encrypt, return code: " + str(return_val))
         assert return_val == CKR_KEY_NOT_ACTIVE, "Expected return code is CKR_KEY_NOT_ACTIVE"
 
@@ -195,10 +188,7 @@ class TestCKAStartEndDate(object):
         logger.info("Test: Verify that user is not able to use the rsa asymmetric object after "
                     "date specified in \
                     CKA_END_DATE attribute")
-        end_d = {}
-        end_d['year'] = "2013"
-        end_d['month'] = "12"
-        end_d['day'] = "31"
+        end_d = {'year': b"2013", 'month': b"12", 'day': b"31"}
 
         CKM_RSA_PKCS_KEY_PAIR_GEN_PUBTEMP = {CKA_TOKEN: True,
                                              CKA_PRIVATE: True,
@@ -220,7 +210,7 @@ class TestCKAStartEndDate(object):
                                               CKA_SIGN: True,
                                               CKA_UNWRAP: True,
                                               CKA_END_DATE: end_d,
-                                              CKA_LABEL: "RSA Private Key"}
+                                              CKA_LABEL: b"RSA Private Key"}
 
         h_pbkey, h_prkey = c_generate_key_pair_ex(self.h_session, flavor=CKM_RSA_PKCS_KEY_PAIR_GEN,
                                                   pbkey_template=CKM_RSA_PKCS_KEY_PAIR_GEN_PUBTEMP,
@@ -230,7 +220,7 @@ class TestCKAStartEndDate(object):
             "Called c-generate: Public Key handle -" + str(h_pbkey) + "Private Key Handle" + str(
                 h_prkey))
 
-        c_encrypt_ex(self.h_session, CKM_RSA_PKCS, h_pbkey, "This is some data to sign ..   ")
+        c_encrypt_ex(self.h_session, CKM_RSA_PKCS, h_pbkey, b"This is some data to sign ..   ")
 
         c_logout_ex(self.h_session)
         c_close_session_ex(self.h_session)
@@ -256,7 +246,7 @@ class TestCKAStartEndDate(object):
         h_session = c_open_session_ex(slot_num=self.admin_slot)
         login_ex(h_session, self.admin_slot, CO_PASSWORD, CKU_USER)
 
-        return_val = c_encrypt(h_session, CKM_RSA_PKCS, h_pbkey, "This is some data to sign ..   ")
+        return_val = c_encrypt(h_session, CKM_RSA_PKCS, h_pbkey, b"This is some data to sign ..   ")
         logger.info("Called C_Encrypt, return code: " + str(return_val))
         assert return_val == CKR_KEY_NOT_ACTIVE, "Expected return code is CKR_KEY_NOT_ACTIVE"
 
@@ -276,10 +266,7 @@ class TestCKAStartEndDate(object):
         logger.info("Test: Verify that user is not able to use the dsa asymmetric object after "
                     "date specified in \
                     CKA_END_DATE attribute")
-        end_d = {}
-        end_d['year'] = "2013"
-        end_d['month'] = "12"
-        end_d['day'] = "31"
+        end_d = {'year': b"2013", 'month': b"12", 'day': b"31"}
 
         CKM_DSA_KEY_PAIR_GEN_PUBTEMP_1024_160 = {CKA_TOKEN: True,
                                                  CKA_PRIVATE: True,
@@ -290,7 +277,7 @@ class TestCKAStartEndDate(object):
                                                  CKA_SUBPRIME: dsa_sub_prime_1024_160,
                                                  CKA_BASE: dsa_base_1024_160,
                                                  CKA_END_DATE: end_d,
-                                                 CKA_LABEL: "DSA 1024_160 Public Key"}
+                                                 CKA_LABEL: b"DSA 1024_160 Public Key"}
 
         CKM_DSA_KEY_PAIR_GEN_PRIVTEMP = {CKA_TOKEN: True,
                                          CKA_PRIVATE: True,
@@ -300,7 +287,7 @@ class TestCKAStartEndDate(object):
                                          CKA_UNWRAP: True,
                                          CKA_EXTRACTABLE: True,
                                          CKA_END_DATE: end_d,
-                                         CKA_LABEL: "DSA Public Key"}
+                                         CKA_LABEL: b"DSA Public Key"}
 
         h_pbkey, h_prkey = c_generate_key_pair_ex(self.h_session, flavor=CKM_DSA_KEY_PAIR_GEN,
                                                   pbkey_template=CKM_DSA_KEY_PAIR_GEN_PUBTEMP_1024_160,
@@ -310,7 +297,7 @@ class TestCKAStartEndDate(object):
             "Called c-generate: Public Key handle -" + str(h_pbkey) + "Private Key Handle" + str(
                 h_prkey))
 
-        c_sign_ex(self.h_session, CKM_DSA_SHA1, "Some data to sign", h_prkey)
+        c_sign_ex(self.h_session, CKM_DSA_SHA1, b"Some data to sign", h_prkey)
 
         c_logout_ex(self.h_session)
         c_close_session_ex(self.h_session)
@@ -336,6 +323,6 @@ class TestCKAStartEndDate(object):
         h_session = c_open_session_ex(slot_num=self.admin_slot)
         login_ex(h_session, self.admin_slot, CO_PASSWORD, CKU_USER)
 
-        return_val, sig = c_sign(h_session, CKM_DSA_SHA1, "Some data to sign", h_prkey)
+        return_val, sig = c_sign(h_session, CKM_DSA_SHA1, b"Some data to sign", h_prkey)
         logger.info("Called C_Sign, return code: " + str(return_val))
         assert return_val == CKR_KEY_NOT_ACTIVE, "Expected return code is CKR_KEY_NOT_ACTIVE"

@@ -52,7 +52,7 @@ def c_get_attribute_value(h_session, h_object, template):
 
     """
     c_struct = Attributes(template).get_c_struct()
-    unknown_key_vals = [key for key, value in template.iteritems() if value is None]
+    unknown_key_vals = [key for key, value in template.items() if value is None]
     if unknown_key_vals:
         LOG.debug("Retrieving Attribute Length for keys %s", unknown_key_vals)
         # We need to get the size of the target memory area first, then

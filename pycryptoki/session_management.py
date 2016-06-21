@@ -88,7 +88,7 @@ def c_open_session(slot_num, flags=(CKF_SERIAL_SESSION | CKF_RW_SESSION)):
 
     """
     # OPEN SESSION
-    arg3 = create_string_buffer("Application")
+    arg3 = create_string_buffer(b"Application")
     h_session = CK_SESSION_HANDLE()
     arg3 = cast(arg3, c_void_p)
     # CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_NOTIFICATION, CK_VOID_PTR)
@@ -117,11 +117,11 @@ def login(h_session, slot_num=1, password=None, user_type=1):
     LOG.info("C_Login: "
              "user_type=%s, "
              "slot=%s, "
-             "password=%s", user_type, slot_num, password)
+             "password=***", user_type, slot_num)
     if password == '':
         password = None
 
-    user_type = CK_USER_TYPE(long(user_type))
+    user_type = CK_USER_TYPE(user_type)
     password = AutoCArray(data=password, ctype=CK_BYTE)
 
     ret = C_Login(h_session, user_type, password.array, password.size.contents)
@@ -195,8 +195,8 @@ def c_get_token_info(slot_id):
                                                 c_char_p).value)[0:32].strip()
         token_info['model'] = str(cast(c_token_info.model,
                                        c_char_p).value)[0:16].strip()
-        token_info['serialNumber'] = int(str(cast(c_token_info.serialNumber,
-                                                  c_char_p).value)[0:16].strip())
+        token_info['serialNumber'] = str(cast(c_token_info.serialNumber,
+                                              c_char_p).value)[0:16].strip()
         token_info['flags'] = c_token_info.flags
         token_info['ulFreePrivateMemory'] = c_token_info.ulFreePrivateMemory
         token_info['ulTotalPrivateMemory'] = c_token_info.ulTotalPrivateMemory

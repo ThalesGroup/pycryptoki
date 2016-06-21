@@ -1,21 +1,19 @@
 """
 Test methods for pycryptoki 'key management' set of commands.
 """
-import logging
-import os
 
 import pytest
 
 from . import config as hsm_config
-from ...cryptoki import CK_ULONG, CK_BYTE, CA_MOFN_GENERATION, \
+from pycryptoki.cryptoki import CK_ULONG, CK_BYTE, CA_MOFN_GENERATION, \
     CA_MOFN_GENERATION_PTR
-from ...default_templates import CKM_DES_KEY_GEN, CKM_DES_KEY_GEN_TEMP
-from ...defines import CKR_OK, CKR_USER_NOT_AUTHORIZED, \
+from pycryptoki.default_templates import CKM_DES_KEY_GEN, CKM_DES_KEY_GEN_TEMP
+from pycryptoki.defines import CKR_OK, CKR_USER_NOT_AUTHORIZED, \
     CK_MODIFY_USAGE_COUNT_COMMAND_TYPE_INCREMENT, \
     CK_MODIFY_USAGE_COUNT_COMMAND_TYPE_SET
-from ...key_generator import c_generate_key
-from ...key_management import ca_generatemofn, ca_modifyusagecount
-from ...return_values import ret_vals_dictionary
+from pycryptoki.key_generator import c_generate_key
+from pycryptoki.key_management import ca_generatemofn, ca_modifyusagecount
+from pycryptoki.return_values import ret_vals_dictionary
 
 
 class TestAlgorithm(object):

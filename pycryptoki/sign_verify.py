@@ -103,7 +103,7 @@ def do_multipart_sign_or_digest(h_session, c_update_function, c_final_function, 
     plain_data_len = len(_get_string_from_list(input_data_list))
 
     remaining_length = plain_data_len
-    python_string = ''
+    python_string = b''
     i = 0
     while remaining_length > 0:
         current_chunk = input_data_list[i]
@@ -128,13 +128,12 @@ def do_multipart_sign_or_digest(h_session, c_update_function, c_final_function, 
 
     # Finalizing multipart decrypt operation
     out_data_len = CK_ULONG(max_data_chunk_size)
-    output = cast(create_string_buffer("", out_data_len.value), CK_BYTE_PTR)
+    output = cast(create_string_buffer(b"", out_data_len.value), CK_BYTE_PTR)
     ret = c_final_function(h_session, output, byref(out_data_len))
 
     # Get output
-    ck_char_array = output._objects.values()[0]
     if out_data_len.value > 0:
-        python_string += string_at(ck_char_array, len(ck_char_array))[0:out_data_len.value]
+        python_string += string_at(output, out_data_len.value)
 
     return ret, python_string
 

@@ -1,6 +1,6 @@
-'''
+"""
 Constants & Definitions pulled from PKCS11
-'''
+"""
 
 LUNA_MAX_UPDATE_DATA_SIZE = (64 * 1024)
 LUNA_GEN_KCV_FLAG_NONE = 0x0000

@@ -3,7 +3,7 @@ import logging
 import pytest
 
 from . import config as hsm_config
-from ...default_templates import CKM_DES_KEY_GEN_TEMP, \
+from pycryptoki.default_templates import CKM_DES_KEY_GEN_TEMP, \
     CKM_DES2_KEY_GEN_TEMP, CKM_DES3_KEY_GEN_TEMP, CKM_CAST3_KEY_GEN_TEMP, \
     CKM_GENERIC_SECRET_KEY_GEN_TEMP, CKM_CAST5_KEY_GEN_TEMP, CKM_RC2_KEY_GEN_TEMP, \
     CKM_RC4_KEY_GEN_TEMP, CKM_RC5_KEY_GEN_TEMP, CKM_AES_KEY_GEN_TEMP, CKM_SEED_KEY_GEN_TEMP, \
@@ -17,7 +17,7 @@ from ...default_templates import CKM_DES_KEY_GEN_TEMP, \
     CKM_KCDSA_KEY_PAIR_GEN_PUBTEMP_1024_160, CKM_KCDSA_KEY_PAIR_GEN_PRIVTEMP, \
     CKM_KCDSA_KEY_PAIR_GEN_PUBTEMP_2048_256, CKM_RSA_X9_31_KEY_PAIR_GEN_PUBTEMP, \
     CKM_RSA_X9_31_KEY_PAIR_GEN_PRIVTEMP, curve_list
-from ...defines import CKM_DES_KEY_GEN, CKR_OK, \
+from pycryptoki.defines import CKM_DES_KEY_GEN, CKR_OK, \
     CKM_DES2_KEY_GEN, CKM_DES3_KEY_GEN, CKM_CAST3_KEY_GEN, \
     CKM_GENERIC_SECRET_KEY_GEN, CKM_CAST5_KEY_GEN, CKM_RC2_KEY_GEN, CKM_RC4_KEY_GEN, \
     CKM_RC5_KEY_GEN, CKM_AES_KEY_GEN, CKM_SEED_KEY_GEN, \
@@ -28,15 +28,16 @@ from ...defines import CKM_DES_KEY_GEN, CKR_OK, \
     CKM_SHA224_KEY_DERIVATION, CKM_SHA256_KEY_DERIVATION, CKM_SHA1_KEY_DERIVATION, \
     CKM_SHA384_KEY_DERIVATION, CKM_SHA512_KEY_DERIVATION, CKM_MD5_KEY_DERIVATION, \
     CKM_MD2_KEY_DERIVATION, CKA_VALUE_LEN, CKR_KEY_SIZE_RANGE
-from ...key_generator import c_generate_key, c_generate_key_pair, \
+from pycryptoki.key_generator import c_generate_key, c_generate_key_pair, \
     c_derive_key, c_generate_key_ex, c_destroy_object
-from ...mechanism import NullMech
-from ...return_values import ret_vals_dictionary
-from ...test_functions import verify_object_attributes
+from pycryptoki.mechanism import NullMech
+from pycryptoki.return_values import ret_vals_dictionary
+from pycryptoki.test_functions import verify_object_attributes
 
 logger = logging.getLogger(__name__)
 
 
+# noinspection PyArgumentList,PyArgumentList
 class TestKeys(object):
     """ """
 
@@ -126,7 +127,7 @@ class TestKeys(object):
         assert public_key_handle > 0, "The public key handle returned should be non zero"
         assert private_key_handle > 0, "The private key handle returned should be non zero"
 
-    @pytest.mark.parametrize("curve_type", curve_list.keys())
+    @pytest.mark.parametrize("curve_type", list(curve_list.keys()))
     def test_generate_ecdsa_key_pairs(self, curve_type):
         """
 
@@ -171,9 +172,6 @@ class TestKeys(object):
                                   'GENERIC', 'CAST5', "SEED", ])
     def test_derive_key(self, key_type, key_template, derive_type):
         """Tests deriving a key
-
-        :param key_type:
-        :param key_template:
 
         """
         h_base_key = c_generate_key_ex(self.h_session, key_type, key_template)

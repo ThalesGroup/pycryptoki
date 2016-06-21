@@ -1,17 +1,16 @@
 import logging
-import os
 
 import pytest
 
 from . import config as hsm_config
-from ...defaults import ADMIN_PARTITION_LABEL, ADMINISTRATOR_PASSWORD
-from ...defines import CKF_TOKEN_PRESENT, CKF_LOGIN_REQUIRED, \
+from pycryptoki.defaults import ADMIN_PARTITION_LABEL, ADMINISTRATOR_PASSWORD
+from pycryptoki.defines import CKF_TOKEN_PRESENT, CKF_LOGIN_REQUIRED, \
     CKF_RESTORE_KEY_NOT_NEEDED, CKF_TOKEN_INITIALIZED, CKF_SERIAL_SESSION, CKF_SO_SESSION, \
     CKF_RW_SESSION
-from ...session_management import ca_factory_reset_ex, \
+from pycryptoki.session_management import ca_factory_reset_ex, \
     c_get_token_info_ex, c_close_all_sessions, c_close_all_sessions_ex, \
     c_open_session_ex
-from ...token_management import get_token_by_label_ex, c_init_token_ex
+from pycryptoki.token_management import c_init_token_ex
 
 logger = logging.getLogger(__name__)
 

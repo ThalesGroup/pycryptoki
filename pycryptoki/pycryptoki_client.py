@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 """
 Contains both a local and remote pycryptoki client
 """
@@ -44,12 +46,12 @@ def retry(ExceptionToCheck, tries=4, delay=3, backoff=2, logger=None):
             while mtries > 1:
                 try:
                     return f(*args, **kwargs)
-                except ExceptionToCheck, e:
+                except ExceptionToCheck as e:
                     msg = "%s, Retrying in %d seconds..." % (str(e), mdelay)
                     if logger:
                         logger.warning(msg)
                     else:
-                        print msg
+                        print(msg)
                     time.sleep(mdelay)
                     mtries -= 1
                     mdelay *= backoff
@@ -81,7 +83,7 @@ def connection_test(func):
     return wrapper
 
 
-class RemotePycryptokiClient:
+class RemotePycryptokiClient(object):
     """Class to handle connecting to a remote Pycryptoki RPYC daemon.
 
     After instantiation, you can use it directly to make calls to a remote
@@ -155,7 +157,7 @@ class RemotePycryptokiClient:
                 masked_kwargs = kwargs
                 if any(x in name for x in ("login", "create_container")):
                     masked_args = tuple("*" for _ in args)
-                    masked_kwargs = {key: "*" for key, _ in kwargs.items()}
+                    masked_kwargs = {key: "*" for key, _ in list(kwargs.items())}
 
                 masked_args = ["{:.10}".format(str(arg)) for arg in masked_args]
                 masked_kwargs = ["{:.10}".format(str(kwarg)) for kwarg in masked_kwargs]

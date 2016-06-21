@@ -4,36 +4,45 @@ Unittests related to the mechanism module.
 import pytest
 from ctypes import cast, c_ulong, c_ubyte
 from mock import patch
-from ...cryptoki import CK_RSA_PKCS_PSS_PARAMS, POINTER, CK_ULONG, CK_AES_GCM_PARAMS, CK_MECHANISM
-from ...defines import *
-from ...mechanism import Mechanism, MechanismException, AutoMech, MECH_LOOKUP, AESGCMMechanism, \
-    NullMech
+from pycryptoki.test_functions import integer_types
+from pycryptoki.cryptoki import (CK_RSA_PKCS_PSS_PARAMS,
+                                 POINTER,
+                                 CK_ULONG,
+                                 CK_AES_GCM_PARAMS,
+                                 CK_MECHANISM)
+from pycryptoki.defines import *
+from pycryptoki.mechanism import (Mechanism,
+                                  MechanismException,
+                                  AutoMech,
+                                  MECH_LOOKUP,
+                                  AESGCMMechanism,
+                                  NullMech)
 
-MECH_PARAMS = {CKM_AES_XTS: {'hTweakKey': 0L,
-                             'cb': range(12),
+MECH_PARAMS = {CKM_AES_XTS: {'hTweakKey': 0,
+                             'cb': list(range(12)),
                              'test_id': 'AES_XTS'},
-               CKM_DES3_CBC: {'iv': range(12),
+               CKM_DES3_CBC: {'iv': list(range(12)),
                               'test_id': 'DES3'},
-               CKM_AES_CBC: {'iv': range(16),
+               CKM_AES_CBC: {'iv': list(range(16)),
                              'test_id': 'AES_CBC'},
                CKM_RC2_ECB: {'usEffectiveBits': 8,
                              'test_id': 'RC2_ECB'},
                CKM_RC2_CBC: {'usEffectiveBits': 8,
-                             'iv': range(8),
+                             'iv': list(range(8)),
                              'test_id': 'RC2_CBC'},
                CKM_RC5_ECB: {'ulWordsize': 8,
                              'ulRounds': 8,
                              'test_id': 'RC5_ECB'},
                CKM_RC5_CBC: {'ulWordsize': 8,
                              'ulRounds': 2,
-                             'iv': range(12),
+                             'iv': list(range(12)),
                              'test_id': 'RC5_CBC'},
                CKM_RSA_PKCS_OAEP: {'hashAlg': CKM_SHA_1,
                                    'mgf': CKG_MGF1_SHA1,
-                                   'sourceData': range(12),
+                                   'sourceData': list(range(12)),
                                    'test_id': 'RSA_OAEP'},
-               CKM_AES_GCM: {'iv': range(16),
-                             'AAD': 'testme',
+               CKM_AES_GCM: {'iv': list(range(16)),
+                             'AAD': b'testme',
                              'ulTagBits': 32,
                              'test_id': 'AES_GCM'},
                CKM_RSA_PKCS_PSS: {'hashAlg': CKM_SHA_1,
@@ -45,6 +54,7 @@ def idfn(test):
     return MECH_PARAMS[test].get('test_id', 'unknown')
 
 
+# noinspection PyArgumentList
 class TestMechanisms(object):
     @pytest.mark.parametrize('flavor,params',
                              [(CKM_AES_XTS, ['hTweakKey', 'cb']),
@@ -52,7 +62,7 @@ class TestMechanisms(object):
                               (CKM_RC2_CBC, ['usEffectiveBits', 'iv']),
                               (CKM_RC5_ECB, ['ulWordsize', 'ulRounds']),
                               (CKM_RC5_CBC, ['ulWordsize', 'ulRounds', 'iv']),
-                              (CKM_RSA_PKCS_OAEP, ['hashAlg', 'mgf', 'sourceData'])
+                              (CKM_RSA_PKCS_OAEP, ['hashAlg', 'mgf'])
                               ],
                              ids=["XTS", "RC2", "RC2_CBC",
                                   "RC5", "RC5_CBC", "RSA_PKCS_OAEP"])
@@ -67,7 +77,7 @@ class TestMechanisms(object):
             mech = Mechanism(flavor)
 
         for x in params:
-            assert x in excinfo.value.message
+            assert x in str(excinfo.value)
 
     def test_auto_mechanism_simple_vals(self):
         """
@@ -88,9 +98,9 @@ class TestMechanisms(object):
             assert params.hashAlg == CKM_SHA_1
             assert params.mgf == CKG_MGF1_SHA1
             assert params.usSaltLen == 8
-            assert isinstance(params.usSaltLen, (long, CK_ULONG))
-            assert isinstance(params.hashAlg, (long, CK_ULONG))
-            assert isinstance(params.mgf, (long, CK_ULONG))
+            assert isinstance(params.usSaltLen, (integer_types, CK_ULONG))
+            assert isinstance(params.hashAlg, (integer_types, CK_ULONG))
+            assert isinstance(params.mgf, (integer_types, CK_ULONG))
 
     def test_null_mechanism_indirect_instantiation(self):
         """
@@ -115,14 +125,14 @@ class TestMechanisms(object):
         :return:
         """
         mech = AESGCMMechanism(mech_type=CKM_AES_GCM,
-                               params={'AAD': 'notsosecret',
-                                       'iv': range(12),
+                               params={'AAD': b'notsosecret',
+                                       'iv': list(range(12)),
                                        'ulTagBits': 32})
         cmech = mech.to_c_mech()
         cparams = cast(cmech.pParameter, POINTER(CK_AES_GCM_PARAMS)).contents
-        assert cparams.ulTagBits == 32L
+        assert cparams.ulTagBits == 32
 
-    @pytest.mark.parametrize('flavor', MECH_PARAMS.keys(),
+    @pytest.mark.parametrize('flavor', list(MECH_PARAMS.keys()),
                              ids=idfn)
     def test_mech_conversions(self, flavor):
         """
@@ -134,8 +144,8 @@ class TestMechanisms(object):
         cmech = mech.to_c_mech()
         # Would prefer to check if it's a c_void_p, but it gets transformed directly to
         # an int/long depending on memory location.
-        assert isinstance(cmech.pParameter, (int, long, c_ulong))
-        assert isinstance(cmech.usParameterLen, (int, long, c_ulong))
+        assert isinstance(cmech.pParameter, (integer_types, c_ulong))
+        assert isinstance(cmech.usParameterLen, (integer_types, c_ulong))
         assert isinstance(cmech, CK_MECHANISM)
         assert cmech.mechanism == flavor
 
@@ -180,4 +190,4 @@ class TestMechanisms(object):
             with pytest.raises(MechanismException) as excinfo:
                 cmech = AutoMech(CKM_DES3_CBC).to_c_mech()
 
-            assert "Failed to find a suitable Ctypes Parameter" in excinfo.value.message
+            assert "Failed to find a suitable Ctypes Parameter" in str(excinfo.value)

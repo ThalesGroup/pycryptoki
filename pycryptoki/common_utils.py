@@ -1,6 +1,7 @@
 """
 Utilities for pycryptoki
 """
+from past.builtins import basestring
 from _ctypes import pointer, POINTER
 from ctypes import c_ulong, cast, create_string_buffer
 

@@ -70,9 +70,9 @@ class Mechanism(object):
 
         if cls == Mechanism:
             mech_cls = MECH_LOOKUP.get(mech_type, NullMech)
-            return super(Mechanism, cls).__new__(mech_cls, mech_type, params)
+            return super(Mechanism, cls).__new__(mech_cls)
         else:
-            return super(Mechanism, cls).__new__(cls, mech_type, params)
+            return super(Mechanism, cls).__new__(cls)
 
     def __init__(self, mech_type="UNKNOWN", params=None):
         self.mech_type = mech_type
@@ -294,7 +294,7 @@ class AESGCMMechanism(Mechanism):
         gcm_params.pIv = cast(ivdata, CK_BYTE_PTR)
         gcm_params.ulIvLen = ivlen
         # Assuming 8 bits per entry in IV.
-        gcm_params.ulIvBits = CK_ULONG(len(self.params['iv'] * 8))
+        gcm_params.ulIvBits = CK_ULONG(len(self.params['iv']) * 8)
         aad, aadlen = to_byte_array(self.params['AAD'])
         gcm_params.pAAD = cast(aad, CK_BYTE_PTR)
         gcm_params.ulAADLen = aadlen

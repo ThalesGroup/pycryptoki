@@ -1,13 +1,12 @@
 import logging
-import os
 
 import pytest
 
 from . import config as hsm_config
-from ...defines import CKR_OK
-from ...misc import c_generate_random_ex, c_seed_random, \
+from pycryptoki.defines import CKR_OK
+from pycryptoki.misc import c_generate_random_ex, c_seed_random, \
     c_generate_random
-from ...return_values import ret_vals_dictionary
+from pycryptoki.return_values import ret_vals_dictionary
 
 logger = logging.getLogger(__name__)
 
@@ -36,7 +35,7 @@ class TestSupportingOperations(object):
 
 
         """
-        seed = "k" * 1024
+        seed = b"k" * 1024
         ret = c_seed_random(self.h_session, seed)
         assert ret == CKR_OK, "Seeding the random number generator shouldn't return an error, " \
                               "it returned " + \

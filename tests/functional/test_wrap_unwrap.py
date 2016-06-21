@@ -1,17 +1,16 @@
 import logging
-import os
 
 import pytest
 
 from . import config as hsm_config
-from ...default_templates import CKM_DES_KEY_GEN_TEMP, \
+from pycryptoki.default_templates import CKM_DES_KEY_GEN_TEMP, \
     CKM_DES_UNWRAP_TEMP
-from ...defines import CKM_DES_KEY_GEN, CKM_DES_CBC, CKR_OK, \
+from pycryptoki.defines import CKM_DES_KEY_GEN, CKM_DES_CBC, CKR_OK, \
     CKM_DES_ECB
-from ...encryption import c_wrap_key, c_unwrap_key, c_encrypt, c_decrypt
-from ...key_generator import c_generate_key_ex
-from ...return_values import ret_vals_dictionary
-from ...test_functions import verify_object_attributes
+from pycryptoki.encryption import c_wrap_key, c_unwrap_key, c_encrypt, c_decrypt
+from pycryptoki.key_generator import c_generate_key_ex
+from pycryptoki.return_values import ret_vals_dictionary
+from pycryptoki.test_functions import verify_object_attributes
 
 logger = logging.getLogger(__name__)
 
@@ -54,7 +53,7 @@ class TestWrappingKeys(object):
         h_wrapping_key = c_generate_key_ex(self.h_session, CKM_DES_KEY_GEN, CKM_DES_KEY_GEN_TEMP)
 
         # Encrypt some data
-        data_to_encrypt = "a" * 512
+        data_to_encrypt = b"a" * 512
         ret, encrypted_data = c_encrypt(self.h_session, CKM_DES_CBC, h_key, data_to_encrypt)
         assert ret == CKR_OK, \
             "Encryption should go through successfully, instead it returned " + \
