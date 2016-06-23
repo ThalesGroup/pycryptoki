@@ -233,7 +233,7 @@ class AESXTSMechanism(Mechanism):
 
 
 class RSAPKCSOAEPMechanism(Mechanism):
-    REQUIRED_PARAMS = ['hashAlg', 'mgf', 'sourceData']
+    REQUIRED_PARAMS = ['hashAlg', 'mgf']
 
     def to_c_mech(self):
         """
@@ -250,7 +250,7 @@ class RSAPKCSOAEPMechanism(Mechanism):
         # /group__SEC__12__1__7__PKCS____1__RSA__OAEP__MECHANISM__PARAMETERS.html
         # there is only one encoding parameter source.
         oaep_params.source = CK_ULONG(CKZ_DATA_SPECIFIED)
-        data, data_len = to_byte_array(self.params['sourceData'])
+        data, data_len = to_byte_array(self.params.get('sourceData', ''))
         oaep_params.pSourceData = data
         oaep_params.ulSourceDataLen = data_len
 
