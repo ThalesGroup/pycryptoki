@@ -86,6 +86,8 @@ class TestAlgorithm(object):
             ret_vals_dictionary[CKR_ATTRIBUTE_VALUE_INVALID] + \
             " not " + ret_vals_dictionary[ret]
 
+    @pytest.mark.xfail(hsm_config["user"] == "CO",
+                       reason="Unable to run on CO slot")
     def test_hainit(self):
         """Tests performs HA init"""
         ret, pubkey_h, prikey_h = c_generate_key_pair(self.h_session,
