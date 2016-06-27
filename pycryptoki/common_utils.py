@@ -52,7 +52,7 @@ class AutoCArray(object):
         if data is not None:
             # Parse out any given data.
             if isinstance(data, basestring):
-                self._array = create_string_buffer(data)
+                self._array = create_string_buffer(data, len(data))
                 self._size = c_ulong(len(data))
                 self.ctype = CK_CHAR
             elif isinstance(data, list):

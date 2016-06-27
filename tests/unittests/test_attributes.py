@@ -81,4 +81,3 @@ class TestAttributes(object):
             else:
                 assert attr.pValue is None
                 assert attr.usValueLen == 0
-

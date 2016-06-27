@@ -11,11 +11,12 @@ from _ctypes import POINTER
 from ctypes import cast, c_void_p, c_ulong, sizeof
 
 from hypothesis import given
-from hypothesis.strategies import integers, floats, text, booleans, lists
+from hypothesis.strategies import integers, floats, text, booleans, lists, dictionaries
 from hypothesis.extra.datetime import dates
 
 from pycryptoki.attributes import CK_ATTRIBUTE, CKA_CLASS, to_long, to_bool, to_char_array, \
-                                  to_ck_date, to_byte_array
+                                  to_ck_date, to_byte_array, to_sub_attributes, Attributes, \
+                                  convert_c_ubyte_array_to_string
 
 LOG = logging.getLogger(__name__)
 
@@ -238,7 +239,7 @@ class TestAttrConversions(object):
         :param txt_val: random text. -TypeError
         """
         with pytest.raises(TypeError):
-            pointer, leng = to_long(txt_val)
+            pointer, leng = to_ck_date(txt_val)
 
     @given(floats())
     def test_to_ck_date_fail_float(self, flo_val):
@@ -247,7 +248,7 @@ class TestAttrConversions(object):
         :param flo_val: random float -TypeError
         """
         with pytest.raises(TypeError):
-            pointer, leng = to_long(flo_val)
+            pointer, leng = to_ck_date(flo_val)
 
     @given(lists(elements=integers(min_value=0, max_value=255), min_size=1))
     def test_to_byte_array(self, list_val):
@@ -340,6 +341,13 @@ class TestAttrConversions(object):
         with pytest.raises(ValueError):
             pointer, leng = to_byte_array(list_val)
 
+    def test_to_byte_array_fail_obj(self):
+        """
+        to_byte_array() with object param. -TypeError
+        """
+        with pytest.raises(TypeError):
+            pointer, leng = to_byte_array(object)
+
     @given(text(alphabet=ascii_letters, min_size=1))
     def test_to_byte_array_fail_str(self, txt_val):
         """
@@ -366,3 +374,16 @@ class TestAttrConversions(object):
 
         # Convert to int b/c of formating differences (0 != 00)
         assert int(py_bytes, 16) == int(hex_string, 16)
+
+    @given(dictionaries(keys=integers(min_value=1, max_value=MAX_INT), dict_class=Attributes,
+                        values=booleans()))
+    def test_to_sub_attributes(self, test_dic):
+        """
+        to_sub_attributes() with param
+        :param test_dic: random dictionary of bools
+        :return:
+        """
+        pointer, leng = to_sub_attributes(test_dic)
+        self.verify_c_type(pointer, leng)
+
+        # TODO: Reverse case
