@@ -86,8 +86,7 @@ class TestAutoCArray(object):
         list_val = [c_long(x) for x in list_val]
         c_array = AutoCArray(data=list_val, ctype=c_long)
 
-        assert c_array._size.value == c_long(len(list_val)).value
-        assert len(c_array) == len(list_val)
+        assert c_array.size.contents.value == len(c_array) == len(list_val)
         assert c_array.ctype == c_long
         assert "".join([str(c_long(x)) for x in c_array]) == "".join([str(x) for x in list_val])
         assert c_array.array[0] == cast(c_array.array, POINTER(c_long)).contents.value
@@ -129,7 +128,7 @@ class TestAutoCArray(object):
         :param test_type: c_types to test with
         """
         if test_type == c_char:
-            new_list = [c_char(str(x)[0]) for x in list_val]
+            new_list = [c_char(chr(x)) for x in list_val]
         else:
             new_list = [test_type(x) for x in list_val]
 
