@@ -6,6 +6,8 @@ import os
 import sys
 
 # From http://stackoverflow.com/a/7759927
+from pycryptoki.test_functions import LunaException
+
 if sys.version_info < (3,):
     def b(x):
         return x
@@ -188,10 +190,14 @@ def partition_clearer(auth_session):
     :return:
     """
     yield
-    # Use a blank template so we can grab everything.
-    template = Attributes({}).get_c_struct()
-    objects = c_find_objects_ex(auth_session, template, 1000)
-    for handle in objects:
-        ret = c_destroy_object(auth_session, handle)
-        if ret != CKR_OK:
-            LOG.info("Failed to destroy object w/ handle %s", handle)
+    try:
+        # Use a blank template so we can grab everything.
+        template = Attributes({}).get_c_struct()
+        objects = c_find_objects_ex(auth_session, template, 1000)
+        for handle in objects:
+            ret = c_destroy_object(auth_session, handle)
+            if ret != CKR_OK:
+                LOG.info("Failed to destroy object w/ handle %s", handle)
+    except LunaException:
+        LOG.exception("Failed to destroy all objects created on this session")
+

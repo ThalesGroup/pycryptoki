@@ -11,12 +11,9 @@
 # Specify a configuration file.
 #rcfile=
 
-# Profiled execution.
-profile=no
-
 # Add <file or directory> to the black list. It should be a base name, not a
 # path. You may set this option multiple times.
-ignore=.svn
+ignore=.svn,cryptoki.py,defines.py,default_templates.py,return_values.py,lookup_dict.py
 
 # Pickle collected data for later comparisons.
 persistent=yes
@@ -49,11 +46,12 @@ load-plugins=
 #enable-msg=
 
 # Disable the message(s) with the given id(s).
-disable-msg=W0142,W0703,R0201
+disable=W0142,W0703,R0201,W0614
 #Ignoring:
 #W0142 - Used * or ** for args/kwargs
 #W0201 - Instance attribute defined outside of __init__
 #W0232 - class has no __init__  defined
+#W0614 -- Wildcard import (highly useful for defines/cryptoki.py)
 
 
 [REPORTS]
@@ -62,15 +60,12 @@ disable-msg=W0142,W0703,R0201
 # html
 output-format=colorized
 
-# Include message's id in output
-include-ids=yes
-
 # Put messages in a separate file for each module / package specified on the
 # command line instead of printing them on stdout. Reports (if any) will be
 # written in a file name "pylint_global.[txt|html]".
 files-output=no
 
-# Tells wether to display a full report or only the messages
+# Tells whether to display a full report or only the messages
 reports=yes
 
 # Python expression which should return a note less than 10 (10 is the highest
@@ -80,9 +75,6 @@ reports=yes
 # (R0004).
 evaluation=10.0 - ((float(5 * error + warning + refactor + convention) / statement) * 10)
 
-# Add a comment according to your evaluation note. This is used by the global
-# evaluation report (R0004).
-comment=yes
 
 # Enable the report(s) with the given id(s).
 #enable-report=
@@ -99,7 +91,7 @@ comment=yes
 #
 [VARIABLES]
 
-# Tells wether we should check for unused import in __init__ files.
+# Tells whether we should check for unused import in __init__ files.
 init-import=yes
 
 # A regular expression matching names used for dummy variables (i.e. not used).
@@ -114,18 +106,13 @@ additional-builtins=
 #
 [TYPECHECK]
 
-# Tells wether missing members accessed in mixin class should be ignored. A
+# Tells whether missing members accessed in mixin class should be ignored. A
 # mixin class is detected if its name ends with "mixin" (case insensitive).
 ignore-mixin-members=yes
-
 
 # List of classes names for which member attributes should not be checked
 # (useful for classes with attributes dynamically set).
 ignored-classes=SQLObject,pytest
-
-# When zope mode is activated, add a predefined set of Zope acquired attributes
-# to generated-members.
-zope=no
 
 # List of members which are set dynamically and missed by pylint inference
 # system, and so shouldn't trigger E0201 when accessed. Python regular
@@ -146,9 +133,6 @@ generated-members=REQUEST,acl_users,aq_parent,[a-zA-Z_]+_ex
 # * uses of the global statement
 #
 [BASIC]
-
-# Required attributes for module, separated by a comma
-required-attributes=
 
 # Regular expression which should only match functions or classes name which do
 # not require a docstring
@@ -260,14 +244,8 @@ int-import-graph=
 #
 [CLASSES]
 
-# List of interface methods to ignore, separated by a comma. This is used for
-# instance to not check methods defines in Zope's Interface base class.
-ignore-iface-methods=isImplementedBy,deferred,extends,names,namesAndDescriptions,queryDescriptionFor,getBases,getDescriptionFor,getDoc,getName,getTaggedValue,getTaggedValueTags,isEqualOrExtendedBy,setTaggedValue,isImplementedByInstancesOf,adaptWith,is_implemented_by
-
 # List of method names used to declare (i.e. assign) instance attributes.
 defining-attr-methods=__init__,__new__,setUp
-
-#ignore pytest
 
 # checks for similarities and duplicated code. This computation may be
 # memory / CPU intensive, so you should disable it if you experiments some
