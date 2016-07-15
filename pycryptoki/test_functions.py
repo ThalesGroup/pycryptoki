@@ -46,7 +46,7 @@ def assert_test_return_value(value, expected_value, message, print_on_success=Tr
     assert value == expected_value, "\nERROR: " + message + "\n\tExpected: " + exp_code + \
                                     "\n\tFound: " + code
     if print_on_success:
-        LOG.info(exp_code + ": " + message)
+        LOG.info("%s: %s", exp_code, message)
 
 
 class LunaException(Exception):
@@ -69,7 +69,7 @@ class LunaException(Exception):
         if self.error_code in ret_vals_dictionary:
             self.error_string = ret_vals_dictionary[self.error_code]
         else:
-            self.error_string = "Unknown Code=" + str(hex(self.error_code))
+            self.error_string = "Unknown Code=%02x" % self.error_code
 
     def __str__(self):
         data = ("\n\tFunction: {func_name}"

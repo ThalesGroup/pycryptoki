@@ -42,7 +42,7 @@ MECH_PARAMS = {CKM_AES_XTS: {'hTweakKey': 0,
                                    'sourceData': list(range(12)),
                                    'test_id': 'RSA_OAEP'},
                CKM_AES_GCM: {'iv': list(range(16)),
-                             'AAD': b'testme',
+                             'AAD': 'testme',
                              'ulTagBits': 32,
                              'test_id': 'AES_GCM'},
                CKM_RSA_PKCS_PSS: {'hashAlg': CKM_SHA_1,
@@ -125,7 +125,7 @@ class TestMechanisms(object):
         :return:
         """
         mech = AESGCMMechanism(mech_type=CKM_AES_GCM,
-                               params={'AAD': b'notsosecret',
+                               params={'AAD': 'notsosecret',
                                        'iv': list(range(12)),
                                        'ulTagBits': 32})
         cmech = mech.to_c_mech()

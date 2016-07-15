@@ -5,14 +5,14 @@ import logging
 from _ctypes import POINTER
 from ctypes import create_string_buffer, cast, byref, string_at, c_ubyte
 
-from .cryptoki import CK_ULONG, \
-    C_EncryptInit, C_Encrypt
-from .defines import CKR_OK
 from .attributes import Attributes, to_char_array
 from .common_utils import AutoCArray, refresh_c_arrays
+from .cryptoki import CK_ULONG, \
+    C_EncryptInit, C_Encrypt
 from .cryptoki import C_Decrypt, C_DecryptInit, CK_OBJECT_HANDLE, \
     C_WrapKey, C_UnwrapKey, C_EncryptUpdate, C_EncryptFinal, CK_BYTE_PTR, \
     C_DecryptUpdate, C_DecryptFinal
+from .defines import CKR_OK
 from .mechanism import Mechanism
 from .test_functions import make_error_handle_function
 

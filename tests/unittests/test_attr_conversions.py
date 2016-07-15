@@ -1,29 +1,38 @@
 """
 Unit tests for python/c type conversions
 """
-import pytest
 import logging
-
-from hypothesis import given
-from hypothesis.strategies import integers, floats, text, booleans, lists, dictionaries, one_of
-from hypothesis.extra.datetime import dates
-
 from _ctypes import POINTER
-from ctypes import cast, c_void_p, c_ulong, sizeof
-
-from pycryptoki.attributes import CK_ATTRIBUTE, CKA_CLASS, CK_BYTE, to_long, to_bool, to_char_array, \
-                                  to_ck_date, to_byte_array, to_sub_attributes, Attributes, \
-                                  convert_c_ubyte_array_to_string
-
 from binascii import hexlify
+from collections import defaultdict
+from ctypes import cast, c_void_p, c_ulong, sizeof
 from string import ascii_letters as letters
+
+import mock
+import pytest
+from hypothesis import given
+from hypothesis.extra.datetime import dates
+from hypothesis.strategies import integers, floats, text, booleans, lists, dictionaries, one_of
+from six import b
+
+from pycryptoki.attributes import (CK_ATTRIBUTE,
+                                   CKA_CLASS,
+                                   CK_BYTE,
+                                   to_long,
+                                   to_bool,
+                                   to_char_array,
+                                   to_ck_date,
+                                   to_byte_array,
+                                   to_sub_attributes,
+                                   Attributes,
+                                   convert_c_ubyte_array_to_string, KEY_TRANSFORMS)
+from pycryptoki.test_functions import integer_types
 
 LOG = logging.getLogger(__name__)
 MAX_INT = 2 ** (sizeof(c_ulong) * 8) - 1
 
 
 class TestAttrConversions(object):
-
     def verify_c_type(self, pointer, leng):
         """
         Verifies that (pointer, leng) is a proper c type
@@ -31,7 +40,7 @@ class TestAttrConversions(object):
         :param leng: length of c data
         """
         assert isinstance(pointer, c_void_p)
-        assert isinstance(leng, (long, int, c_ulong))
+        assert isinstance(leng, (integer_types, c_ulong))
 
     def create_ck_attr(self, pointer, leng):
         """
@@ -74,7 +83,7 @@ class TestAttrConversions(object):
         self.verify_c_type(pointer, leng)
 
         # C type is unsigned integer. Assert result is positive.
-        assert cast(pointer, POINTER(c_ulong)).contents >= 0
+        assert cast(pointer, POINTER(c_ulong)).contents.value >= 0
 
         py_long = self.reverse_case(pointer, leng, to_long)
         assert int_val == py_long
@@ -138,11 +147,11 @@ class TestAttrConversions(object):
         to_char_array() with param:
         :param txt_val: random string
         """
-        pointer, leng = to_char_array(str(txt_val))
+        pointer, leng = to_char_array(txt_val)
         self.verify_c_type(pointer, leng)
 
         py_txt = self.reverse_case(pointer, leng, to_char_array)
-        assert txt_val == py_txt
+        assert b(txt_val) == py_txt
 
     @given(lists(elements=text(alphabet=letters, min_size=1, max_size=1), min_size=1))
     def test_to_char_array_list(self, list_val):
@@ -154,7 +163,7 @@ class TestAttrConversions(object):
         self.verify_c_type(pointer, leng)
 
         py_txt = self.reverse_case(pointer, leng, to_char_array)
-        assert "".join(list_val) == py_txt
+        assert b("".join(list_val)) == py_txt
 
     def test_to_char_array_fail_obj(self):
         """
@@ -168,12 +177,12 @@ class TestAttrConversions(object):
         to_ck_date() with param:
         :param date_val: random date to be converted to date-string
         """
-        date_string = str(date_val).replace("-", "")
+        date_string = date_val.strftime("%Y%m%d")
         pointer, leng = to_ck_date(date_string)
         self.verify_c_type(pointer, leng)
 
         py_date = self.reverse_case(pointer, leng, to_ck_date)
-        assert date_string == str(py_date)
+        assert b(date_string) == py_date
 
     @given(dates(min_year=1900))
     def test_to_ck_date_dict(self, date_val):
@@ -186,7 +195,7 @@ class TestAttrConversions(object):
         self.verify_c_type(pointer, leng)
 
         py_date = self.reverse_case(pointer, leng, to_ck_date)
-        assert (str(date_val).replace("-", "")) == py_date
+        assert b(date_val.strftime("%Y%m%d")) == py_date
 
     @given(dates(min_year=1900))
     def test_to_ck_date(self, date_val):
@@ -198,7 +207,7 @@ class TestAttrConversions(object):
         self.verify_c_type(pointer, leng)
 
         py_date = self.reverse_case(pointer, leng, to_ck_date)
-        assert str(date_val).replace("-", "") == py_date
+        assert b(date_val.strftime("%Y%m%d")) == py_date
 
     def test_to_ck_date_fail_obj(self):
         """
@@ -242,7 +251,7 @@ class TestAttrConversions(object):
         self.verify_c_type(pointer, leng)
 
         py_bytes = self.reverse_case(pointer, leng, to_byte_array)
-        LOG.debug("to_byte_array() data loss: %s => %s", str(hex(int_val)), str(py_bytes))
+        LOG.debug("to_byte_array() data loss: %s => %s", b(hex(int_val)), py_bytes)
         assert int(py_bytes, 16) != int_val
 
     @given(lists(elements=integers(min_value=0, max_value=255)))
@@ -287,13 +296,13 @@ class TestAttrConversions(object):
         """
         self.force_fail(object(), to_byte_array, TypeError)
 
-    @given(text(alphabet=letters, min_size=1))
+    @given(text(alphabet="ghijklmnopqrstuvwxyz", min_size=1))
     def test_to_byte_array_fail_str(self, txt_val):
         """
         to_byte_array() with incompatible param:
         :param txt_val: random text -TypeError
         """
-        self.force_fail(txt_val, to_byte_array, TypeError)
+        self.force_fail(txt_val, to_byte_array, ValueError)
 
     @given(integers(min_value=0))
     def test_to_byte_array_hexstring(self, int_val):
@@ -308,14 +317,18 @@ class TestAttrConversions(object):
         py_bytes = self.reverse_case(pointer, leng, to_byte_array)
         assert int(py_bytes, 16) == int(hex_string, 16)
 
-    @given(dictionaries(keys=integers(min_value=1, max_value=MAX_INT), dict_class=Attributes, values=booleans()))
+    @given(dictionaries(keys=integers(min_value=1, max_value=MAX_INT), dict_class=Attributes,
+                        values=booleans()))
     def test_to_sub_attributes(self, test_dic):
         """
         to_sub_attributes() with param
         :param test_dic: random dictionary of bools
         """
-        pointer, leng = to_sub_attributes(test_dic)
-        self.verify_c_type(pointer, leng)
+        mock_xform_dict = defaultdict(lambda: to_bool)
+        mock_xform_dict.update({key: to_bool for key in KEY_TRANSFORMS})
+        with mock.patch('pycryptoki.attributes.KEY_TRANSFORMS', new=mock_xform_dict):
+            pointer, leng = to_sub_attributes(test_dic)
+            self.verify_c_type(pointer, leng)
 
     @given(integers())
     def test_to_sub_attributes_fail(self, int_val):

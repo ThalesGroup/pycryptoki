@@ -4,6 +4,7 @@ Unit tests for encryption.py
 import pytest
 from hypothesis import given
 from hypothesis.strategies import text, integers, data, lists
+from six import b
 
 import pycryptoki.encryption as encrypt
 
@@ -30,5 +31,6 @@ class TestEncryption(object):
         _get_string_from_list w/ list of random text
         :param list_val: list of random text
         """
-        assert encrypt._get_string_from_list(list_val) == "".join(list_val)
+        list_val = [b(x) for x in list_val]
+        assert encrypt._get_string_from_list(list_val) == b"".join(list_val)
 

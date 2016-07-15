@@ -17,6 +17,6 @@ setup(name='pycryptoki',
                 'pycryptoki.daemon'],
       scripts=['pycryptoki/daemon/rpyc_pycryptoki.py'],
       setup_requires=['pytest-runner'],
-      tests_require=['pytest', 'hypothesis', 'mock'],
-      requires=['future', 'rpyc']
+      tests_require=['pytest', 'hypothesis', 'mock', 'pytz'],
+      requires=['future', 'rpyc', 'six']
       )

@@ -47,7 +47,7 @@ class TestUsageLimitAndCount(object):
 
         h_key = c_generate_key_ex(self.h_session, flavor=CKM_DES_KEY_GEN,
                                   template=CKM_DES_KEY_GEN_TEMP)
-        LOG.info("Called c-generate: Key handle -" + str(h_key))
+        LOG.info("Called c-generate: Key handle -%s", h_key)
         usage_limit = 5
 
         c_set_attribute_value_ex(self.h_session,
@@ -57,7 +57,7 @@ class TestUsageLimitAndCount(object):
                                                 template={CKA_USAGE_LIMIT: None})
 
         usage_val_out = out_template[CKA_USAGE_LIMIT]
-        LOG.info("CKA_USAGE_LIMIT reported by C_GetAttributeValue :" + str(usage_val_out))
+        LOG.info("CKA_USAGE_LIMIT reported by C_GetAttributeValue :%s", usage_val_out)
         assert usage_limit == usage_val_out, "reported USAGE LIMIT does not match"
 
     def test_usage_limit_attribute_check_sym_des(self):
@@ -79,7 +79,7 @@ class TestUsageLimitAndCount(object):
 
         h_key = c_generate_key_ex(self.h_session, flavor=CKM_DES_KEY_GEN,
                                   template=CKM_DES_KEY_GEN_TEMP)
-        LOG.info("Called c-generate: Key handle -" + str(h_key))
+        LOG.info("Called c-generate: Key handle -%s", h_key)
 
         c_set_attribute_value_ex(self.h_session,
                                  h_key, usage_lim_template)
@@ -92,7 +92,7 @@ class TestUsageLimitAndCount(object):
                                                template={CKA_USAGE_COUNT: None})
 
         usage_val_out = py_template[CKA_USAGE_COUNT]
-        LOG.info("CKA_USAGE_COUNT reported by C_GetAttributeValue :" + str(usage_val_out))
+        LOG.info("CKA_USAGE_COUNT reported by C_GetAttributeValue: %s", usage_val_out)
 
         assert usage_count == usage_val_out, "reported USAGE LIMIT does not match"
 
@@ -127,7 +127,7 @@ class TestUsageLimitAndCount(object):
                                                template={CKA_USAGE_COUNT: None})
 
         usage_val_out = py_template[CKA_USAGE_COUNT]
-        LOG.info("CKA_USAGE_COUNT reported by C_GetAttributeValue :" + str(usage_val_out))
+        LOG.info("CKA_USAGE_COUNT reported by C_GetAttributeValue: %s", usage_val_out)
 
         assert usage_count == usage_val_out, "reported USAGE LIMIT does not match"
 
@@ -151,8 +151,7 @@ class TestUsageLimitAndCount(object):
                                                   prkey_template=CKM_RSA_PKCS_KEY_PAIR_GEN_PRIVTEMP,
                                                   mech=None)
         LOG.info(
-            "Called c-generate: Public Key handle -" + str(h_pbkey) + "Private Key Handle" + str(
-                h_prkey))
+            "Called c-generate: Public Key handle: %s Private Key Handle: %s", h_pbkey, h_prkey)
         usage_limit = 2
 
         c_set_attribute_value_ex(self.h_session,
@@ -161,7 +160,7 @@ class TestUsageLimitAndCount(object):
         py_template = c_get_attribute_value_ex(self.h_session, h_pbkey,
                                                template={CKA_USAGE_LIMIT: None})
         usage_val_out = py_template[CKA_USAGE_LIMIT]
-        LOG.info("CKA_USAGE_LIMIT reported by C_GetAttributeValue :" + str(usage_val_out))
+        LOG.info("CKA_USAGE_LIMIT reported by C_GetAttributeValue: %s", usage_val_out)
         assert usage_limit == usage_val_out, "reported USAGE LIMIT does not match"
 
     def test_usage_limit_attribute_check_Assym(self):
@@ -188,8 +187,7 @@ class TestUsageLimitAndCount(object):
                                                   mech=None)
 
         LOG.info(
-            "Called c-generate: Public Key handle -" + str(h_pbkey) + "Private Key Handle" + str(
-                h_prkey))
+            "Called c-generate: Public Key handle -%s Private Key Handle -%s", h_pbkey, h_prkey)
 
         c_set_attribute_value_ex(self.h_session,
                                  h_pbkey, usage_lim_template)
@@ -201,7 +199,7 @@ class TestUsageLimitAndCount(object):
                                                template={CKA_USAGE_COUNT: None})
 
         usage_val_out = py_template[CKA_USAGE_COUNT]
-        LOG.info("CKA_USAGE_COUNT reported by C_GetAttributeValue :" + str(usage_val_out))
+        LOG.info("CKA_USAGE_COUNT reported by C_GetAttributeValue: %s", usage_val_out)
         assert usage_count == usage_val_out, "reported USAGE LIMIT does not match"
 
     def test_set_attribute_usage_count_check_error_CKR_KEY_NOT_ACTIVE_3des(self):
@@ -231,13 +229,13 @@ class TestUsageLimitAndCount(object):
         c_encrypt_ex(self.h_session, CKM_DES3_ECB, h_key, b'a' * 2048)
 
         return_val, data = c_encrypt(self.h_session, CKM_DES3_ECB, h_key, b'a' * 2048)
-        LOG.info("Called C_Encrypt, return code: " + str(return_val))
+        LOG.info("Called C_Encrypt, return code: %s", return_val)
 
         py_template = c_get_attribute_value_ex(self.h_session, h_key,
                                                template={CKA_USAGE_COUNT: None})
 
         usage_val_out = py_template[CKA_USAGE_COUNT]
-        LOG.info("CKA_USAGE_COUNT reported by C_GetAttributeValue :" + str(usage_val_out))
+        LOG.info("CKA_USAGE_COUNT reported by C_GetAttributeValue: %s", usage_val_out)
 
         assert return_val == CKR_KEY_NOT_ACTIVE, "reported error code does not match"
 
@@ -260,8 +258,7 @@ class TestUsageLimitAndCount(object):
                                                   mech=None)
 
         LOG.info(
-            "Called c-generate: Public Key handle -" + str(h_pbkey) + "Private Key Handle" + str(
-                h_prkey))
+            "Called c-generate: Public Key handle -%s Private Key Handle - %s", h_pbkey, h_prkey)
 
         c_set_attribute_value_ex(self.h_session,
                                  h_pbkey, usage_lim_template)
@@ -271,7 +268,7 @@ class TestUsageLimitAndCount(object):
         c_encrypt_ex(self.h_session, CKM_RSA_PKCS, h_pbkey, b'a' * 20)
 
         return_val, data = c_encrypt(self.h_session, CKM_RSA_PKCS, h_pbkey, b'a' * 20)
-        LOG.info("Called C_Encrypt, return code: " + str(return_val))
+        LOG.info("Called C_Encrypt, return code: %s", return_val)
         py_template = c_get_attribute_value_ex(self.h_session, h_pbkey,
                                                template={CKA_USAGE_COUNT: None})
 

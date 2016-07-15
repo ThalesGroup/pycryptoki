@@ -1,16 +1,15 @@
 """
 Unit tests for AutoCArray in common_util.py
 """
-import pytest
-
-from pycryptoki.common_utils import AutoCArray
-
 from ctypes import *
+from string import ascii_letters
 
+import pytest
 from hypothesis import given
 from hypothesis.strategies import text, lists, sampled_from, integers
+from six import b, binary_type
 
-from string import ascii_letters
+from pycryptoki.common_utils import AutoCArray
 
 c_types = [c_short, c_ushort, c_long, c_ulong, c_int, c_uint, c_float, c_double, c_longdouble,
            c_longlong, c_ulonglong, c_byte, c_ubyte, c_char, c_char_p, c_void_p, c_bool]
@@ -19,7 +18,6 @@ MAX_INT = 2 ** (sizeof(c_ulong) * 8) - 1
 
 
 class TestAutoCArray(object):
-
     @given(sampled_from(c_types))
     def test_auto_c_array_empty(self, typ_val):
         """
@@ -33,7 +31,7 @@ class TestAutoCArray(object):
         assert c_array.ctype == typ_val
 
         if typ_val == c_char:
-            assert c_array.array.contents.value == typ_val('\x00').value
+            assert c_array.array.contents.value == typ_val(b'\x00').value
         else:
             assert c_array.array.contents.value == typ_val(0).value
 
@@ -47,7 +45,7 @@ class TestAutoCArray(object):
 
         assert c_array.size.contents.value == len(c_array) == len(str_val)
         assert c_array.ctype == c_ubyte
-        assert "".join(c_array) == str_val
+        assert b"".join(c_array) == b(str_val)
 
     @given(lists(elements=integers(min_value=-128, max_value=127), min_size=1))
     def test_auto_c_array_byte_list(self, list_val):
@@ -60,7 +58,7 @@ class TestAutoCArray(object):
 
         assert c_array.size.contents.value == len(c_array) == len(list_val)
         assert c_array.ctype == c_byte
-        assert "".join([str(c_byte(x)) for x in c_array]) == "".join([str(x) for x in list_val])
+        assert b"".join([bytes(c_byte(x)) for x in c_array]) == b"".join([bytes(x) for x in list_val])
         assert c_array.array[0] == cast(c_array.array, POINTER(c_byte)).contents.value
 
     @given(lists(elements=integers(min_value=0, max_value=256), min_size=1))
@@ -74,10 +72,13 @@ class TestAutoCArray(object):
 
         assert c_array.size.contents.value == len(c_array) == len(list_val)
         assert c_array.ctype == c_ubyte
-        assert "".join([str(c_ubyte(x)) for x in c_array]) == "".join([str(x) for x in list_val])
+        assert b"".join([bytes(c_ubyte(x)) for x in c_array]) == b"".join(
+            [bytes(x) for x in list_val])
         assert c_array.array[0] == cast(c_array.array, POINTER(c_ubyte)).contents.value
 
-    @given(lists(elements=integers(min_value=(-MAX_INT/2), max_value=MAX_INT/2), min_size=1))
+    @given(lists(elements=integers(min_value=int(-MAX_INT / 2),
+                                   max_value=int(MAX_INT / 2)),
+                 min_size=1))
     def test_auto_c_array_long_list(self, list_val):
         """
         Initalize an array from list of long's
@@ -88,7 +89,8 @@ class TestAutoCArray(object):
 
         assert c_array.size.contents.value == len(c_array) == len(list_val)
         assert c_array.ctype == c_long
-        assert "".join([str(c_long(x)) for x in c_array]) == "".join([str(x) for x in list_val])
+        assert b"".join([bytes(c_long(x)) for x in c_array]) == b"".join(
+            [bytes(x) for x in list_val])
         assert c_array.array[0] == cast(c_array.array, POINTER(c_long)).contents.value
 
     @given(lists(elements=integers(min_value=0, max_value=MAX_INT), min_size=1))
@@ -102,7 +104,8 @@ class TestAutoCArray(object):
 
         assert c_array.size.contents.value == len(c_array) == len(list_val)
         assert c_array.ctype == c_ulong
-        assert "".join([str(c_ulong(x)) for x in c_array]) == "".join([str(x) for x in list_val])
+        assert b"".join([bytes(c_ulong(x)) for x in c_array]) == b"".join(
+            [bytes(x) for x in list_val])
         assert c_array.array[0] == cast(c_array.array, POINTER(c_ulong)).contents.value
 
     @given(lists(elements=text(alphabet=ascii_letters, min_size=1, max_size=1), min_size=1))
@@ -111,12 +114,13 @@ class TestAutoCArray(object):
         Initalize an array from list of c_chars
         :param list_val: list of char to be converted to c_char's
         """
-        new_list_val = [c_char(str(x)) for x in list_val]
+        list_val = [bytes(b(x)) for x in list_val]
+        new_list_val = [c_char(x) for x in list_val]
         c_array = AutoCArray(data=new_list_val, ctype=c_char)
 
         assert c_array.size.contents.value == len(c_array) == len(list_val)
         assert c_array.ctype == c_char
-        assert "".join([str(x) for x in c_array]) == "".join([str(x) for x in list_val])
+        assert b"".join([x for x in c_array]) == b"".join(list_val)
         assert c_array.array[0] == cast(c_array.array, POINTER(c_char)).contents.value
 
     @given(list_val=lists(elements=integers(min_value=0, max_value=127), min_size=1))
@@ -128,7 +132,7 @@ class TestAutoCArray(object):
         :param test_type: c_types to test with
         """
         if test_type == c_char:
-            new_list = [c_char(chr(x)) for x in list_val]
+            new_list = [c_char(b(chr(x))) for x in list_val]
         else:
             new_list = [test_type(x) for x in list_val]
 
