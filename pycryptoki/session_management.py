@@ -95,7 +95,7 @@ def c_open_session(slot_num, flags=(CKF_SERIAL_SESSION | CKF_RW_SESSION)):
     ret = C_OpenSession(CK_SLOT_ID(slot_num), CK_FLAGS(flags),
                         cast(arg3, CK_VOID_PTR), CK_NOTIFY(0),
                         pointer(h_session))
-    LOG.info("C_OpenSession: Opening Session. slot=" + str(slot_num))
+    LOG.info("C_OpenSession: Opening Session. slot=%s", slot_num)
 
     return ret, h_session.value
 
@@ -186,7 +186,7 @@ def c_get_token_info(slot_id):
     """
     token_info = {}
     c_token_info = CK_TOKEN_INFO()
-    LOG.info("Getting token info. slot=" + str(slot_id))
+    LOG.info("Getting token info. slot=%s", slot_id)
     ret = C_GetTokenInfo(CK_ULONG(slot_id), byref(c_token_info))
 
     if ret == CKR_OK:
@@ -259,7 +259,7 @@ def c_close_session(h_session):
 
     """
     # CLOSE SESSION
-    LOG.info("C_CloseSession: Closing session " + str(h_session))
+    LOG.info("C_CloseSession: Closing session %s", h_session)
     ret = C_CloseSession(h_session)
     return ret
 
@@ -274,7 +274,7 @@ def c_logout(h_session):
     :returns: The result code
 
     """
-    LOG.info("C_Logout: Logging out of session " + str(h_session))
+    LOG.info("C_Logout: Logging out of session %s", h_session)
     ret = C_Logout(h_session)
     return ret
 
@@ -291,7 +291,7 @@ def c_init_pin(h_session, pin):
 
     """
 
-    LOG.info("C_InitPIN: Initializing PIN to " + str(pin))
+    LOG.info("C_InitPIN: Initializing PIN to %s", pin)
     pin = AutoCArray(data=pin)
     ret = C_InitPIN(h_session, pin.array, pin.size.contents)
     return ret
@@ -307,7 +307,7 @@ def ca_factory_reset(slot):
     :returns: The result code
 
     """
-    LOG.info("CA_FactoryReset: Factory Reset. slot=" + str(slot))
+    LOG.info("CA_FactoryReset: Factory Reset. slot=%s", slot)
     ret = CA_FactoryReset(CK_SLOT_ID(slot), CK_ULONG(0))
     return ret
 
@@ -325,7 +325,7 @@ def c_set_pin(h_session, old_pass, new_pass):
 
     """
     LOG.info("C_SetPIN: Changing password. "
-             "old_pass=" + str(old_pass) + ", new_pass=" + str(new_pass))
+             "old_pass=%s, new_pass=%s", old_pass, new_pass)
 
     old_pass = AutoCArray(data=old_pass)
     new_pass = AutoCArray(data=new_pass)
@@ -347,7 +347,7 @@ def c_close_all_sessions(slot):
 
     """
 
-    LOG.info("C_CloseAllSessions: Closing all sessions. slot=" + str(slot))
+    LOG.info("C_CloseAllSessions: Closing all sessions. slot=%s", slot)
     ret = C_CloseAllSessions(CK_ULONG(slot))
     return ret
 

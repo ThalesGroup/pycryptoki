@@ -12,6 +12,8 @@ from ctypes import cast, c_void_p, create_string_buffer, c_bool, \
     c_ulong, pointer, POINTER, sizeof, c_char, string_at, c_ubyte
 from functools import wraps
 
+from six import b, string_types
+
 from .cryptoki import CK_ATTRIBUTE, CK_BBOOL, CK_ATTRIBUTE_TYPE, CK_ULONG, \
     CK_BYTE, CK_CHAR
 from .defines import CKA_EKM_UID, CKA_GENERIC_1, CKA_GENERIC_2, \
@@ -125,13 +127,18 @@ def to_char_array(val, reverse=False):
         LOG.debug("Converted to : %s", ret_data)
         return ret_data
 
-    if not isinstance(val, (str, bytes, list)):
+    if not isinstance(val, (string_types, bytes, list)):
         raise TypeError("Invalid conversion {} to CK_CHAR*!".format(type(val)))
 
     if isinstance(val, list):
-        val = str("".join(val))
+        val = "".join(val)
 
-    if isinstance(val, (str, bytes)):
+    # If already a bytestring, go directly to C.
+    # Otherwise, convert to bytestring, then go to C.
+    if isinstance(val, bytes):
+        string_val = create_string_buffer(val, len(val))
+    elif isinstance(val, string_types):
+        val = b(val)
         string_val = create_string_buffer(val, len(val))
 
     return cast(pointer(string_val), c_void_p), CK_ULONG(sizeof(string_val))
@@ -153,13 +160,13 @@ def to_ck_date(val, reverse=False):
     if isinstance(val, dict):
         val = datetime.date(year=val['year'], month=val['month'], day=val['day'])
 
-    if isinstance(val, (str, bytes)):
+    if isinstance(val, string_types):
         if len(val) != 8:
             raise TypeError("Invalid date string passed! Should be of type YYYYMMDD")
-        date_val = create_string_buffer(val, len(val))
+        date_val = create_string_buffer(b(val), len(val))
 
     elif isinstance(val, datetime.date):
-        data = val.strftime("%Y%m%d")
+        data = b(val.strftime("%Y%m%d"))
         date_val = create_string_buffer(data, len(data))
 
     else:
@@ -190,10 +197,8 @@ def to_byte_array(val, reverse=False):
         fin = binascii.hexlify(bytearray(data_list))
         LOG.debug("Final hex data: %s", fin)
         return fin
-    if isinstance(val, bytearray):
-        # Convert to list of ints, and use int-list case
-        val = [int(x) for x in val]
-    elif isinstance(val, (str, bytes)):
+
+    if isinstance(val, string_types):
         # Hex-string in form '01e4'
         val = int(val, 16)
     if isinstance(val, collections.Iterable):
@@ -426,4 +431,4 @@ def convert_c_ubyte_array_to_string(byte_array):
 
     :param byte_array:
     """
-    return "".join("%02x" % b for b in byte_array)
+    return b("".join("%02x" % x for x in byte_array))

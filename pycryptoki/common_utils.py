@@ -1,7 +1,7 @@
 """
 Utilities for pycryptoki
 """
-from past.builtins import basestring
+from six import b, string_types
 from _ctypes import pointer, POINTER
 from ctypes import c_ulong, cast, create_string_buffer
 
@@ -51,8 +51,8 @@ class AutoCArray(object):
         # name was just for logging.
         if data is not None:
             # Parse out any given data.
-            if isinstance(data, basestring):
-                self._array = create_string_buffer(data, len(data))
+            if isinstance(data, (bytes, string_types)):
+                self._array = create_string_buffer(b(data), len(data))
                 self._size = c_ulong(len(data))
                 self.ctype = CK_CHAR
             elif isinstance(data, list):

@@ -2,9 +2,9 @@
 Functions for managing partitions
 """
 import logging
-from functools import reduce
 from _ctypes import pointer
 from ctypes import byref, c_ubyte
+from functools import reduce
 
 from .common_utils import AutoCArray, refresh_c_arrays
 from .cryptoki import (CK_SLOT_ID,
@@ -56,8 +56,8 @@ def ca_create_container(h_session, storage_size, password=None, label='Inserted 
     """
     h_sess = CK_SESSION_HANDLE(h_session)
     h_container = CK_ULONG()
-    LOG.info("CA_CreateContainer: Inserting token with no SO storage_size=" + str(
-        storage_size) + ", pin=" + str(password) + ", label=" + label)
+    LOG.info("CA_CreateContainer: Inserting token with no SO storage_size=%s, pin=%s, label=%s",
+             storage_size, password, label)
 
     if password == '':
         password = None
@@ -70,7 +70,7 @@ def ca_create_container(h_session, storage_size, password=None, label='Inserted 
                              password.array, password.size.contents,
                              CK_ULONG(-1), CK_ULONG(-1), CK_ULONG(0), CK_ULONG(0),
                              CK_ULONG(storage_size), byref(h_container))
-    LOG.info("CA_CreateContainer: Inserted token into slot " + str(h_container.value))
+    LOG.info("CA_CreateContainer: Inserted token into slot %s", h_container.value)
     return ret, h_container.value
 
 

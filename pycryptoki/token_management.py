@@ -7,6 +7,8 @@ import logging
 from ctypes import byref
 
 # Cryptoki Constants
+from six import b
+
 from .cryptoki import (CK_ULONG,
                        CK_BBOOL,
                        CK_MECHANISM_TYPE,
@@ -37,10 +39,10 @@ def c_init_token(slot_num, password, token_label='Main Token'):
     :returns: The result code
 
     """
-    LOG.info("C_InitToken: Initializing token. slot=" + str(
-        slot_num) + ", label='" + token_label + "', password='" + str(password) + "'")
+    LOG.info("C_InitToken: Initializing token (slot=%s, label='%s', password='%s')",
+             slot_num, token_label, password)
 
-    if password == '':
+    if password == b'':
         password = None
     password = AutoCArray(data=password)
     slot_id = CK_ULONG(slot_num)

@@ -8,15 +8,7 @@ import sys
 # From http://stackoverflow.com/a/7759927
 from pycryptoki.test_functions import LunaException
 
-if sys.version_info < (3,):
-    def b(x):
-        return x
-else:
-    import codecs
-
-    def b(x):
-        return codecs.latin_1_encode(x)[0]
-
+from six import b
 import pytest
 
 from . import config as hsm_config
@@ -106,9 +98,9 @@ def pytest_configure(config):
             co_pwd = config.getoption("copassword", default=CO_PASSWORD)
 
         if admin_pwd:
-            admin_pwd = b(admin_pwd)
+            admin_pwd = admin_pwd
         if co_pwd:
-            co_pwd = b(co_pwd)
+            co_pwd = co_pwd
 
         hsm_config['admin_pwd'] = admin_pwd
         hsm_config['co_pwd'] = co_pwd
