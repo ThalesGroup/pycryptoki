@@ -1,39 +1,54 @@
+""" Functional tests for digest data """
 import logging
-
 import pytest
 
 from pycryptoki.return_values import ret_vals_dictionary
-from . import config as hsm_config
-from pycryptoki.defines import CKM_MD2, CKR_OK
+from pycryptoki.defines import CKR_OK, \
+    CKM_MD2, CKM_SHA_1, CKM_SHA224, CKM_SHA256, CKM_SHA384, CKM_SHA512
 from pycryptoki.encryption import _get_string_from_list
 from pycryptoki.misc import c_digest
 
 logger = logging.getLogger(__name__)
 
+MECHS = {CKM_MD2: "MD2",
+         CKM_SHA_1: "SHA1",
+         CKM_SHA224: "SHA224",
+         CKM_SHA256: "SHA256",
+         CKM_SHA384: "SHA384",
+         CKM_SHA512: "SHA512"}
+
+DATA = [b"Some arbitrary string", [b"Some arbitrary string", b"Some second arbitrary string"]]
+
 
 class TestDigestData(object):
-    """ """
+
+    def verify_ret(self, ret, expected_ret):
+        """
+        Assert that ret is as expected
+        :param ret: the actual return value
+        :param expected_ret: the expected return value
+        """
+        assert ret == expected_ret, "Function should return: " + \
+            ret_vals_dictionary[expected_ret] + ".\nInstead returned: " + ret_vals_dictionary[ret]
 
     @pytest.fixture(autouse=True)
     def setup_teardown(self, auth_session):
-        self.admin_slot = hsm_config["test_slot"]
         self.h_session = auth_session
 
-    def test_digest_data(self):
-        """Calls C_Digest on some data and makes sure there is no failure"""
-        data_to_digest = b"Some arbitrary string"
-        ret, digested_data = c_digest(self.h_session, data_to_digest, CKM_MD2)
-        assert ret == CKR_OK, "Digesting should occur with no errors, got {}".format(ret_vals_dictionary[ret])
+    @pytest.mark.parametrize('data', DATA, ids=['String', 'Blocks'])
+    @pytest.mark.parametrize('mech', MECHS.keys(), ids=MECHS.values())
+    def test_digest_data(self, mech, data):
+        """
+        Tests digest data mechs
+        :param mech: parametrized mech from 'MECHS'
+        :param data: parametrized testing data from 'DATA'
+        """
+        ret, digested_data = c_digest(self.h_session, data, mech)
+        self.verify_ret(ret, CKR_OK)
         assert len(digested_data) > 0, "The digested data should have a length"
-        assert data_to_digest != digested_data, "The digested data should not be the same as the " \
-                                                "original string"
 
-    def test_multipart_digest_data(self):
-        """ """
-        data_to_digest = [b"Some arbitrary string", b"Some second arbitrary string"]
-        ret, digested_data = c_digest(self.h_session, data_to_digest, CKM_MD2)
-        assert ret == CKR_OK, "Digesting should occur with no errors"
-        assert len(digested_data) > 0, "The digested data should have a length"
-        assert _get_string_from_list(
-            data_to_digest) != digested_data, "The digested data should not be the same as the " \
-                                              "original string"
+        # If data is blocks
+        if type(data) is list:
+            digested_data = _get_string_from_list(digested_data)
+
+        assert data != digested_data, "Digested data should not be the same as the original string"
