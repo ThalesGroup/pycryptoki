@@ -1,6 +1,8 @@
 import pytest
 import logging
 
+from six import integer_types
+
 from . import config as hsm_config
 from pycryptoki.defines import CKR_OK
 import pycryptoki.session_management as sess_mang
@@ -20,10 +22,10 @@ class TestSessionManagement(object):
         ret, sess_info = sess_mang.c_get_session_info(self.h_session)
         assert ret == CKR_OK
         # Checks that session_info dictionary is the right format. Does not check the values
-        assert isinstance(sess_info['state'], long)
-        assert isinstance(sess_info['flags'], long)
-        assert isinstance(sess_info['slotID'], long)
-        assert isinstance(sess_info['usDeviceError'], long)
+        assert isinstance(sess_info['state'], integer_types)
+        assert isinstance(sess_info['flags'], integer_types)
+        assert isinstance(sess_info['slotID'], integer_types)
+        assert isinstance(sess_info['usDeviceError'], integer_types)
 
     def test_get_slot_dict(self):
         """ get_slot_dict() """
