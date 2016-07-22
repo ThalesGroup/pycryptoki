@@ -5,7 +5,6 @@ import pytest
 from pycryptoki.return_values import ret_vals_dictionary
 from pycryptoki.defines import CKR_OK, \
     CKM_MD2, CKM_SHA_1, CKM_SHA224, CKM_SHA256, CKM_SHA384, CKM_SHA512
-from pycryptoki.encryption import _get_string_from_list
 from pycryptoki.misc import c_digest
 
 logger = logging.getLogger(__name__)
@@ -36,7 +35,7 @@ class TestDigestData(object):
         self.h_session = auth_session
 
     @pytest.mark.parametrize('data', DATA, ids=['String', 'Blocks'])
-    @pytest.mark.parametrize('mech', MECHS.keys(), ids=MECHS.values())
+    @pytest.mark.parametrize('mech', list(MECHS.keys()), ids=list(MECHS.values()))
     def test_digest_data(self, mech, data):
         """
         Tests digest data mechs
@@ -46,9 +45,4 @@ class TestDigestData(object):
         ret, digested_data = c_digest(self.h_session, data, mech)
         self.verify_ret(ret, CKR_OK)
         assert len(digested_data) > 0, "The digested data should have a length"
-
-        # If data is blocks
-        if type(data) is list:
-            digested_data = _get_string_from_list(digested_data)
-
         assert data != digested_data, "Digested data should not be the same as the original string"
