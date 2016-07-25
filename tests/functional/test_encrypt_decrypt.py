@@ -16,6 +16,7 @@ from pycryptoki.defines import (CKM_DES_CBC, CKM_DES_KEY_GEN,
                                 CKM_CAST5_CBC, CKM_CAST5_ECB, CKM_CAST5_KEY_GEN,
                                 CKM_RC2_CBC, CKM_RC2_ECB, CKM_RC2_CBC_PAD, CKM_RC2_KEY_GEN,
                                 CKM_RC4, CKM_RC4_KEY_GEN,
+                                CKM_SEED_CBC, CKM_SEED_CBC_PAD, CKM_SEED_ECB, CKM_SEED_KEY_GEN,
                                 CKM_RSA_PKCS, CKM_RSA_PKCS_OAEP, CKM_RSA_PKCS_KEY_PAIR_GEN,
                                 CKM_RSA_X_509, CKM_RSA_X9_31_KEY_PAIR_GEN,
                                 CKM_SHA_1, CKG_MGF1_SHA1)
@@ -38,7 +39,11 @@ SYM_TABLE = {CKM_DES_CBC: CKM_DES_KEY_GEN,
              CKM_RC2_CBC: CKM_RC2_KEY_GEN,
              CKM_RC2_ECB: CKM_RC2_KEY_GEN,
              CKM_RC2_CBC_PAD: CKM_RC2_KEY_GEN,
-             CKM_RC4: CKM_RC4_KEY_GEN}
+             CKM_RC4: CKM_RC4_KEY_GEN,
+             CKM_SEED_CBC: CKM_SEED_KEY_GEN,
+             CKM_SEED_CBC_PAD: CKM_SEED_KEY_GEN,
+             CKM_SEED_ECB: CKM_SEED_KEY_GEN
+             }
 ASYM_TABLE = {CKM_RSA_PKCS: CKM_RSA_PKCS_KEY_PAIR_GEN,
               CKM_RSA_PKCS_OAEP: CKM_RSA_PKCS_KEY_PAIR_GEN,
               CKM_RSA_X_509: CKM_RSA_X9_31_KEY_PAIR_GEN}
@@ -60,6 +65,9 @@ PARAM_TABLE = {CKM_DES_CBC: [{}, {'iv': list(range(8))}],
                CKM_RC2_ECB: [{'usEffectiveBits': 8}],
                CKM_RC2_CBC_PAD: [{'iv': list(range(8)), 'usEffectiveBits': 8}],
                CKM_RC4: [{}],
+               CKM_SEED_CBC: [{}],
+               CKM_SEED_CBC_PAD: [{}],
+               CKM_SEED_ECB: [{}],
                CKM_RSA_PKCS: [{}],
                CKM_RSA_PKCS_OAEP: [{'hashAlg': CKM_SHA_1, 'mgf': CKG_MGF1_SHA1, 'sourceData': list(range(12))}],
                CKM_RSA_X_509: [{}]}
@@ -69,7 +77,7 @@ PAD = b"a" * 0xfff0
 RAW = b"abcdefghijk"
 
 # Flavors which auto-pad (will return 'CKR_OK' on un-padded(RAW) data)
-PADDING_ALGORITHMS = [CKM_DES3_CBC_PAD, CKM_RC2_CBC_PAD, CKM_RC4, CKM_AES_GCM]
+PADDING_ALGORITHMS = [CKM_DES3_CBC_PAD, CKM_RC2_CBC_PAD, CKM_RC4, CKM_AES_GCM, CKM_SEED_CBC_PAD]
 
 # Flavors which are not compatible with multi encrypt/decrypt
 NOT_MULTI = [CKM_AES_GCM]
