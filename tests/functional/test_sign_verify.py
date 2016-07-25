@@ -9,6 +9,7 @@ from pycryptoki.defines import (CKM_AES_MAC, CKM_AES_CMAC, CKM_AES_KEY_GEN,
                                 CKM_DES3_MAC, CKM_DES3_CMAC, CKM_DES3_KEY_GEN,
                                 CKM_CAST3_MAC, CKM_CAST3_KEY_GEN,
                                 CKM_CAST5_MAC, CKM_CAST5_KEY_GEN,
+                                CKM_SEED_MAC, CKM_SEED_CMAC, CKM_SEED_KEY_GEN,
 
                                 CKM_DSA, CKM_DSA_KEY_PAIR_GEN,
                                 CKM_ECDSA, CKM_ECDSA_KEY_PAIR_GEN,
@@ -35,7 +36,8 @@ SYM_PARAMS = [(CKM_AES_KEY_GEN, CKM_AES_MAC), (CKM_AES_KEY_GEN, CKM_AES_CMAC),
               (CKM_DES_KEY_GEN, CKM_DES_MAC),
               (CKM_DES3_KEY_GEN, CKM_DES3_MAC), (CKM_DES3_KEY_GEN, CKM_DES3_CMAC),
               (CKM_CAST3_KEY_GEN, CKM_CAST3_MAC),
-              (CKM_CAST5_KEY_GEN, CKM_CAST5_MAC)]
+              (CKM_CAST5_KEY_GEN, CKM_CAST5_MAC),
+              (CKM_SEED_KEY_GEN, CKM_SEED_MAC), (CKM_SEED_KEY_GEN, CKM_SEED_CMAC)]
 SYM_KEYS = [key for key, _ in SYM_PARAMS]
 
 DSA_PUB_TEMPS = [CKM_DSA_KEY_PAIR_GEN_PUBTEMP_1024_160, CKM_DSA_KEY_PAIR_GEN_PUBTEMP_2048_224,
