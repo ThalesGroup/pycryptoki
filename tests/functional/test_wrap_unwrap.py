@@ -141,7 +141,7 @@ class TestWrappingKeys(object):
         :param keys: keys fixture
         """
         temp = get_default_key_template(k_type)
-        unwrap_temp = self.generate_unwarp_temp(k_type)
+        unwrap_temp = self.generate_unwrap_temp(k_type)
         extra_p = EXTRA_PARAM[mech]
         h_key, h_wrap_key = keys[k_type]
         if h_key is None or h_wrap_key is None:
@@ -170,7 +170,7 @@ class TestWrappingKeys(object):
         :param k_type: key gen mech
         :param keys: keys fixture
         """
-        unwrap_temp = self.generate_unwarp_temp(k_type)
+        unwrap_temp = self.generate_unwrap_temp(k_type)
         h_key, h_wrap_key = keys[k_type]
         extra_p = EXTRA_PARAM[mech]
         if h_key is None or h_wrap_key is None:
