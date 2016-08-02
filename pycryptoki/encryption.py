@@ -5,6 +5,7 @@ import logging
 from _ctypes import POINTER
 from ctypes import create_string_buffer, cast, byref, string_at, c_ubyte
 
+from .return_values import ret_vals_dictionary
 from .attributes import Attributes, to_char_array
 from .common_utils import AutoCArray, refresh_c_arrays
 from .cryptoki import CK_ULONG, \
@@ -34,7 +35,6 @@ def c_encrypt(h_session, encryption_flavor, h_key, data_to_encrypt, mech=None, e
     :param extra_params: Parameters to be passed to mechanism generation.
     :returns: Returns the result code of the operation, a python string representing the
     encrypted data
-
     """
     if mech is None:
         py_mech = Mechanism(mech_type=encryption_flavor, params=extra_params)
@@ -130,8 +130,8 @@ def c_decrypt(h_session, decryption_flavor, h_key, encrypted_data, mech=None, ex
     is_multi_part_operation = isinstance(encrypted_data, (list, tuple))
 
     if is_multi_part_operation:
-        ret, python_string = do_multipart_operation(h_session, C_DecryptUpdate, C_DecryptFinal,
-                                                    encrypted_data)
+        ret, python_data = do_multipart_operation(h_session, C_DecryptUpdate, C_DecryptFinal,
+                                                  encrypted_data)
     else:
 
         # Get the length of the final data
@@ -158,9 +158,9 @@ def c_decrypt(h_session, decryption_flavor, h_key, encrypted_data, mech=None, ex
             return ret, None
 
         # Convert the decrypted data to a python readable format
-        python_string = string_at(decrypted_data.array, len(decrypted_data))
+        python_data = string_at(decrypted_data.array, len(decrypted_data))
 
-    return ret, python_string
+    return ret, python_data
 
 
 c_decrypt_ex = make_error_handle_function(c_decrypt)
@@ -170,17 +170,16 @@ def do_multipart_operation(h_session, c_update_function, c_finalize_function, in
     """Some code which will do a multipart encrypt or decrypt since they are the same
     with just different functions called
 
-    :param h_session:
-    :param c_update_function:
-    :param c_finalize_function:
-    :param input_data_list:
-
+    :param h_session: Session handle.
+    :param c_update_function: C_<NAME>Update function to call to update each operation.
+    :param c_finalize_function: Function to call at end of multipart operation.
+    :param input_data_list: List of data to call update function on.
     """
     max_data_chunk_size = 0xfff0
-    plain_data_len = len(_get_string_from_list(input_data_list))
+    plain_data_len = len(b"".join(input_data_list))
 
     remaining_length = plain_data_len
-    python_string = b''
+    python_data = []
     i = 0
     while remaining_length > 0:
         current_chunk = input_data_list[i]
@@ -189,9 +188,8 @@ def do_multipart_operation(h_session, c_update_function, c_finalize_function, in
         current_chunk_len = min(len(current_chunk), remaining_length)
 
         if current_chunk_len > max_data_chunk_size:
-            raise Exception(
-                "chunk_sizes variable too large, the maximum size of a chunk is " + str(
-                    max_data_chunk_size))
+            raise ValueError("chunk_sizes variable too large,"
+                             " the maximum size of a chunk is %s" % max_data_chunk_size)
 
         out_data = create_string_buffer(b'', max_data_chunk_size)
         out_data_len = CK_ULONG(max_data_chunk_size)
@@ -202,25 +200,28 @@ def do_multipart_operation(h_session, c_update_function, c_finalize_function, in
                                 data_chunk, data_chunk_len,
                                 cast(out_data, CK_BYTE_PTR), byref(out_data_len))
         if ret != CKR_OK:
+            LOG.debug("Failed C_Update operation on chunk %.20s (%s/%s) - ret %s",
+                      current_chunk, i, len(input_data_list), ret_vals_dictionary[ret])
             return ret, None
 
         remaining_length -= current_chunk_len
 
         # Get the output
-        python_string += out_data.raw[0:int(out_data_len.value)]
+        python_data.append(string_at(out_data, out_data_len.value))
         i += 1
 
     # Finalizing multipart decrypt operation
-    out_data_len = CK_ULONG(max_data_chunk_size)
-    out_data = create_string_buffer(b"", out_data_len.value)
-    output = cast(out_data, CK_BYTE_PTR)
-    ret = c_finalize_function(h_session, output, byref(out_data_len))
+    fin_out_data_len = CK_ULONG(max_data_chunk_size)
+    fin_out_data = create_string_buffer(b"", fin_out_data_len.value)
+    output = cast(fin_out_data, CK_BYTE_PTR)
+    ret = c_finalize_function(h_session, output, byref(fin_out_data_len))
     if ret != CKR_OK:
         return ret, None
 
-    python_string += out_data.value
+    if fin_out_data_len.value > 0:
+        python_data.append(string_at(fin_out_data, fin_out_data_len.value))
 
-    return ret, python_string
+    return ret, b"".join(python_data)
 
 
 def c_wrap_key(h_session, h_wrapping_key, h_key, encryption_flavor, mech=None, extra_params=None):

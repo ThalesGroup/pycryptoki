@@ -21,7 +21,7 @@ from pycryptoki.object_attr_lookup import c_find_objects_ex
 from pycryptoki.session_management import c_initialize_ex, c_close_all_sessions_ex, \
     ca_factory_reset_ex, c_open_session_ex, login_ex, c_finalize_ex, \
     c_close_session, c_logout, c_get_token_info_ex
-from pycryptoki.token_management import c_init_token_ex
+from pycryptoki.token_management import c_init_token_ex, c_get_mechanism_list_ex
 
 LOG = logging.getLogger(__name__)
 
@@ -89,6 +89,10 @@ def pytest_configure(config):
         flags = token_info['flags']
         is_ped = (flags & CKF_PROTECTED_AUTHENTICATION_PATH) != 0
         hsm_config["is_ped"] = is_ped
+        raw_firmware = token_info['firmwareVersion']
+        hsm_config['firmware'] = "{}.{}.{}".format(raw_firmware.major,
+                                                   raw_firmware.minor / 10,
+                                                   raw_firmware.minor % 10)
 
         if is_ped:
             admin_pwd = None
@@ -193,3 +197,15 @@ def partition_clearer(auth_session):
     except LunaException:
         LOG.exception("Failed to destroy all objects created on this session")
 
+
+@pytest.yield_fixture(scope="class")
+def valid_mechanisms():
+    """
+    Fixture that will query the active slot to get a list of valid mechanisms.
+    This can be used for assertions across FW versions/configurations. Note, this ends up being
+    just a list of constants, but it should match up w/ what you're using from `pycryptoki.defines`.
+
+    :return: list of integers, each corresponding to a mechanism.
+    """
+    raw_mechs = c_get_mechanism_list_ex(slot=hsm_config['test_slot'])
+    yield raw_mechs

@@ -117,7 +117,12 @@ class IvMechanism(Mechanism):
         if self.params is None or 'iv' not in self.params:
             self.params['iv'] = [0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38]
             LOG.warning("Using static IVs can be insecure! ")
-        iv_ba, iv_len = to_byte_array(self.params['iv'])
+        if len(self.params['iv']) == 0:
+            LOG.debug("Setting IV to NULL (using internal)")
+            iv_ba = None
+            iv_len = 0
+        else:
+            iv_ba, iv_len = to_byte_array(self.params['iv'])
         self.mech.pParameter = iv_ba
         self.mech.usParameterLen = iv_len
         return self.mech
@@ -134,7 +139,12 @@ class Iv16Mechanism(Mechanism):
         if self.params is None or 'iv' not in self.params:
             self.params['iv'] = [1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8]
             LOG.warning("Using static IVs can be insecure! ")
-        iv_ba, iv_len = to_byte_array(self.params['iv'])
+        if len(self.params['iv']) == 0:
+            LOG.debug("Setting IV to NULL (using internal)")
+            iv_ba = None
+            iv_len = 0
+        else:
+            iv_ba, iv_len = to_byte_array(self.params['iv'])
         self.mech.pParameter = iv_ba
         self.mech.usParameterLen = iv_len
         return self.mech
@@ -290,9 +300,14 @@ class AESGCMMechanism(Mechanism):
         """
         super(AESGCMMechanism, self).to_c_mech()
         gcm_params = CK_AES_GCM_PARAMS()
-        ivdata, ivlen = to_byte_array(self.params['iv'])
-        gcm_params.pIv = cast(ivdata, CK_BYTE_PTR)
-        gcm_params.ulIvLen = ivlen
+        if len(self.params['iv']) == 0:
+            LOG.debug("Setting IV to NULL (using internal)")
+            iv_ba = None
+            iv_len = 0
+        else:
+            iv_ba, iv_len = to_byte_array(self.params['iv'])
+        gcm_params.pIv = cast(iv_ba, CK_BYTE_PTR)
+        gcm_params.ulIvLen = iv_len
         # Assuming 8 bits per entry in IV.
         gcm_params.ulIvBits = CK_ULONG(len(self.params['iv']) * 8)
         aad, aadlen = to_char_array(self.params['AAD'])
@@ -378,11 +393,11 @@ MECH_LOOKUP = {
     CKM_DES3_CBC_PAD_IPSEC: IvMechanism,
     CKM_CAST3_CBC_PAD: IvMechanism,
     CKM_CAST5_CBC_PAD: IvMechanism,
-    CKM_AES_KW: IvMechanism,
-    CKM_AES_KWP: IvMechanism,
     CKM_DES_CFB8: IvMechanism,
     CKM_DES_CFB64: IvMechanism,
     CKM_DES_OFB64: IvMechanism,
+    CKM_AES_KW: IvMechanism,
+    CKM_AES_KWP: IvMechanism,
     CKM_AES_CFB8: IvMechanism,
     CKM_AES_CFB128: IvMechanism,
     CKM_AES_OFB: IvMechanism,
@@ -407,9 +422,10 @@ MECH_LOOKUP = {
     CKM_RC5_ECB: RC5Mechanism,
 
     CKM_AES_XTS: AESXTSMechanism,
+    (CKM_VENDOR_DEFINED + 0x11c): AESGCMMechanism,  # Backwards compatibility w/ older Lunas.
+    CKM_AES_GCM: AESGCMMechanism,
 
     CKM_RSA_PKCS_OAEP: RSAPKCSOAEPMechanism,
-    CKM_AES_GCM: AESGCMMechanism,
 
     CKM_RSA_PKCS_PSS: RSAPKCSPSSMechanism,
     CKM_SHA1_RSA_PKCS_PSS: RSAPKCSPSSMechanism,
