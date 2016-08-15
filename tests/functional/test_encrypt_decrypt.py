@@ -255,7 +255,7 @@ class TestEncryptData(object):
 
         # AES_GCM Requires smaller data sizes.
         if m_type == CKM_AES_GCM and data == PAD:
-            data = "a" * 0xff0
+            data = b"a" * 0xff0
 
         ret, encrypted = c_encrypt(auth_session, m_type, h_key, data, extra_params=params)
         self.verify_ret(ret, exp_ret)
