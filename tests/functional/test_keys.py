@@ -1,4 +1,5 @@
 import logging
+
 import pytest
 
 from pycryptoki.default_templates import \
@@ -13,7 +14,6 @@ from pycryptoki.default_templates import \
 
      curve_list, get_default_key_template, get_default_key_pair_template,
      MECHANISM_LOOKUP_EXT)
-
 from pycryptoki.defines import \
     (CKM_DES_KEY_GEN, CKM_DES2_KEY_GEN, CKM_DES3_KEY_GEN, CKM_CAST3_KEY_GEN, CKM_CAST5_KEY_GEN,
      CKM_RC2_KEY_GEN, CKM_RC4_KEY_GEN, CKM_RC5_KEY_GEN, CKM_GENERIC_SECRET_KEY_GEN,
@@ -23,16 +23,15 @@ from pycryptoki.defines import \
      CKM_ECDSA_KEY_PAIR_GEN, CKA_ECDSA_PARAMS, CKM_KCDSA_KEY_PAIR_GEN, CKM_RSA_X9_31_KEY_PAIR_GEN,
 
      CKM_SHA1_KEY_DERIVATION, CKM_SHA224_KEY_DERIVATION, CKM_SHA256_KEY_DERIVATION,
-     CKM_SHA384_KEY_DERIVATION, CKM_SHA512_KEY_DERIVATION, CKM_MD5_KEY_DERIVATION, CKM_MD2_KEY_DERIVATION,
+     CKM_SHA384_KEY_DERIVATION, CKM_SHA512_KEY_DERIVATION, CKM_MD5_KEY_DERIVATION,
+     CKM_MD2_KEY_DERIVATION,
 
      CKR_OK, CKA_VALUE_LEN, CKR_KEY_SIZE_RANGE)
-
 from pycryptoki.key_generator import \
     c_generate_key, c_generate_key_pair, c_derive_key, c_generate_key_ex, c_destroy_object
 from pycryptoki.mechanism import NullMech
 from pycryptoki.return_values import ret_vals_dictionary
 from pycryptoki.test_functions import verify_object_attributes
-
 
 logger = logging.getLogger(__name__)
 
@@ -45,6 +44,7 @@ def pair_params(key_gen):
     """ Return the params tuple given the key_gen mech """
     return (key_gen,) + get_default_key_pair_template(key_gen)
 
+
 DSA_PUB_TEMPS = [CKM_DSA_KEY_PAIR_GEN_PUBTEMP_1024_160, CKM_DSA_KEY_PAIR_GEN_PUBTEMP_2048_224,
                  CKM_DSA_KEY_PAIR_GEN_PUBTEMP_2048_256, CKM_DSA_KEY_PAIR_GEN_PUBTEMP_3072_256]
 KCDSA_P_TEMPS = [CKM_KCDSA_KEY_PAIR_GEN_PUBTEMP_1024_160, CKM_KCDSA_KEY_PAIR_GEN_PUBTEMP_2048_256]
@@ -54,7 +54,8 @@ KEY_PAIRS = [pair_params(CKM_RSA_PKCS_KEY_PAIR_GEN),
              pair_params(CKM_ECDSA_KEY_PAIR_GEN),
              pair_params(CKM_RSA_X9_31_KEY_PAIR_GEN)]
 KEY_PAIRS.extend([(CKM_DSA_KEY_PAIR_GEN, x, CKM_DSA_KEY_PAIR_GEN_PRIVTEMP) for x in DSA_PUB_TEMPS])
-KEY_PAIRS.extend([(CKM_KCDSA_KEY_PAIR_GEN, x, CKM_KCDSA_KEY_PAIR_GEN_PRIVTEMP) for x in KCDSA_P_TEMPS])
+KEY_PAIRS.extend(
+    [(CKM_KCDSA_KEY_PAIR_GEN, x, CKM_KCDSA_KEY_PAIR_GEN_PRIVTEMP) for x in KCDSA_P_TEMPS])
 
 DERIVE_PARAMS = {CKM_SHA224_KEY_DERIVATION: "SHA224",
                  CKM_SHA256_KEY_DERIVATION: "SHA256",
@@ -76,7 +77,6 @@ ALL_DERIVES = {k: v for d in [DERIVE_PARAMS, DRV_TOO_LONG] for k, v in d.items()
 
 
 class TestKeys(object):
-
     def verify_ret(self, ret, expected_ret):
         """ Verify ret check and len > 0"""
         assert ret == expected_ret, "Function should return: " + ret_vals_dictionary[expected_ret] \
@@ -113,8 +113,8 @@ class TestKeys(object):
         :param prv_key_temp: private key template
         """
         ret, pub_key, prv_key = c_generate_key_pair(self.h_session, key_type,
-                                                                    pub_key_temp,
-                                                                    prv_key_temp)
+                                                    pub_key_temp,
+                                                    prv_key_temp)
         self.verify_ret(ret, CKR_OK)
         self.verify_key_len(pub_key, prv_key)
 
@@ -154,9 +154,8 @@ class TestKeys(object):
         del derived_key_template[CKA_VALUE_LEN]
 
         ret, h_derived_key = c_derive_key(self.h_session, h_base_key,
-                                                          key_template,
-                                                          mech_flavor=d_type,
-                                                          mech=mech)
+                                          key_template,
+                                          mechanism=mech)
         try:
             self.verify_ret(ret, CKR_OK)
             verify_object_attributes(self.h_session, h_derived_key, key_template)
@@ -183,9 +182,8 @@ class TestKeys(object):
         del derived_key_template[CKA_VALUE_LEN]
 
         ret, h_derived_key = c_derive_key(self.h_session, h_base_key,
-                                                          key_template,
-                                                          mech_flavor=d_type,
-                                                          mech=mech)
+                                          key_template,
+                                          mechanism=mech)
         try:
             self.verify_ret(ret, CKR_KEY_SIZE_RANGE)
         finally:
@@ -209,10 +207,10 @@ class TestKeys(object):
         derived_key_template = key_template.copy()
         del derived_key_template[CKA_VALUE_LEN]
 
-        ret, h_derived_key = c_derive_key(self.h_session, h_base_key,
-                                                          key_template,
-                                                          mech_flavor=d_type,
-                                                          mech=mech)
+        ret, h_derived_key = c_derive_key(self.h_session,
+                                          h_base_key,
+                                          key_template,
+                                          mechanism=mech)
         try:
             self.verify_ret(ret, CKR_OK)
             verify_object_attributes(self.h_session, h_derived_key, key_template)

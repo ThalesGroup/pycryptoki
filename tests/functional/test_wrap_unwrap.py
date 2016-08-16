@@ -1,8 +1,9 @@
 import logging
+
 import pytest
 
-from pycryptoki.default_templates import get_default_key_template
 from pycryptoki.default_templates import MECHANISM_LOOKUP_EXT as LOOKUP
+from pycryptoki.default_templates import get_default_key_template
 from pycryptoki.defines import (CKM_DES_ECB, CKM_DES_CBC, CKM_DES_CBC_PAD, CKM_DES_KEY_GEN,
                                 CKM_DES3_ECB, CKM_DES3_CBC, CKM_DES3_CBC_PAD, CKM_DES3_KEY_GEN,
                                 CKM_AES_ECB, CKM_AES_CBC, CKM_AES_CBC_PAD, CKM_AES_KEY_GEN,
@@ -12,8 +13,6 @@ from pycryptoki.defines import (CKM_DES_ECB, CKM_DES_CBC, CKM_DES_CBC_PAD, CKM_D
 
                                 CKR_OK, CKA_DECRYPT, CKA_VERIFY, CKA_UNWRAP,
                                 CKA_VALUE_LEN, CKA_EXTRACTABLE)
-
-
 from pycryptoki.encryption import c_wrap_key, c_unwrap_key, c_encrypt, c_decrypt
 from pycryptoki.key_generator import c_destroy_object, c_generate_key
 from pycryptoki.return_values import ret_vals_dictionary
@@ -102,7 +101,6 @@ def keys(auth_session):
 
 
 class TestWrappingKeys(object):
-
     def verify_ret(self, ret, expected_ret):
         """
         Assert that ret is as expected
@@ -128,11 +126,12 @@ class TestWrappingKeys(object):
         unwrap_temp.pop(CKA_UNWRAP, None)
         unwrap_temp.pop(CKA_EXTRACTABLE, None)
         if key_gen not in VALUE_LEN:
-             unwrap_temp.pop(CKA_VALUE_LEN, None)
+            unwrap_temp.pop(CKA_VALUE_LEN, None)
 
         return unwrap_temp
 
-    @pytest.mark.parametrize(('mech', 'k_type'), PARAM_LIST, ids=[LOOKUP[m][0] for m, _ in PARAM_LIST])
+    @pytest.mark.parametrize(('mech', 'k_type'), PARAM_LIST,
+                             ids=[LOOKUP[m][0] for m, _ in PARAM_LIST])
     def test_wrap_unwrap_key(self, mech, k_type, keys):
         """
         Test key wrapping
@@ -148,24 +147,28 @@ class TestWrappingKeys(object):
             pytest.fail("No valid key found for {}".format(LOOKUP[mech][0]))
 
         # Wrap the key
-        ret, wrapped_key = c_wrap_key(self.h_session, h_wrap_key, h_key, mech, extra_params=extra_p)
+        wrap_mech = {"mech_type": mech,
+                     "params": extra_p}
+        ret, wrapped_key = c_wrap_key(self.h_session, h_wrap_key, h_key, mechanism=wrap_mech)
         self.verify_ret(ret, CKR_OK)
 
         # Unwrap the Key
-        ret, h_unwrapped_key = c_unwrap_key(self.h_session, h_wrap_key,
-                                                            wrapped_key,
-                                                            unwrap_temp,
-                                                            mech,
-                                                            extra_params=extra_p)
+        ret, h_unwrapped_key = c_unwrap_key(self.h_session,
+                                            h_wrap_key,
+                                            wrapped_key,
+                                            unwrap_temp,
+                                            mechanism=wrap_mech)
         self.verify_ret(ret, CKR_OK)
 
         # Verify all of the attributes against the originally generated attributes
         verify_object_attributes(self.h_session, h_unwrapped_key, temp)
 
-    @pytest.mark.parametrize(('mech', 'k_type'), PARAM_LIST, ids=[LOOKUP[m][0] for m, _ in PARAM_LIST])
+    @pytest.mark.parametrize(('mech', 'k_type'), PARAM_LIST,
+                             ids=[LOOKUP[m][0] for m, _ in PARAM_LIST])
     def test_encrypt_wrap_unwrap_decrypt_key(self, mech, k_type, keys):
         """
         Test that encrypt/decrypt works with wrapped keys
+
         :param mech: encryption mech
         :param k_type: key gen mech
         :param keys: keys fixture
@@ -178,23 +181,28 @@ class TestWrappingKeys(object):
 
         # Encrypt some data
         data_to_encrypt = b"a" * 512
-        ret, encrypted_data = c_encrypt(self.h_session, mech, h_key, data_to_encrypt)
+        enc_mech = {"mech_type": mech}
+        ret, encrypted_data = c_encrypt(self.h_session, h_key, data_to_encrypt, mechanism=enc_mech)
         self.verify_ret(ret, CKR_OK)
 
         # Wrap the key
-        ret, wrapped_key = c_wrap_key(self.h_session, h_wrap_key, h_key, mech, extra_params=extra_p)
+        wrap_mech = {"mech_type": mech,
+                     "params": extra_p}
+        ret, wrapped_key = c_wrap_key(self.h_session, h_wrap_key, h_key, mechanism=wrap_mech)
         self.verify_ret(ret, CKR_OK)
 
         # Unwrap the Key
         ret, h_unwrapped_key = c_unwrap_key(self.h_session, h_wrap_key,
-                                                            wrapped_key,
-                                                            unwrap_temp,
-                                                            mech,
-                                                            extra_params=extra_p)
+                                            wrapped_key,
+                                            unwrap_temp,
+                                            mechanism=wrap_mech)
         self.verify_ret(ret, CKR_OK)
 
         # Decrypt the data
-        ret, decrypted_string = c_decrypt(self.h_session, mech, h_unwrapped_key, encrypted_data)
+        ret, decrypted_string = c_decrypt(self.h_session,
+                                          h_unwrapped_key,
+                                          encrypted_data,
+                                          mechanism=enc_mech)
         self.verify_ret(ret, CKR_OK)
 
         assert decrypted_string == data_to_encrypt, \

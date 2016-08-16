@@ -13,18 +13,17 @@ from .cryptoki import C_VerifyInit, C_Verify, C_SignUpdate, \
     C_SignFinal, C_VerifyUpdate, C_VerifyFinal
 from .defines import CKR_OK
 from .encryption import _get_string_from_list
-from .mechanism import Mechanism, NullMech
+from .mechanism import parse_mechanism
 from .test_functions import make_error_handle_function
 
 LOG = logging.getLogger(__name__)
 
 
-def c_sign(h_session, sign_flavor, data_to_sign, h_key, mech=None, extra_params=None):
+def c_sign(h_session, h_key, data_to_sign, mechanism):
     """
     Performs a C_SignInit and C_Sign operation on some data
 
     :param h_session: The current session
-    :param sign_flavor: The flavour of signing to do
     :param data_to_sign: The data to sign, either a string or a list of strings. If this is a list
                          a multipart operation will be used (using C_...Update and C_...Final)
 
@@ -35,19 +34,11 @@ def c_sign(h_session, sign_flavor, data_to_sign, h_key, mech=None, extra_params=
                            "It will operate on these strings in parts"]
 
     :param h_key: The key to sign the data with
-    :param mech: The mechanism to use, if None a blank mechanism will be created based on the
-                 sign_flavor
-    :param extra_params: Parameters to be passed to the mechanism creation. If None, blank mechanism
-    will be used.
+    :param mechanism: Will create a mechanism with the :py:func:`mechanism.parse_mechanism` function
     :return: The result code, A python string representing the signature
     """
 
-    # Get the mechanism
-    if mech is None:
-        if extra_params is None:
-            mech = NullMech(sign_flavor).to_c_mech()
-        else:
-            mech = Mechanism(sign_flavor, params=extra_params).to_c_mech()
+    mech = parse_mechanism(mechanism)
 
     # Initialize the sign operation
     ret = C_SignInit(h_session, byref(mech), CK_ULONG(h_key))
@@ -181,15 +172,13 @@ def do_multipart_verify(h_session, input_data_list, signature):
     return ret
 
 
-def c_verify(h_session, h_key, verify_flavor, data_to_verify, signature, mech=None,
-             extra_params=None):
+def c_verify(h_session, h_key, data_to_verify, signature, mechanism):
     """
     Return the result code of C_Verify which indicates whether or not the signature is
     valid.
 
     :param h_session: The current session
     :param h_key: The key handle to verify the signature against
-    :param verify_flavor: The flavour of the mechanism to verify against
     :param data_to_verify: The data to verify, either a string or a list of strings. If this is a
                            list, a multipart operation will be used (using C_...Update and
                            C_...Final)
@@ -201,18 +190,11 @@ def c_verify(h_session, h_key, verify_flavor, data_to_verify, signature, mech=No
                              "It will operate on these strings in parts"]
 
     :param signature: The signature of the data
-    :param mech: The mechanism to use, if None is specified the mechanism will
-                 try to be automatically obtained
-    :param algorithm: The hash algorithm used on data_to_sign; only necessary for RSA PKCS PSS
+    :param mechanism: Will create a mechanism with the :py:func:`mechanism.parse_mechanism` function
     :return: The result code
     """
 
-    # Get the mechanism
-    if mech is None:
-        if extra_params is None:
-            mech = NullMech(verify_flavor).to_c_mech()
-        else:
-            mech = Mechanism(verify_flavor, extra_params).to_c_mech()
+    mech = parse_mechanism(mechanism)
 
     # Initialize the verify operation
     ret = C_VerifyInit(h_session, mech, CK_ULONG(h_key))

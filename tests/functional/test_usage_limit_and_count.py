@@ -8,7 +8,6 @@ import logging
 
 import pytest
 
-from . import config as hsm_config
 from pycryptoki.default_templates import CKM_DES_KEY_GEN_TEMP, CKM_DES3_KEY_GEN_TEMP, \
     CKM_RSA_PKCS_KEY_PAIR_GEN_PUBTEMP, CKM_RSA_PKCS_KEY_PAIR_GEN_PRIVTEMP, CKM_AES_KEY_GEN_TEMP
 from pycryptoki.defines import CKM_DES_KEY_GEN, CKM_AES_KEY_GEN, CKM_DES3_KEY_GEN, \
@@ -17,6 +16,7 @@ from pycryptoki.defines import CKM_DES_KEY_GEN, CKM_AES_KEY_GEN, CKM_DES3_KEY_GE
 from pycryptoki.encryption import c_encrypt, c_encrypt_ex
 from pycryptoki.key_generator import c_generate_key_ex, c_generate_key_pair_ex
 from pycryptoki.object_attr_lookup import c_get_attribute_value_ex, c_set_attribute_value_ex
+from . import config as hsm_config
 
 LOG = logging.getLogger(__name__)
 
@@ -45,7 +45,8 @@ class TestUsageLimitAndCount(object):
 
         usage_template = {CKA_USAGE_LIMIT: 5}
 
-        h_key = c_generate_key_ex(self.h_session, flavor=CKM_DES_KEY_GEN,
+        h_key = c_generate_key_ex(self.h_session,
+                                  mechanism=CKM_DES_KEY_GEN,
                                   template=CKM_DES_KEY_GEN_TEMP)
         LOG.info("Called c-generate: Key handle -%s", h_key)
         usage_limit = 5
@@ -77,16 +78,18 @@ class TestUsageLimitAndCount(object):
 
         usage_count = 2
 
-        h_key = c_generate_key_ex(self.h_session, flavor=CKM_DES_KEY_GEN,
+        h_key = c_generate_key_ex(self.h_session,
+                                  mechanism=CKM_DES_KEY_GEN,
                                   template=CKM_DES_KEY_GEN_TEMP)
         LOG.info("Called c-generate: Key handle -%s", h_key)
 
         c_set_attribute_value_ex(self.h_session,
                                  h_key, usage_lim_template)
 
-        c_encrypt_ex(self.h_session, CKM_DES_ECB, h_key, b'a' * 2048)
+        c_encrypt_ex(self.h_session, h_key, b'a' * 2048, mechanism={"mech_type": CKM_DES_ECB})
 
-        c_encrypt_ex(self.h_session, CKM_DES_ECB, h_key, b'a' * 2048)
+        c_encrypt_ex(self.h_session, h_key, b'a' * 2048,
+                     mechanism={"mech_type": CKM_DES_ECB})
 
         py_template = c_get_attribute_value_ex(self.h_session, h_key,
                                                template={CKA_USAGE_COUNT: None})
@@ -113,15 +116,15 @@ class TestUsageLimitAndCount(object):
 
         usage_count = 2
 
-        h_key = c_generate_key_ex(self.h_session, flavor=CKM_AES_KEY_GEN,
+        h_key = c_generate_key_ex(self.h_session, mechanism=CKM_AES_KEY_GEN,
                                   template=CKM_AES_KEY_GEN_TEMP)
         LOG.info("Called c-generate: Key handle -" + str(h_key))
 
         c_set_attribute_value_ex(self.h_session,
                                  h_key, usage_lim_template)
-        c_encrypt_ex(self.h_session, CKM_AES_ECB, h_key, b'a' * 2048)
+        c_encrypt_ex(self.h_session, h_key, b'a' * 2048, mechanism={"mech_type": CKM_AES_ECB})
 
-        c_encrypt_ex(self.h_session, CKM_AES_ECB, h_key, b'a' * 2048)
+        c_encrypt_ex(self.h_session, h_key, b'a' * 2048, mechanism={"mech_type": CKM_AES_ECB})
 
         py_template = c_get_attribute_value_ex(self.h_session, h_key,
                                                template={CKA_USAGE_COUNT: None})
@@ -146,10 +149,10 @@ class TestUsageLimitAndCount(object):
                   an assymetric crypto object")
         usage_lim_template = {CKA_USAGE_LIMIT: 2}
 
-        h_pbkey, h_prkey = c_generate_key_pair_ex(self.h_session, flavor=CKM_RSA_PKCS_KEY_PAIR_GEN,
+        h_pbkey, h_prkey = c_generate_key_pair_ex(self.h_session,
+                                                  mechanism=CKM_RSA_PKCS_KEY_PAIR_GEN,
                                                   pbkey_template=CKM_RSA_PKCS_KEY_PAIR_GEN_PUBTEMP,
-                                                  prkey_template=CKM_RSA_PKCS_KEY_PAIR_GEN_PRIVTEMP,
-                                                  mech=None)
+                                                  prkey_template=CKM_RSA_PKCS_KEY_PAIR_GEN_PRIVTEMP)
         LOG.info(
             "Called c-generate: Public Key handle: %s Private Key Handle: %s", h_pbkey, h_prkey)
         usage_limit = 2
@@ -181,19 +184,19 @@ class TestUsageLimitAndCount(object):
         usage_lim_template = {CKA_USAGE_LIMIT: 2}
         usage_count = 2
 
-        h_pbkey, h_prkey = c_generate_key_pair_ex(self.h_session, flavor=CKM_RSA_PKCS_KEY_PAIR_GEN,
+        h_pbkey, h_prkey = c_generate_key_pair_ex(self.h_session,
+                                                  mechanism=CKM_RSA_PKCS_KEY_PAIR_GEN,
                                                   pbkey_template=CKM_RSA_PKCS_KEY_PAIR_GEN_PUBTEMP,
-                                                  prkey_template=CKM_RSA_PKCS_KEY_PAIR_GEN_PRIVTEMP,
-                                                  mech=None)
+                                                  prkey_template=CKM_RSA_PKCS_KEY_PAIR_GEN_PRIVTEMP)
 
         LOG.info(
             "Called c-generate: Public Key handle -%s Private Key Handle -%s", h_pbkey, h_prkey)
 
         c_set_attribute_value_ex(self.h_session,
                                  h_pbkey, usage_lim_template)
-        c_encrypt_ex(self.h_session, CKM_RSA_PKCS, h_pbkey, b'a' * 20)
+        c_encrypt_ex(self.h_session, h_pbkey, b'a' * 20, mechanism={"mech_type": CKM_RSA_PKCS})
 
-        c_encrypt_ex(self.h_session, CKM_RSA_PKCS, h_pbkey, b'a' * 20)
+        c_encrypt_ex(self.h_session, h_pbkey, b'a' * 20, mechanism={"mech_type": CKM_RSA_PKCS})
 
         py_template = c_get_attribute_value_ex(self.h_session, h_pbkey,
                                                template={CKA_USAGE_COUNT: None})
@@ -217,18 +220,20 @@ class TestUsageLimitAndCount(object):
                   if user try to use crypto object more than limit set on CKA_USAGE_LIMIT")
         usage_lim_template = {CKA_USAGE_LIMIT: 2}
 
-        h_key = c_generate_key_ex(self.h_session, flavor=CKM_DES3_KEY_GEN,
+        h_key = c_generate_key_ex(self.h_session,
+                                  mechanism=CKM_DES3_KEY_GEN,
                                   template=CKM_DES3_KEY_GEN_TEMP)
         LOG.info("Called c-generate: Key handle -" + str(h_key))
 
         c_set_attribute_value_ex(self.h_session,
                                  h_key, usage_lim_template)
 
-        c_encrypt_ex(self.h_session, CKM_DES3_ECB, h_key, b'a' * 2048)
+        c_encrypt_ex(self.h_session, h_key, b'a' * 2048, mechanism={"mech_type": CKM_DES3_ECB})
 
-        c_encrypt_ex(self.h_session, CKM_DES3_ECB, h_key, b'a' * 2048)
+        c_encrypt_ex(self.h_session, h_key, b'a' * 2048, mechanism={"mech_type": CKM_DES3_ECB})
 
-        return_val, data = c_encrypt(self.h_session, CKM_DES3_ECB, h_key, b'a' * 2048)
+        return_val, data = c_encrypt(self.h_session, h_key, b'a' * 2048,
+                                     mechanism={"mech_type": CKM_DES3_ECB})
         LOG.info("Called C_Encrypt, return code: %s", return_val)
 
         py_template = c_get_attribute_value_ex(self.h_session, h_key,
@@ -252,10 +257,10 @@ class TestUsageLimitAndCount(object):
 
         usage_lim_template = {CKA_USAGE_LIMIT: 2}
 
-        h_pbkey, h_prkey = c_generate_key_pair_ex(self.h_session, flavor=CKM_RSA_PKCS_KEY_PAIR_GEN,
+        h_pbkey, h_prkey = c_generate_key_pair_ex(self.h_session,
+                                                  mechanism=CKM_RSA_PKCS_KEY_PAIR_GEN,
                                                   pbkey_template=CKM_RSA_PKCS_KEY_PAIR_GEN_PUBTEMP,
-                                                  prkey_template=CKM_RSA_PKCS_KEY_PAIR_GEN_PRIVTEMP,
-                                                  mech=None)
+                                                  prkey_template=CKM_RSA_PKCS_KEY_PAIR_GEN_PRIVTEMP)
 
         LOG.info(
             "Called c-generate: Public Key handle -%s Private Key Handle - %s", h_pbkey, h_prkey)
@@ -263,11 +268,12 @@ class TestUsageLimitAndCount(object):
         c_set_attribute_value_ex(self.h_session,
                                  h_pbkey, usage_lim_template)
 
-        c_encrypt_ex(self.h_session, CKM_RSA_PKCS, h_pbkey, b'a' * 20)
+        c_encrypt_ex(self.h_session, h_pbkey, b'a' * 20, mechanism={"mech_type": CKM_RSA_PKCS})
 
-        c_encrypt_ex(self.h_session, CKM_RSA_PKCS, h_pbkey, b'a' * 20)
+        c_encrypt_ex(self.h_session, h_pbkey, b'a' * 20, mechanism={"mech_type": CKM_RSA_PKCS})
 
-        return_val, data = c_encrypt(self.h_session, CKM_RSA_PKCS, h_pbkey, b'a' * 20)
+        return_val, data = c_encrypt(self.h_session, h_pbkey, b'a' * 20,
+                                     mechanism={"mech_type": CKM_RSA_PKCS})
         LOG.info("Called C_Encrypt, return code: %s", return_val)
         py_template = c_get_attribute_value_ex(self.h_session, h_pbkey,
                                                template={CKA_USAGE_COUNT: None})

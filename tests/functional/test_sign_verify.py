@@ -129,10 +129,10 @@ class TestSignVerify(object):
             pytest.fail("No valid key found for {}".format(MECHANISM_LOOKUP_EXT[key_type][0]))
         h_key = sym_keys[key_type]
 
-        ret, signature = c_sign(self.h_session, sign_flavor, data, h_key)
+        ret, signature = c_sign(self.h_session, h_key, data,  mechanism=sign_flavor)
         self.verify_ret(ret, CKR_OK)
 
-        ret = c_verify(self.h_session, h_key, sign_flavor, data, signature)
+        ret = c_verify(self.h_session, h_key, data, signature, mechanism=sign_flavor)
         self.verify_ret(ret, CKR_OK)
 
     @pytest.mark.parametrize("data", DATA, ids=['String', "Block"])
@@ -150,8 +150,8 @@ class TestSignVerify(object):
             pytest.fail("No valid key found for {}".format(MECHANISM_LOOKUP_EXT[k_type][0]))
         pub_key, prv_key = asym_keys[k_type]
 
-        ret, signature = c_sign(self.h_session, sig_mech, data, prv_key)
+        ret, signature = c_sign(self.h_session, prv_key, data, mechanism=sig_mech)
         self.verify_ret(ret, CKR_OK)
 
-        ret = c_verify(self.h_session, pub_key, sig_mech, data, signature)
+        ret = c_verify(self.h_session, pub_key, data, signature, mechanism=sig_mech)
         self.verify_ret(ret, CKR_OK)

@@ -257,12 +257,14 @@ class TestEncryptData(object):
         if m_type == CKM_AES_GCM and data == PAD:
             data = b"a" * 0xff0
 
-        ret, encrypted = c_encrypt(auth_session, m_type, h_key, data, extra_params=params)
+        mech = {"mech_type": m_type,
+                "params": params}
+        ret, encrypted = c_encrypt(auth_session, h_key, data, mechanism=mech)
         self.verify_ret(ret, exp_ret)
 
         # If not expecting error, proceed with testing
         if exp_ret in (CKR_OK, KEY_SIZE_RANGE):
-            ret, end_data = c_decrypt(auth_session, m_type, h_key, encrypted, extra_params=params)
+            ret, end_data = c_decrypt(auth_session, h_key, encrypted, mechanism=mech)
             self.verify_ret(ret, exp_ret)
 
             self.verify_data(data, end_data)
@@ -288,13 +290,15 @@ class TestEncryptData(object):
         # AES_KW will fail on very large data sizes
         # AES_GCM requires smaller data sizes as well.
         if m_type in (CKM_AES_KW, CKM_AES_GCM) and data == PAD:
-            data = "a" * 256
+            data = b"a" * 256
 
         exp_ret = ret_val(m_type, data, valid_mechanisms)
         h_key = sym_keys[SYM_TABLE[m_type]]
         encrypt_this = [data, data, data, data]
 
-        ret, encrypted = c_encrypt(auth_session, m_type, h_key, encrypt_this, extra_params=params)
+        mech = {"mech_type": m_type,
+                "params": params}
+        ret, encrypted = c_encrypt(auth_session, h_key, encrypt_this, mechanism=mech)
         self.verify_ret(ret, exp_ret)
 
         # If not expecting error, proceed with testing
@@ -302,8 +306,7 @@ class TestEncryptData(object):
             if m_type not in PADDING_ALGORITHMS and m_type != CKM_AES_KW:
                 assert len(encrypted) == len(b"".join(encrypt_this))
 
-            ret, end_data = c_decrypt(auth_session, m_type, h_key, encrypted,
-                                      extra_params=params)
+            ret, end_data = c_decrypt(auth_session, h_key, encrypted, mechanism=mech)
             self.verify_ret(ret, exp_ret)
             if m_type in PADDING_ALGORITHMS:
                 end_data = end_data.rstrip(b"\x00")
@@ -324,12 +327,13 @@ class TestEncryptData(object):
         expected_retcode = ret_val(m_type, RAW, valid_mechanisms)
         pub_key, prv_key = asym_keys[ASYM_TABLE[m_type]]
 
-        ret, decrypt_this = c_encrypt(auth_session, m_type, pub_key, RAW, extra_params=params)
+        mech = {"mech_type": m_type,
+                "params": params}
+        ret, decrypt_this = c_encrypt(auth_session, pub_key, RAW, mechanism=mech)
         self.verify_ret(ret, expected_retcode)
 
         if expected_retcode == CKR_OK:
-            ret, decrypted_data = c_decrypt(auth_session, m_type, prv_key, decrypt_this,
-                                            extra_params=params)
+            ret, decrypted_data = c_decrypt(auth_session, prv_key, decrypt_this, mechanism=mech)
             self.verify_ret(ret, expected_retcode)
 
         self.verify_data(RAW, decrypted_data.replace(b"\x00", b""))

@@ -5,8 +5,9 @@ import logging
 from _ctypes import POINTER
 from ctypes import create_string_buffer, cast, byref, string_at, c_ubyte
 
-from .return_values import ret_vals_dictionary
-from .attributes import Attributes, to_char_array
+from six import string_types
+
+from .attributes import Attributes, to_char_array, to_byte_array
 from .common_utils import AutoCArray, refresh_c_arrays
 from .cryptoki import CK_ULONG, \
     C_EncryptInit, C_Encrypt
@@ -14,35 +15,29 @@ from .cryptoki import C_Decrypt, C_DecryptInit, CK_OBJECT_HANDLE, \
     C_WrapKey, C_UnwrapKey, C_EncryptUpdate, C_EncryptFinal, CK_BYTE_PTR, \
     C_DecryptUpdate, C_DecryptFinal
 from .defines import CKR_OK
-from .mechanism import Mechanism
+from .mechanism import parse_mechanism
+from .return_values import ret_vals_dictionary
 from .test_functions import make_error_handle_function
 
 LOG = logging.getLogger(__name__)
 
 
-def c_encrypt(h_session, encryption_flavor, h_key, data_to_encrypt, mech=None, extra_params=None):
+def c_encrypt(h_session, h_key, data, mechanism):
     """Encrypts data with a given key and encryption flavor
     encryption flavors
 
     :param h_session: Current session
-    :param encryption_flavor: The flavor of encryption to use
     :param h_key: The key handle to encrypt the data with
-    :param data_to_encrypt: The data to encrypt, either a string or a list of strings. If this is
-    a list
-        a multipart operation will be used
-    :param mech: The mechanism to use, if None will try to look up a
-        default mechanism based on the encryption flavor
-    :param extra_params: Parameters to be passed to mechanism generation.
+    :param data: The data to encrypt, either a string or a list of strings. If this is
+    a list a multipart operation will be used
+    :param mechanism: Will create a mechanism with the :py:func:`mechanism.parse_mechanism` function
     :returns: Returns the result code of the operation, a python string representing the
     encrypted data
     """
-    if mech is None:
-        py_mech = Mechanism(mech_type=encryption_flavor, params=extra_params)
-        mech = py_mech.to_c_mech()
-
+    mech = parse_mechanism(mechanism)
     # if a list is passed out do an encrypt operation on each string in the list, otherwise just
     # do one encrypt operation
-    is_multi_part_operation = isinstance(data_to_encrypt, (list, tuple))
+    is_multi_part_operation = isinstance(data, (list, tuple))
 
     # Initialize encryption
     ret = C_EncryptInit(h_session, byref(mech), CK_ULONG(h_key))
@@ -51,9 +46,9 @@ def c_encrypt(h_session, encryption_flavor, h_key, data_to_encrypt, mech=None, e
 
     if is_multi_part_operation:
         ret, encrypted_python_string = do_multipart_operation(h_session, C_EncryptUpdate,
-                                                              C_EncryptFinal, data_to_encrypt)
+                                                              C_EncryptFinal, data)
     else:
-        plain_data, plain_data_length = to_char_array(data_to_encrypt)
+        plain_data, plain_data_length = to_char_array(data)
         plain_data = cast(plain_data, POINTER(c_ubyte))
 
         enc_data = AutoCArray(ctype=c_ubyte)
@@ -100,26 +95,17 @@ def _get_string_from_list(list_of_strings):
     return b"".join(list_of_strings)
 
 
-def c_decrypt(h_session, decryption_flavor, h_key, encrypted_data, mech=None, extra_params=None):
+def c_decrypt(h_session, h_key, encrypted_data, mechanism):
     """Decrypts some data
 
     :param h_session: The session to use
-    :param decryption_flavor: The decryption flavor to create a new mechanism with if no mechanism
-        is provided
     :param h_key: The handle of the key to use to decrypt
-    :param mech: The mechanism, if none is provided a blank one will be
-        provided based on the decryption_flavor (Default value = None)
     :param encrypted_data: Data to be decrypted
-    :param extra_params: Parameters to be passed to mechanism generation.
+    :param mechanism: Will create a mechanism with the :py:func:`mechanism.parse_mechanism` function
     :returns: The result code, a python string of the decrypted data
 
     """
-
-    # Get the mechanism
-    if mech is None:
-        py_mech = Mechanism(mech_type=decryption_flavor, params=extra_params)
-        mech = py_mech.to_c_mech()
-
+    mech = parse_mechanism(mechanism)
     # Initialize Decrypt
     ret = C_DecryptInit(h_session, mech, CK_ULONG(h_key))
     if ret != CKR_OK:
@@ -224,23 +210,18 @@ def do_multipart_operation(h_session, c_update_function, c_finalize_function, in
     return ret, b"".join(python_data)
 
 
-def c_wrap_key(h_session, h_wrapping_key, h_key, encryption_flavor, mech=None, extra_params=None):
+def c_wrap_key(h_session, h_wrapping_key, h_key, mechanism):
     """Function which wraps a key
 
     :param h_session: The session to use
     :param h_wrapping_key: The handle of the key to use to wrap another key
     :param h_key: The key to wrap
-    :param encryption_flavor: The encryption flavor to create a new mechanism with if no mechanism
-        is provided
-    :param mech: The mechanism, if none is provided a blank one will be provided
         based on the encryption flavor (Default value = None)
-    :param extra_params: Parameters to be passed to mechanism generation.
+    :param mechanism: Will create a mechanism with the :py:func:`mechanism.parse_mechanism` function
     :returns: The result code, a ctypes byte array representing the new key
 
     """
-    if mech is None:
-        py_mech = Mechanism(mech_type=encryption_flavor, params=extra_params)
-        mech = py_mech.to_c_mech()
+    mech = parse_mechanism(mechanism)
 
     wrapped_key = AutoCArray(ctype=c_ubyte)
 
@@ -261,33 +242,26 @@ def c_wrap_key(h_session, h_wrapping_key, h_key, encryption_flavor, mech=None, e
 c_wrap_key_ex = make_error_handle_function(c_wrap_key)
 
 
-def c_unwrap_key(h_session, h_unwrapping_key, wrapped_key, key_template, encryption_flavor,
-                 mech=None, extra_params=None):
+def c_unwrap_key(h_session, h_unwrapping_key, wrapped_key, key_template, mechanism):
     """Function which unwraps a key
 
     :param h_session: The session to use
     :param h_unwrapping_key: The wrapping key handle
-    :param wrapped_key: The wrapped key in a ctypes CK_CHAR_PTR array
+    :param wrapped_key: The wrapped key
     :param key_template: The python template representing the new key's template
-    :param encryption_flavor: If the mechanism is not specified it will create a
-        default one based on the encryption flavor
-    :param mech: The mechanism to use, if null a default one will be created based on the
-    encryption_flavor
-    :param h_unwrapping_key: Key to do the unwrapping
-    :param wrapped_key: Key to be decrypted (unwrapped)
-    :param extra_params: Parameters to be passed to mechanism generation.
+    :param mechanism: Will create a mechanism with the :py:func:`mechanism.parse_mechanism` function
     :returns: The result code, the handle of the unwrapped key
 
     """
-    if mech is None:
-        py_mech = Mechanism(mech_type=encryption_flavor, params=extra_params)
-        mech = py_mech.to_c_mech()
-
+    mech = parse_mechanism(mechanism)
     c_template = Attributes(key_template).get_c_struct()
-    byte_wrapped_key = cast(wrapped_key, CK_BYTE_PTR)
+    if isinstance(wrapped_key, string_types):
+        wrapped_key = bytearray(wrapped_key)
+    byte_wrapped_key, key_len = to_byte_array(wrapped_key)
+    byte_wrapped_key = cast(byte_wrapped_key, CK_BYTE_PTR)
     h_output_key = CK_ULONG()
-    ret = C_UnwrapKey(h_session, mech, CK_OBJECT_HANDLE(h_unwrapping_key), byte_wrapped_key,
-                      CK_ULONG(len(wrapped_key)),
+    ret = C_UnwrapKey(h_session, mech, CK_OBJECT_HANDLE(h_unwrapping_key),
+                      byte_wrapped_key, key_len,
                       c_template, CK_ULONG(len(key_template)), byref(h_output_key))
 
     return ret, h_output_key.value

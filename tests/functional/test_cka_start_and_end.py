@@ -98,7 +98,7 @@ class TestCKAStartEndDate(object):
         h_session = c_open_session_ex(slot_num=self.admin_slot)
         login_ex(h_session, self.admin_slot, CO_PASSWORD, CKU_USER)
 
-        return_val = c_encrypt(h_session, CKM_DES_ECB, h_key, b"This is some data to sign ..   ")
+        return_val = c_encrypt(h_session, h_key, b"This is some data to sign ..   ", CKM_DES_ECB)
 
         assert return_val == CKR_KEY_NOT_ACTIVE, "return value should be CKR_KEY_NOT_ACTIVE"
         c_logout_ex(h_session)
@@ -168,7 +168,7 @@ class TestCKAStartEndDate(object):
         h_session = c_open_session_ex(slot_num=self.admin_slot)
         login_ex(h_session, self.admin_slot, CO_PASSWORD, CKU_USER)
 
-        return_val = c_encrypt(h_session, CKM_AES_ECB, h_key, b"This is some data to sign ..   ")
+        return_val = c_encrypt(h_session, h_key, b"This is some data to sign ..   ", CKM_AES_ECB)
         logger.info("Called C_Encrypt, return code: " + str(return_val))
         assert return_val == CKR_KEY_NOT_ACTIVE, "Expected return code is CKR_KEY_NOT_ACTIVE"
 
@@ -246,7 +246,7 @@ class TestCKAStartEndDate(object):
         h_session = c_open_session_ex(slot_num=self.admin_slot)
         login_ex(h_session, self.admin_slot, CO_PASSWORD, CKU_USER)
 
-        return_val = c_encrypt(h_session, CKM_RSA_PKCS, h_pbkey, b"This is some data to sign ..   ")
+        return_val = c_encrypt(h_session, h_pbkey, b"This is some data to sign ..   ", CKM_RSA_PKCS)
         logger.info("Called C_Encrypt, return code: " + str(return_val))
         assert return_val == CKR_KEY_NOT_ACTIVE, "Expected return code is CKR_KEY_NOT_ACTIVE"
 

@@ -18,15 +18,13 @@ just returning the second part of the regular return tuple::
 
 """
 from __future__ import print_function
-import ctypes
+
 import logging
 import multiprocessing
 import os
 import signal
 import sys
 import time
-from _ctypes import pointer
-from ctypes import cast
 from optparse import OptionParser
 
 import rpyc
@@ -41,7 +39,6 @@ from pycryptoki.backup import (ca_open_secure_token, ca_open_secure_token_ex,
                                ca_extract, ca_extract_ex,
                                ca_insert, ca_insert_ex)
 from pycryptoki.cryptoki import CK_ULONG
-from pycryptoki.cryptoki import CK_VOID_PTR
 from pycryptoki.encryption import (c_encrypt, c_encrypt_ex,
                                    c_decrypt, c_decrypt_ex,
                                    c_wrap_key, c_wrap_key_ex,
@@ -65,7 +62,6 @@ from pycryptoki.hsm_management import (c_performselftest, c_performselftest_ex,
                                        ca_get_hsm_capability_setting_ex, ca_set_hsm_policies,
                                        ca_set_hsm_policies_ex, ca_set_destructive_hsm_policies,
                                        ca_set_destructive_hsm_policies_ex)
-from pycryptoki.key_generator import _get_mechanism
 from pycryptoki.key_generator import (c_destroy_object, c_destroy_object_ex,
                                       c_generate_key_pair, c_generate_key_pair_ex,
                                       c_generate_key, c_generate_key_ex,
@@ -358,55 +354,8 @@ class PycryptokiService(rpyc.SlaveService):
     exposed_ca_clonemofn_ex = staticmethod(ca_clonemofn_ex)
     exposed_ca_duplicatemofn = staticmethod(ca_duplicatemofn)
     exposed_ca_duplicatemofn_ex = staticmethod(ca_duplicatemofn_ex)
-
-    @staticmethod
-    def exposed_c_derive_key_ex(h_session, h_base_key, h_second_key, template, mech_flavor,
-                                mech=None):
-        """#key_generator.py
-
-        Wrapper around the default c_derive_key_ex. Have to do the mechanism creation on the
-        daemon side
-        because it involves pointers.
-
-        :param h_session:
-        :param h_base_key:
-        :param h_second_key:
-        :param template:
-        :param mech_flavor:
-        :param mech:  (Default value = None)
-
-        """
-        if mech:
-            mech = _get_mechanism(mech)
-            c_second_key = CK_ULONG(h_second_key)
-            mech.pParameter = cast(pointer(c_second_key), CK_VOID_PTR)
-            mech.usParameterLen = ctypes.sizeof(c_second_key)
-
-        return c_derive_key_ex(h_session, h_base_key, template, mech_flavor, mech)
-
-    @staticmethod
-    def exposed_c_derive_key(h_session, h_base_key, h_second_key, template, mech_flavor, mech=None):
-        """#key_generator.py
-
-        Wrapper around the default c_derive_key_ex. Have to do the mechanism creation on the
-        daemon side
-        because it involves pointers.
-
-        :param h_session:
-        :param h_base_key:
-        :param h_second_key:
-        :param template:
-        :param mech_flavor:
-        :param mech:  (Default value = None)
-
-        """
-        if mech:
-            mech = _get_mechanism(mech)
-            c_second_key = CK_ULONG(h_second_key)
-            mech.pParameter = cast(pointer(c_second_key), CK_VOID_PTR)
-            mech.usParameterLen = ctypes.sizeof(c_second_key)
-
-        return c_derive_key(h_session, h_base_key, template, mech_flavor, mech)
+    exposed_c_derive_key = staticmethod(c_derive_key)
+    exposed_c_derive_key_ex = staticmethod(c_derive_key_ex)
 
 
 def server_launch(service, ip, port, config):
