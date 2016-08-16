@@ -1,18 +1,17 @@
 """
 Methods used to generate keys.
 """
-
 from ctypes import byref
 
+from .attributes import Attributes
+from .cryptoki import C_DeriveKey
 from .cryptoki import C_DestroyObject, CK_OBJECT_HANDLE, CK_ULONG, C_GenerateKey, \
     C_GenerateKeyPair, \
     C_CopyObject
 from .default_templates import CKM_DES_KEY_GEN_TEMP, \
-    CKM_RSA_PKCS_KEY_PAIR_GEN_PUBTEMP, CKM_RSA_PKCS_KEY_PAIR_GEN_PRIVTEMP
+    get_default_key_pair_template
 from .defines import CKM_DES_KEY_GEN, CKM_RSA_PKCS_KEY_PAIR_GEN
-from .attributes import Attributes
-from .cryptoki import C_DeriveKey
-from .mechanism import NullMech
+from .mechanism import parse_mechanism
 from .test_functions import make_error_handle_function
 
 
@@ -55,28 +54,23 @@ def c_copy_object(h_session, h_object, template=None):
 c_copy_object_ex = make_error_handle_function(c_copy_object)
 
 
-def _get_mechanism(flavor):
-    """Method used to get the CK_MECHANISM variable for key generation.
-
-    :param flavor: The key flavor of the mechanism
-    :returns: Returns a blank mechanism of type flavor
-
-    """
-    return NullMech(flavor).to_c_mech()
-
-
-def c_generate_key(h_session, flavor=CKM_DES_KEY_GEN, template=CKM_DES_KEY_GEN_TEMP):
+def c_generate_key(h_session, mechanism=None, template=None):
     """
     Generates a symmetric key of a given flavor given the correct template.
 
     :param h_session: Current session
-    :param flavor: The flavour of the DES key to generate
     :param template: The template to use to generate the key
+    :param mechanism: Will create a mechanism with the :py:func:`mechanism.parse_mechanism` function
 
     :return: Returns the result code and the key's handle
     """
-    # INITALIZE VARIABLES
-    mech = _get_mechanism(flavor)
+    if mechanism is None:
+        mechanism = {"mech_type": CKM_DES_KEY_GEN}
+
+    mech = parse_mechanism(mechanism)
+
+    if template is None:
+        template = CKM_DES_KEY_GEN_TEMP
 
     key_attributes = Attributes(template)
     us_public_template_size = CK_ULONG(len(template))
@@ -93,24 +87,28 @@ def c_generate_key(h_session, flavor=CKM_DES_KEY_GEN, template=CKM_DES_KEY_GEN_T
 c_generate_key_ex = make_error_handle_function(c_generate_key)
 
 
-def c_generate_key_pair(h_session, flavor=CKM_RSA_PKCS_KEY_PAIR_GEN,
-                        pbkey_template=CKM_RSA_PKCS_KEY_PAIR_GEN_PUBTEMP,
-                        prkey_template=CKM_RSA_PKCS_KEY_PAIR_GEN_PRIVTEMP,
-                        mech=None):
+def c_generate_key_pair(h_session,
+                        mechanism=None,
+                        pbkey_template=None,
+                        prkey_template=None):
     """Generates a private and public key pair for a given flavor, and given public and private
     key templates. The return value will be the handle for the key.
 
     :param h_session: Current session
-    :param flavor: The flavor of the key to generate (Default value = CKM_DES_KEY_GEN)
     :param pbkey_template: The public key template to use for key generation
     :param prkey_template: The private key template to use for key generation
-    :param mech: The mechanism to generate the key with
+    :param mechanism: Will create a mechanism with the :py:func:`mechanism.parse_mechanism` function
+
     :returns: Returns the result code, the public key's handle, and the private key's handle
 
     """
-    # INITALIZE VARIABLES
-    if mech is None:
-        mech = _get_mechanism(flavor)
+    if mechanism is None:
+        mechanism = {"mech_type": CKM_RSA_PKCS_KEY_PAIR_GEN}
+
+    if pbkey_template is None and prkey_template is None:
+        pbkey_template, prkey_template = get_default_key_pair_template(CKM_RSA_PKCS_KEY_PAIR_GEN)
+
+    mech = parse_mechanism(mechanism)
 
     pbkey_template_size = len(pbkey_template)
     pbkey_attributes = Attributes(pbkey_template)
@@ -131,21 +129,17 @@ def c_generate_key_pair(h_session, flavor=CKM_RSA_PKCS_KEY_PAIR_GEN,
 c_generate_key_pair_ex = make_error_handle_function(c_generate_key_pair)
 
 
-def c_derive_key(h_session, h_base_key, template, mech_flavor, mech=None):
+def c_derive_key(h_session, h_base_key, template, mechanism=None):
     """Calls C_DeriveKey
 
     :param h_session: The session handle to use
     :param h_base_key: The base key
     :param template: A python template of attributes (ex. CKM_DES_KEY_GEN_TEMP)
-    :param mech: The mechanism to use, if None a default mechanism will be used
-    :param mech_flavor:
+    :param mechanism: Will create a mechanism with the :py:func:`mechanism.parse_mechanism` function
     :returns: The result code, The derived key's handle
 
     """
-
-    if mech is None:
-        mech = _get_mechanism(mech_flavor)
-
+    mech = parse_mechanism(mechanism)
     h_key = CK_OBJECT_HANDLE()
     c_template = Attributes(template).get_c_struct()
     ret = C_DeriveKey(h_session, mech,

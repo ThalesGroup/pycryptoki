@@ -3,7 +3,10 @@ Mechanism-related utilities
 """
 
 import logging
+import types
 from ctypes import c_void_p, cast, pointer, POINTER, sizeof, create_string_buffer, c_char
+
+from six import integer_types
 
 from . import cryptoki
 from .attributes import to_byte_array, to_char_array, CONVERSIONS
@@ -534,3 +537,39 @@ def get_python_dict_from_c_mechanism(c_mechanism, params_type_string):
         raise Exception("Unsupported parameter type, pycryptoki can be extended to make it work")
 
     return python_dictionary
+
+
+def parse_mechanism(mechanism_param):
+    """
+    Designed for use with any function call that takes in a mechanism,
+    this will handle a mechanism parameter that is one of the following:
+
+        1. CKM_ integer constant -- will create a CK_MECHANISM with only mech_type set.
+        2. Dictionary with `mech_type` as a mandatory key, and `params` as an optional key. This
+        will be passed into the `Mechanism` class for conversion to a CK_MECHANISM.
+        3. CK_MECHANISM struct -- passed directly into the raw C Call.
+        4. Mechanism class -- will call to_c_mech() on the class, and use the results.
+
+    .. warning:: If you're using this with rpyc, you need to make sure the call `to_c_mech` occurs
+    on the *server* (the machine with the HSM)! If you pass in a :py:class:`Mechanism` class that
+    was created on the client, the resulting call into `to_c_mech()` will *also* be on the client
+    side!
+
+    :param mechanism_param: Parameter to convert to a C Mechanism.
+    :return: `CK_MECHANISM` struct.
+    """
+
+    if isinstance(mechanism_param, dict):
+        mech = Mechanism(**mechanism_param).to_c_mech()
+    elif isinstance(mechanism_param, CK_MECHANISM):
+        mech = mechanism_param
+    elif isinstance(mechanism_param, integer_types):
+        mech = NullMech(mech_type=mechanism_param).to_c_mech()
+    elif isinstance(mechanism_param, Mechanism):
+        mech = mechanism_param.to_c_mech()
+    else:
+        raise TypeError("Invalid mechanism type {}, should be CK_MECHANISM, dictionary with "
+                        "kwargs to be passed to `Mechanism`, integer constant, or a "
+                        "Mechanism() class.".format(type(mechanism_param)))
+
+    return mech
