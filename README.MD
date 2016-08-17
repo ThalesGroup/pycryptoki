@@ -1,5 +1,5 @@
 ## Pycryptoki
-
+[![Doc Status](https://readthedocs.org/projects/pycryptoki/badge/?version=latest)](http://pycryptoki.readthedocs.io/en/latest/)
 Pycryptoki is a python wrapper around the PKCS11 library.
 
 
