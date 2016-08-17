@@ -565,8 +565,7 @@ def parse_mechanism(mechanism_param):
         mech = mechanism_param
     elif isinstance(mechanism_param, integer_types):
         mech = NullMech(mech_type=mechanism_param).to_c_mech()
-    elif isinstance(mechanism_param, (type, types.ClassType)) and \
-            issubclass(mechanism_param, Mechanism):
+    elif isinstance(mechanism_param, Mechanism):
         mech = mechanism_param.to_c_mech()
     else:
         raise TypeError("Invalid mechanism type {}, should be CK_MECHANISM, dictionary with "
