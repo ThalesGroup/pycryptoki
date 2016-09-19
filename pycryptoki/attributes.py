@@ -200,7 +200,14 @@ def to_byte_array(val, reverse=False):
 
     if isinstance(val, string_types):
         # Hex-string in form '01e4'
-        val = int(val, 16)
+        try:
+            val = int(val, 16)
+        except ValueError:
+            # To allow for pre-allocation of data with ' ' * 64
+            if val.isspace() or len(val) == 0:
+                val = b(val)
+            else:
+                raise
     if isinstance(val, collections.Iterable):
         py_bytes = bytearray(val)
         byte_array = (CK_BYTE * len(py_bytes))(*py_bytes)
