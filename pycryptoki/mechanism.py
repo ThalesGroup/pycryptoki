@@ -14,7 +14,7 @@ from .cryptoki import CK_AES_CBC_PAD_EXTRACT_PARAMS, CK_MECHANISM, \
     CK_ULONG, CK_ULONG_PTR, CK_AES_CBC_PAD_INSERT_PARAMS, CK_BYTE, CK_BYTE_PTR, CK_RC2_CBC_PARAMS, \
     CK_RC5_PARAMS, CK_RC5_CBC_PARAMS, CK_MECHANISM_TYPE, CK_AES_XTS_PARAMS, \
     CK_RSA_PKCS_OAEP_PARAMS, \
-    CK_AES_GCM_PARAMS, CK_RSA_PKCS_PSS_PARAMS
+    CK_AES_GCM_PARAMS, CK_RSA_PKCS_PSS_PARAMS, CK_KEY_DERIVATION_STRING_DATA, c_ubyte
 from .defines import *
 from .test_functions import LunaException
 
@@ -322,6 +322,51 @@ class AESGCMMechanism(Mechanism):
         return self.mech
 
 
+class ConcatenationDeriveMechanism(Mechanism):
+    """
+    Mechanism class for key derivations. This will take in a second key handle in the parameters,
+     and use it in the resulting Structure.
+
+     .. warning :: This mechanism is disabled in later versions of PCKS11.
+
+    """
+    REQUIRED_PARAMS = ['h_second_key']
+
+    def to_c_mech(self):
+        """
+        Add in a pointer to the second key in the resulting mech structure.
+
+        :return: Mechanism Structure
+        """
+        super(ConcatenationDeriveMechanism, self).to_c_mech()
+        c_second_key = CK_ULONG(self.params['h_second_key'])
+        self.mech.pParameter = cast(pointer(c_second_key), c_void_p)
+        self.mech.usParameterLen = sizeof(c_second_key)
+        return self.mech
+
+
+class StringDataDerivationMechanism(Mechanism):
+    """
+    Mechanism class for key derivation using passed in string data.
+    """
+    REQUIRED_PARAMS = ['data']
+
+    def to_c_mech(self):
+        """
+        Convert data to bytearray, then use in the resulting mech structure.
+
+        :return: Mechanism Structure
+        """
+        super(ConcatenationDeriveMechanism, self).to_c_mech()
+        parameters = CK_KEY_DERIVATION_STRING_DATA
+        data, length = to_byte_array(self.params['data'])
+        parameters.pData = cast(data, POINTER(c_ubyte))
+        parameters.ulLen = length
+        self.mech.pParameter = parameters
+        self.mech.usParameterLen = sizeof(parameters)
+        return self.mech
+
+
 # TODO: xordf mech
 
 class NullMech(Mechanism):
@@ -438,6 +483,11 @@ MECH_LOOKUP = {
     CKM_SHA512_RSA_PKCS_PSS: RSAPKCSPSSMechanism,
 
     CKM_DES_ECB: NullMech,
+
+    CKM_CONCATENATE_BASE_AND_KEY: ConcatenationDeriveMechanism,
+    CKM_CONCATENATE_BASE_AND_DATA: StringDataDerivationMechanism,
+    CKM_XOR_BASE_AND_DATA: StringDataDerivationMechanism,
+    CKM_CONCATENATE_DATA_AND_BASE: StringDataDerivationMechanism,
 }
 
 
@@ -564,7 +614,7 @@ def parse_mechanism(mechanism_param):
     elif isinstance(mechanism_param, CK_MECHANISM):
         mech = mechanism_param
     elif isinstance(mechanism_param, integer_types):
-        mech = NullMech(mech_type=mechanism_param).to_c_mech()
+        mech = Mechanism(mech_type=mechanism_param).to_c_mech()
     elif isinstance(mechanism_param, Mechanism):
         mech = mechanism_param.to_c_mech()
     else:
