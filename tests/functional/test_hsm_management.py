@@ -4,7 +4,6 @@ Test methods for pycryptoki 'hsm management' set of commands.
 
 import pytest
 
-from . import config as hsm_config
 from pycryptoki.default_templates import CKM_RSA_PKCS_KEY_PAIR_GEN, \
     CKM_RSA_PKCS_KEY_PAIR_GEN_PUBTEMP, CKM_RSA_PKCS_KEY_PAIR_GEN_PRIVTEMP
 from pycryptoki.defines import CKR_OK, \
@@ -19,10 +18,12 @@ from pycryptoki.hsm_management import ca_settokencertificatesignature, ca_hainit
     ca_mtkresplit, ca_mtkzeroize, c_performselftest
 from pycryptoki.key_generator import c_generate_key_pair
 from pycryptoki.return_values import ret_vals_dictionary
+from . import config as hsm_config
 
 
 class TestAlgorithm(object):
     """Test algorithm class"""
+
     @pytest.fixture(autouse=True)
     def setup_teardown(self, auth_session):
         self.h_session = auth_session
@@ -108,8 +109,8 @@ class TestAlgorithm(object):
             "Return code should be " + ret_vals_dictionary[CKR_OK] + \
             " not " + ret_vals_dictionary[ret]
 
-    @pytest.mark.xfail(condition=not hsm_config['is_ped'] or hsm_config['user'] == "CO",
-                       reason="Not valid on PWD auth")
+    @pytest.mark.skipif(condition=not hsm_config['is_ped'] or hsm_config['user'] == "CO",
+                        reason="Not valid on PWD auth")
     def test_initializeremotepedvector(self):
         """Tests to initialize remote ped vector"""
         ret = ca_initializeremotepedvector(self.h_session)
@@ -118,8 +119,8 @@ class TestAlgorithm(object):
             "Return code should be " + ret_vals_dictionary[CKR_OK] + \
             " not " + ret_vals_dictionary[ret]
 
-    @pytest.mark.xfail(condition=not hsm_config['is_ped'] or hsm_config['user'] == "CO",
-                       reason="Not valid on PWD auth")
+    @pytest.mark.skipif(condition=not hsm_config['is_ped'] or hsm_config['user'] == "CO",
+                        reason="Not valid on PWD auth")
     def test_deleteremotepedvector(self):
         """Tests to delete remote ped vector"""
         ret = ca_deleteremotepedvector(self.h_session)

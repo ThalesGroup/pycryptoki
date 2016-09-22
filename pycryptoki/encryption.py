@@ -5,7 +5,9 @@ import logging
 from _ctypes import POINTER
 from ctypes import create_string_buffer, cast, byref, string_at, c_ubyte
 
-from .attributes import Attributes, to_char_array
+from six import string_types
+
+from .attributes import Attributes, to_char_array, to_byte_array
 from .common_utils import AutoCArray, refresh_c_arrays
 from .cryptoki import CK_ULONG, \
     C_EncryptInit, C_Encrypt
@@ -245,7 +247,7 @@ def c_unwrap_key(h_session, h_unwrapping_key, wrapped_key, key_template, mechani
 
     :param h_session: The session to use
     :param h_unwrapping_key: The wrapping key handle
-    :param wrapped_key: The wrapped key in a ctypes CK_CHAR_PTR array
+    :param wrapped_key: The wrapped key
     :param key_template: The python template representing the new key's template
     :param mechanism: Will create a mechanism with the :py:func:`mechanism.parse_mechanism` function
     :returns: The result code, the handle of the unwrapped key
@@ -253,10 +255,13 @@ def c_unwrap_key(h_session, h_unwrapping_key, wrapped_key, key_template, mechani
     """
     mech = parse_mechanism(mechanism)
     c_template = Attributes(key_template).get_c_struct()
-    byte_wrapped_key = cast(wrapped_key, CK_BYTE_PTR)
+    if isinstance(wrapped_key, string_types):
+        wrapped_key = bytearray(wrapped_key)
+    byte_wrapped_key, key_len = to_byte_array(wrapped_key)
+    byte_wrapped_key = cast(byte_wrapped_key, CK_BYTE_PTR)
     h_output_key = CK_ULONG()
-    ret = C_UnwrapKey(h_session, mech, CK_OBJECT_HANDLE(h_unwrapping_key), byte_wrapped_key,
-                      CK_ULONG(len(wrapped_key)),
+    ret = C_UnwrapKey(h_session, mech, CK_OBJECT_HANDLE(h_unwrapping_key),
+                      byte_wrapped_key, key_len,
                       c_template, CK_ULONG(len(key_template)), byref(h_output_key))
 
     return ret, h_output_key.value

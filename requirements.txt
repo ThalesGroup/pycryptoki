@@ -3,3 +3,4 @@ hypothesis
 pytest
 future
 mock
+six

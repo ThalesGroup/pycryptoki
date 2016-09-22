@@ -12,11 +12,10 @@ setup(name='pycryptoki',
       description="A python wrapper around the C cryptoki library.",
       author='Ashley Straw',
       url='https://github.com/gemalto/pycryptoki',
-      version='1.0',
+      version='2.0',
       packages=['pycryptoki',
                 'pycryptoki.daemon'],
       scripts=['pycryptoki/daemon/rpyc_pycryptoki.py'],
-      setup_requires=['pytest-runner'],
       tests_require=['pytest', 'hypothesis', 'mock', 'pytz'],
-      requires=['future', 'rpyc', 'six']
+      install_requires=['future', 'rpyc', 'six']
       )
