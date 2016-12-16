@@ -5,11 +5,16 @@ import logging
 import os
 import re
 import sys
+import struct
 from ctypes import CDLL
+
+from six.moves import configparser
 
 from .defaults import CHRYSTOKI_DLL_FILE, CHRYSTOKI_CONFIG_FILE
 
 LOG = logging.getLogger(__name__)
+
+IS_64B = 8 * struct.calcsize("P") == 64
 
 
 def parse_chrystoki_conf():
@@ -44,48 +49,37 @@ def parse_chrystoki_conf():
 
     LOG.info("Searching %s for Chrystoki DLL path...", conf_path)
 
-    chrystoki_conf_text = _get_chrystoki_conf_file_text(conf_path)
-
-    dll_path = _search_for_dll_in_chrystoki_conf(conf_path, chrystoki_conf_text)
+    dll_path = _search_for_dll_in_chrystoki_conf(conf_path)
 
     LOG.info("Using DLL at location: %s", dll_path)
 
     return dll_path
 
 
-def _search_for_dll_in_chrystoki_conf(conf_path, chrystoki_conf_text):
+def _search_for_dll_in_chrystoki_conf(conf_path):
     """Parses the chrystoki configuration file for the section that specifies the location
     of the DLL and returns the DLL location.
 
-    :param conf_path: The path to the configuration file
-    :param chrystoki_conf_text: The output of the read in chrystoki configuration file
+    :param str conf_path: The path to the configuration file
     :returns: The path to the chrystoki DLL
-
+    :rtype: str
     """
     if 'win' in sys.platform:
-        chrystoki2_segments = re.findall("\s*\[Chrystoki2\]\s*([^\r\n]*)", chrystoki_conf_text)
+        try:
+            config = configparser.ConfigParser()
+            config.read(conf_path)
 
-        if len(chrystoki2_segments) > 1:
-            raise Exception("Found %s Chrystoki2 sections in the config file: %s",
-                            chrystoki2_segments, conf_path)
-        elif len(chrystoki2_segments) < 1:
-            raise Exception("Found no Chrystoki2 section in the config file: %s", conf_path)
-
-        chrystoki2 = chrystoki2_segments[0].split('\n')
-        dll_path = ""
-        for line in chrystoki2:
-            lib_nt_line = re.findall("^\s*LibNT\s*=\s*([^\n]+)", line)
-
-            if len(lib_nt_line) > 1:
-                raise Exception("Found more than one LibNT pattern on the same line")
-            elif len(lib_nt_line) == 1:
-                if dll_path != "":
-                    raise Exception("Found more than one instance of LibNT in the file.")
-                dll_path = lib_nt_line[0].strip().strip(';').strip().strip("'").strip('"')
-
-        if dll_path == "":
-            raise Exception("Error finding LibNT declaration in configuration file: %s", conf_path)
+            dll_path = config.get("Chrystoki2", "LibNT")
+        except ValueError:
+            LOG.exception("Failed to read DLL from crystoki.ini.")
+            raise ValueError("Failed to read DLL location crystoki.ini file!")
+        else:
+            if not os.path.isfile(dll_path):
+                raise ValueError("Cryptoki DLL does not exist at path {}! Check your "
+                                 "crystoki.ini file.".format(dll_path))
     else:
+        with open(conf_path) as conf_file:
+            chrystoki_conf_text = conf_file.read()
         chrystoki2_segments = re.findall("\s*Chrystoki2\s*=\s*\{([^\}]*)", chrystoki_conf_text)
 
         if len(chrystoki2_segments) > 1:
@@ -117,20 +111,6 @@ def _search_for_dll_in_chrystoki_conf(conf_path, chrystoki_conf_text):
     return dll_path
 
 
-def _get_chrystoki_conf_file_text(conf_path):
-    """Reads in the chrystoki configuration and returns the text in the file
-
-    :param conf_path:
-    """
-
-    try:
-        chrystoki_conf_file = open(conf_path, "r")
-        chrystoki_conf_text = chrystoki_conf_file.read()
-    except IOError:
-        raise Exception("Could not find/read Chrystoki configuration file at path %s", conf_path)
-    return chrystoki_conf_text
-
-
 class CryptokiDLLException(Exception):
     """Custom exception class used to print an error when a call to the Cryptoki DLL failed.
     The late binding makes debugging a little bit more difficult because function calls
@@ -160,16 +140,15 @@ class CryptokiDLLSingleton(object):
 
             dll_path = parse_chrystoki_conf()
             cls._instance.dll_path = dll_path
-            if 'win' in sys.platform:
+            if 'win' in sys.platform and IS_64B:
                 import ctypes
-
                 cls._instance.loaded_dll_library = ctypes.WinDLL(dll_path)
             else:
                 cls._instance.loaded_dll_library = CDLL(dll_path)
         return cls._instance
 
     def get_dll(self):
-        """ """
+        """Get the loaded library (parsed from crystoki.ini/Chrystoki.conf)"""
         if self.loaded_dll_library is None or self.loaded_dll_library == "":
             raise Exception(
                 "DLL path never found:\n1. Is the cryptoki client installed?\n2. Can python read "
