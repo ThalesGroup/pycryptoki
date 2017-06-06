@@ -19,10 +19,12 @@ from .mechanism import parse_mechanism
 from .return_values import ret_vals_dictionary
 from .exceptions import make_error_handle_function
 
+MAX_BUFFER = 0xffff
+
 LOG = logging.getLogger(__name__)
 
 
-def c_encrypt(h_session, h_key, data, mechanism):
+def c_encrypt(h_session, h_key, data, mechanism, output_buffers=None):
     """Encrypts data with a given key and encryption flavor
     encryption flavors
 
@@ -34,6 +36,9 @@ def c_encrypt(h_session, h_key, data, mechanism):
         a list a multipart operation will be used
     :param mechanism: See the :py:func:`~pycryptoki.mechanism.parse_mechanism` function
         for possible values.
+    :param list output_buffers: List of integers that specify a size of output buffers to use
+        for multi-part operations. By default will query with NULL pointer buffer
+        to get required size of buffer.
     :returns: (Retcode, Python bytestring of encrypted data)
     :rtype: tuple
     """
@@ -49,7 +54,7 @@ def c_encrypt(h_session, h_key, data, mechanism):
 
     if is_multi_part_operation:
         ret, encrypted_python_string = do_multipart_operation(h_session, C_EncryptUpdate,
-                                                              C_EncryptFinal, data)
+                                                              C_EncryptFinal, data, output_buffers)
     else:
         plain_data, plain_data_length = to_char_array(data)
         plain_data = cast(plain_data, POINTER(c_ubyte))
@@ -98,7 +103,7 @@ def _get_string_from_list(list_of_strings):
     return b"".join(list_of_strings)
 
 
-def c_decrypt(h_session, h_key, encrypted_data, mechanism):
+def c_decrypt(h_session, h_key, encrypted_data, mechanism, output_buffers=None):
     """Decrypt given data with the given key and mechanism.
 
     .. note:: If data is a list or tuple of strings, multi-part decryption will be used.
@@ -108,6 +113,9 @@ def c_decrypt(h_session, h_key, encrypted_data, mechanism):
     :param bytes encrypted_data: Data to be decrypted
     :param mechanism: See the :py:func:`~pycryptoki.mechanism.parse_mechanism` function
         for possible values.
+    :param list output_buffers: List of integers that specify a size of output buffers to use
+        for multi-part operations. By default will query with NULL pointer buffer
+        to get required size of buffer.
     :returns: (Retcode, Python bytestring of decrypted data))
     :rtype: tuple
     """
@@ -123,7 +131,7 @@ def c_decrypt(h_session, h_key, encrypted_data, mechanism):
 
     if is_multi_part_operation:
         ret, python_data = do_multipart_operation(h_session, C_DecryptUpdate, C_DecryptFinal,
-                                                  encrypted_data)
+                                                  encrypted_data, output_buffers)
     else:
 
         # Get the length of the final data
@@ -158,7 +166,11 @@ def c_decrypt(h_session, h_key, encrypted_data, mechanism):
 c_decrypt_ex = make_error_handle_function(c_decrypt)
 
 
-def do_multipart_operation(h_session, c_update_function, c_finalize_function, input_data_list):
+def do_multipart_operation(h_session,
+                           c_update_function,
+                           c_finalize_function,
+                           input_data_list,
+                           output_buffers=None):
     """Some code which will do a multipart encrypt or decrypt since they are the same
     with just different functions called
 
@@ -166,44 +178,67 @@ def do_multipart_operation(h_session, c_update_function, c_finalize_function, in
     :param c_update_function: C_<NAME>Update function to call to update each operation.
     :param c_finalize_function: Function to call at end of multipart operation.
     :param input_data_list: List of data to call update function on.
+    :param list output_buffers: List of integers that specify a size of output buffers to use
+        for multi-part operations. By default will query with NULL pointer buffer
+        to get required size of buffer
     """
-    max_data_chunk_size = 0xfff0
-    plain_data_len = len(b"".join(input_data_list))
-
-    remaining_length = plain_data_len
     python_data = []
-    i = 0
-    while remaining_length > 0:
-        current_chunk = input_data_list[i]
+    error = None
 
-        # Prepare arguments for decrypt update operation
-        current_chunk_len = min(len(current_chunk), remaining_length)
-
-        if current_chunk_len > max_data_chunk_size:
-            raise ValueError("chunk_sizes variable too large,"
-                             " the maximum size of a chunk is %s" % max_data_chunk_size)
-
-        out_data = create_string_buffer(b'', max_data_chunk_size)
-        out_data_len = CK_ULONG(max_data_chunk_size)
-        data_chunk, data_chunk_len = to_char_array(current_chunk)
+    for index, chunk in enumerate(input_data_list):
+        if output_buffers:
+            out_data_len = CK_ULONG(output_buffers[index])
+            out_data = cast(create_string_buffer(b'', output_buffers[index]), CK_BYTE_PTR)
+        else:
+            out_data_len = CK_ULONG()
+            out_data = None
+        data_chunk, data_chunk_len = to_char_array(chunk)
         data_chunk = cast(data_chunk, POINTER(c_ubyte))
 
         ret = c_update_function(h_session,
                                 data_chunk, data_chunk_len,
-                                cast(out_data, CK_BYTE_PTR), byref(out_data_len))
+                                out_data, byref(out_data_len))
         if ret != CKR_OK:
-            LOG.debug("Failed C_Update operation on chunk %.20s (%s/%s) - ret %s",
-                      current_chunk, i, len(input_data_list), ret_vals_dictionary[ret])
-            return ret, None
+            LOG.debug("%s call on chunk %.20s (%s/%s) Failed w/ ret %s (%s)",
+                      c_update_function.__name__,
+                      chunk, index + 1, len(input_data_list), ret_vals_dictionary[ret], ret)
+            error = ret
+            break
 
-        remaining_length -= current_chunk_len
+        if not output_buffers:
+            # Need a second call to actually get the data.
+            LOG.debug("Creating cipher data buffer of size %s", out_data_len.value)
+            out_data = create_string_buffer(b'', out_data_len.value)
+            ret = c_update_function(h_session,
+                                    data_chunk, data_chunk_len,
+                                    cast(out_data, CK_BYTE_PTR), byref(out_data_len))
+            if ret != CKR_OK:
+                LOG.debug("%s call on chunk %.20s (%s/%s) Failed w/ ret %s (%s)",
+                          c_update_function.__name__,
+                          chunk, index + 1, len(input_data_list), ret_vals_dictionary[ret], ret)
+                error = ret
+                break
 
         # Get the output
         python_data.append(string_at(out_data, out_data_len.value))
-        i += 1
+
+    if error:
+        # Make sure we finalize the operation -- don't want to leave any operations active.
+        ret = c_finalize_function(h_session,
+                                  cast(create_string_buffer(b'', MAX_BUFFER), CK_BYTE_PTR),
+                                  CK_ULONG(MAX_BUFFER))
+        LOG.debug("%s call after a %s failure returned: %s (%s)",
+                  c_finalize_function.__name__,
+                  c_update_function.__name__, ret_vals_dictionary[ret], ret)
+        return error, None
 
     # Finalizing multipart decrypt operation
-    fin_out_data_len = CK_ULONG(max_data_chunk_size)
+    fin_out_data_len = CK_ULONG()
+    # Get buffer size for data
+    ret = c_finalize_function(h_session, None, byref(fin_out_data_len))
+    if ret != CKR_OK:
+        return ret, None
+
     fin_out_data = create_string_buffer(b"", fin_out_data_len.value)
     output = cast(fin_out_data, CK_BYTE_PTR)
     ret = c_finalize_function(h_session, output, byref(fin_out_data_len))

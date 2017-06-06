@@ -5,22 +5,19 @@ import logging
 import os
 import sys
 
-# From http://stackoverflow.com/a/7759927
-from pycryptoki.test_functions import LunaException
-
-from six import b
 import pytest
 
 from . import config as hsm_config
 from pycryptoki.attributes import Attributes
 from pycryptoki.defaults import ADMINISTRATOR_PASSWORD, ADMIN_PARTITION_LABEL, CO_PASSWORD
-from pycryptoki.defines import CKF_RW_SESSION, CKF_SERIAL_SESSION, CKF_PROTECTED_AUTHENTICATION_PATH, CKR_OK
-from pycryptoki.defines import CKF_SO_SESSION
+from pycryptoki.defines import CKF_RW_SESSION, CKF_SERIAL_SESSION, CKR_OK, CKF_SO_SESSION, \
+    CKF_PROTECTED_AUTHENTICATION_PATH
 from pycryptoki.key_generator import c_destroy_object
 from pycryptoki.object_attr_lookup import c_find_objects_ex
 from pycryptoki.session_management import c_initialize_ex, c_close_all_sessions_ex, \
     ca_factory_reset_ex, c_open_session_ex, login_ex, c_finalize_ex, \
     c_close_session, c_logout, c_get_token_info_ex
+from pycryptoki.test_functions import LunaException
 from pycryptoki.token_management import c_init_token_ex, c_get_mechanism_list_ex
 
 LOG = logging.getLogger(__name__)
@@ -186,7 +183,6 @@ def auth_session(pytestconfig, session):
     login_ex(session, slot, hsm_config["password"], usertype)
     yield session
     c_logout(session)
-
 
 
 @pytest.yield_fixture(scope="class")

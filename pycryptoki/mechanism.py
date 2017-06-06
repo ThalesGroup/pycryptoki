@@ -357,7 +357,7 @@ class StringDataDerivationMechanism(Mechanism):
 
         :return: :class:`~pycryptoki.cryptoki.CK_MECHANISM`
         """
-        super(ConcatenationDeriveMechanism, self).to_c_mech()
+        super(StringDataDerivationMechanism, self).to_c_mech()
         parameters = CK_KEY_DERIVATION_STRING_DATA
         data, length = to_byte_array(self.params['data'])
         parameters.pData = cast(data, POINTER(c_ubyte))

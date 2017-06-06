@@ -184,7 +184,7 @@ def make_late_binding_function(function_name):
         :param **kwargs:
 
         """
-        late_binded_function = eval("CryptokiDLLSingleton().get_dll()." + function_name)
+        late_binded_function = getattr(CryptokiDLLSingleton().get_dll(), function_name)
         late_binded_function.restype = luna_function.restype
         late_binded_function.argtypes = luna_function.argtypes
 
@@ -196,4 +196,5 @@ def make_late_binding_function(function_name):
                                                                                args,
                                                                                kwargs), e)
 
+    luna_function.__name__ = function_name
     return luna_function
