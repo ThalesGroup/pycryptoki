@@ -3,7 +3,7 @@ from ctypes import byref
 
 from .cryptoki import CA_OpenSecureToken, CA_CloseSecureToken, CA_Extract, CA_Insert, CK_ULONG
 from .mechanism import Mechanism
-from .test_functions import make_error_handle_function
+from .exceptions import make_error_handle_function
 
 logger = logging.getLogger(__name__)
 

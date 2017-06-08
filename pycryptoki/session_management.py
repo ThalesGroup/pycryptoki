@@ -42,7 +42,7 @@ from .cryptoki import (C_Initialize,
 
 from .common_utils import AutoCArray, refresh_c_arrays
 from .defines import CKR_OK, CKF_RW_SESSION, CKF_SERIAL_SESSION
-from .test_functions import make_error_handle_function
+from .exceptions import make_error_handle_function
 
 LOG = logging.getLogger(__name__)
 

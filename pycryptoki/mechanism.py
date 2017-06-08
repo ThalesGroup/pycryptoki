@@ -16,7 +16,7 @@ from .cryptoki import CK_AES_CBC_PAD_EXTRACT_PARAMS, CK_MECHANISM, \
     CK_RSA_PKCS_OAEP_PARAMS, \
     CK_AES_GCM_PARAMS, CK_RSA_PKCS_PSS_PARAMS, CK_KEY_DERIVATION_STRING_DATA, c_ubyte
 from .defines import *
-from .test_functions import LunaException
+from .exceptions import LunaException
 
 LOG = logging.getLogger(__name__)
 

@@ -8,7 +8,7 @@ from .attributes import Attributes, c_struct_to_python, KEY_TRANSFORMS
 from .cryptoki import CK_OBJECT_HANDLE, C_FindObjectsInit, CK_ULONG, \
     C_FindObjects, C_FindObjectsFinal, C_GetAttributeValue, C_SetAttributeValue
 from .defines import CKR_OK
-from .test_functions import make_error_handle_function
+from .exceptions import make_error_handle_function
 
 LOG = logging.getLogger(__name__)
 

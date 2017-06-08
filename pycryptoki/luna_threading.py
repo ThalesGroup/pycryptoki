@@ -12,7 +12,7 @@ from .key_generator import c_generate_key_ex, c_generate_key_pair_ex
 from .return_values import ret_vals_dictionary
 from .session_management import c_open_session_ex, c_get_token_info_ex, \
     c_open_session, c_close_session
-from .test_functions import verify_object_attributes
+from .exceptions import verify_object_attributes
 from .token_management import get_token_by_label_ex, \
     c_get_mechanism_list_ex, c_get_mechanism_info_ex
 

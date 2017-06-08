@@ -39,7 +39,7 @@ from .defines import (LUNA_PARTITION_TYPE_STANDALONE,
                       LUNA_CF_LIMITED_USER_CREATED,
                       LUNA_CF_USER_PIN_TO_BE_CHANGED,
                       LUNA_CF_LIMITED_USER_PIN_TO_BE_CHANGED)
-from .test_functions import make_error_handle_function
+from .exceptions import make_error_handle_function
 
 LOG = logging.getLogger(__name__)
 

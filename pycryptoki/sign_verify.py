@@ -14,7 +14,7 @@ from .cryptoki import C_VerifyInit, C_Verify, C_SignUpdate, \
 from .defines import CKR_OK
 from .encryption import _get_string_from_list
 from .mechanism import parse_mechanism
-from .test_functions import make_error_handle_function
+from .exceptions import make_error_handle_function
 
 LOG = logging.getLogger(__name__)
 

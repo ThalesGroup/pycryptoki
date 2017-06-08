@@ -13,7 +13,7 @@ import pytest
 from hypothesis import given
 from hypothesis.extra.datetime import dates
 from hypothesis.strategies import integers, floats, text, booleans, lists, dictionaries, one_of
-from six import b
+from six import b, integer_types
 
 from pycryptoki.attributes import (CK_ATTRIBUTE,
                                    CKA_CLASS,
@@ -26,7 +26,6 @@ from pycryptoki.attributes import (CK_ATTRIBUTE,
                                    to_sub_attributes,
                                    Attributes,
                                    convert_c_ubyte_array_to_string, KEY_TRANSFORMS)
-from pycryptoki.test_functions import integer_types
 
 LOG = logging.getLogger(__name__)
 MAX_INT = 2 ** (sizeof(c_ulong) * 8) - 1

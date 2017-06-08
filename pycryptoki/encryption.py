@@ -17,7 +17,7 @@ from .cryptoki import C_Decrypt, C_DecryptInit, CK_OBJECT_HANDLE, \
 from .defines import CKR_OK
 from .mechanism import parse_mechanism
 from .return_values import ret_vals_dictionary
-from .test_functions import make_error_handle_function
+from .exceptions import make_error_handle_function
 
 LOG = logging.getLogger(__name__)
 

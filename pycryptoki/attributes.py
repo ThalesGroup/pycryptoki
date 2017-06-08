@@ -12,7 +12,7 @@ from ctypes import cast, c_void_p, create_string_buffer, c_bool, \
     c_ulong, pointer, POINTER, sizeof, c_char, string_at, c_ubyte
 from functools import wraps
 
-from six import b, string_types
+from six import b, string_types, integer_types
 
 from .cryptoki import CK_ATTRIBUTE, CK_BBOOL, CK_ATTRIBUTE_TYPE, CK_ULONG, \
     CK_BYTE, CK_CHAR
@@ -31,7 +31,6 @@ from .defines import CKA_USAGE_LIMIT, CKA_USAGE_COUNT, CKA_CLASS, CKA_TOKEN, \
     CKA_CCM_PRIVATE, CKA_FINGERPRINT_SHA1, CKA_FINGERPRINT_SHA256, CKA_OUID, CKA_UNWRAP_TEMPLATE, \
     CKA_DERIVE_TEMPLATE, \
     CKA_X9_31_GENERATED, CKA_VALUE
-from .test_functions import integer_types
 
 LOG = logging.getLogger(__name__)
 

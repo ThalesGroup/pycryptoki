@@ -12,16 +12,17 @@ PKCS11 Interface to the following functions:
 from _ctypes import POINTER
 from ctypes import create_string_buffer, cast, byref, string_at, c_ubyte
 
+from six import integer_types
+
 from .attributes import Attributes, to_char_array
 from .common_utils import refresh_c_arrays, AutoCArray
 from .cryptoki import C_GenerateRandom, CK_BYTE_PTR, CK_ULONG, \
     C_SeedRandom, C_DigestInit, C_DigestUpdate, C_DigestFinal, C_Digest, C_CreateObject, \
     CA_SetPedId, CK_SLOT_ID, CA_GetPedId, C_DigestKey
 from .defines import CKR_OK
-from .mechanism import Mechanism
-from .mechanism import NullMech
+from .mechanism import Mechanism, NullMech
 from .sign_verify import do_multipart_sign_or_digest
-from .test_functions import make_error_handle_function, integer_types
+from .exceptions import make_error_handle_function
 
 
 def c_generate_random(h_session, length):

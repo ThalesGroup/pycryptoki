@@ -4,7 +4,8 @@ Unittests related to the mechanism module.
 import pytest
 from ctypes import cast, c_ulong, c_ubyte
 from mock import patch
-from pycryptoki.test_functions import integer_types
+from six import integer_types
+
 from pycryptoki.cryptoki import (CK_RSA_PKCS_PSS_PARAMS,
                                  POINTER,
                                  CK_ULONG,
