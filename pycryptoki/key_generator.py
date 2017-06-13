@@ -18,10 +18,9 @@ from .test_functions import make_error_handle_function
 def c_destroy_object(h_session, h_object_value):
     """Deletes the object corresponsing to the passed in object handle
 
-    :param h_session: Current session
-    :param h_object_value: The handle of the object to delete
-    :returns: The resutl code from the C_DestroyObject operation
-
+    :param int h_session: Session handle
+    :param int h_object_value: The handle of the object to delete
+    :returns: Return code
     """
     ret = C_DestroyObject(h_session, CK_OBJECT_HANDLE(h_object_value))
     return ret
@@ -33,11 +32,11 @@ c_destroy_object_ex = make_error_handle_function(c_destroy_object)
 def c_copy_object(h_session, h_object, template=None):
     """Method to call the C_CopyObject cryptoki command.
 
-    :param h_session: Handle to the session
-    :param h_object: Handle to the object to be cloned
-    :param template: Template for the new object. Defaults to None
-    :return: Handle to the new cloned object.
-
+    :param int h_session: Session handle
+    :param int h_object: Handle to the object to be cloned
+    :param dict template: Template for the new object. Defaults to None
+    :return: (retcode, Handle to the new cloned object)
+    :rtype: tuple
     """
     if template is None:
         template = {}
@@ -58,11 +57,12 @@ def c_generate_key(h_session, mechanism=None, template=None):
     """
     Generates a symmetric key of a given flavor given the correct template.
 
-    :param h_session: Current session
-    :param template: The template to use to generate the key
-    :param mechanism: Will create a mechanism with the :py:func:`mechanism.parse_mechanism` function
-
-    :return: Returns the result code and the key's handle
+    :param int h_session: Session handle
+    :param dict template: The template to use to generate the key
+    :param mechanism: See the :py:func:`~pycryptoki.mechanism.parse_mechanism` function
+        for possible values.
+    :return: (retcode, generated key handle)
+    :rtype tuple:
     """
     if mechanism is None:
         mechanism = {"mech_type": CKM_DES_KEY_GEN}
@@ -94,13 +94,13 @@ def c_generate_key_pair(h_session,
     """Generates a private and public key pair for a given flavor, and given public and private
     key templates. The return value will be the handle for the key.
 
-    :param h_session: Current session
-    :param pbkey_template: The public key template to use for key generation
-    :param prkey_template: The private key template to use for key generation
-    :param mechanism: Will create a mechanism with the :py:func:`mechanism.parse_mechanism` function
-
-    :returns: Returns the result code, the public key's handle, and the private key's handle
-
+    :param int h_session: Session handle
+    :param dict pbkey_template: The public key template to use for key generation
+    :param dict prkey_template: The private key template to use for key generation
+    :param mechanism: See the :py:func:`~pycryptoki.mechanism.parse_mechanism` function
+        for possible values.
+    :returns: (retcode, public key handle, private key handle)
+    :rtype: tuple
     """
     if mechanism is None:
         mechanism = {"mech_type": CKM_RSA_PKCS_KEY_PAIR_GEN}
@@ -130,12 +130,13 @@ c_generate_key_pair_ex = make_error_handle_function(c_generate_key_pair)
 
 
 def c_derive_key(h_session, h_base_key, template, mechanism=None):
-    """Calls C_DeriveKey
+    """Derives a key from another key.
 
-    :param h_session: The session handle to use
-    :param h_base_key: The base key
-    :param template: A python template of attributes (ex. CKM_DES_KEY_GEN_TEMP)
-    :param mechanism: Will create a mechanism with the :py:func:`mechanism.parse_mechanism` function
+    :param int h_session: Session handle
+    :param int h_base_key: The base key
+    :param dict template: A python template of attributes to set on derived key
+    :param mechanism: See the :py:func:`~pycryptoki.mechanism.parse_mechanism` function
+        for possible values.
     :returns: The result code, The derived key's handle
 
     """
@@ -155,8 +156,7 @@ c_derive_key_ex = make_error_handle_function(c_derive_key)
 def clear_keys(h_session):
     """Quick hacked together function that can be used to clear the first 10 000 keys.
 
-    :param h_session: Current session
-
+    :param int h_session: Session handle
     """
     for i in range(1, 10000):
         c_destroy_object(h_session, i)

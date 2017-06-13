@@ -18,8 +18,7 @@ from .cryptoki import C_GenerateRandom, CK_BYTE_PTR, CK_ULONG, \
     C_SeedRandom, C_DigestInit, C_DigestUpdate, C_DigestFinal, C_Digest, C_CreateObject, \
     CA_SetPedId, CK_SLOT_ID, CA_GetPedId, C_DigestKey
 from .defines import CKR_OK
-from .mechanism import Mechanism
-from .mechanism import NullMech
+from .mechanism import Mechanism, NullMech, parse_mechanism
 from .sign_verify import do_multipart_sign_or_digest
 from .test_functions import make_error_handle_function, integer_types
 
@@ -27,10 +26,10 @@ from .test_functions import make_error_handle_function, integer_types
 def c_generate_random(h_session, length):
     """Generates a sequence of random numbers
 
-    :param h_session: The current session
-    :param length: The length in bytes of the random number sequence
-    :returns: The result code, A string of random data
-
+    :param int h_session: Session handle
+    :param int length: The length in bytes of the random number sequence
+    :returns: (retcode, A string of random data)
+    :rtype: tuple
     """
 
     random_data = create_string_buffer(b"", length)
@@ -47,10 +46,10 @@ c_generate_random_ex = make_error_handle_function(c_generate_random)
 def c_seed_random(h_session, seed):
     """Seeds the random number generator
 
-    :param h_session: The current session
-    :param seed: A python string of some seed
-    :returns: The result code
-
+    :param int h_session: Session handle
+    :param bytes seed: A python string of some seed
+    :returns: retcode
+    :rtype: int
     """
     seed_bytes = cast(create_string_buffer(seed), CK_BYTE_PTR)
     if isinstance(seed, (integer_types, float)):
@@ -64,26 +63,23 @@ def c_seed_random(h_session, seed):
 c_seed_random_ex = make_error_handle_function(c_seed_random)
 
 
-def c_digest(h_session, data_to_digest, digest_flavor, mech=None, extra_params=None):
+def c_digest(h_session, data_to_digest, digest_flavor, mechanism=None):
     """Digests some data
 
-    :param h_session: Current session
-    :param data_to_digest: The data to digest, either a string or a list of strings. If this is a
-    list a multipart operation will be used
-    :param digest_flavor: The flavour of the mechanism to digest (MD2, SHA-1, HAS-160,
+    :param int h_session: Session handle
+    :param bytes data_to_digest: The data to digest, either a string or a list of strings.
+        If this is a list a multipart operation will be used
+    :param int digest_flavor: The flavour of the mechanism to digest (MD2, SHA-1, HAS-160,
         SHA224, SHA256, SHA384, SHA512)
-    :param mech: The mechanism to be used. If None a blank one with the
-        digest_flavour will be used (Default value = None)
-    :returns: The result code, a python string of the digested data
-
+    :param mechanism: See the :py:func:`~pycryptoki.mechanism.parse_mechanism` function
+        for possible values. If None will use digest flavor.
+    :returns: (retcode, a python string of the digested data)
+    :rtype: tuple
     """
-
-    # Get mechanism if none provided
-    if mech is None:
-        if extra_params is None:
-            mech = NullMech(digest_flavor).to_c_mech()
-        else:
-            mech = Mechanism(digest_flavor).to_c_mech()
+    if mechanism is None:
+        mech = parse_mechanism(digest_flavor)
+    else:
+        mech = parse_mechanism(mechanism)
 
     # Initialize Digestion
     ret = C_DigestInit(h_session, mech)
@@ -126,21 +122,19 @@ def c_digest(h_session, data_to_digest, digest_flavor, mech=None, extra_params=N
 c_digest_ex = make_error_handle_function(c_digest)
 
 
-def c_digestkey(h_session, h_key, digest_flavor, mech=None, extra_params=None):
-    """
+def c_digestkey(h_session, h_key, digest_flavor, mechanism=None):
+    """Digest a key
 
-    :param h_session: Logged in session handle
-    :param h_key: Key to digest
-    :param digest_flavor: Digest flavor
-    :param mech: Mechanism to use for digest. Defaults to using the flavor mechanism. (Default
-    value = None)
+    :param int h_session: Session handle
+    :param int h_key: Key to digest
+    :param int digest_flavor: Digest flavor
+    :param mechanism: See the :py:func:`~pycryptoki.mechanism.parse_mechanism` function
+        for possible values. If None will use digest flavor.
     """
-    # Get mechanism if none provided
-    if mech is None:
-        if extra_params is None:
-            mech = NullMech(digest_flavor).to_c_mech()
-        else:
-            mech = Mechanism(digest_flavor).to_c_mech()
+    if mechanism is None:
+        mech = parse_mechanism(digest_flavor)
+    else:
+        mech = parse_mechanism(mechanism)
 
     # Initialize Digestion
     ret = C_DigestInit(h_session, mech)
@@ -158,10 +152,10 @@ c_digestkey_ex = make_error_handle_function(c_digestkey)
 def c_create_object(h_session, template):
     """Creates an object based on a given python template
 
-    :param h_session: The session handle to use
-    :param template: The python template which the object will be based on
-    :returns: The result code, the handle of the object
-
+    :param int h_session: Session handle
+    :param dict template: The python template which the object will be based on
+    :returns: (retcode, the handle of the object)
+    :rtype: tuple
     """
     c_template = Attributes(template).get_c_struct()
     new_object_handle = CK_ULONG()

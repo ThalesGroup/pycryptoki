@@ -47,7 +47,7 @@ LOG = logging.getLogger(__name__)
 def ca_create_container(h_session, storage_size, password=None, label='Inserted Token'):
     """Inserts a token into a slot without a Security Officer on the token
 
-    :param h_session: Current session
+    :param int h_session: Session handle
     :param storage_size: The storage size of the token (0 for undefined/unlimited)
     :param password: The password associated with the token (Default value = 'userpin')
     :param label: The label associated with the token (Default value = 'Inserted Token')
@@ -81,7 +81,7 @@ def ca_delete_container_with_handle(h_session, h_container):
     """
     Delete a container by handle
 
-    :param h_session: session
+    :param int h_session: Session handle
     :param h_container: target container handle
     :return: result code
     """
@@ -372,7 +372,7 @@ def ca_set_container_policy(h_session, h_containerber, policy_id, policy_val):
     NOTE: With per partition SO this method should generally not be used. Instead
     ca_set_partition_policies should be used
 
-    :param h_session: The session handle of the entity with permission to change the policy
+    :param int h_session: Session handle
     :param h_containerber: The container number to set the policy on.
     :param policy_id: The identifier of the policy (ex. CONTAINER_CONFIG_MINIMUM_PIN_LENGTH)
     :param policy_val: The value to set the policy to
@@ -393,7 +393,7 @@ def ca_set_container_policies(h_session, h_container, policies):
     """
     Set multiple container policies.
 
-    :param h_session: session handle
+    :param int h_session: Session handle
     :param h_container: target container handle
     :param policies: dict of policy ID ints and value ints
     :return: result code
@@ -421,7 +421,7 @@ def ca_set_container_size(h_session, h_container, size):
     """
     Set a container's size
 
-    :param h_session: session handle
+    :param int h_session: Session handle
     :param h_container: target container handle
     :param size: size
     :return: result code

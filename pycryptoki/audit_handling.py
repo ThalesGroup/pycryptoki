@@ -32,7 +32,7 @@ ca_init_audit_ex = make_error_handle_function(ca_init_audit)
 def ca_time_sync(h_session, ultime):
     """
 
-    :param h_session:
+    :param int h_session: Session handle
     :param ultime:
 
     """
@@ -47,7 +47,7 @@ ca_time_sync_ex = make_error_handle_function(ca_time_sync)
 def ca_get_time(h_session):
     """
 
-    :param h_session:
+    :param int h_session: Session handle
 
     """
 
