@@ -48,11 +48,9 @@ LOG = logging.getLogger(__name__)
 
 
 def c_initialize():
-    """Calls C_Initialize to c_initialize the board
+    """Initializes current process for use with PKCS11
 
-
-    :returns: The result code
-
+    :returns: retcode
     """
     # INITIALIZE
     LOG.info("C_Initialize: Initializing HSM")
@@ -64,12 +62,11 @@ c_initialize_ex = make_error_handle_function(c_initialize)
 
 
 def c_finalize():
-    """Calls C_Finalize
+    """Finalizes PKCS11 usage.
 
-
-    :returns: The result code
-
+    :return: retcode
     """
+
     LOG.info("C_Finalize: Finalizing HSM")
     ret = C_Finalize(0)
     return ret
@@ -79,13 +76,13 @@ c_finalize_ex = make_error_handle_function(c_finalize)
 
 
 def c_open_session(slot_num, flags=(CKF_SERIAL_SESSION | CKF_RW_SESSION)):
-    """Opens a session on a given slot
+    """Opens a session on the given slot
 
-    :param slot_num: The slot to get a session on
-    :param flags: The flags to open the session with
+    :param int slot_num: The slot to get a session on
+    :param int flags: The flags to open the session with
         (Default value = (CKF_SERIAL_SESSION | CKF_RW_SESSION)
-    :returns: The result code, the session handle
-
+    :returns: (retcode, session handle)
+    :rtype: tuple
     """
     # OPEN SESSION
     arg3 = create_string_buffer(b"Application")
@@ -104,14 +101,14 @@ c_open_session_ex = make_error_handle_function(c_open_session)
 
 
 def login(h_session, slot_num=1, password=None, user_type=1):
-    """Login to the HSM
+    """Login to the given session.
 
-    :param h_session: Current session
-    :param slot_num: Slot index to login on (Default value = 1)
-    :param password: Password to login with (Default value = "userpin")
-    :param user_type: User type to login as (Default value = 1)
-    :returns: The result code
-
+    :param int h_session: Session handle
+    :param int slot_num: Slot index to login on (Default value = 1)
+    :param bytes password: Password to login with (Default value = "userpin")
+    :param int user_type: User type to login as (Default value = 1)
+    :returns: retcode
+    :rtype: int
     """
     # LOGIN
     LOG.info("C_Login: "
@@ -156,10 +153,11 @@ get_slot_info_ex = make_error_handle_function(get_slot_info)
 
 
 def c_get_session_info(session):
-    """
+    """Get information about the given session.
 
-    :param session: return:
-
+    :param int session: session handle
+    :return: (retcode, dictionary of session information)
+    :rtype: tuple
     """
     session_info = {}
     c_session_info = CK_SESSION_INFO()
@@ -180,9 +178,9 @@ c_get_session_info_ex = make_error_handle_function(c_get_session_info)
 def c_get_token_info(slot_id):
     """Gets the token info for a given slot id
 
-    :param slot_id: Slot index to get the token info for
-    :returns: The result code, A python dictionary representing the token info
-
+    :param int slot_id: Slot index to get the token info for
+    :returns: (retcode, A python dictionary representing the token info)
+    :rtype: tuple
     """
     token_info = {}
     c_token_info = CK_TOKEN_INFO()
@@ -223,7 +221,6 @@ def get_slot_dict():
 
 
     :returns: A python dictionary of the available slots
-
     """
     slot_list = AutoCArray()
 
@@ -254,9 +251,9 @@ get_slot_dict_ex = make_error_handle_function(get_slot_dict)
 def c_close_session(h_session):
     """Closes a session
 
-    :param h_session: The session to close
-    :returns: The result code
-
+    :param int h_session: Session handle
+    :returns: retcode
+    :rtype: int
     """
     # CLOSE SESSION
     LOG.info("C_CloseSession: Closing session %s", h_session)
@@ -270,9 +267,9 @@ c_close_session_ex = make_error_handle_function(c_close_session)
 def c_logout(h_session):
     """Logs out of a given session
 
-    :param h_session: The session to log out from
-    :returns: The result code
-
+    :param int h_session: Session handle
+    :returns: retcode
+    :rtype: int
     """
     LOG.info("C_Logout: Logging out of session %s", h_session)
     ret = C_Logout(h_session)
@@ -285,7 +282,7 @@ c_logout_ex = make_error_handle_function(c_logout)
 def c_init_pin(h_session, pin):
     """Initializes the PIN
 
-    :param h_session: Current session
+    :param int h_session: Session handle
     :param pin: pin to c_initialize
     :returns: THe result code
 
@@ -318,7 +315,7 @@ ca_factory_reset_ex = make_error_handle_function(ca_factory_reset)
 def c_set_pin(h_session, old_pass, new_pass):
     """Allows a user to change their PIN
 
-    :param h_session: Session of the user
+    :param int h_session: Session handle
     :param old_pass: The user's old password
     :param new_pass: The user's desired new password
     :returns: The result code
@@ -343,8 +340,8 @@ def c_close_all_sessions(slot):
     """Closes all the sessions on a given slot
 
     :param slot: The slot to close all sessions on
-    :returns: The result code
-
+    :returns: retcode
+    :rtype: int
     """
 
     LOG.info("C_CloseAllSessions: Closing all sessions. slot=%s", slot)
@@ -356,12 +353,13 @@ c_close_all_sessions_ex = make_error_handle_function(c_close_all_sessions)
 
 
 def ca_openapplicationID(slot, id_high, id_low):
-    """
+    """Open an application ID on the given slot.
 
-    :param slot:
-    :param id_high:
-    :param id_low:
-
+    :param int slot: Slot on which to open the APP ID
+    :param int id_high: High value of App ID
+    :param int id_low: Low value of App ID
+    :return: retcode
+    :rtype: int
     """
     uid_high = CK_ULONG(id_high)
     uid_low = CK_ULONG(id_low)
@@ -379,12 +377,13 @@ ca_openapplicationID_ex = make_error_handle_function(ca_openapplicationID)
 
 
 def ca_closeapplicationID(slot, id_high, id_low):
-    """
+    """Close a given AppID on a slot.
 
-    :param slot:
-    :param id_high:
-    :param id_low:
-
+    :param int slot: Slot on which to close the APP ID
+    :param int id_high: High value of App ID
+    :param int id_low: Low value of App ID
+    :return: retcode
+    :rtype: int
     """
     uid_high = CK_ULONG(id_high)
     uid_low = CK_ULONG(id_low)
@@ -402,11 +401,12 @@ ca_closeapplicationID_ex = make_error_handle_function(ca_closeapplicationID)
 
 
 def ca_setapplicationID(id_high, id_low):
-    """Set the App ID for the current application.
+    """Set the App ID for the current process.
 
-    :param id_high:
-    :param id_low:
-
+    :param int id_high: High value of App ID
+    :param int id_low: Low value of App ID
+    :return: retcode
+    :rtype: int
     """
     uid_high = CK_ULONG(id_high)
     uid_low = CK_ULONG(id_low)
@@ -427,7 +427,6 @@ def ca_restart(slot):
     """
 
     :param slot:
-
     """
     LOG.info("CA_Restart: attempting to restart")
 

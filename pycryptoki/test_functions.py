@@ -62,7 +62,7 @@ def verify_object_attributes(h_session, h_object, expected_template):
     """Verifies that an object generated has the correct attributes on the board.
     The expected attributes are passed in alongside the handle of the object.
 
-    :param h_session: Current session
+    :param int h_session: Session handle
     :param h_object: Handle of the object to verify the attributes against
     :param expected_template: The expected template to compare against
 
@@ -87,7 +87,7 @@ def verify_object_exists(h_session, h_object, should_exist=True):
     """Queries the HSM to determine if an object exists. Asserts whether or not
     it exists.
 
-    :param h_session: The current session
+    :param int h_session: Session handle
     :param h_object: The object to verify if it exists
     :param should_exist: Whether or not the parameter should exist (Default value = True)
 

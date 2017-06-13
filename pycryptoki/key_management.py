@@ -13,7 +13,7 @@ def ca_generatemofn(h_session,
                     is_secure_port_used):
     """Generates MofN secret information on a token.
 
-    :param h_session: the current session
+    :param int h_session: Session handle
     :param m_value: m
     :param vector_count: number of vectors
     :param is_secure_port_used: is secure port used
@@ -52,7 +52,7 @@ ca_generatemofn_ex = make_error_handle_function(ca_generatemofn)
 def ca_modifyusagecount(h_session, h_object, command_type, value):
     """Modifies CKA_USAGE_COUNT attribute of the object.
 
-    :param h_session: the current session
+    :param int h_session: Session handle
     :param h_object: object
     :param command_type: command type
     :param value: value

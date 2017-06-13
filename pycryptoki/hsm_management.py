@@ -76,7 +76,7 @@ def ca_settokencertificatesignature(h_session,
     The public key is provided through the template; it must contain a key
     type, a modulus and a public exponent.
 
-    :param h_session: the current session
+    :param int h_session: Session handle
     :param access_level: the access level
     :param customer_id: the customer ID
     :param pub_template: the public template
@@ -110,7 +110,7 @@ ca_settokencertificatesignature_ex = \
 def ca_hainit(h_session, h_key):
     """Creates a login key pair on the primary token.
 
-    :param h_session: the current session
+    :param int h_session: Session handle
     :param h_key: the login private key
     :returns: the result code
 
@@ -128,7 +128,7 @@ def ca_createloginchallenge(h_session,
                             challenge):
     """Creates a login challenge for the given user.
 
-    :param h_session: the current session
+    :param int h_session: Session handle
     :param user_type: user type
     :param challenge: challenge
     :returns: the result code
@@ -155,7 +155,7 @@ ca_createloginchallenge_ex = \
 def ca_initializeremotepedvector(h_session):
     """Initializes a remote PED vector
 
-    :param h_session: the current session
+    :param int h_session: Session handle
     :returns: the result code
 
     """
@@ -170,7 +170,7 @@ ca_initializeremotepedvector_ex = \
 def ca_deleteremotepedvector(h_session):
     """Deletes a remote PED vector
 
-    :param h_session: the current session
+    :param int h_session: Session handle
     :returns: the result code
 
     """
@@ -227,7 +227,7 @@ ca_mtkzeroize_ex = make_error_handle_function(ca_mtkzeroize)
 def ca_set_hsm_policy(h_session, policy_id, policy_val):
     """Sets the HSM policies by calling CA_SetHSMPolicy
 
-    :param h_session: The session handle of the administrator setting the HSM policy
+    :param int h_session: Session handle
     :param policy_id: The ID of the policy being set
     :param policy_val: The value of the policy being set
     :returns: The result code
@@ -244,7 +244,7 @@ def ca_set_hsm_policies(h_session, policies):
     """
     Set multiple HSM policies.
 
-    :param h_session: session handle
+    :param int h_session: Session handle
     :param policies: dict of policy ID ints and value ints
     :return: result code
     """
@@ -266,7 +266,7 @@ ca_set_hsm_policies_ex = make_error_handle_function(ca_set_hsm_policies)
 def ca_set_destructive_hsm_policy(h_session, policy_id, policy_val):
     """Sets the destructive HSM policies by calling CA_SetDestructiveHSMPolicy
 
-    :param h_session: The session handle of the administrator setting the HSM policy
+    :param int h_session: Session handle
     :param policy_id: The ID of the policy being set
     :param policy_val: The value of the policy being set
     :returns: The result code
@@ -283,7 +283,7 @@ def ca_set_destructive_hsm_policies(h_session, policies):
     """
     Set multiple HSM policies.
 
-    :param h_session: session handle
+    :param int h_session: Session handle
     :param policies: dict of policy ID ints and value ints
     :return: result code
     """

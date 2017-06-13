@@ -97,7 +97,7 @@ class Mechanism(object):
         """
         Create the Mechanism structure & set the mech type to the passed-in flavor.
 
-        :return: `CK_MECHANISM`
+        :return: `:class:`~pycryptoki.cryptoki.CK_MECHANISM``
         """
         self.mech = CK_MECHANISM()
         self.mech.mechanism = CK_MECHANISM_TYPE(self.mech_type)
@@ -114,7 +114,7 @@ class IvMechanism(Mechanism):
         """
         Convert extra parameters to ctypes, then build out the mechanism.
 
-        :return: CK_MECHANISM
+        :return: :class:`~pycryptoki.cryptoki.CK_MECHANISM`
         """
         super(IvMechanism, self).to_c_mech()
         if self.params is None or 'iv' not in self.params:
@@ -136,7 +136,7 @@ class Iv16Mechanism(Mechanism):
         """
         Convert extra parameters to ctypes, then build out the mechanism.
 
-        :return: CK_MECHANISM
+        :return: :class:`~pycryptoki.cryptoki.CK_MECHANISM`
         """
         super(Iv16Mechanism, self).to_c_mech()
         if self.params is None or 'iv' not in self.params:
@@ -160,7 +160,7 @@ class RC2Mechanism(Mechanism):
         """
         Convert extra parameters to ctypes, then build out the mechanism.
 
-        :return: CK_MECHANISM
+        :return: :class:`~pycryptoki.cryptoki.CK_MECHANISM`
         """
         super(RC2Mechanism, self).to_c_mech()
         effective_bits = CK_ULONG(self.params['usEffectiveBits'])
@@ -176,7 +176,7 @@ class RC2CBCMechanism(Mechanism):
         """
         Convert extra parameters to ctypes, then build out the mechanism.
 
-        :return: CK_MECHANISM
+        :return: :class:`~pycryptoki.cryptoki.CK_MECHANISM`
         """
         super(RC2CBCMechanism, self).to_c_mech()
         effective_bits = self.params['usEffectiveBits']
@@ -195,7 +195,7 @@ class RC5Mechanism(Mechanism):
         """
         Convert extra parameters to ctypes, then build out the mechanism.
 
-        :return: CK_MECHANISM
+        :return: :class:`~pycryptoki.cryptoki.CK_MECHANISM`
         """
         super(RC5Mechanism, self).to_c_mech()
         rc5_params = CK_RC5_PARAMS()
@@ -213,7 +213,7 @@ class RC5CBCMechanism(Mechanism):
         """
         Convert extra parameters to ctypes, then build out the mechanism.
 
-        :return: CK_MECHANISM
+        :return: :class:`~pycryptoki.cryptoki.CK_MECHANISM`
         """
         super(RC5CBCMechanism, self).to_c_mech()
         rc5_params = CK_RC5_CBC_PARAMS()
@@ -234,7 +234,7 @@ class AESXTSMechanism(Mechanism):
         """
         Convert extra parameters to ctypes, then build out the mechanism.
 
-        :return: CK_MECHANISM
+        :return: :class:`~pycryptoki.cryptoki.CK_MECHANISM`
         """
         super(AESXTSMechanism, self).to_c_mech()
         xts_params = CK_AES_XTS_PARAMS()
@@ -252,7 +252,7 @@ class RSAPKCSOAEPMechanism(Mechanism):
         """
         Convert extra parameters to ctypes, then build out the mechanism.
 
-        :return: CK_MECHANISM
+        :return: :class:`~pycryptoki.cryptoki.CK_MECHANISM`
         """
         super(RSAPKCSOAEPMechanism, self).to_c_mech()
         oaep_params = CK_RSA_PKCS_OAEP_PARAMS()
@@ -280,7 +280,7 @@ class RSAPKCSPSSMechanism(Mechanism):
         Uses default salt length of 8.
         Can be overridden w/ a parameter though.
 
-        :return: CK_MECHANISM
+        :return: :class:`~pycryptoki.cryptoki.CK_MECHANISM`
         """
         super(RSAPKCSPSSMechanism, self).to_c_mech()
         c_params = CK_RSA_PKCS_PSS_PARAMS()
@@ -299,7 +299,7 @@ class AESGCMMechanism(Mechanism):
         """
         Convert extra parameters to ctypes, then build out the mechanism.
 
-        :return: CK_MECHANISM
+        :return: :class:`~pycryptoki.cryptoki.CK_MECHANISM`
         """
         super(AESGCMMechanism, self).to_c_mech()
         gcm_params = CK_AES_GCM_PARAMS()
@@ -336,7 +336,7 @@ class ConcatenationDeriveMechanism(Mechanism):
         """
         Add in a pointer to the second key in the resulting mech structure.
 
-        :return: Mechanism Structure
+        :return: :class:`~pycryptoki.cryptoki.CK_MECHANISM`
         """
         super(ConcatenationDeriveMechanism, self).to_c_mech()
         c_second_key = CK_ULONG(self.params['h_second_key'])
@@ -355,7 +355,7 @@ class StringDataDerivationMechanism(Mechanism):
         """
         Convert data to bytearray, then use in the resulting mech structure.
 
-        :return: Mechanism Structure
+        :return: :class:`~pycryptoki.cryptoki.CK_MECHANISM`
         """
         super(ConcatenationDeriveMechanism, self).to_c_mech()
         parameters = CK_KEY_DERIVATION_STRING_DATA
@@ -378,7 +378,8 @@ class NullMech(Mechanism):
     def to_c_mech(self):
         """
         Simply set the pParameter to null pointer.
-        :return:
+
+        :return: :class:`~pycryptoki.cryptoki.CK_MECHANISM`
         """
         super(NullMech, self).to_c_mech()
         self.mech.pParameter = c_void_p(0)
@@ -399,7 +400,8 @@ class AutoMech(Mechanism):
         """
         Attempt to handle generic mechanisms by introspection of the
         structure.
-        :return:
+
+        :return: :class:`~pycryptoki.cryptoki.CK_MECHANISM`
         """
         super(AutoMech, self).to_c_mech()
         c_params_type = getattr(cryptoki,
@@ -495,9 +497,10 @@ def get_c_struct_from_mechanism(python_dictionary, params_type_string):
     """Gets a c struct from a python dictionary representing that struct
 
     :param python_dictionary: The python dictionary representing the C struct,
-    see CK_AES_CBC_PAD_EXTRACT_PARAMS_TEMP for an example
+        see :class:`CK_AES_CBC_PAD_EXTRACT_PARAMS` for an example
     :param params_type_string: A string representing the parameter struct.
-    ex. for  CK_AES_CBC_PAD_EXTRACT_PARAMS use the string 'CK_AES_CBC_PAD_EXTRACT_PARAMS'
+        ex. for  :class:`~pycryptoki.cryptoki.CK_AES_CBC_PAD_EXTRACT_PARAMS` use the
+        string ``CK_AES_CBC_PAD_EXTRACT_PARAMS``
     :returns: A C struct
 
     """
@@ -545,9 +548,9 @@ def get_python_dict_from_c_mechanism(c_mechanism, params_type_string):
 
     :param c_mechanism: The c mechanism to convert to a python dictionary
     :param params_type_string: A string representing the parameter struct.
-    ex. for  CK_AES_CBC_PAD_EXTRACT_PARAMS use the string 'CK_AES_CBC_PAD_EXTRACT_PARAMS'
+        ex. for  :class:`~pycryptoki.cryptoki.CK_AES_CBC_PAD_EXTRACT_PARAMS` use the
+        string ``CK_AES_CBC_PAD_EXTRACT_PARAMS``
     :returns: A python dictionary representing the c struct
-
     """
     python_dictionary = {}
     python_dictionary['mechanism'] = c_mechanism.mechanism
@@ -594,19 +597,46 @@ def parse_mechanism(mechanism_param):
     Designed for use with any function call that takes in a mechanism,
     this will handle a mechanism parameter that is one of the following:
 
-        1. CKM_ integer constant -- will create a CK_MECHANISM with only mech_type set.
-        2. Dictionary with `mech_type` as a mandatory key, and `params` as an optional key. This
-        will be passed into the `Mechanism` class for conversion to a CK_MECHANISM.
-        3. CK_MECHANISM struct -- passed directly into the raw C Call.
+        1. ``CKM_`` integer constant -- will create a :class:`~pycryptoki.cryptoki.CK_MECHANISM`
+           with only mech_type set.
+
+           .. code-block :: python
+
+                parse_mechanism(CKM_RSA_PKCS)
+                # Results in:
+                mech = CK_MECHANISM()
+                mech.mechanism = CK_MECHANISM_TYPE(CKM_RSA_PKCS)
+                mech.pParameter = None
+                mech.usParameterLen = 0
+
+        2. Dictionary with ``mech_type`` as a mandatory key, and ``params`` as an optional key. This
+           will be passed into the :class:`Mechanism` class for conversion to
+           a :class:`~pycryptoki.cryptoki.CK_MECHANISM`.
+
+           .. code-block :: python
+
+                parse_mechanism({'mech_type': CKM_AES_CBC,
+                                 'params': {'iv': list(range(8))}})
+                # Results in:
+                mech = CK_MECHANISM()
+                mech.mechanism = CK_MECHANISM_TYPE(CKM_AES_CBC)
+                iv_ba, iv_len = to_byte_array(list(range(8)))
+                mech.pParameter = iv_ba
+                mech.usParameterLen = iv_len
+
+        3. :class:`~pycryptoki.cryptoki.CK_MECHANISM` struct -- passed directly into the raw C Call.
         4. Mechanism class -- will call to_c_mech() on the class, and use the results.
 
     .. warning:: If you're using this with rpyc, you need to make sure the call `to_c_mech` occurs
-    on the *server* (the machine with the HSM)! If you pass in a :py:class:`Mechanism` class that
-    was created on the client, the resulting call into `to_c_mech()` will *also* be on the client
-    side!
+        on the *server* (the machine with the HSM)! If you pass in a :py:class:`Mechanism` class
+        that was created on the client, the resulting call into `to_c_mech()` will *also* be on
+        the client side!
+
+    .. note:: You can look at ``REQUIRED_PARAMS`` on each mechanism class to see what parameters are
+        required.
 
     :param mechanism_param: Parameter to convert to a C Mechanism.
-    :return: `CK_MECHANISM` struct.
+    :return: :class:`~pycryptoki.cryptoki.CK_MECHANISM` struct.
     """
 
     if isinstance(mechanism_param, dict):

@@ -26,13 +26,16 @@ def c_encrypt(h_session, h_key, data, mechanism):
     """Encrypts data with a given key and encryption flavor
     encryption flavors
 
-    :param h_session: Current session
-    :param h_key: The key handle to encrypt the data with
+    .. note:: If data is a list or tuple of strings, multi-part encryption will be used.
+
+    :param int h_session: Current session
+    :param int h_key: The key handle to encrypt the data with
     :param data: The data to encrypt, either a string or a list of strings. If this is
-    a list a multipart operation will be used
-    :param mechanism: Will create a mechanism with the :py:func:`mechanism.parse_mechanism` function
-    :returns: Returns the result code of the operation, a python string representing the
-    encrypted data
+        a list a multipart operation will be used
+    :param mechanism: See the :py:func:`~pycryptoki.mechanism.parse_mechanism` function
+        for possible values.
+    :returns: (Retcode, Python bytestring of encrypted data)
+    :rtype: tuple
     """
     mech = parse_mechanism(mechanism)
     # if a list is passed out do an encrypt operation on each string in the list, otherwise just
@@ -96,14 +99,17 @@ def _get_string_from_list(list_of_strings):
 
 
 def c_decrypt(h_session, h_key, encrypted_data, mechanism):
-    """Decrypts some data
+    """Decrypt given data with the given key and mechanism.
 
-    :param h_session: The session to use
-    :param h_key: The handle of the key to use to decrypt
-    :param encrypted_data: Data to be decrypted
-    :param mechanism: Will create a mechanism with the :py:func:`mechanism.parse_mechanism` function
-    :returns: The result code, a python string of the decrypted data
+    .. note:: If data is a list or tuple of strings, multi-part decryption will be used.
 
+    :param int h_session: The session to use
+    :param int h_key: The handle of the key to use to decrypt
+    :param bytes encrypted_data: Data to be decrypted
+    :param mechanism: See the :py:func:`~pycryptoki.mechanism.parse_mechanism` function
+        for possible values.
+    :returns: (Retcode, Python bytestring of decrypted data))
+    :rtype: tuple
     """
     mech = parse_mechanism(mechanism)
     # Initialize Decrypt
@@ -156,7 +162,7 @@ def do_multipart_operation(h_session, c_update_function, c_finalize_function, in
     """Some code which will do a multipart encrypt or decrypt since they are the same
     with just different functions called
 
-    :param h_session: Session handle.
+    :param int h_session: Session handle
     :param c_update_function: C_<NAME>Update function to call to update each operation.
     :param c_finalize_function: Function to call at end of multipart operation.
     :param input_data_list: List of data to call update function on.
@@ -211,15 +217,15 @@ def do_multipart_operation(h_session, c_update_function, c_finalize_function, in
 
 
 def c_wrap_key(h_session, h_wrapping_key, h_key, mechanism):
-    """Function which wraps a key
+    """Wrap a key off the HSM into an encrypted data blob.
 
-    :param h_session: The session to use
-    :param h_wrapping_key: The handle of the key to use to wrap another key
-    :param h_key: The key to wrap
-        based on the encryption flavor (Default value = None)
-    :param mechanism: Will create a mechanism with the :py:func:`mechanism.parse_mechanism` function
-    :returns: The result code, a ctypes byte array representing the new key
-
+    :param int h_session: The session to use
+    :param int h_wrapping_key: The handle of the key to use to wrap another key
+    :param int h_key: The key to wrap based on the encryption flavor
+    :param mechanism: See the :py:func:`~pycryptoki.mechanism.parse_mechanism` function
+        for possible values.
+    :returns: (Retcode, python bytestring representing wrapped key)
+    :rtype: tuple
     """
     mech = parse_mechanism(mechanism)
 
@@ -243,15 +249,16 @@ c_wrap_key_ex = make_error_handle_function(c_wrap_key)
 
 
 def c_unwrap_key(h_session, h_unwrapping_key, wrapped_key, key_template, mechanism):
-    """Function which unwraps a key
+    """Unwrap a key from an encrypted data blob.
 
-    :param h_session: The session to use
-    :param h_unwrapping_key: The wrapping key handle
-    :param wrapped_key: The wrapped key
-    :param key_template: The python template representing the new key's template
-    :param mechanism: Will create a mechanism with the :py:func:`mechanism.parse_mechanism` function
-    :returns: The result code, the handle of the unwrapped key
-
+    :param int h_session: The session to use
+    :param int h_unwrapping_key: The wrapping key handle
+    :param bytes wrapped_key: The wrapped key
+    :param dict key_template: The python template representing the new key's template
+    :param mechanism: See the :py:func:`~pycryptoki.mechanism.parse_mechanism` function
+        for possible values.
+    :returns: (Retcode, unwrapped key handle)
+    :rtype: tuple
     """
     mech = parse_mechanism(mechanism)
     c_template = Attributes(key_template).get_c_struct()

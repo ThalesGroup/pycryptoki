@@ -20,22 +20,25 @@ LOG = logging.getLogger(__name__)
 
 
 def c_sign(h_session, h_key, data_to_sign, mechanism):
-    """
-    Performs a C_SignInit and C_Sign operation on some data
+    """Signs the given data with given key and mechanism.
 
-    :param h_session: The current session
+    .. note:: If data is a list or tuple of strings, multi-part operations will be used.
+
+    :param int h_session: Session handle
     :param data_to_sign: The data to sign, either a string or a list of strings. If this is a list
-                         a multipart operation will be used (using C_...Update and C_...Final)
+         a multipart operation will be used (using C_...Update and C_...Final)
 
-                         ex:
+         ex:
 
-                         - "This is a proper argument of some data to use in the function"
-                         - ["This is another format of data this", "function will accept.",
-                           "It will operate on these strings in parts"]
+             - "This is a proper argument of some data to use in the function"
+             - ["This is another format of data this", "function will accept.",
+                "It will operate on these strings in parts"]
 
-    :param h_key: The key to sign the data with
-    :param mechanism: Will create a mechanism with the :py:func:`mechanism.parse_mechanism` function
-    :return: The result code, A python string representing the signature
+    :param int h_key: The signing key
+    :param mechanism: See the :py:func:`~pycryptoki.mechanism.parse_mechanism` function
+        for possible values.
+    :return: (retcode, python string of signed data)
+    :rtype: tuple
     """
 
     mech = parse_mechanism(mechanism)
@@ -84,7 +87,7 @@ def do_multipart_sign_or_digest(h_session, c_update_function, c_final_function, 
     """
     Do a multipart sign or digest operation
 
-    :param h_session: The current session
+    :param int h_session: Session handle
     :param c_update_function: signing update function
     :param c_final_function: signing finalization function
     :param input_data_list:
@@ -133,7 +136,7 @@ def do_multipart_verify(h_session, input_data_list, signature):
     """
     Do a multipart verify operation
 
-    :param h_session: The current session
+    :param int h_session: Session handle
     :param input_data_list: list of data to verify with
     :param signature: signature to verify
     :return: The result code
@@ -173,25 +176,24 @@ def do_multipart_verify(h_session, input_data_list, signature):
 
 
 def c_verify(h_session, h_key, data_to_verify, signature, mechanism):
-    """
-    Return the result code of C_Verify which indicates whether or not the signature is
-    valid.
+    """Verifies data with the given signature, key and mechanism.
 
-    :param h_session: The current session
-    :param h_key: The key handle to verify the signature against
-    :param data_to_verify: The data to verify, either a string or a list of strings. If this is a
-                           list, a multipart operation will be used (using C_...Update and
-                           C_...Final)
+    .. note:: If data is a list or tuple of strings, multi-part operations will be used.
 
-                           ex:
+    :param int h_session: Session handle
+    :param data_to_verify: The data to sign, either a string or a list of strings. If this is a list
+                         a multipart operation will be used (using C_...Update and C_...Final)
 
-                           - "This is a proper argument of some data to use in the function"
-                           - ["This is another format of data this", "function will accept.",
-                             "It will operate on these strings in parts"]
+                         ex:
 
-    :param signature: The signature of the data
-    :param mechanism: Will create a mechanism with the :py:func:`mechanism.parse_mechanism` function
-    :return: The result code
+                         - "This is a proper argument of some data to use in the function"
+                         - ["This is another format of data this", "function will accept.",
+                           "It will operate on these strings in parts"]
+    :param bytes signature: Signature with which to verify the data.
+    :param int h_key: The verifying key
+    :param mechanism: See the :py:func:`~pycryptoki.mechanism.parse_mechanism` function
+        for possible values.
+    :return: retcode of verify operation
     """
 
     mech = parse_mechanism(mechanism)

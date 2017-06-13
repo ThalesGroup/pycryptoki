@@ -63,15 +63,6 @@ pycryptoki.defaults
     :show-inheritance:
 
 
-pycryptoki.dictionary_handling
-------------------------------
-
-.. automodule:: pycryptoki.dictionary_handling
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
 
 
 
