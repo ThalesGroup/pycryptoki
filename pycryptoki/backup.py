@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 def ca_open_secure_token(h_session, storage_path, dev_ID, mode):
     """
 
-    :param h_session:
+    :param int h_session: Session handle
     :param storage_path:
     :param dev_ID:
     :param mode:
@@ -31,7 +31,7 @@ ca_open_secure_token_ex = make_error_handle_function(ca_open_secure_token)
 def ca_close_secure_token(h_session, h_ID):
     """
 
-    :param h_session:
+    :param int h_session: Session handle
     :param h_ID:
 
     """
@@ -48,7 +48,7 @@ def ca_extract(h_session, mech_type, mech_params):
     """
 
     :param mech_params:
-    :param h_session:
+    :param int h_session: Session handle
     """
 
     mech = Mechanism(mech_type, params=mech_params)
@@ -65,7 +65,7 @@ ca_extract_ex = make_error_handle_function(ca_extract)
 def ca_insert(h_session, mech_type, mech_params):
     """
 
-    :param h_session:
+    :param int h_session: Session handle
     :param py_mechanism_dict:
     :param params_type_string:
 

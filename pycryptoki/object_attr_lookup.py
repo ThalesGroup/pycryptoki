@@ -17,7 +17,7 @@ def c_find_objects(h_session, template, num_entries):
     """Calls c_find_objects and c_find_objects_init to get a python dictionary
     of the objects found.
 
-    :param h_session: The current session
+    :param int h_session: Session handle
     :param template: A python dictionary of the object template to look for
     :param num_entries: The max number of entries to return
     :returns: Returns a list of handles of objects found
@@ -45,7 +45,7 @@ c_find_objects_ex = make_error_handle_function(c_find_objects)
 def c_get_attribute_value(h_session, h_object, template):
     """Calls C_GetAttrributeValue to get an attribute value based on a python template
 
-    :param h_session: The current session
+    :param int h_session: Session handle
     :param h_object: The handle of the object to get attributes for
     :param template: A python dictionary representing the template of the attributes to be retrieved
     :returns: A python dictionary representing the attributes returned from the HSM/library
@@ -82,7 +82,7 @@ c_get_attribute_value_ex = make_error_handle_function(c_get_attribute_value)
 def c_set_attribute_value(h_session, h_object, template):
     """Calls C_SetAttributeValue to set an attribute value based on a python template
 
-    :param h_session: The current session
+    :param int h_session: Session handle
     :param h_object: The handle of the object to get attributes for
     :param template: A python dictionary representing the template of the attributes to be written
     :returns: A python dictionary representing the attributes returned from the HSM/library

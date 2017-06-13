@@ -9,7 +9,7 @@ from .test_functions import make_error_handle_function
 def ca_clonemofn(h_session):
     """Clones MofN secret from one token to another.
 
-    :param h_session: the current session
+    :param int h_session: Session handle
     :returns: the result code
 
     """
@@ -26,7 +26,7 @@ ca_clonemofn_ex = make_error_handle_function(ca_clonemofn)
 def ca_duplicatemofn(h_session):
     """Duplicates a set of M of N vectors.
 
-    :param h_session: the current session
+    :param int h_session: Session handle
     :returns: the result code
 
     """
