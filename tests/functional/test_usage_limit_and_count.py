@@ -14,7 +14,7 @@ from pycryptoki.defines import CKM_DES_KEY_GEN, CKM_AES_KEY_GEN, CKM_DES3_KEY_GE
     CKA_USAGE_LIMIT, CKA_USAGE_COUNT, CKM_RSA_PKCS_KEY_PAIR_GEN, CKM_DES3_ECB, \
     CKM_DES_ECB, CKM_RSA_PKCS, CKR_KEY_NOT_ACTIVE, CKM_AES_ECB
 from pycryptoki.encryption import c_encrypt, c_encrypt_ex
-from pycryptoki.key_generator import c_generate_key_ex, c_generate_key_pair_ex
+from pycryptoki.key_generator import c_generate_key_ex, c_generate_key_pair_ex, c_destroy_object
 from pycryptoki.object_attr_lookup import c_get_attribute_value_ex, c_set_attribute_value_ex
 from . import config as hsm_config
 
@@ -48,18 +48,21 @@ class TestUsageLimitAndCount(object):
         h_key = c_generate_key_ex(self.h_session,
                                   mechanism=CKM_DES_KEY_GEN,
                                   template=CKM_DES_KEY_GEN_TEMP)
-        LOG.info("Called c-generate: Key handle -%s", h_key)
-        usage_limit = 5
+        try:
+            LOG.info("Called c-generate: Key handle -%s", h_key)
+            usage_limit = 5
 
-        c_set_attribute_value_ex(self.h_session,
-                                 h_key, usage_template)
+            c_set_attribute_value_ex(self.h_session,
+                                     h_key, usage_template)
 
-        out_template = c_get_attribute_value_ex(self.h_session, h_key,
-                                                template={CKA_USAGE_LIMIT: None})
+            out_template = c_get_attribute_value_ex(self.h_session, h_key,
+                                                    template={CKA_USAGE_LIMIT: None})
 
-        usage_val_out = out_template[CKA_USAGE_LIMIT]
-        LOG.info("CKA_USAGE_LIMIT reported by C_GetAttributeValue :%s", usage_val_out)
-        assert usage_limit == usage_val_out, "reported USAGE LIMIT does not match"
+            usage_val_out = out_template[CKA_USAGE_LIMIT]
+            LOG.info("CKA_USAGE_LIMIT reported by C_GetAttributeValue :%s", usage_val_out)
+            assert usage_limit == usage_val_out, "reported USAGE LIMIT does not match"
+        finally:
+            c_destroy_object(self.h_session, h_key)
 
     def test_usage_limit_attribute_check_sym_des(self):
         """Test: Verify that CKA_USAGE_COUNT attribute increments as user
@@ -81,23 +84,26 @@ class TestUsageLimitAndCount(object):
         h_key = c_generate_key_ex(self.h_session,
                                   mechanism=CKM_DES_KEY_GEN,
                                   template=CKM_DES_KEY_GEN_TEMP)
-        LOG.info("Called c-generate: Key handle -%s", h_key)
+        try:
+            LOG.info("Called c-generate: Key handle -%s", h_key)
 
-        c_set_attribute_value_ex(self.h_session,
-                                 h_key, usage_lim_template)
+            c_set_attribute_value_ex(self.h_session,
+                                     h_key, usage_lim_template)
 
-        c_encrypt_ex(self.h_session, h_key, b'a' * 2048, mechanism={"mech_type": CKM_DES_ECB})
+            c_encrypt_ex(self.h_session, h_key, b'a' * 2048, mechanism={"mech_type": CKM_DES_ECB})
 
-        c_encrypt_ex(self.h_session, h_key, b'a' * 2048,
-                     mechanism={"mech_type": CKM_DES_ECB})
+            c_encrypt_ex(self.h_session, h_key, b'a' * 2048,
+                         mechanism={"mech_type": CKM_DES_ECB})
 
-        py_template = c_get_attribute_value_ex(self.h_session, h_key,
-                                               template={CKA_USAGE_COUNT: None})
+            py_template = c_get_attribute_value_ex(self.h_session, h_key,
+                                                   template={CKA_USAGE_COUNT: None})
 
-        usage_val_out = py_template[CKA_USAGE_COUNT]
-        LOG.info("CKA_USAGE_COUNT reported by C_GetAttributeValue: %s", usage_val_out)
+            usage_val_out = py_template[CKA_USAGE_COUNT]
+            LOG.info("CKA_USAGE_COUNT reported by C_GetAttributeValue: %s", usage_val_out)
 
-        assert usage_count == usage_val_out, "reported USAGE LIMIT does not match"
+            assert usage_count == usage_val_out, "reported USAGE LIMIT does not match"
+        finally:
+            c_destroy_object(self.h_session, h_key)
 
     def test_usage_limit_attribute_check_sym_aes(self):
         """Test: Verify that CKA_USAGE_COUNT attribute increments as user
@@ -118,21 +124,24 @@ class TestUsageLimitAndCount(object):
 
         h_key = c_generate_key_ex(self.h_session, mechanism=CKM_AES_KEY_GEN,
                                   template=CKM_AES_KEY_GEN_TEMP)
-        LOG.info("Called c-generate: Key handle -" + str(h_key))
+        try:
+            LOG.info("Called c-generate: Key handle -" + str(h_key))
 
-        c_set_attribute_value_ex(self.h_session,
-                                 h_key, usage_lim_template)
-        c_encrypt_ex(self.h_session, h_key, b'a' * 2048, mechanism={"mech_type": CKM_AES_ECB})
+            c_set_attribute_value_ex(self.h_session,
+                                     h_key, usage_lim_template)
+            c_encrypt_ex(self.h_session, h_key, b'a' * 2048, mechanism={"mech_type": CKM_AES_ECB})
 
-        c_encrypt_ex(self.h_session, h_key, b'a' * 2048, mechanism={"mech_type": CKM_AES_ECB})
+            c_encrypt_ex(self.h_session, h_key, b'a' * 2048, mechanism={"mech_type": CKM_AES_ECB})
 
-        py_template = c_get_attribute_value_ex(self.h_session, h_key,
-                                               template={CKA_USAGE_COUNT: None})
+            py_template = c_get_attribute_value_ex(self.h_session, h_key,
+                                                   template={CKA_USAGE_COUNT: None})
 
-        usage_val_out = py_template[CKA_USAGE_COUNT]
-        LOG.info("CKA_USAGE_COUNT reported by C_GetAttributeValue: %s", usage_val_out)
+            usage_val_out = py_template[CKA_USAGE_COUNT]
+            LOG.info("CKA_USAGE_COUNT reported by C_GetAttributeValue: %s", usage_val_out)
 
-        assert usage_count == usage_val_out, "reported USAGE LIMIT does not match"
+            assert usage_count == usage_val_out, "reported USAGE LIMIT does not match"
+        finally:
+            c_destroy_object(self.h_session, h_key)
 
     def test_set_attribute_usage_limit_Assym(self):
         """Test: Verify that user is able to set CKA_USAGE_LIMIT attribute on
@@ -153,18 +162,22 @@ class TestUsageLimitAndCount(object):
                                                   mechanism=CKM_RSA_PKCS_KEY_PAIR_GEN,
                                                   pbkey_template=CKM_RSA_PKCS_KEY_PAIR_GEN_PUBTEMP,
                                                   prkey_template=CKM_RSA_PKCS_KEY_PAIR_GEN_PRIVTEMP)
-        LOG.info(
-            "Called c-generate: Public Key handle: %s Private Key Handle: %s", h_pbkey, h_prkey)
-        usage_limit = 2
+        try:
+            LOG.info(
+                "Called c-generate: Public Key handle: %s Private Key Handle: %s", h_pbkey, h_prkey)
+            usage_limit = 2
 
-        c_set_attribute_value_ex(self.h_session,
-                                 h_pbkey, usage_lim_template)
+            c_set_attribute_value_ex(self.h_session,
+                                     h_pbkey, usage_lim_template)
 
-        py_template = c_get_attribute_value_ex(self.h_session, h_pbkey,
-                                               template={CKA_USAGE_LIMIT: None})
-        usage_val_out = py_template[CKA_USAGE_LIMIT]
-        LOG.info("CKA_USAGE_LIMIT reported by C_GetAttributeValue: %s", usage_val_out)
-        assert usage_limit == usage_val_out, "reported USAGE LIMIT does not match"
+            py_template = c_get_attribute_value_ex(self.h_session, h_pbkey,
+                                                   template={CKA_USAGE_LIMIT: None})
+            usage_val_out = py_template[CKA_USAGE_LIMIT]
+            LOG.info("CKA_USAGE_LIMIT reported by C_GetAttributeValue: %s", usage_val_out)
+            assert usage_limit == usage_val_out, "reported USAGE LIMIT does not match"
+        finally:
+            c_destroy_object(self.h_session, h_pbkey)
+            c_destroy_object(self.h_session, h_prkey)
 
     def test_usage_limit_attribute_check_Assym(self):
         """Test: Verify that CKA_USAGE_COUNT attribute increments as user
@@ -189,21 +202,25 @@ class TestUsageLimitAndCount(object):
                                                   pbkey_template=CKM_RSA_PKCS_KEY_PAIR_GEN_PUBTEMP,
                                                   prkey_template=CKM_RSA_PKCS_KEY_PAIR_GEN_PRIVTEMP)
 
-        LOG.info(
-            "Called c-generate: Public Key handle -%s Private Key Handle -%s", h_pbkey, h_prkey)
+        try:
+            LOG.info(
+                "Called c-generate: Public Key handle -%s Private Key Handle -%s", h_pbkey, h_prkey)
 
-        c_set_attribute_value_ex(self.h_session,
-                                 h_pbkey, usage_lim_template)
-        c_encrypt_ex(self.h_session, h_pbkey, b'a' * 20, mechanism={"mech_type": CKM_RSA_PKCS})
+            c_set_attribute_value_ex(self.h_session,
+                                     h_pbkey, usage_lim_template)
+            c_encrypt_ex(self.h_session, h_pbkey, b'a' * 20, mechanism={"mech_type": CKM_RSA_PKCS})
 
-        c_encrypt_ex(self.h_session, h_pbkey, b'a' * 20, mechanism={"mech_type": CKM_RSA_PKCS})
+            c_encrypt_ex(self.h_session, h_pbkey, b'a' * 20, mechanism={"mech_type": CKM_RSA_PKCS})
 
-        py_template = c_get_attribute_value_ex(self.h_session, h_pbkey,
-                                               template={CKA_USAGE_COUNT: None})
+            py_template = c_get_attribute_value_ex(self.h_session, h_pbkey,
+                                                   template={CKA_USAGE_COUNT: None})
 
-        usage_val_out = py_template[CKA_USAGE_COUNT]
-        LOG.info("CKA_USAGE_COUNT reported by C_GetAttributeValue: %s", usage_val_out)
-        assert usage_count == usage_val_out, "reported USAGE LIMIT does not match"
+            usage_val_out = py_template[CKA_USAGE_COUNT]
+            LOG.info("CKA_USAGE_COUNT reported by C_GetAttributeValue: %s", usage_val_out)
+            assert usage_count == usage_val_out, "reported USAGE LIMIT does not match"
+        finally:
+            c_destroy_object(self.h_session, h_pbkey)
+            c_destroy_object(self.h_session, h_prkey)
 
     def test_set_attribute_usage_count_check_error_CKR_KEY_NOT_ACTIVE_3des(self):
         """Test: Verify that crypto operation returns error CKR_KEY_NOT_ACTIVE
@@ -224,25 +241,28 @@ class TestUsageLimitAndCount(object):
                                   mechanism=CKM_DES3_KEY_GEN,
                                   template=CKM_DES3_KEY_GEN_TEMP)
         LOG.info("Called c-generate: Key handle -" + str(h_key))
+        try:
 
-        c_set_attribute_value_ex(self.h_session,
-                                 h_key, usage_lim_template)
+            c_set_attribute_value_ex(self.h_session,
+                                     h_key, usage_lim_template)
 
-        c_encrypt_ex(self.h_session, h_key, b'a' * 2048, mechanism={"mech_type": CKM_DES3_ECB})
+            c_encrypt_ex(self.h_session, h_key, b'a' * 2048, mechanism={"mech_type": CKM_DES3_ECB})
 
-        c_encrypt_ex(self.h_session, h_key, b'a' * 2048, mechanism={"mech_type": CKM_DES3_ECB})
+            c_encrypt_ex(self.h_session, h_key, b'a' * 2048, mechanism={"mech_type": CKM_DES3_ECB})
 
-        return_val, data = c_encrypt(self.h_session, h_key, b'a' * 2048,
-                                     mechanism={"mech_type": CKM_DES3_ECB})
-        LOG.info("Called C_Encrypt, return code: %s", return_val)
+            return_val, data = c_encrypt(self.h_session, h_key, b'a' * 2048,
+                                         mechanism={"mech_type": CKM_DES3_ECB})
+            LOG.info("Called C_Encrypt, return code: %s", return_val)
 
-        py_template = c_get_attribute_value_ex(self.h_session, h_key,
-                                               template={CKA_USAGE_COUNT: None})
+            py_template = c_get_attribute_value_ex(self.h_session, h_key,
+                                                   template={CKA_USAGE_COUNT: None})
 
-        usage_val_out = py_template[CKA_USAGE_COUNT]
-        LOG.info("CKA_USAGE_COUNT reported by C_GetAttributeValue: %s", usage_val_out)
+            usage_val_out = py_template[CKA_USAGE_COUNT]
+            LOG.info("CKA_USAGE_COUNT reported by C_GetAttributeValue: %s", usage_val_out)
 
-        assert return_val == CKR_KEY_NOT_ACTIVE, "reported error code does not match"
+            assert return_val == CKR_KEY_NOT_ACTIVE, "reported error code does not match"
+        finally:
+            c_destroy_object(self.h_session, h_key)
 
     def test_set_attribute_usage_count_check_error_CKR_KEY_NOT_ACTIVE_rsa(self):
         """Test: Verify that crypto operation returns error CKR_KEY_NOT_ACTIVE
@@ -261,22 +281,26 @@ class TestUsageLimitAndCount(object):
                                                   mechanism=CKM_RSA_PKCS_KEY_PAIR_GEN,
                                                   pbkey_template=CKM_RSA_PKCS_KEY_PAIR_GEN_PUBTEMP,
                                                   prkey_template=CKM_RSA_PKCS_KEY_PAIR_GEN_PRIVTEMP)
+        try:
 
-        LOG.info(
-            "Called c-generate: Public Key handle -%s Private Key Handle - %s", h_pbkey, h_prkey)
+            LOG.info(
+                "Called c-generate: Public Key handle -%s Private Key Handle - %s", h_pbkey, h_prkey)
 
-        c_set_attribute_value_ex(self.h_session,
-                                 h_pbkey, usage_lim_template)
+            c_set_attribute_value_ex(self.h_session,
+                                     h_pbkey, usage_lim_template)
 
-        c_encrypt_ex(self.h_session, h_pbkey, b'a' * 20, mechanism={"mech_type": CKM_RSA_PKCS})
+            c_encrypt_ex(self.h_session, h_pbkey, b'a' * 20, mechanism={"mech_type": CKM_RSA_PKCS})
 
-        c_encrypt_ex(self.h_session, h_pbkey, b'a' * 20, mechanism={"mech_type": CKM_RSA_PKCS})
+            c_encrypt_ex(self.h_session, h_pbkey, b'a' * 20, mechanism={"mech_type": CKM_RSA_PKCS})
 
-        return_val, data = c_encrypt(self.h_session, h_pbkey, b'a' * 20,
-                                     mechanism={"mech_type": CKM_RSA_PKCS})
-        LOG.info("Called C_Encrypt, return code: %s", return_val)
-        py_template = c_get_attribute_value_ex(self.h_session, h_pbkey,
-                                               template={CKA_USAGE_COUNT: None})
+            return_val, data = c_encrypt(self.h_session, h_pbkey, b'a' * 20,
+                                         mechanism={"mech_type": CKM_RSA_PKCS})
+            LOG.info("Called C_Encrypt, return code: %s", return_val)
+            py_template = c_get_attribute_value_ex(self.h_session, h_pbkey,
+                                                   template={CKA_USAGE_COUNT: None})
 
-        usage_val_out = py_template[CKA_USAGE_COUNT]
-        assert return_val == CKR_KEY_NOT_ACTIVE, "reported error code does not match"
+            usage_val_out = py_template[CKA_USAGE_COUNT]
+            assert return_val == CKR_KEY_NOT_ACTIVE, "reported error code does not match"
+        finally:
+            c_destroy_object(self.h_session, h_pbkey)
+            c_destroy_object(self.h_session, h_prkey)

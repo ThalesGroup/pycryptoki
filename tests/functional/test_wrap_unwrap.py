@@ -1,3 +1,6 @@
+"""
+Testcases for wrapping/unwrapping keys.
+"""
 import logging
 
 import pytest
@@ -15,7 +18,7 @@ from pycryptoki.defines import (CKM_DES_ECB, CKM_DES_CBC, CKM_DES_CBC_PAD, CKM_D
                                 CKA_VALUE_LEN, CKA_EXTRACTABLE)
 from pycryptoki.encryption import c_wrap_key, c_unwrap_key, c_encrypt, c_decrypt
 from pycryptoki.key_generator import c_destroy_object, c_generate_key
-from pycryptoki.return_values import ret_vals_dictionary
+from pycryptoki.lookup_dicts import ret_vals_dictionary
 from pycryptoki.test_functions import verify_object_attributes
 
 logger = logging.getLogger(__name__)
@@ -101,6 +104,9 @@ def keys(auth_session):
 
 
 class TestWrappingKeys(object):
+    """
+    Testcases for wrapping/unwrapping keys.
+    """
     def verify_ret(self, ret, expected_ret):
         """
         Assert that ret is as expected

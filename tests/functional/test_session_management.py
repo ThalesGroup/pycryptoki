@@ -1,3 +1,6 @@
+"""
+Tests session management functions
+"""
 import pytest
 import logging
 
@@ -11,7 +14,9 @@ logger = logging.getLogger(__name__)
 
 
 class TestSessionManagement(object):
-
+    """
+    Tests session management functions
+    """
     @pytest.fixture(autouse=True)
     def setup_teardown(self, auth_session):
         self.admin_slot = hsm_config["test_slot"]

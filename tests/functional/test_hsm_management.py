@@ -21,8 +21,9 @@ from pycryptoki.return_values import ret_vals_dictionary
 from . import config as hsm_config
 
 
-class TestAlgorithm(object):
-    """Test algorithm class"""
+@pytest.mark.reset
+class TestHSMManagementFunctions(object):
+    """Test HSM Management functions class"""
 
     @pytest.fixture(autouse=True)
     def setup_teardown(self, auth_session):

@@ -80,6 +80,7 @@ def pytest_configure(config):
 
     hsm_config["test_slot"] = config.getoption("test_slot")
     hsm_config["user"] = config.getoption("user")
+    hsm_config["reset"] = config.getoption("reset")
     c_initialize_ex()
     try:
         # Factory Reset
@@ -115,6 +116,16 @@ def pytest_configure(config):
             hsm_config['password'] = admin_pwd
     finally:
         c_finalize_ex()
+
+
+def pytest_collection_modifyitems(session, config, items):
+    """
+    Deselect tests marked with @pytest.mark.reset if --reset isn't given on cmdline.
+    """
+    reset = config.getoption('reset')
+    for test_item in items[:]:
+        if test_item.get_marker('reset') and not reset:
+            items.remove(test_item)
 
 
 @pytest.yield_fixture(scope='session', autouse=True)
@@ -176,26 +187,6 @@ def auth_session(pytestconfig, session):
     yield session
     c_logout(session)
 
-
-@pytest.yield_fixture(scope="class", autouse=True)
-def partition_clearer(auth_session):
-    """
-    Autoused fixture to make sure the active session is cleared from all created objects.
-
-    :param auth_session:
-    :return:
-    """
-    yield
-    try:
-        # Use a blank template so we can grab everything.
-        template = Attributes({}).get_c_struct()
-        objects = c_find_objects_ex(auth_session, template, 1000)
-        for handle in objects:
-            ret = c_destroy_object(auth_session, handle)
-            if ret != CKR_OK:
-                LOG.info("Failed to destroy object w/ handle %s", handle)
-    except LunaException:
-        LOG.exception("Failed to destroy all objects created on this session")
 
 
 @pytest.yield_fixture(scope="class")

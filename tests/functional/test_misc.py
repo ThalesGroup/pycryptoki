@@ -1,3 +1,6 @@
+"""
+Test RNG functions
+"""
 import logging
 
 import pytest
@@ -6,13 +9,13 @@ from . import config as hsm_config
 from pycryptoki.defines import CKR_OK
 from pycryptoki.misc import c_generate_random_ex, c_seed_random, \
     c_generate_random
-from pycryptoki.return_values import ret_vals_dictionary
+from pycryptoki.lookup_dicts import ret_vals_dictionary
 
 logger = logging.getLogger(__name__)
 
 
-class TestSupportingOperations(object):
-    """ """
+class TestRNG(object):
+    """Test RNG Functions"""
 
     @pytest.fixture(autouse=True)
     def setup_teardown(self, auth_session):

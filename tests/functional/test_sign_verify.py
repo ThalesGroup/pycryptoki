@@ -25,7 +25,7 @@ from pycryptoki.default_templates import (CKM_DSA_KEY_PAIR_GEN_PRIVTEMP,
 
                                           MECHANISM_LOOKUP_EXT, get_default_key_template)
 
-from pycryptoki.return_values import ret_vals_dictionary
+from pycryptoki.lookup_dicts import ret_vals_dictionary
 
 
 logger = logging.getLogger(__name__)
@@ -99,6 +99,9 @@ def asym_keys(auth_session):
 
 
 class TestSignVerify(object):
+    """
+    Creates key pairs, signs data, and verifies that data.
+    """
 
     def verify_ret(self, ret, expected_ret):
         """

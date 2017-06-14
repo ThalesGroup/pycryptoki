@@ -77,6 +77,9 @@ ALL_DERIVES = {k: v for d in [DERIVE_PARAMS, DRV_TOO_LONG] for k, v in d.items()
 
 
 class TestKeys(object):
+    """
+    Tests Key & Key pair generation
+    """
     def verify_ret(self, ret, expected_ret):
         """ Verify ret check and len > 0"""
         assert ret == expected_ret, "Function should return: " + ret_vals_dictionary[expected_ret] \
@@ -100,8 +103,11 @@ class TestKeys(object):
         key_template = get_default_key_template(key_type)
         ret, key_handle = c_generate_key(self.h_session, key_type, key_template)
 
-        self.verify_ret(ret, CKR_OK)
-        self.verify_key_len(key_handle, key_handle)
+        try:
+            self.verify_ret(ret, CKR_OK)
+            self.verify_key_len(key_handle, key_handle)
+        finally:
+            c_destroy_object(self.h_session, key_handle)
 
     @pytest.mark.parametrize(("key_type", "pub_key_temp", "prv_key_temp"), KEY_PAIRS,
                              ids=[MECHANISM_LOOKUP_EXT[k[0]][0] for k in KEY_PAIRS])
@@ -115,8 +121,12 @@ class TestKeys(object):
         ret, pub_key, prv_key = c_generate_key_pair(self.h_session, key_type,
                                                     pub_key_temp,
                                                     prv_key_temp)
-        self.verify_ret(ret, CKR_OK)
-        self.verify_key_len(pub_key, prv_key)
+        try:
+            self.verify_ret(ret, CKR_OK)
+            self.verify_key_len(pub_key, prv_key)
+        finally:
+            c_destroy_object(self.h_session, prv_key)
+            c_destroy_object(self.h_session, pub_key)
 
     @pytest.mark.parametrize("curve_type", list(curve_list.keys()))
     def test_generate_ecdsa_key_pairs(self, curve_type):
