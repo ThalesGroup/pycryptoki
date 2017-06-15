@@ -1,6 +1,7 @@
 import logging
 
 import pytest
+from .util import get_session_template
 
 from pycryptoki.default_templates import \
     (CKM_DSA_KEY_PAIR_GEN_PRIVTEMP,
@@ -80,6 +81,7 @@ class TestKeys(object):
     """
     Tests Key & Key pair generation
     """
+
     def verify_ret(self, ret, expected_ret):
         """ Verify ret check and len > 0"""
         assert ret == expected_ret, "Function should return: " + ret_vals_dictionary[expected_ret] \
@@ -100,7 +102,7 @@ class TestKeys(object):
         Test generation of keys for sym. crypto systems
         :param key_type: key generation mechanism
         """
-        key_template = get_default_key_template(key_type)
+        key_template = get_session_template(get_default_key_template(key_type))
         ret, key_handle = c_generate_key(self.h_session, key_type, key_template)
 
         try:
@@ -119,8 +121,8 @@ class TestKeys(object):
         :param prv_key_temp: private key template
         """
         ret, pub_key, prv_key = c_generate_key_pair(self.h_session, key_type,
-                                                    pub_key_temp,
-                                                    prv_key_temp)
+                                                    get_session_template(pub_key_temp),
+                                                    get_session_template(prv_key_temp))
         try:
             self.verify_ret(ret, CKR_OK)
             self.verify_key_len(pub_key, prv_key)
@@ -135,10 +137,11 @@ class TestKeys(object):
         :param curve_type:
         """
         CKM_ECDSA_KEY_PAIR_GEN_PUBTEMP[CKA_ECDSA_PARAMS] = curve_list[curve_type]
-        ret, public_key_handle, private_key_handle = c_generate_key_pair(self.h_session,
-                                                                         CKM_ECDSA_KEY_PAIR_GEN,
-                                                                         CKM_ECDSA_KEY_PAIR_GEN_PUBTEMP,
-                                                                         CKM_ECDSA_KEY_PAIR_GEN_PRIVTEMP)
+        data = c_generate_key_pair(self.h_session,
+                                   CKM_ECDSA_KEY_PAIR_GEN,
+                                   get_session_template(CKM_ECDSA_KEY_PAIR_GEN_PUBTEMP),
+                                   get_session_template(CKM_ECDSA_KEY_PAIR_GEN_PRIVTEMP))
+        ret, public_key_handle, private_key_handle = data
         try:
             self.verify_ret(ret, CKR_OK)
             self.verify_key_len(public_key_handle, private_key_handle)
@@ -156,7 +159,7 @@ class TestKeys(object):
         :param key_type: Key-gen mechanism
         :param d_type: Hash mech
         """
-        key_template = get_default_key_template(key_type)
+        key_template = get_session_template(get_default_key_template(key_type))
         h_base_key = c_generate_key_ex(self.h_session, key_type, key_template)
         mech = NullMech(d_type).to_c_mech()
 
@@ -184,7 +187,7 @@ class TestKeys(object):
         :param key_type:
         :param d_type:
         """
-        key_template = get_default_key_template(key_type)
+        key_template = get_session_template(get_default_key_template(key_type))
         h_base_key = c_generate_key_ex(self.h_session, key_type, key_template)
         mech = NullMech(d_type).to_c_mech()
 
@@ -210,7 +213,7 @@ class TestKeys(object):
         :param key_type: key generation mechanism
         :param d_type: derive mechanism
         """
-        key_template = get_default_key_template(key_type)
+        key_template = get_session_template(get_default_key_template(key_type))
         h_base_key = c_generate_key_ex(self.h_session, key_type, key_template)
         mech = NullMech(d_type).to_c_mech()
 

@@ -158,16 +158,21 @@ class TestWrappingKeys(object):
         ret, wrapped_key = c_wrap_key(self.h_session, h_wrap_key, h_key, mechanism=wrap_mech)
         self.verify_ret(ret, CKR_OK)
 
-        # Unwrap the Key
-        ret, h_unwrapped_key = c_unwrap_key(self.h_session,
-                                            h_wrap_key,
-                                            wrapped_key,
-                                            unwrap_temp,
-                                            mechanism=wrap_mech)
-        self.verify_ret(ret, CKR_OK)
+        h_unwrapped_key = None
+        try:
+            # Unwrap the Key
+            ret, h_unwrapped_key = c_unwrap_key(self.h_session,
+                                                h_wrap_key,
+                                                wrapped_key,
+                                                unwrap_temp,
+                                                mechanism=wrap_mech)
+            self.verify_ret(ret, CKR_OK)
 
-        # Verify all of the attributes against the originally generated attributes
-        verify_object_attributes(self.h_session, h_unwrapped_key, temp)
+            # Verify all of the attributes against the originally generated attributes
+            verify_object_attributes(self.h_session, h_unwrapped_key, temp)
+        finally:
+            if h_unwrapped_key:
+                c_destroy_object(self.h_session, h_unwrapped_key)
 
     @pytest.mark.parametrize(('mech', 'k_type'), PARAM_LIST,
                              ids=[LOOKUP[m][0] for m, _ in PARAM_LIST])
@@ -197,20 +202,25 @@ class TestWrappingKeys(object):
         ret, wrapped_key = c_wrap_key(self.h_session, h_wrap_key, h_key, mechanism=wrap_mech)
         self.verify_ret(ret, CKR_OK)
 
-        # Unwrap the Key
-        ret, h_unwrapped_key = c_unwrap_key(self.h_session, h_wrap_key,
-                                            wrapped_key,
-                                            unwrap_temp,
-                                            mechanism=wrap_mech)
-        self.verify_ret(ret, CKR_OK)
+        h_unwrapped_key = None
+        try:
+            # Unwrap the Key
+            ret, h_unwrapped_key = c_unwrap_key(self.h_session, h_wrap_key,
+                                                wrapped_key,
+                                                unwrap_temp,
+                                                mechanism=wrap_mech)
+            self.verify_ret(ret, CKR_OK)
 
-        # Decrypt the data
-        ret, decrypted_string = c_decrypt(self.h_session,
-                                          h_unwrapped_key,
-                                          encrypted_data,
-                                          mechanism=enc_mech)
-        self.verify_ret(ret, CKR_OK)
+            # Decrypt the data
+            ret, decrypted_string = c_decrypt(self.h_session,
+                                              h_unwrapped_key,
+                                              encrypted_data,
+                                              mechanism=enc_mech)
+            self.verify_ret(ret, CKR_OK)
 
-        assert decrypted_string == data_to_encrypt, \
-            "The decrypted data should be the same as the data that was encrypted. " \
-            "Instead found " + str(decrypted_string)
+            assert decrypted_string == data_to_encrypt, \
+                "The decrypted data should be the same as the data that was encrypted. " \
+                "Instead found " + str(decrypted_string)
+        finally:
+            if h_unwrapped_key:
+                c_destroy_object(self.h_session, h_unwrapped_key)

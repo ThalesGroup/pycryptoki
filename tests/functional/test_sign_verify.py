@@ -26,7 +26,7 @@ from pycryptoki.default_templates import (CKM_DSA_KEY_PAIR_GEN_PRIVTEMP,
                                           MECHANISM_LOOKUP_EXT, get_default_key_template)
 
 from pycryptoki.lookup_dicts import ret_vals_dictionary
-
+from .util import get_session_template
 
 logger = logging.getLogger(__name__)
 
@@ -65,7 +65,7 @@ def sym_keys(auth_session):
     keys = {}
     try:
         for key_type in SYM_KEYS:
-            template = get_default_key_template(key_type)
+            template = get_session_template(get_default_key_template(key_type))
             ret, key_handle = c_generate_key(auth_session, key_type, template)
             if ret == CKR_OK:
                 keys[key_type] = key_handle
@@ -85,7 +85,10 @@ def asym_keys(auth_session):
     try:
         for params in ASYM_PARAMS:
             key_type, pub_temp, prv_temp, _ = params
-            ret, pub_key, prv_key = c_generate_key_pair(auth_session, key_type, pub_temp, prv_temp)
+            ret, pub_key, prv_key = c_generate_key_pair(auth_session,
+                                                        key_type,
+                                                        get_session_template(pub_temp),
+                                                        get_session_template(prv_temp))
             if ret == CKR_OK:
                 keys[key_type] = (pub_key, prv_key)
             else:

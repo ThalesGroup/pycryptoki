@@ -18,6 +18,7 @@ from pycryptoki.defines import CKM_DES_KEY_GEN, CKM_AES_KEY_GEN, CKM_DES3_KEY_GE
 from pycryptoki.encryption import c_encrypt, c_encrypt_ex
 from pycryptoki.key_generator import c_generate_key_ex, c_destroy_object, c_generate_key_pair_ex
 from pycryptoki.object_attr_lookup import c_get_attribute_value_ex, c_set_attribute_value_ex
+from .util import get_session_template
 
 LOG = logging.getLogger(__name__)
 
@@ -65,7 +66,7 @@ def sym_key_params(request, auth_session, usage_set):
     """
     usage_type, limit = usage_set
     key_gen, mechanism = request.param
-    key_template = get_default_key_template(key_gen)
+    key_template = get_session_template(get_default_key_template(key_gen))
     usage_template = {CKA_USAGE_LIMIT: limit}
     if usage_type in ("create", "both", "create_then_use"):
         key_template.update(usage_template)
@@ -104,12 +105,14 @@ def asym_key(auth_session, usage_set):
     """
     usage_type, limit = usage_set
     pubtemp, privtemp = get_default_key_pair_template(CKM_RSA_PKCS_KEY_PAIR_GEN)
+
     usage_template = {CKA_USAGE_LIMIT: limit}
     if usage_type in ("create", "both", "create_then_use"):
         privtemp.update(usage_template)
 
-    pubkey, privkey = c_generate_key_pair_ex(auth_session, CKM_RSA_PKCS_KEY_PAIR_GEN, pubtemp,
-                                             privtemp)
+    pubkey, privkey = c_generate_key_pair_ex(auth_session, CKM_RSA_PKCS_KEY_PAIR_GEN,
+                                             get_session_template(pubtemp),
+                                             get_session_template(privtemp))
     try:
         if usage_type == "create_then_use":
 

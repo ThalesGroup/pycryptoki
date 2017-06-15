@@ -11,7 +11,7 @@ from pycryptoki.key_generator import c_destroy_object, c_generate_key_ex
 from pycryptoki.key_management import ca_modifyusagecount
 from pycryptoki.lookup_dicts import ret_vals_dictionary
 from . import config as hsm_config
-
+from .util import get_session_template
 
 class TestKeyManagementFunctions(object):
     """Test algorithm class"""
@@ -32,7 +32,7 @@ class TestKeyManagementFunctions(object):
         """
         key_handle = c_generate_key_ex(self.h_session,
                                        CKM_DES_KEY_GEN,
-                                       CKM_DES_KEY_GEN_TEMP)
+                                       get_session_template(CKM_DES_KEY_GEN_TEMP))
         try:
             ret = ca_modifyusagecount(self.h_session,
                                       key_handle,

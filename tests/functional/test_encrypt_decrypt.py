@@ -22,8 +22,9 @@ from pycryptoki.defines import (CKM_DES_CBC, CKM_DES_KEY_GEN,
 from pycryptoki.defines import (CKR_OK, CKR_DATA_LEN_RANGE, CKR_KEY_SIZE_RANGE)
 from pycryptoki.encryption import c_encrypt, c_decrypt
 from pycryptoki.key_generator import c_generate_key, c_generate_key_pair, c_destroy_object
-from pycryptoki.return_values import ret_vals_dictionary
+from pycryptoki.lookup_dicts import ret_vals_dictionary
 from . import config as hsm_config
+from .util import get_session_template
 
 logger = logging.getLogger(__name__)
 
@@ -170,7 +171,7 @@ def sym_keys(auth_session):
     keys = {}
     try:
         for key_type in SYM_TABLE.values():
-            template = get_default_key_template(key_type)
+            template = get_session_template(get_default_key_template(key_type))
 
             ret, key_handle = c_generate_key(auth_session, key_type, template)
             if ret == CKR_OK:
@@ -192,7 +193,9 @@ def asym_keys(auth_session):
         for key_type in ASYM_TABLE.values():
             pub_temp, prv_temp = get_default_key_pair_template(key_type)
 
-            ret, pub_key, prv_key = c_generate_key_pair(auth_session, key_type, pub_temp, prv_temp)
+            ret, pub_key, prv_key = c_generate_key_pair(auth_session, key_type,
+                                                        get_session_template(pub_temp),
+                                                        get_session_template(prv_temp))
             if ret == CKR_OK:
                 keys[key_type] = (pub_key, prv_key)
             else:
