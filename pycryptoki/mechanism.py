@@ -14,7 +14,8 @@ from .cryptoki import CK_AES_CBC_PAD_EXTRACT_PARAMS, CK_MECHANISM, \
     CK_ULONG, CK_ULONG_PTR, CK_AES_CBC_PAD_INSERT_PARAMS, CK_BYTE, CK_BYTE_PTR, CK_RC2_CBC_PARAMS, \
     CK_RC5_PARAMS, CK_RC5_CBC_PARAMS, CK_MECHANISM_TYPE, CK_AES_XTS_PARAMS, \
     CK_RSA_PKCS_OAEP_PARAMS, \
-    CK_AES_GCM_PARAMS, CK_RSA_PKCS_PSS_PARAMS, CK_KEY_DERIVATION_STRING_DATA, c_ubyte
+    CK_AES_GCM_PARAMS, CK_RSA_PKCS_PSS_PARAMS, CK_KEY_DERIVATION_STRING_DATA, c_ubyte, \
+    CK_ECDH1_DERIVE_PARAMS
 from .defines import *
 from .exceptions import LunaException
 
@@ -367,6 +368,37 @@ class StringDataDerivationMechanism(Mechanism):
         return self.mech
 
 
+class ECDH1DeriveMechanism(Mechanism):
+    """
+    ECDH1-specific mechanism
+    """
+    REQUIRED_PARAMS = ["kdf", "sharedData", "publicData"]
+
+    def to_c_mech(self):
+        """
+        Create the Param structure, then convert the data into byte arrays.
+
+        :return: :class:`~pycryptoki.cryptoki.CK_MECHANISM`
+        """
+        super(ECDH1DeriveMechanism, self).to_c_mech()
+        params = CK_ECDH1_DERIVE_PARAMS()
+        params.kdf = self.params['kdf']
+        if self.params['sharedData'] is None:
+            shared_data = None
+            shared_data_len = 0
+        else:
+            shared_data, shared_data_len = to_byte_array(self.params['sharedData'])
+        params.pSharedData = cast(shared_data, CK_BYTE_PTR)
+        params.ulSharedDataLen = shared_data_len
+        public_data, public_data_len = to_byte_array(self.params['publicData'])
+        params.pPublicData = cast(public_data, CK_BYTE_PTR)
+        params.ulPublicDataLen = public_data_len
+        self.mech.pParameter = cast(pointer(params), c_void_p)
+        self.mech.usParameterLen = CK_ULONG(sizeof(params))
+        return self.mech
+
+
+
 # TODO: xordf mech
 
 class NullMech(Mechanism):
@@ -490,6 +522,9 @@ MECH_LOOKUP = {
     CKM_CONCATENATE_BASE_AND_DATA: StringDataDerivationMechanism,
     CKM_XOR_BASE_AND_DATA: StringDataDerivationMechanism,
     CKM_CONCATENATE_DATA_AND_BASE: StringDataDerivationMechanism,
+
+
+    CKM_ECDH1_DERIVE: ECDH1DeriveMechanism,
 }
 
 

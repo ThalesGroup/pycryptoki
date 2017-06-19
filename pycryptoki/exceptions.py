@@ -4,10 +4,10 @@ Exception-s and exception handling code.
 import inspect
 from functools import wraps
 
-from six import integer_types
+from six import integer_types, string_types
 
 from .defines import CKR_OK
-from .lookup_dicts import ret_vals_dictionary
+from .lookup_dicts import ret_vals_dictionary, ATTR_NAME_LOOKUP
 
 
 def make_error_handle_function(luna_function):
@@ -75,13 +75,13 @@ def make_error_handle_function(luna_function):
                 "Functions wrapped by the exception handler should return a tuple or just the "
                 "long representing Luna's return code.")
 
-        check_luna_exception(ret, luna_function, args)
+        check_luna_exception(ret, luna_function, args, kwargs)
         return return_data
 
     return luna_function_exception_handle
 
 
-def check_luna_exception(ret, luna_function, args):
+def check_luna_exception(ret, luna_function, args, kwargs):
     """
     Check the return code from cryptoki.dll, and if it's non-zero raise an
     exception with the error code looked up.
@@ -90,12 +90,26 @@ def check_luna_exception(ret, luna_function, args):
     :param luna_function: pycryptoki function that was called
     :param args: Arguments passed to the pycryptoki function.
     """
-    arg_spec = inspect.getargspec(luna_function).args
-    nice_args = [x if len(str(x)) < 20 else "{}...{}".format(str(x)[:10], str(x)[-10:])
-                 for x in args]
-    arg_string = ", ".join("{}={}".format(key, value) for key, value in zip(arg_spec, nice_args))
+    log_list = []
+    all_args = inspect.getcallargs(luna_function, *args, **kwargs)
+    for key, value in all_args.items():
+        if "template" in key and isinstance(value, dict):
+            # Means it's a template, so let's perform a lookup on all of the objects within
+            # this.
+            log_list.append("\t\t%s: " % key)
+            for template_key, template_value in all_args[key].items():
+                log_list.append("\t\t\t%s: %s" % (ATTR_NAME_LOOKUP.get(template_key, template_key),
+                                                  template_value))
+        elif "password" in key:
+            log_list.append("\t\t%s: *" % key)
+        else:
+            if len(str(value)) > 20:
+                msg = "\t\t%s: %s[...]%s" % (key, str(value)[:10], str(value)[-10:])
+            else:
+                msg = "\t\t%s: %s" % (key, value)
+            log_list.append(msg)
 
-    arg_string = "({})".format(arg_string)
+    arg_string = "{}".format("\n".join(log_list))
     if ret != CKR_OK:
         raise LunaCallException(ret, luna_function.__name__, arg_string)
 
@@ -131,9 +145,9 @@ class LunaCallException(LunaException):
         data = ("\n\tFunction: {func_name}"
                 "\n\tError: {err_string}"
                 "\n\tError Code: {err_code}"
-                "\n\tArguments: {args}").format(func_name=self.function_name,
-                                                err_string=self.error_string,
-                                                err_code=hex(self.error_code),
-                                                args=self.arguments)
+                "\n\tArguments:\n{args}").format(func_name=self.function_name,
+                                                   err_string=self.error_string,
+                                                   err_code=hex(self.error_code),
+                                                   args=self.arguments)
 
         return data
