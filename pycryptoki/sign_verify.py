@@ -32,7 +32,7 @@ def c_sign(h_session, h_key, data_to_sign, mechanism):
 
              - "This is a proper argument of some data to use in the function"
              - ["This is another format of data this", "function will accept.",
-                "It will operate on these strings in parts"]
+               "It will operate on these strings in parts"]
 
     :param int h_key: The signing key
     :param mechanism: See the :py:func:`~pycryptoki.mechanism.parse_mechanism` function

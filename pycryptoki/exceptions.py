@@ -4,7 +4,7 @@ Exception-s and exception handling code.
 import inspect
 from functools import wraps
 
-from six import integer_types, string_types
+from six import integer_types
 
 from .defines import CKR_OK
 from .lookup_dicts import ret_vals_dictionary, ATTR_NAME_LOOKUP
@@ -44,8 +44,7 @@ def make_error_handle_function(luna_function):
 
     This should therefore make for shorter test cases
 
-    :param luna_function:
-
+    :param luna_function: Function object to wrap.
     """
 
     @wraps(luna_function)
@@ -78,6 +77,25 @@ def make_error_handle_function(luna_function):
         check_luna_exception(ret, luna_function, args, kwargs)
         return return_data
 
+    luna_function_exception_handle.__doc__ = """Executes :py:func:`{}`, and checks the
+retcode; raising an exception if the return code is not CKR_OK.
+
+    .. note:: By default, this will not return the return code if the function returns additional
+        data.
+
+        Example::
+
+            retcode, key_handle = c_generate_key(...)
+            #vs
+            key_handle = c_generate_key_ex(...)
+
+        If the function *only* returns the retcode, then that will still be returned::
+
+            retcode = c_seed_random(...)
+            retcode = c_seed_random_ex(...)
+
+
+    """.format(luna_function.__name__)
     return luna_function_exception_handle
 
 
@@ -146,8 +164,8 @@ class LunaCallException(LunaException):
                 "\n\tError: {err_string}"
                 "\n\tError Code: {err_code}"
                 "\n\tArguments:\n{args}").format(func_name=self.function_name,
-                                                   err_string=self.error_string,
-                                                   err_code=hex(self.error_code),
-                                                   args=self.arguments)
+                                                 err_string=self.error_string,
+                                                 err_code=hex(self.error_code),
+                                                 args=self.arguments)
 
         return data
