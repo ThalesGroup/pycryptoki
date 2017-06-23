@@ -38,8 +38,8 @@ def c_generate_random(h_session, length):
     data_ptr = cast(random_data, CK_BYTE_PTR)
     ret = C_GenerateRandom(h_session, data_ptr, CK_ULONG(length))
 
-    random_string = random_data.value
-    return ret, random_string
+    data = string_at(data_ptr, length)
+    return ret, data
 
 
 c_generate_random_ex = make_error_handle_function(c_generate_random)

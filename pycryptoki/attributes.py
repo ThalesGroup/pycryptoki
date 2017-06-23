@@ -12,7 +12,7 @@ from ctypes import cast, c_void_p, create_string_buffer, c_bool, \
     c_ulong, pointer, POINTER, sizeof, c_char, string_at, c_ubyte
 from functools import wraps
 
-from six import b, string_types, integer_types
+from six import b, string_types, integer_types, text_type, binary_type
 
 from .cryptoki import CK_ATTRIBUTE, CK_BBOOL, CK_ATTRIBUTE_TYPE, CK_ULONG, \
     CK_BYTE, CK_CHAR
@@ -196,9 +196,12 @@ def to_byte_array(val, reverse=False):
         fin = binascii.hexlify(bytearray(data_list))
         LOG.debug("Final hex data: %s", fin)
         return fin
-
-    if isinstance(val, string_types):
+    if isinstance(val, text_type):
+        raise TypeError("Cannot convert unicode types to byte arrays!")
+    elif isinstance(val, binary_type):
         # Hex-string in form '01e4'
+        if val.startswith(b"0x"):
+            val = val.replace(b"0x", b"", 1)
         try:
             val = int(val, 16)
         except ValueError:
@@ -206,7 +209,7 @@ def to_byte_array(val, reverse=False):
             if val.isspace() or len(val) == 0:
                 val = b(val)
             else:
-                raise
+                pass  # Pass on through to the iterable below.
     if isinstance(val, collections.Iterable):
         py_bytes = bytearray(val)
         byte_array = (CK_BYTE * len(py_bytes))(*py_bytes)

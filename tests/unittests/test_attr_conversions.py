@@ -228,6 +228,24 @@ class TestAttrConversions(object):
         py_bytes = self.reverse_case(pointer, leng, to_byte_array)
         assert py_bytes == hexlify(b_array)
 
+    @pytest.mark.parametrize("test_val",
+                             [b"deadbeef",
+                              b"\xde\xad\xbe\xef",
+                              b"0xdeadbeef"],
+                             ids=["plain",
+                                  "escaped",
+                                  "prefixed"])
+    def test_to_byte_array_from_hex(self, test_val):
+        """
+        to_byte_array() with param:
+        :param list_val: list of ints in range (0-255), convert to bytearray
+        """
+        pointer, leng = to_byte_array(test_val)
+        self.verify_c_type(pointer, leng)
+
+        py_bytes = self.reverse_case(pointer, leng, to_byte_array)
+        assert py_bytes == b"deadbeef"
+
     @given(integers(min_value=0))
     def test_to_byte_array_int(self, int_val):
         """
@@ -301,7 +319,7 @@ class TestAttrConversions(object):
         to_byte_array() with incompatible param:
         :param txt_val: random text -TypeError
         """
-        self.force_fail(txt_val, to_byte_array, ValueError)
+        self.force_fail(txt_val, to_byte_array, (ValueError, TypeError))
 
     @given(integers(min_value=0))
     def test_to_byte_array_hexstring(self, int_val):
@@ -309,7 +327,7 @@ class TestAttrConversions(object):
         to_byte_array() with param:
         :param int_val: random integer to be converted to hex string.
         """
-        hex_string = hex(int_val).replace("0x", "").replace("L", "")
+        hex_string = b(hex(int_val).replace("0x", "").replace("L", ""))
         pointer, leng = to_byte_array(hex_string)
         self.verify_c_type(pointer, leng)
 

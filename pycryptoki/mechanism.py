@@ -15,7 +15,7 @@ from .cryptoki import CK_AES_CBC_PAD_EXTRACT_PARAMS, CK_MECHANISM, \
     CK_RC5_PARAMS, CK_RC5_CBC_PARAMS, CK_MECHANISM_TYPE, CK_AES_XTS_PARAMS, \
     CK_RSA_PKCS_OAEP_PARAMS, \
     CK_AES_GCM_PARAMS, CK_RSA_PKCS_PSS_PARAMS, CK_KEY_DERIVATION_STRING_DATA, c_ubyte, \
-    CK_ECDH1_DERIVE_PARAMS
+    CK_AES_CBC_ENCRYPT_DATA_PARAMS, CK_ECDH1_DERIVE_PARAMS
 from .defines import *
 from .exceptions import LunaException
 
@@ -323,6 +323,57 @@ class AESGCMMechanism(Mechanism):
         return self.mech
 
 
+class AESECBEncryptDataMechanism(Mechanism):
+    """
+    AES mechanism for deriving keys from encrypted data.
+    """
+    REQUIRED_PARAMS = ['data']
+
+    def to_c_mech(self):
+        """
+        Convert extra parameters to ctypes, then build out the mechanism.
+
+        :return: :class:`~pycryptoki.cryptoki.CK_MECHANISM`
+        """
+        super(AESECBEncryptDataMechanism, self).to_c_mech()
+        # from https://www.cryptsoft.com/pkcs11doc/v220/group__SEC__12__14__2__MECHANISM__PARAMETERS.html
+        # Note: data should be a multiple of 16 long.
+        params = CK_KEY_DERIVATION_STRING_DATA()
+        pdata, data_len = to_byte_array(self.params['data'])
+        params.pData = pdata
+        params.ulLen = CK_ULONG(data_len)
+        self.mech.pParameter = cast(pointer(params), c_void_p)
+        self.mech.usParameterLen = CK_ULONG(sizeof(params))
+        return self.mech
+
+
+class AESCBCEncryptDataMechanism(Mechanism):
+    """
+    AES CBC mechanism for deriving keys from encrypted data.
+    """
+    REQUIRED_PARAMS = ['iv', 'data']
+
+    def to_c_mech(self):
+        """
+        Convert extra parameters to ctypes, then build out the mechanism.
+
+        :return: :class:`~pycryptoki.cryptoki.CK_MECHANISM`
+        """
+        super(AESCBCEncryptDataMechanism, self).to_c_mech()
+        # https://www.cryptsoft.com/pkcs11doc/v220/group__SEC__12__14__KEY__DERIVATION__BY__DATA__ENCRYPTION______DES______AES.html#CKM_AES_CBC_ENCRYPT_DATA
+        # Note: data should be a multiple of 16 long.
+        params = CK_AES_CBC_ENCRYPT_DATA_PARAMS()
+        pdata, data_len = to_byte_array(self.params['data'])
+        # Note: IV should always be a length of 8.
+        p_iv, _ = to_byte_array(self.params['iv'])
+        params.pData = pdata
+        params.ulLen = CK_ULONG(data_len)
+        params.iv = p_iv
+        self.mech.pParameter = cast(pointer(params), c_void_p)
+        self.mech.usParameterLen = CK_ULONG(sizeof(params))
+        return self.mech
+
+
 class ConcatenationDeriveMechanism(Mechanism):
     """
     Mechanism class for key derivations. This will take in a second key handle in the parameters,
@@ -517,6 +568,9 @@ MECH_LOOKUP = {
     CKM_SHA512_RSA_PKCS_PSS: RSAPKCSPSSMechanism,
 
     CKM_DES_ECB: NullMech,
+
+    CKM_AES_CBC_ENCRYPT_DATA: AESCBCEncryptDataMechanism,
+    CKM_AES_ECB_ENCRYPT_DATA: AESECBEncryptDataMechanism,
 
     CKM_CONCATENATE_BASE_AND_KEY: ConcatenationDeriveMechanism,
     CKM_CONCATENATE_BASE_AND_DATA: StringDataDerivationMechanism,
