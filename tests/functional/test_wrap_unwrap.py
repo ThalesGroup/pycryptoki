@@ -150,7 +150,7 @@ class TestWrappingKeys(object):
         extra_p = EXTRA_PARAM[mech]
         h_key, h_wrap_key = keys[k_type]
         if h_key is None or h_wrap_key is None:
-            pytest.fail("No valid key found for {}".format(LOOKUP[mech][0]))
+            pytest.skip("No valid key found for {}".format(LOOKUP[mech][0]))
 
         # Wrap the key
         wrap_mech = {"mech_type": mech,
@@ -188,7 +188,7 @@ class TestWrappingKeys(object):
         h_key, h_wrap_key = keys[k_type]
         extra_p = EXTRA_PARAM[mech]
         if h_key is None or h_wrap_key is None:
-            pytest.fail("No valid key found for {}".format(LOOKUP[mech][0]))
+            pytest.skip("No valid key found for {}".format(LOOKUP[mech][0]))
 
         # Encrypt some data
         data_to_encrypt = b"a" * 512

@@ -132,7 +132,7 @@ class TestSignVerify(object):
         """
         # Auto-fail when key-generation fails
         if sym_keys.get(key_type) is None:
-            pytest.fail("No valid key found for {}".format(MECHANISM_LOOKUP_EXT[key_type][0]))
+            pytest.skip("No valid key found for {}".format(MECHANISM_LOOKUP_EXT[key_type][0]))
         h_key = sym_keys[key_type]
 
         ret, signature = c_sign(self.h_session, h_key, data,  mechanism=sign_flavor)
@@ -153,7 +153,7 @@ class TestSignVerify(object):
         """
         # Auto-fail when key-generation fails
         if asym_keys.get(k_type) is None:
-            pytest.fail("No valid key found for {}".format(MECHANISM_LOOKUP_EXT[k_type][0]))
+            pytest.skip("No valid key found for {}".format(MECHANISM_LOOKUP_EXT[k_type][0]))
         pub_key, prv_key = asym_keys[k_type]
 
         ret, signature = c_sign(self.h_session, prv_key, data, mechanism=sig_mech)

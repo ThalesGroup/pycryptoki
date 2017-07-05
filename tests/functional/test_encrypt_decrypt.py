@@ -89,6 +89,15 @@ PARAM_TABLE = {CKM_DES_CBC: [{}, {'iv': list(range(8))}],
 # TESTING DATA
 PAD = b"a" * 0xfff0
 RAW = b"abcdefghijk"
+MULTIPART_DATA_PAD = [b"a" * 32,
+                      b"b" * 32,
+                      b"c" * 32,
+                      b"d" * 32]
+
+MULTIPART_DATA_RAW = [b"a" * 11,
+                      b"b" * 11,
+                      b"c" * 11,
+                      b"d" * 11]
 
 # Flavors which auto-pad (will return 'CKR_OK' on un-padded(RAW) data)
 PADDING_ALGORITHMS = [CKM_DES3_CBC_PAD,
@@ -123,7 +132,7 @@ def ret_val(mech, data, valid_mechs=None):
                        mech, MECHANISM_LOOKUP_EXT.get(mech, ("Unknown",))[0])
         return CKR_MECHANISM_INVALID, CKR_MECHANISM_PARAM_INVALID
 
-    if data == RAW:
+    if data in (RAW, MULTIPART_DATA_RAW):
         if mech not in PADDING_ALGORITHMS and mech not in ASYM_TABLE:
             return CKR_DATA_LEN_RANGE
         else:
@@ -254,7 +263,7 @@ class TestEncryptData(object):
         """
         # Auto-fail when key-generation fails
         if sym_keys.get(SYM_TABLE[m_type]) is None:
-            pytest.fail("No valid key found for {}".format(MECHANISM_LOOKUP_EXT[m_type][0]))
+            pytest.skip("No valid key found for {}".format(MECHANISM_LOOKUP_EXT[m_type][0]))
 
         exp_ret = ret_val(m_type, data, valid_mechanisms)
         h_key = sym_keys[SYM_TABLE[m_type]]
@@ -275,7 +284,8 @@ class TestEncryptData(object):
 
             self.verify_data(data, end_data)
 
-    @pytest.mark.parametrize('data', [PAD, RAW], ids=["valid_data", "raw(pad-required)"])
+    @pytest.mark.parametrize('data', [MULTIPART_DATA_PAD, MULTIPART_DATA_RAW],
+                             ids=["valid_data", "raw(pad-required)"])
     @pytest.mark.parametrize(('m_type', 'params'), scenarios(SYM_TABLE), ids=idfn(SYM_TABLE))
     def test_multi_sym_encrypt_decrypt(self, m_type, params, data, sym_keys, auth_session,
                                        valid_mechanisms):
@@ -291,27 +301,20 @@ class TestEncryptData(object):
 
         # Auto-fail when key-generation is fails
         if sym_keys.get(SYM_TABLE[m_type]) is None:
-            pytest.fail("No valid key found for {}".format(MECHANISM_LOOKUP_EXT[m_type][0]))
-
-        # AES_KW will fail on very large data sizes
-        # AES_GCM requires smaller data sizes as well.
-        if m_type in (CKM_AES_KW, CKM_AES_GCM) and data == PAD:
-            data = b"a" * 256
+            pytest.skip("No valid key found for {}".format(MECHANISM_LOOKUP_EXT[m_type][0]))
 
         exp_ret = ret_val(m_type, data, valid_mechanisms)
         h_key = sym_keys[SYM_TABLE[m_type]]
-        encrypt_this = [data, data, data, data]
+        encrypt_this = data
 
         mech = {"mech_type": m_type,
                 "params": params}
-        ret, encrypted = c_encrypt(auth_session, h_key, encrypt_this, mechanism=mech)
+        ret, encrypted = c_encrypt(auth_session, h_key, encrypt_this, mechanism=mech,
+                                   output_buffers=[0xffff, 0xffff, 0xffff, 0xffff])
         self.verify_ret(ret, exp_ret)
 
         # If not expecting error, proceed with testing
         if exp_ret in (CKR_OK, KEY_SIZE_RANGE):
-            if m_type not in PADDING_ALGORITHMS and m_type != CKM_AES_KW:
-                assert len(encrypted) == len(b"".join(encrypt_this))
-
             ret, end_data = c_decrypt(auth_session, h_key, encrypted, mechanism=mech)
             self.verify_ret(ret, exp_ret)
             if m_type in PADDING_ALGORITHMS:
@@ -328,7 +331,7 @@ class TestEncryptData(object):
         :param auth_session:
         """
         if asym_keys.get(ASYM_TABLE[m_type]) is None:
-            pytest.fail("No valid key found for {}".format(MECHANISM_LOOKUP_EXT[m_type][0]))
+            pytest.skip("No valid key found for {}".format(MECHANISM_LOOKUP_EXT[m_type][0]))
 
         expected_retcode = ret_val(m_type, RAW, valid_mechanisms)
         pub_key, prv_key = asym_keys[ASYM_TABLE[m_type]]

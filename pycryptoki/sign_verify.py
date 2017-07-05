@@ -5,7 +5,8 @@ import logging
 from _ctypes import POINTER
 from ctypes import create_string_buffer, cast, byref, string_at, c_ubyte
 
-from .attributes import to_char_array
+from pycryptoki.conversions import from_bytestring
+from .attributes import to_char_array, to_byte_array
 from .common_utils import refresh_c_arrays, AutoCArray
 from .cryptoki import CK_ULONG, \
     CK_BYTE_PTR, C_SignInit, C_Sign
@@ -59,7 +60,7 @@ def c_sign(h_session, h_key, data_to_sign, mechanism):
                                                             data_to_sign)
     else:
         # Prepare the data to sign
-        c_data_to_sign, plain_date_len = to_char_array(data_to_sign)
+        c_data_to_sign, plain_date_len = to_byte_array(from_bytestring(data_to_sign))
         c_data_to_sign = cast(c_data_to_sign, POINTER(c_ubyte))
 
         signed_data = AutoCArray(ctype=c_ubyte)
@@ -109,7 +110,7 @@ def do_multipart_sign_or_digest(h_session, c_update_function, c_final_function, 
             raise Exception("chunk_sizes variable too large, the maximum size of a chunk is " +
                             str(max_data_chunk_size))
 
-        data_chunk, data_chunk_len = to_char_array(current_chunk)
+        data_chunk, data_chunk_len = to_byte_array(from_bytestring(current_chunk))
         data_chunk = cast(data_chunk, POINTER(c_ubyte))
 
         ret = c_update_function(h_session, data_chunk, data_chunk_len)
@@ -156,7 +157,7 @@ def do_multipart_verify(h_session, input_data_list, signature):
             raise Exception("chunk_sizes variable too large, the maximum size of a chunk is " +
                             str(max_data_chunk_size))
 
-        data_chunk, data_chunk_len = to_char_array(current_chunk)
+        data_chunk, data_chunk_len = to_byte_array(from_bytestring(current_chunk))
         data_chunk = cast(data_chunk, POINTER(c_ubyte))
 
         ret = C_VerifyUpdate(h_session, data_chunk, data_chunk_len)
@@ -211,7 +212,7 @@ def c_verify(h_session, h_key, data_to_verify, signature, mechanism):
         ret = do_multipart_verify(h_session, data_to_verify, signature)
     else:
         # Prepare the data to verify
-        c_data_to_verify, plain_date_len = to_char_array(data_to_verify)
+        c_data_to_verify, plain_date_len = to_byte_array(from_bytestring(data_to_verify))
         c_data_to_verify = cast(c_data_to_verify, POINTER(c_ubyte))
 
         c_signature, c_sig_length = to_char_array(signature)

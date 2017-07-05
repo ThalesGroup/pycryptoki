@@ -14,7 +14,8 @@ from ctypes import create_string_buffer, cast, byref, string_at, c_ubyte
 
 from six import integer_types
 
-from .attributes import Attributes, to_char_array
+from pycryptoki.conversions import from_bytestring
+from .attributes import Attributes, to_char_array, to_byte_array
 from .common_utils import refresh_c_arrays, AutoCArray
 from .cryptoki import C_GenerateRandom, CK_BYTE_PTR, CK_ULONG, \
     C_SeedRandom, C_DigestInit, C_DigestUpdate, C_DigestFinal, C_Digest, C_CreateObject, \
@@ -98,7 +99,7 @@ def c_digest(h_session, data_to_digest, digest_flavor, mechanism=None):
                                                                   data_to_digest)
     else:
         # Get arguments
-        c_data_to_digest, c_digest_data_len = to_char_array(data_to_digest)
+        c_data_to_digest, c_digest_data_len = to_byte_array(from_bytestring(data_to_digest))
         c_data_to_digest = cast(c_data_to_digest, POINTER(c_ubyte))
 
         digested_data = AutoCArray(ctype=c_ubyte)

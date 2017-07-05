@@ -5,9 +5,8 @@ import logging
 from _ctypes import POINTER
 from ctypes import create_string_buffer, cast, byref, string_at, c_ubyte
 
-from six import string_types
-
-from .attributes import Attributes, to_char_array, to_byte_array
+from .conversions import from_bytestring, to_hex
+from .attributes import Attributes, to_byte_array
 from .common_utils import AutoCArray, refresh_c_arrays
 from .cryptoki import CK_ULONG, \
     C_EncryptInit, C_Encrypt
@@ -15,9 +14,9 @@ from .cryptoki import C_Decrypt, C_DecryptInit, CK_OBJECT_HANDLE, \
     C_WrapKey, C_UnwrapKey, C_EncryptUpdate, C_EncryptFinal, CK_BYTE_PTR, \
     C_DecryptUpdate, C_DecryptFinal
 from .defines import CKR_OK
-from .mechanism import parse_mechanism
-from .return_values import ret_vals_dictionary
 from .exceptions import make_error_handle_function
+from .mechanism import parse_mechanism
+from .lookup_dicts import ret_vals_dictionary
 
 MAX_BUFFER = 0xffff
 
@@ -32,8 +31,24 @@ def c_encrypt(h_session, h_key, data, mechanism, output_buffers=None):
 
     :param int h_session: Current session
     :param int h_key: The key handle to encrypt the data with
-    :param data: The data to encrypt, either a string or a list of strings. If this is
+    :param data: The data to encrypt, either a bytestring or a list of bytestrings. If this is
         a list a multipart operation will be used
+
+        .. note:: This will be converted to hexadecimal by calling::
+
+                to_hex(from_bytestring(data))
+
+            If you need to pass in raw hex data, call::
+
+                to_bytestring(from_hex(hex-data))
+
+
+            References:
+                * :py:func:`~pycryptoki.conversions.to_hex`
+                * :py:func:`~pycryptoki.conversions.from_hex`
+                * :py:func:`~pycryptoki.conversions.to_bytestring`
+                * :py:func:`~pycryptoki.conversions.from_bytestring`
+
     :param mechanism: See the :py:func:`~pycryptoki.mechanism.parse_mechanism` function
         for possible values.
     :param list output_buffers: List of integers that specify a size of output buffers to use
@@ -56,7 +71,7 @@ def c_encrypt(h_session, h_key, data, mechanism, output_buffers=None):
         ret, encrypted_python_string = do_multipart_operation(h_session, C_EncryptUpdate,
                                                               C_EncryptFinal, data, output_buffers)
     else:
-        plain_data, plain_data_length = to_char_array(data)
+        plain_data, plain_data_length = to_byte_array(from_bytestring(data))
         plain_data = cast(plain_data, POINTER(c_ubyte))
 
         enc_data = AutoCArray(ctype=c_ubyte)
@@ -111,6 +126,22 @@ def c_decrypt(h_session, h_key, encrypted_data, mechanism, output_buffers=None):
     :param int h_session: The session to use
     :param int h_key: The handle of the key to use to decrypt
     :param bytes encrypted_data: Data to be decrypted
+
+        .. note:: Data will be converted to hexadecimal by calling::
+
+                to_hex(from_bytestring(data))
+
+            If you need to pass in raw hex data, call::
+
+                to_bytestring(from_hex(hex-data))
+
+
+            References:
+                * :py:func:`~pycryptoki.conversions.to_hex`
+                * :py:func:`~pycryptoki.conversions.from_hex`
+                * :py:func:`~pycryptoki.conversions.to_bytestring`
+                * :py:func:`~pycryptoki.conversions.from_bytestring`
+
     :param mechanism: See the :py:func:`~pycryptoki.mechanism.parse_mechanism` function
         for possible values.
     :param list output_buffers: List of integers that specify a size of output buffers to use
@@ -141,7 +172,7 @@ def c_decrypt(h_session, h_key, encrypted_data, mechanism, output_buffers=None):
         # number of bytes needed. So the python string that's returned in the
         # end needs to be adjusted based on the second called to C_Decrypt
         # which will have the right length
-        c_enc_data, c_enc_data_len = to_char_array(encrypted_data)
+        c_enc_data, c_enc_data_len = to_byte_array(from_bytestring(encrypted_data))
         c_enc_data = cast(c_enc_data, POINTER(c_ubyte))
 
         decrypted_data = AutoCArray(ctype=c_ubyte)
@@ -178,6 +209,22 @@ def do_multipart_operation(h_session,
     :param c_update_function: C_<NAME>Update function to call to update each operation.
     :param c_finalize_function: Function to call at end of multipart operation.
     :param input_data_list: List of data to call update function on.
+
+        .. note:: Data will be converted to hexadecimal by calling::
+
+                to_hex(from_bytestring(data))
+
+            If you need to pass in raw hex data, call::
+
+                to_bytestring(from_hex(hex-data))
+
+
+            References:
+                * :py:func:`~pycryptoki.conversions.to_hex`
+                * :py:func:`~pycryptoki.conversions.from_hex`
+                * :py:func:`~pycryptoki.conversions.to_bytestring`
+                * :py:func:`~pycryptoki.conversions.from_bytestring`
+
     :param list output_buffers: List of integers that specify a size of output buffers to use
         for multi-part operations. By default will query with NULL pointer buffer
         to get required size of buffer
@@ -192,7 +239,7 @@ def do_multipart_operation(h_session,
         else:
             out_data_len = CK_ULONG()
             out_data = None
-        data_chunk, data_chunk_len = to_char_array(chunk)
+        data_chunk, data_chunk_len = to_byte_array(from_bytestring(chunk))
         data_chunk = cast(data_chunk, POINTER(c_ubyte))
 
         ret = c_update_function(h_session,
@@ -289,6 +336,22 @@ def c_unwrap_key(h_session, h_unwrapping_key, wrapped_key, key_template, mechani
     :param int h_session: The session to use
     :param int h_unwrapping_key: The wrapping key handle
     :param bytes wrapped_key: The wrapped key
+
+        .. note:: Data will be converted to hexadecimal by calling::
+
+                to_hex(from_bytestring(data))
+
+            If you need to pass in raw hex data, call::
+
+                to_bytestring(from_hex(hex-data))
+
+
+            References:
+                * :py:func:`~pycryptoki.conversions.to_hex`
+                * :py:func:`~pycryptoki.conversions.from_hex`
+                * :py:func:`~pycryptoki.conversions.to_bytestring`
+                * :py:func:`~pycryptoki.conversions.from_bytestring`
+
     :param dict key_template: The python template representing the new key's template
     :param mechanism: See the :py:func:`~pycryptoki.mechanism.parse_mechanism` function
         for possible values.
@@ -297,9 +360,7 @@ def c_unwrap_key(h_session, h_unwrapping_key, wrapped_key, key_template, mechani
     """
     mech = parse_mechanism(mechanism)
     c_template = Attributes(key_template).get_c_struct()
-    if isinstance(wrapped_key, string_types):
-        wrapped_key = bytearray(wrapped_key)
-    byte_wrapped_key, key_len = to_byte_array(wrapped_key)
+    byte_wrapped_key, key_len = to_byte_array(from_bytestring(wrapped_key))
     byte_wrapped_key = cast(byte_wrapped_key, CK_BYTE_PTR)
     h_output_key = CK_ULONG()
     ret = C_UnwrapKey(h_session, mech, CK_OBJECT_HANDLE(h_unwrapping_key),
