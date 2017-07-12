@@ -15,15 +15,15 @@ from ctypes import create_string_buffer, cast, byref, string_at, c_ubyte
 from six import integer_types
 
 from pycryptoki.conversions import from_bytestring
-from .attributes import Attributes, to_char_array, to_byte_array
+from .attributes import Attributes, to_byte_array
 from .common_utils import refresh_c_arrays, AutoCArray
 from .cryptoki import C_GenerateRandom, CK_BYTE_PTR, CK_ULONG, \
     C_SeedRandom, C_DigestInit, C_DigestUpdate, C_DigestFinal, C_Digest, C_CreateObject, \
     CA_SetPedId, CK_SLOT_ID, CA_GetPedId, C_DigestKey
 from .defines import CKR_OK
-from .mechanism import Mechanism, NullMech, parse_mechanism
-from .sign_verify import do_multipart_sign_or_digest
 from .exceptions import make_error_handle_function
+from .mechanism import parse_mechanism
+from .sign_verify import do_multipart_sign_or_digest
 
 
 def c_generate_random(h_session, length):
@@ -66,7 +66,7 @@ def c_seed_random(h_session, seed):
 c_seed_random_ex = make_error_handle_function(c_seed_random)
 
 
-def c_digest(h_session, data_to_digest, digest_flavor, mechanism=None):
+def c_digest(h_session, data_to_digest, digest_flavor, mechanism=None, output_buffer=None):
     """Digests some data
 
     :param int h_session: Session handle
@@ -76,6 +76,9 @@ def c_digest(h_session, data_to_digest, digest_flavor, mechanism=None):
         SHA224, SHA256, SHA384, SHA512)
     :param mechanism: See the :py:func:`~pycryptoki.mechanism.parse_mechanism` function
         for possible values. If None will use digest flavor.
+    :param list|int output_buffer: Integer or list of integers that specify a size of output 
+        buffer to use for an operation. By default will query with NULL pointer buffer
+        to get required size of buffer.
     :returns: (retcode, a python string of the digested data)
     :rtype: tuple
     """
@@ -96,28 +99,39 @@ def c_digest(h_session, data_to_digest, digest_flavor, mechanism=None):
     if is_multi_part_operation:
         ret, digested_python_string = do_multipart_sign_or_digest(h_session, C_DigestUpdate,
                                                                   C_DigestFinal,
-                                                                  data_to_digest)
+                                                                  data_to_digest,
+                                                                  output_buffer=output_buffer)
     else:
         # Get arguments
         c_data_to_digest, c_digest_data_len = to_byte_array(from_bytestring(data_to_digest))
         c_data_to_digest = cast(c_data_to_digest, POINTER(c_ubyte))
 
-        digested_data = AutoCArray(ctype=c_ubyte)
+        if output_buffer is not None:
+            size = CK_ULONG(output_buffer)
+            digested_data = AutoCArray(ctype=c_ubyte,
+                                       size=size)
+            ret = C_Digest(h_session,
+                           c_data_to_digest, c_digest_data_len,
+                           digested_data.array, digested_data.size)
+        else:
+            digested_data = AutoCArray(ctype=c_ubyte)
 
-        @refresh_c_arrays(1)
-        def _digest():
-            """ Perform the digest operations
-            """
-            return C_Digest(h_session,
-                            c_data_to_digest, c_digest_data_len,
-                            digested_data.array, digested_data.size)
+            @refresh_c_arrays(1)
+            def _digest():
+                """ Perform the digest operations
+                """
+                return C_Digest(h_session,
+                                c_data_to_digest, c_digest_data_len,
+                                digested_data.array, digested_data.size)
 
-        ret = _digest()
+            ret = _digest()
+
         if ret != CKR_OK:
             return ret, None
 
         # Convert Digested data into a python string
-        digested_python_string = string_at(digested_data.array, len(digested_data))
+        digested_python_string = string_at(digested_data.array,
+                                           digested_data.size.contents.value)
 
     return ret, digested_python_string
 

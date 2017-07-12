@@ -310,7 +310,7 @@ class TestEncryptData(object):
         mech = {"mech_type": m_type,
                 "params": params}
         ret, encrypted = c_encrypt(auth_session, h_key, encrypt_this, mechanism=mech,
-                                   output_buffers=[0xffff, 0xffff, 0xffff, 0xffff])
+                                   output_buffer=[0xffff, 0xffff, 0xffff, 0xffff])
         self.verify_ret(ret, exp_ret)
 
         # If not expecting error, proceed with testing
