@@ -132,7 +132,7 @@ from ..defines import (CKM_DES_CBC,
                        CKM_XOR_BASE_AND_DATA,
                        CKM_CONCATENATE_DATA_AND_BASE,
 
-                       CKM_ECDH1_DERIVE, CKM_AES_CTR)
+                       CKM_ECDH1_DERIVE, CKM_AES_CTR, CKM_AES_GMAC)
 
 MECH_LOOKUP = {
     # Iv
@@ -177,6 +177,7 @@ MECH_LOOKUP = {
     CKM_AES_XTS: AESXTSMechanism,
     (CKM_VENDOR_DEFINED + 0x11c): AESGCMMechanism,  # Backwards compatibility w/ older Lunas.
     CKM_AES_GCM: AESGCMMechanism,
+    CKM_AES_GMAC: AESGCMMechanism,
 
     CKM_RSA_PKCS_OAEP: RSAPKCSOAEPMechanism,
 
