@@ -18,7 +18,8 @@ from pycryptoki.defines import (CKM_DES_CBC, CKM_DES_KEY_GEN,
                                 CKM_RSA_PKCS, CKM_RSA_PKCS_OAEP, CKM_RSA_PKCS_KEY_PAIR_GEN,
                                 CKM_RSA_X_509, CKM_RSA_X9_31_KEY_PAIR_GEN,
                                 CKM_SHA_1, CKG_MGF1_SHA1, CKM_AES_KWP, CKM_AES_KW,
-                                CKR_MECHANISM_INVALID, CKR_MECHANISM_PARAM_INVALID, CKM_AES_CTR)
+                                CKR_MECHANISM_INVALID, CKR_MECHANISM_PARAM_INVALID, CKM_AES_CTR,
+                                CKM_AES_GMAC)
 from pycryptoki.defines import (CKR_OK, CKR_DATA_LEN_RANGE, CKR_KEY_SIZE_RANGE)
 from pycryptoki.encryption import c_encrypt, c_decrypt
 from pycryptoki.key_generator import c_generate_key, c_generate_key_pair, c_destroy_object
@@ -65,7 +66,8 @@ PARAM_TABLE = {CKM_DES_CBC: [{}, {'iv': list(range(8))}],
                CKM_AES_CTR: [{'cb': list(range(16))}],
                #  Note: Supported in Q3/Q4 2016 SA
                CKM_AES_ECB: [{}],
-               CKM_AES_GCM: [{'iv': list(range(8)), 'AAD': b'notsosecret', 'ulTagBits': 32}],
+               CKM_AES_GCM: [{'iv': list(range(8)), 'AAD': b'deadbeef', 'ulTagBits': 32}],
+               CKM_AES_GMAC: [{'iv': list(range(8)), 'AAD': b'deadbeef', 'ulTagBits': 32}],
                CKM_DES3_CBC: [{}, {'iv': list(range(8))}],
                CKM_DES3_ECB: [{}],
                CKM_DES3_CBC_PAD: [{}, {'iv': list(range(8))}],

@@ -5,7 +5,7 @@ import logging
 from ctypes import c_void_p, cast, pointer, sizeof
 
 from . import Mechanism
-from ..attributes import to_byte_array, to_char_array
+from ..attributes import to_byte_array
 from ..cryptoki import CK_ULONG, CK_BYTE, CK_BYTE_PTR, CK_AES_XTS_PARAMS, \
     CK_AES_GCM_PARAMS, CK_KEY_DERIVATION_STRING_DATA, CK_AES_CBC_ENCRYPT_DATA_PARAMS, \
     CK_AES_CTR_PARAMS
@@ -90,7 +90,7 @@ class AESXTSMechanism(Mechanism):
 
 class AESGCMMechanism(Mechanism):
     """
-    Creates the AES-GCM specific param structure & converts python types to C types. 
+    Creates the AES-GCM specific param structure & converts python types to C types.
     """
     REQUIRED_PARAMS = ['iv', 'AAD', 'ulTagBits']
 
@@ -112,7 +112,7 @@ class AESGCMMechanism(Mechanism):
         gcm_params.ulIvLen = iv_len
         # Assuming 8 bits per entry in IV.
         gcm_params.ulIvBits = CK_ULONG(len(self.params['iv']) * 8)
-        aad, aadlen = to_char_array(self.params['AAD'])
+        aad, aadlen = to_byte_array(self.params['AAD'])
         gcm_params.pAAD = cast(aad, CK_BYTE_PTR)
         gcm_params.ulAADLen = aadlen
         gcm_params.ulTagBits = CK_ULONG(self.params['ulTagBits'])

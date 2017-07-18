@@ -6,6 +6,7 @@ from ctypes import cast, c_ulong, c_ubyte
 from mock import patch
 from six import integer_types
 
+from pycryptoki.conversions import from_hex, to_bytestring
 from pycryptoki.cryptoki import (CK_RSA_PKCS_PSS_PARAMS,
                                  POINTER,
                                  CK_ULONG,
@@ -43,7 +44,7 @@ MECH_PARAMS = {CKM_AES_XTS: {'hTweakKey': 0,
                                    'sourceData': list(range(12)),
                                    'test_id': 'RSA_OAEP'},
                CKM_AES_GCM: {'iv': list(range(16)),
-                             'AAD': 'testme',
+                             'AAD': b'deadbeef',
                              'ulTagBits': 32,
                              'test_id': 'AES_GCM'},
                CKM_RSA_PKCS_PSS: {'hashAlg': CKM_SHA_1,
@@ -126,7 +127,7 @@ class TestMechanisms(object):
         :return:
         """
         mech = AESGCMMechanism(mech_type=CKM_AES_GCM,
-                               params={'AAD': 'notsosecret',
+                               params={'AAD': to_bytestring(from_hex(b'deadbeef')),
                                        'iv': list(range(12)),
                                        'ulTagBits': 32})
         cmech = mech.to_c_mech()

@@ -6,6 +6,7 @@ import re
 from ctypes import cast, c_char_p, c_void_p, create_string_buffer, \
     byref, pointer
 
+from .common_utils import AutoCArray, refresh_c_arrays
 # cryptoki constants
 from .cryptoki import (CK_ULONG,
                        CK_BBOOL,
@@ -18,8 +19,7 @@ from .cryptoki import (CK_ULONG,
                        CK_USER_TYPE,
                        CK_TOKEN_INFO,
                        CK_VOID_PTR,
-                       CK_BYTE)
-
+                       CK_BYTE, CK_INFO, C_GetInfo)
 # Cryptoki Functions
 from .cryptoki import (C_Initialize,
                        C_GetSlotList,
@@ -39,8 +39,6 @@ from .cryptoki import (C_Initialize,
                        CA_CloseApplicationID,
                        CA_Restart,
                        CA_SetApplicationID)
-
-from .common_utils import AutoCArray, refresh_c_arrays
 from .defines import CKR_OK, CKF_RW_SESSION, CKF_SERIAL_SESSION
 from .exceptions import make_error_handle_function
 
@@ -127,6 +125,38 @@ def login(h_session, slot_num=1, password=None, user_type=1):
 
 
 login_ex = make_error_handle_function(login)
+
+
+def c_get_info():
+    """
+    Get general information about the Cryptoki Library
+
+    Returns a dictionary containing the following keys:
+
+        * cryptokiVersion
+        * manufacturerID
+        * flags
+        * libraryDescription
+        * libraryVersion
+
+    ``cryptokiVersion`` and ``libraryVersion`` are :ref:`~pycryptoki.cryptoki.CK_VERSION` structs,
+    and the major/minor values can be accessed directly (``info['cryptokiVersion'].major == 2``)
+
+    :return: (retcode, info dictionary)
+    """
+    info = {}
+    info_struct = CK_INFO()
+    ret = C_GetInfo(byref(info_struct))
+    if ret == CKR_OK:
+        info['cryptokiVersion'] = info_struct.cryptokiVersion
+        info['manufacturerID'] = info_struct.manufacturerID
+        info['flags'] = info_struct.flags
+        info['libraryDescription'] = info_struct.libraryDescription
+        info['libraryVersion'] = info_struct.libraryVersion
+    return ret, info
+
+
+c_get_info_ex = make_error_handle_function(c_get_info)
 
 
 def get_slot_info(description):
