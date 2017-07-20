@@ -178,9 +178,11 @@ class AESCBCEncryptDataMechanism(Mechanism):
 class AESCTRMechanism(Mechanism):
     """
     AES CTR Mechanism param conversion.
+    
+    
     """
 
-    REQUIRED_PARAMS = ['cb']
+    REQUIRED_PARAMS = ['cb', 'ulCounterBits']
 
     def to_c_mech(self):
         """
@@ -191,7 +193,7 @@ class AESCTRMechanism(Mechanism):
         super(AESCTRMechanism, self).to_c_mech()
         ctr_params = CK_AES_CTR_PARAMS()
         ctr_params.cb = (CK_BYTE * 16)(*self.params['cb'])
-        ctr_params.ulCounterBits = CK_ULONG(len(self.params['cb']))
+        ctr_params.ulCounterBits = CK_ULONG(self.params['ulCounterBits'])
         self.mech.pParameter = cast(pointer(ctr_params), c_void_p)
         self.mech.usParameterLen = CK_ULONG(sizeof(ctr_params))
         return self.mech
