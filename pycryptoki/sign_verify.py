@@ -5,6 +5,8 @@ import logging
 from _ctypes import POINTER
 from ctypes import create_string_buffer, cast, byref, string_at, c_ubyte
 
+from pycryptoki.conversions import from_bytestring
+
 from .attributes import to_char_array, to_byte_array
 from .common_utils import refresh_c_arrays, AutoCArray
 from .conversions import from_bytestring
@@ -194,7 +196,7 @@ def do_multipart_verify(h_session, input_data_list, signature):
         return error, None
 
     # Finalizing multipart decrypt operation
-    c_sig_data, c_sig_data_len = to_char_array(signature)
+    c_sig_data, c_sig_data_len = to_byte_array(from_bytestring(signature))
     output = cast(c_sig_data, CK_BYTE_PTR)
     ret = C_VerifyFinal(h_session, output, c_sig_data_len)
     return ret
@@ -236,15 +238,15 @@ def c_verify(h_session, h_key, data_to_verify, signature, mechanism):
         ret = do_multipart_verify(h_session, data_to_verify, signature)
     else:
         # Prepare the data to verify
-        c_data_to_verify, plain_date_len = to_byte_array(from_bytestring(data_to_verify))
+        c_data_to_verify, plain_data_len = to_byte_array(from_bytestring(data_to_verify))
         c_data_to_verify = cast(c_data_to_verify, POINTER(c_ubyte))
 
-        c_signature, c_sig_length = to_char_array(signature)
+        c_signature, c_sig_length = to_byte_array(from_bytestring(signature))
         c_signature = cast(c_signature, POINTER(c_ubyte))
 
         # Actually verify the data
         ret = C_Verify(h_session,
-                       c_data_to_verify, plain_date_len,
+                       c_data_to_verify, plain_data_len,
                        c_signature, c_sig_length)
 
     return ret
