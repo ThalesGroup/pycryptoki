@@ -294,20 +294,20 @@ def do_multipart_operation(h_session,
         LOG.debug("%s call after a %s failure returned: %s (%s)",
                   c_finalize_function.__name__,
                   c_update_function.__name__, ret_vals_dictionary[ret], ret)
-        return error, None
+        return error, b"".join(python_data)
 
     # Finalizing multipart decrypt operation
     fin_out_data_len = CK_ULONG()
     # Get buffer size for data
     ret = c_finalize_function(h_session, None, byref(fin_out_data_len))
     if ret != CKR_OK:
-        return ret, None
+        return ret, b"".join(python_data)
 
     fin_out_data = create_string_buffer(b"", fin_out_data_len.value)
     output = cast(fin_out_data, CK_BYTE_PTR)
     ret = c_finalize_function(h_session, output, byref(fin_out_data_len))
     if ret != CKR_OK:
-        return ret, None
+        return ret, b"".join(python_data)
 
     if fin_out_data_len.value > 0:
         python_data.append(string_at(fin_out_data, fin_out_data_len.value))
