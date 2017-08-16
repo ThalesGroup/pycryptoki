@@ -74,6 +74,7 @@ from .rc import (RC2CBCMechanism,
                  RC5Mechanism)
 from .rsa import (RSAPKCSOAEPMechanism,
                   RSAPKCSPSSMechanism)
+from .kdf import PRFKDFDeriveMechanism
 from ..defines import (CKM_DES_CBC,
                        CKM_DES3_CBC,
                        CKM_CAST3_CBC,
@@ -132,7 +133,11 @@ from ..defines import (CKM_DES_CBC,
                        CKM_XOR_BASE_AND_DATA,
                        CKM_CONCATENATE_DATA_AND_BASE,
 
-                       CKM_ECDH1_DERIVE, CKM_AES_CTR, CKM_AES_GMAC)
+                       CKM_ECDH1_DERIVE,
+                       CKM_AES_CTR,
+                       CKM_AES_GMAC,
+
+                       CKM_PRF_KDF)
 
 MECH_LOOKUP = {
     # Iv
@@ -199,4 +204,6 @@ MECH_LOOKUP = {
     CKM_CONCATENATE_DATA_AND_BASE: StringDataDerivationMechanism,
 
     CKM_ECDH1_DERIVE: ECDH1DeriveMechanism,
+
+    CKM_PRF_KDF: PRFKDFDeriveMechanism,
 }
