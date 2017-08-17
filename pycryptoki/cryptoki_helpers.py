@@ -4,14 +4,14 @@ Helper functions to get us access to the PKCS11 library.
 import logging
 import os
 import re
-import sys
 import struct
+import sys
 from ctypes import CDLL
 
 from six.moves import configparser
 
-from .exceptions import LunaException
 from .defaults import CHRYSTOKI_DLL_FILE, CHRYSTOKI_CONFIG_FILE
+from .exceptions import LunaException
 
 LOG = logging.getLogger(__name__)
 
@@ -169,6 +169,17 @@ class CryptokiDLLSingleton(object):
         return self.loaded_dll_library
 
 
+def log_args(funcname, args):
+    """Log function name & arguments for a cryptoki ctypes call.
+    
+    :param str funcname: Function name
+    :param tuple args: Arguments to be passed to ctypes function.
+    """
+    log_msg = "Cryptoki call: {}({})".format(funcname,
+                                             ", ".join(str(arg) for arg in args))
+    LOG.debug(log_msg)
+
+
 def make_late_binding_function(function_name):
     """A function factory for creating a function that will bind to the cryptoki
     DLL only when the function is called.
@@ -177,7 +188,7 @@ def make_late_binding_function(function_name):
 
     """
 
-    def luna_function(*args, **kwargs):
+    def luna_function(*args):
         """
 
         :param *args:
@@ -188,13 +199,13 @@ def make_late_binding_function(function_name):
         late_binded_function.restype = luna_function.restype
         late_binded_function.argtypes = luna_function.argtypes
 
+        log_args(function_name, args)
         try:
-            return_value = late_binded_function(*args, **kwargs)
+            return_value = late_binded_function(*args)
             return return_value
         except Exception as e:
-            raise CryptokiDLLException("Call to '%s(%s, **%s)' failed.".format(function_name,
-                                                                               args,
-                                                                               kwargs), e)
+            raise CryptokiDLLException("Call to '%s(%s)' failed.".format(function_name,
+                                                                         ", ".join(args)), e)
 
     luna_function.__name__ = function_name
     return luna_function

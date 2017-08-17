@@ -8,6 +8,7 @@ from ctypes import c_void_p, cast, pointer, POINTER, sizeof, create_string_buffe
 
 from six import integer_types
 
+from pycryptoki.lookup_dicts import MECH_NAME_LOOKUP
 from ..cryptoki import CK_AES_CBC_PAD_EXTRACT_PARAMS, CK_MECHANISM, \
     CK_ULONG, CK_ULONG_PTR, CK_AES_CBC_PAD_INSERT_PARAMS, CK_BYTE, CK_BYTE_PTR, CK_MECHANISM_TYPE
 from ..defines import *
@@ -87,6 +88,16 @@ class Mechanism(object):
                                      "Missing required parameters:\n\t"
                                      "{}".format(self.__class__,
                                                  "\n\t".join(missing_params)))
+
+    def __repr__(self):
+        """
+        Return a human-readable string of the mechanism data.
+        """
+        # todo: lookup dict for the mechanism name.
+        return "{}(mech_type: {}," \
+               " {})".format(self.__class__.__name__,
+                             MECH_NAME_LOOKUP.get(self.mech_type, "UNKNOWN"),
+                             ", ".join("{}: {}".format(k, v) for k, v in self.params.items()))
 
     def to_c_mech(self):
         """
