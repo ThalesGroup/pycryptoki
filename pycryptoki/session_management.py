@@ -19,7 +19,7 @@ from .cryptoki import (CK_ULONG,
                        CK_USER_TYPE,
                        CK_TOKEN_INFO,
                        CK_VOID_PTR,
-                       CK_BYTE, CK_INFO, C_GetInfo)
+                       CK_BYTE, CK_INFO, C_GetInfo, CA_GetFirmwareVersion, c_ulong)
 # Cryptoki Functions
 from .cryptoki import (C_Initialize,
                        C_GetSlotList,
@@ -40,7 +40,7 @@ from .cryptoki import (C_Initialize,
                        CA_Restart,
                        CA_SetApplicationID)
 from .defines import CKR_OK, CKF_RW_SESSION, CKF_SERIAL_SESSION
-from .exceptions import make_error_handle_function
+from .exceptions import make_error_handle_function, LunaCallException
 
 LOG = logging.getLogger(__name__)
 
@@ -468,3 +468,35 @@ def ca_restart(slot):
 
 
 ca_restart_ex = make_error_handle_function(ca_restart)
+
+
+def get_firmware_version(slot):
+    """
+    Returns a string representing the firmware version of the given slot.
+
+    It will first try to call ``CA_GetFirmwareVersion``, and if that fails (not present on older
+    cryptoki libraries), will call ``C_GetTokenInfo``.
+
+    :param int slot: Token slot number
+    :return: Firmware String in the format "X.Y.Z", where X is major, Y is minor, Z is subminor.
+    :rtype: str
+    """
+
+    # Note, CA_GetFirmwareVersion should be available from 6.3+.
+    try:
+        ul_major, ul_minor, ul_subminor = c_ulong(), c_ulong(), c_ulong()
+        ret = CA_GetFirmwareVersion(slot, byref(ul_major), byref(ul_minor), byref(ul_subminor))
+        if ret != 0:
+            LOG.warning("Failed retrieving Firmware information from slot '%s'", slot)
+            raise LunaCallException(ret, "CA_GetFirmwareVersion", (0,))
+        else:
+            major = ul_major.value
+            minor = ul_minor.value
+            subminor = ul_subminor.value
+    except AttributeError:
+        raw_firmware = c_get_token_info_ex(slot)['firmwareVersion']
+        major = raw_firmware.major
+        minor = raw_firmware.minor / 10
+        subminor = raw_firmware.minor % 10
+
+    return "{}.{}.{}".format(major, minor, subminor)

@@ -16,7 +16,7 @@ from pycryptoki.key_generator import c_destroy_object
 from pycryptoki.object_attr_lookup import c_find_objects_ex
 from pycryptoki.session_management import c_initialize_ex, c_close_all_sessions_ex, \
     ca_factory_reset_ex, c_open_session_ex, login_ex, c_finalize_ex, \
-    c_close_session, c_logout, c_get_token_info_ex
+    c_close_session, c_logout, c_get_token_info_ex, get_firmware_version
 from pycryptoki.test_functions import LunaException
 from pycryptoki.token_management import c_init_token_ex, c_get_mechanism_list_ex
 
@@ -87,11 +87,7 @@ def pytest_configure(config):
         flags = token_info['flags']
         is_ped = (flags & CKF_PROTECTED_AUTHENTICATION_PATH) != 0
         hsm_config["is_ped"] = is_ped
-        raw_firmware = token_info['firmwareVersion']
-        hsm_config['firmware'] = "{}.{}.{}".format(raw_firmware.major,
-                                                   raw_firmware.minor / 10,
-                                                   raw_firmware.minor % 10)
-
+        hsm_config['firmware'] = get_firmware_version(slot)
         if is_ped:
             admin_pwd = None
             co_pwd = config.getoption("copassword", default=None)
