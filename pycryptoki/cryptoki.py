@@ -2361,7 +2361,7 @@ CA_Get.argtypes = [CK_SLOT_ID, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR]
 
 CA_GetFirmwareVersion = make_late_binding_function('CA_GetFirmwareVersion')
 CA_GetFirmwareVersion.restype = CK_RV
-CA_GetFirmwareVersion.argypes = [CK_SLOT_ID, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR]
+CA_GetFirmwareVersion.argtypes = [CK_SLOT_ID, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR]
 
 CK_GetTotalOperations = CFUNCTYPE(CK_RV, CK_SLOT_ID, POINTER(c_int))
 CK_ResetTotalOperations = CFUNCTYPE(CK_RV, CK_SLOT_ID)
