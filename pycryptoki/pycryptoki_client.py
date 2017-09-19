@@ -1,8 +1,11 @@
 from __future__ import print_function
 
+from six import string_types, binary_type
+
 """
 Contains both a local and remote pycryptoki client
 """
+import inspect
 import logging
 import socket
 from functools import wraps
@@ -13,8 +16,9 @@ import time
 from rpyc.core.protocol import PingError
 
 from .daemon import rpyc_pycryptoki
+from .lookup_dicts import ATTR_NAME_LOOKUP, ret_vals_dictionary
 
-log = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 # from https://github.com/saltycrane/retry-decorator/blob/master/decorators.py
@@ -83,6 +87,42 @@ def connection_test(func):
     return wrapper
 
 
+def log_args(funcname, arg_dict):
+    """
+    This will run through each of the key, value pairs of the argument spec passed into
+    pycryptoki and perform the following checks:
+
+        if key is a template, format the template data through a dict lookup
+        if key is password, set the log data to be '*'
+        if value is longer than 10 characters, shorten it.
+
+    :param arg_dict:
+    :return:
+    """
+    log_msg = "Running remote pycryptoki command {}()".format(funcname)
+    if arg_dict:
+        log_msg += " with args:"
+    log_list = [log_msg]
+    for key, value in arg_dict.items():
+        if "template" in key and isinstance(value, dict):
+            # Means it's a template, so let's perform a lookup on all of the objects within
+            # this.
+            log_list.append("\t%s: " % key)
+            for template_key, template_value in arg_dict[key].items():
+                log_list.append("\t\t%s: %s" % (ATTR_NAME_LOOKUP.get(template_key, template_key),
+                                                template_value))
+        elif "password" in key:
+            log_list.append("\t%s: *" % key)
+        else:
+            if isinstance(value, (string_types, binary_type)) and len(value) > 20:
+                msg = "\t%s: %s[...]%s" % (key, value[:10], value[-10:])
+            else:
+                msg = "\t%s: %s" % (key, value)
+            log_list.append(msg)
+
+    LOG.debug("\n".join(log_list))
+
+
 class RemotePycryptokiClient(object):
     """Class to handle connecting to a remote Pycryptoki RPYC daemon.
 
@@ -106,16 +146,16 @@ class RemotePycryptokiClient(object):
         """
         # maybe we should be reloading cryptoki dll?
         if self.started and not self.connection.closed:
-            log.info("Stopping remote pycryptoki connection.")
+            LOG.info("Stopping remote pycryptoki connection.")
             self.connection.close()
 
-    @retry((socket.error, EOFError, PingError), logger=log)
+    @retry((socket.error, EOFError, PingError), logger=LOG)
     def start(self):
         """
         Start the connection to the remote RPYC daemon.
         """
         if not self.started:
-            log.info("Starting remote pycryptoki connection")
+            LOG.info("Starting remote pycryptoki connection")
             self.connection = rpyc.classic.connect(self.ip, port=self.port)
             self.connection.ping()
             self.server = self.connection.root
@@ -153,17 +193,28 @@ class RemotePycryptokiClient(object):
                 Closer to allow us to log the full args & keyword argument list
                 of all calls.
                 """
-                masked_args = args
-                masked_kwargs = kwargs
-                if any(x in name for x in ("login", "create_container")):
-                    masked_args = tuple("*" for _ in args)
-                    masked_kwargs = {key: "*" for key, _ in list(kwargs.items())}
+                will_raise = False
+                if name.endswith("_ex"):
+                    func = getattr(self.server, name.rsplit("_ex", 1)[0])
+                    will_raise = True
+                else:
+                    func = getattr(self.server, name)
+                nice_args = inspect.getcallargs(func, *args, **kwargs)
 
-                masked_args = ["{:.10}".format(str(arg)) for arg in masked_args]
-                masked_kwargs = ["{:.10}".format(str(kwarg)) for kwarg in masked_kwargs]
-                log.info("Running remote pycryptoki command: "
-                         "{0}(args={1}, kwargs={2})".format(name, masked_args, masked_kwargs))
-                return getattr(self.server, name)(*args, **kwargs)
+                log_args(name, nice_args)
+                ret = getattr(self.server, name)(*args, **kwargs)
+                # Two major calling types for pycryptoki:
+                # 1. with _ex appended, which will raise an exception if retcode != 0
+                # 2. without _ex, which will return either just the retcode, or a tuple where the
+                #    first item is the retcode.
+                # We can assume the calls that could raise an exception will *also* log the retcode.
+                if not will_raise:
+                    retcode = ret
+                    if isinstance(ret, tuple):
+                        retcode = ret[0]
+                    LOG.debug("Remote call '%s' returned %s (%s)", name,
+                              ret_vals_dictionary.get(retcode, "Unknown"), retcode)
+                return ret
 
             return wrapper
         else:
@@ -186,7 +237,7 @@ class LocalPycryptokiClient(object):
         Function that overrides python attribute lookup; automagically calls
         functions in pycryptoki if they're listed in the daemon
         """
-        log.info("Running local pycryptoki command: {0}".format(name))
+        LOG.info("Running local pycryptoki command: {0}".format(name))
         return getattr(rpyc_pycryptoki, name)
 
     def kill(self):

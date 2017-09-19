@@ -2,12 +2,15 @@
 Exception-s and exception handling code.
 """
 import inspect
+import logging
 from functools import wraps
 
 from six import integer_types
 
 from .defines import CKR_OK
 from .lookup_dicts import ret_vals_dictionary, ATTR_NAME_LOOKUP
+
+LOG = logging.getLogger(__name__)
 
 
 def make_error_handle_function(luna_function):
@@ -127,7 +130,9 @@ def check_luna_exception(ret, luna_function, args, kwargs):
                 msg = "\t\t%s: %s" % (key, value)
             log_list.append(msg)
 
-    arg_string = "{}".format("\n".join(log_list))
+    arg_string = "({})".format("\n".join(log_list))
+    LOG.debug("Call to %s returned %s (%s)", luna_function,
+              ret_vals_dictionary.get(ret, "Unknown"), ret)
     if ret != CKR_OK:
         raise LunaCallException(ret, luna_function.__name__, arg_string)
 
