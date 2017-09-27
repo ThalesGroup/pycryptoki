@@ -5,22 +5,19 @@ import logging
 import os
 import sys
 
-# From http://stackoverflow.com/a/7759927
-from pycryptoki.test_functions import LunaException
-
-from six import b
 import pytest
 
 from . import config as hsm_config
 from pycryptoki.attributes import Attributes
 from pycryptoki.defaults import ADMINISTRATOR_PASSWORD, ADMIN_PARTITION_LABEL, CO_PASSWORD
-from pycryptoki.defines import CKF_RW_SESSION, CKF_SERIAL_SESSION, CKF_PROTECTED_AUTHENTICATION_PATH, CKR_OK
-from pycryptoki.defines import CKF_SO_SESSION
+from pycryptoki.defines import CKF_RW_SESSION, CKF_SERIAL_SESSION, CKR_OK, CKF_SO_SESSION, \
+    CKF_PROTECTED_AUTHENTICATION_PATH
 from pycryptoki.key_generator import c_destroy_object
 from pycryptoki.object_attr_lookup import c_find_objects_ex
 from pycryptoki.session_management import c_initialize_ex, c_close_all_sessions_ex, \
     ca_factory_reset_ex, c_open_session_ex, login_ex, c_finalize_ex, \
-    c_close_session, c_logout, c_get_token_info_ex
+    c_close_session, c_logout, c_get_token_info_ex, get_firmware_version
+from pycryptoki.test_functions import LunaException
 from pycryptoki.token_management import c_init_token_ex, c_get_mechanism_list_ex
 
 LOG = logging.getLogger(__name__)
@@ -80,6 +77,7 @@ def pytest_configure(config):
 
     hsm_config["test_slot"] = config.getoption("test_slot")
     hsm_config["user"] = config.getoption("user")
+    hsm_config["reset"] = config.getoption("reset")
     c_initialize_ex()
     try:
         # Factory Reset
@@ -89,11 +87,7 @@ def pytest_configure(config):
         flags = token_info['flags']
         is_ped = (flags & CKF_PROTECTED_AUTHENTICATION_PATH) != 0
         hsm_config["is_ped"] = is_ped
-        raw_firmware = token_info['firmwareVersion']
-        hsm_config['firmware'] = "{}.{}.{}".format(raw_firmware.major,
-                                                   raw_firmware.minor / 10,
-                                                   raw_firmware.minor % 10)
-
+        hsm_config['firmware'] = get_firmware_version(slot)
         if is_ped:
             admin_pwd = None
             co_pwd = config.getoption("copassword", default=None)
@@ -115,6 +109,16 @@ def pytest_configure(config):
             hsm_config['password'] = admin_pwd
     finally:
         c_finalize_ex()
+
+
+def pytest_collection_modifyitems(session, config, items):
+    """
+    Deselect tests marked with @pytest.mark.reset if --reset isn't given on cmdline.
+    """
+    reset = config.getoption('reset')
+    for test_item in items[:]:
+        if test_item.get_marker('reset') and not reset:
+            items.remove(test_item)
 
 
 @pytest.yield_fixture(scope='session', autouse=True)
@@ -175,27 +179,6 @@ def auth_session(pytestconfig, session):
     login_ex(session, slot, hsm_config["password"], usertype)
     yield session
     c_logout(session)
-
-
-@pytest.yield_fixture(scope="class", autouse=True)
-def partition_clearer(auth_session):
-    """
-    Autoused fixture to make sure the active session is cleared from all created objects.
-
-    :param auth_session:
-    :return:
-    """
-    yield
-    try:
-        # Use a blank template so we can grab everything.
-        template = Attributes({}).get_c_struct()
-        objects = c_find_objects_ex(auth_session, template, 1000)
-        for handle in objects:
-            ret = c_destroy_object(auth_session, handle)
-            if ret != CKR_OK:
-                LOG.info("Failed to destroy object w/ handle %s", handle)
-    except LunaException:
-        LOG.exception("Failed to destroy all objects created on this session")
 
 
 @pytest.yield_fixture(scope="class")

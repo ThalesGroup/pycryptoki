@@ -6,6 +6,7 @@ import re
 from ctypes import cast, c_char_p, c_void_p, create_string_buffer, \
     byref, pointer
 
+from .common_utils import AutoCArray, refresh_c_arrays
 # cryptoki constants
 from .cryptoki import (CK_ULONG,
                        CK_BBOOL,
@@ -18,8 +19,7 @@ from .cryptoki import (CK_ULONG,
                        CK_USER_TYPE,
                        CK_TOKEN_INFO,
                        CK_VOID_PTR,
-                       CK_BYTE)
-
+                       CK_BYTE, CK_INFO, C_GetInfo, CA_GetFirmwareVersion, c_ulong)
 # Cryptoki Functions
 from .cryptoki import (C_Initialize,
                        C_GetSlotList,
@@ -39,10 +39,8 @@ from .cryptoki import (C_Initialize,
                        CA_CloseApplicationID,
                        CA_Restart,
                        CA_SetApplicationID)
-
-from .common_utils import AutoCArray, refresh_c_arrays
 from .defines import CKR_OK, CKF_RW_SESSION, CKF_SERIAL_SESSION
-from .test_functions import make_error_handle_function
+from .exceptions import make_error_handle_function, LunaCallException
 
 LOG = logging.getLogger(__name__)
 
@@ -127,6 +125,38 @@ def login(h_session, slot_num=1, password=None, user_type=1):
 
 
 login_ex = make_error_handle_function(login)
+
+
+def c_get_info():
+    """
+    Get general information about the Cryptoki Library
+
+    Returns a dictionary containing the following keys:
+
+        * cryptokiVersion
+        * manufacturerID
+        * flags
+        * libraryDescription
+        * libraryVersion
+
+    ``cryptokiVersion`` and ``libraryVersion`` are :ref:`~pycryptoki.cryptoki.CK_VERSION` structs,
+    and the major/minor values can be accessed directly (``info['cryptokiVersion'].major == 2``)
+
+    :return: (retcode, info dictionary)
+    """
+    info = {}
+    info_struct = CK_INFO()
+    ret = C_GetInfo(byref(info_struct))
+    if ret == CKR_OK:
+        info['cryptokiVersion'] = info_struct.cryptokiVersion
+        info['manufacturerID'] = info_struct.manufacturerID
+        info['flags'] = info_struct.flags
+        info['libraryDescription'] = info_struct.libraryDescription
+        info['libraryVersion'] = info_struct.libraryVersion
+    return ret, info
+
+
+c_get_info_ex = make_error_handle_function(c_get_info)
 
 
 def get_slot_info(description):
@@ -438,3 +468,35 @@ def ca_restart(slot):
 
 
 ca_restart_ex = make_error_handle_function(ca_restart)
+
+
+def get_firmware_version(slot):
+    """
+    Returns a string representing the firmware version of the given slot.
+
+    It will first try to call ``CA_GetFirmwareVersion``, and if that fails (not present on older
+    cryptoki libraries), will call ``C_GetTokenInfo``.
+
+    :param int slot: Token slot number
+    :return: Firmware String in the format "X.Y.Z", where X is major, Y is minor, Z is subminor.
+    :rtype: str
+    """
+
+    # Note, CA_GetFirmwareVersion should be available from 6.3+.
+    try:
+        ul_major, ul_minor, ul_subminor = c_ulong(), c_ulong(), c_ulong()
+        ret = CA_GetFirmwareVersion(slot, byref(ul_major), byref(ul_minor), byref(ul_subminor))
+        if ret != 0:
+            LOG.warning("Failed retrieving Firmware information from slot '%s'", slot)
+            raise LunaCallException(ret, "CA_GetFirmwareVersion", (0,))
+        else:
+            major = ul_major.value
+            minor = ul_minor.value
+            subminor = ul_subminor.value
+    except AttributeError:
+        raw_firmware = c_get_token_info_ex(slot)['firmwareVersion']
+        major = raw_firmware.major
+        minor = raw_firmware.minor / 10
+        subminor = raw_firmware.minor % 10
+
+    return "{}.{}.{}".format(major, minor, subminor)

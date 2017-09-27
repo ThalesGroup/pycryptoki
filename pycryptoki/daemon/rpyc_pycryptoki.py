@@ -19,25 +19,27 @@ just returning the second part of the regular return tuple::
 """
 from __future__ import print_function
 
-import logging
 import multiprocessing
 import os
 import signal
 import sys
 import time
-from optparse import OptionParser
+from argparse import ArgumentParser
+from logging.handlers import RotatingFileHandler
 
 import rpyc
 from rpyc.utils.server import ThreadedServer
 
 import pycryptoki
+from pycryptoki.attributes import *
 from pycryptoki.audit_handling import (ca_get_time, ca_get_time_ex,
                                        ca_init_audit, ca_init_audit_ex,
                                        ca_time_sync, ca_time_sync_ex)
 from pycryptoki.backup import (ca_open_secure_token, ca_open_secure_token_ex,
                                ca_close_secure_token, ca_close_secure_token_ex,
                                ca_extract, ca_extract_ex,
-                               ca_insert, ca_insert_ex)
+                               ca_insert, ca_insert_ex, ca_sim_insert, ca_sim_insert_ex,
+                               ca_sim_extract_ex, ca_sim_extract)
 from pycryptoki.cryptoki import CK_ULONG
 from pycryptoki.encryption import (c_encrypt, c_encrypt_ex,
                                    c_decrypt, c_decrypt_ex,
@@ -133,7 +135,7 @@ from pycryptoki.token_management import (c_init_token, c_init_token_ex,
 
 CRYPTO_OPS = pycryptoki.cryptoki.__all__[:]
 
-logger = logging.getLogger(__name__)
+MAX_LOG_SIZE = 5242880
 
 
 class PycryptokiService(rpyc.SlaveService):
@@ -161,6 +163,14 @@ class PycryptokiService(rpyc.SlaveService):
         else:
             name = "exposed_" + name
         return getattr(self, name)
+
+    # attribute transforms
+    exposed_to_byte_array = staticmethod(to_byte_array)
+    exposed_to_char_array = staticmethod(to_char_array)
+    exposed_to_bool = staticmethod(to_bool)
+    exposed_to_long = staticmethod(to_long)
+    exposed_to_ck_date = staticmethod(to_ck_date)
+    exposed_to_subattributes = staticmethod(to_sub_attributes)
 
     # encryption.py
     exposed_c_wrap_key = staticmethod(c_wrap_key)
@@ -267,6 +277,10 @@ class PycryptokiService(rpyc.SlaveService):
     exposed_ca_extract_ex = staticmethod(ca_extract_ex)
     exposed_ca_insert = staticmethod(ca_insert)
     exposed_ca_insert_ex = staticmethod(ca_insert_ex)
+    exposed_ca_sim_insert = staticmethod(ca_sim_insert)
+    exposed_ca_sim_insert_ex = staticmethod(ca_sim_insert_ex)
+    exposed_ca_sim_extract = staticmethod(ca_sim_extract)
+    exposed_ca_sim_extract_ex = staticmethod(ca_sim_extract_ex)
 
     # audit_handling.py
     exposed_ca_get_time = staticmethod(ca_get_time)
@@ -401,28 +415,57 @@ def create_server_subprocess(target, args):
     return server
 
 
+def configure_logging(logfile=None):
+    """
+    Setup logging. If a log file is specified, will log to that file.
+
+    :param str logfile: Log file path/name to use for logging.
+    :return: Configured logger.
+    """
+    logger = logging.getLogger("pycryptoki")
+    logger.setLevel(getattr(logging, args.loglevel))
+    if not logfile:
+        handler = logging.StreamHandler(sys.stdout)
+    else:
+        # 5 megabyte file, max of 10 files.
+        handler = RotatingFileHandler(logfile, maxBytes=MAX_LOG_SIZE, backupCount=10)
+    handler.setFormatter(logging.Formatter('%(asctime)s:%(name)s:%(levelname)s: %(message)s'))
+    logger.addHandler(handler)
+    return logger
+
+
 if __name__ == '__main__':
+    parser = ArgumentParser()
+    parser.add_argument("-i", "--ip_address",
+                        dest="i",
+                        help="pycryptoki daemon IP address",
+                        metavar="<IP address>",
+                        default="localhost",
+                        action="store")
+    parser.add_argument("-p", "--port", dest="p",
+                        help="pycryptoki daemon IP port", metavar="<number>",
+                        default=8001,
+                        action="store",
+                        type=int)
+    parser.add_argument("-f", "--forked", dest="forked",
+                        help="Fork the daemon from the parent process so we can recover from "
+                             "segfaults", default=False, action="store_true")
+    parser.add_argument("-l", "--loglevel",
+                        choices=["DEBUG", "INFO", "WARNING", "ERROR"],
+                        default="DEBUG",
+                        action="store",
+                        help="Log level.")
+    parser.add_argument("-lf", "--logfile",
+                        action="store",
+                        dest="logfile",
+                        help="Specifies a logfile to output to. Will perform log rotation based "
+                             "on file size. If specified, will NOT output to stdout.")
+    args = parser.parse_args()
+    ip = args.i
+    port = args.p
 
-    logging.basicConfig(stream=sys.stdout,
-                        level=logging.DEBUG,
-                        format='%(asctime)s:%(name)s:%(levelname)s: %(message)s')
-    logger = logging.getLogger(__name__)
-
-    parser = OptionParser()
-    parser.add_option("-i", "--ip_address", dest="i",
-                      help="pycryptoki daemon IP address", metavar="<IP address>")
-    parser.add_option("-p", "--port", dest="p",
-                      help="pycryptoki daemon IP port", metavar="<number>")
-    parser.add_option("-f", "--forked", dest="forked",
-                      help="Fork the daemon from the parent process so we can recover from "
-                           "segfaults", default=False, action="store_true")
-    (options, args) = parser.parse_args()
-
-    # Default arguments
-    ip = options.i if options.i is not None else 'localhost'
-    port = int(options.p if options.p is not None else '8001')
-    logger.info("Pycryptoki Daemon ip=" + str(ip) + ", port=" +
-                str(port) + ", PID=" + str(os.getpid()))
+    logger = configure_logging(args.logfile)
+    logger.info("Pycryptoki Daemon ip={}, port={}, PID={}".format(ip, port, os.getpid()))
 
     server_config = {'allow_public_attrs': True,
                      'allow_all_attrs': True,
@@ -435,7 +478,7 @@ if __name__ == '__main__':
                                ip, port,
                                server_config))
 
-    if options.forked:
+    if args.forked:
         logger.info("Starting PycryptokiServer in a separate process...")
         server = create_server_subprocess(**server_kwargs)
         if server.exitcode is not None and not server.is_alive():

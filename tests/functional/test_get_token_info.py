@@ -40,7 +40,7 @@ def reset_to_defaults():
     c_close_all_sessions_ex(slot)
 
 
-@pytest.mark.skipif("config.getoption('user') != 'SO' or not config.getoption('reset')")
+@pytest.mark.reset
 class TestGetTokenInfo(object):
     """ """
 

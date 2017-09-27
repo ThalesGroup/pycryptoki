@@ -12,8 +12,9 @@ from ctypes import cast, c_void_p, create_string_buffer, c_bool, \
     c_ulong, pointer, POINTER, sizeof, c_char, string_at, c_ubyte
 from functools import wraps
 
-from six import b, string_types
+from six import b, string_types, integer_types, text_type, binary_type
 
+from pycryptoki.conversions import from_bytestring
 from .cryptoki import CK_ATTRIBUTE, CK_BBOOL, CK_ATTRIBUTE_TYPE, CK_ULONG, \
     CK_BYTE, CK_CHAR
 from .defines import CKA_EKM_UID, CKA_GENERIC_1, CKA_GENERIC_2, \
@@ -31,7 +32,6 @@ from .defines import CKA_USAGE_LIMIT, CKA_USAGE_COUNT, CKA_CLASS, CKA_TOKEN, \
     CKA_CCM_PRIVATE, CKA_FINGERPRINT_SHA1, CKA_FINGERPRINT_SHA256, CKA_OUID, CKA_UNWRAP_TEMPLATE, \
     CKA_DERIVE_TEMPLATE, \
     CKA_X9_31_GENERATED, CKA_VALUE
-from .test_functions import integer_types
 
 LOG = logging.getLogger(__name__)
 
@@ -198,20 +198,25 @@ def to_byte_array(val, reverse=False):
         LOG.debug("Final hex data: %s", fin)
         return fin
 
-    if isinstance(val, string_types):
-        # Hex-string in form '01e4'
-        try:
+    if not isinstance(val, (binary_type, collections.Iterable, integer_types)):
+        raise TypeError("Unknown conversion to byte array for type {}".format(type(val)))
+
+    if isinstance(val, binary_type):
+        # Hex-string in form '0xdeadbeef''
+        if val.startswith(b"0x"):
+            val = val.replace(b"0x", b"", 1)
+        # Raw byte data: '\xde\xad\xbe\xef"
+        if "\\x" in repr(val):
+            val = list(from_bytestring(val))
+            byte_array = (CK_BYTE * len(val))(*val)
+        # Hex string: '01af'
+        else:
             val = int(val, 16)
-        except ValueError:
-            # To allow for pre-allocation of data with ' ' * 64
-            if val.isspace() or len(val) == 0:
-                val = b(val)
-            else:
-                raise
-    if isinstance(val, collections.Iterable):
+    elif isinstance(val, collections.Iterable):
         py_bytes = bytearray(val)
         byte_array = (CK_BYTE * len(py_bytes))(*py_bytes)
-    elif isinstance(val, integer_types):
+
+    if isinstance(val, integer_types):
         # Explicitly convert to a long. Python doesn't like X.bit_length() where X is an int
         # and not a variable assigned an int.
         x = val
@@ -223,8 +228,6 @@ def to_byte_array(val, reverse=False):
         n = 8
         str_array = [str_val[i:i + n] for i in range(0, len(str_val), n)]
         byte_array = (CK_BYTE * len(str_array))(*[int(x, 2) for x in str_array])
-    else:
-        raise TypeError("Invalid conversion {} to byte array!".format(type(val)))
 
     return cast(pointer(byte_array), c_void_p), CK_ULONG(sizeof(byte_array))
 

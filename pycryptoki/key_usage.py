@@ -3,7 +3,7 @@ Methods responsible for key usage
 """
 from .cryptoki import CA_CloneMofN, CA_DuplicateMofN, \
     CK_VOID_PTR, CK_SESSION_HANDLE
-from .test_functions import make_error_handle_function
+from .exceptions import make_error_handle_function
 
 
 def ca_clonemofn(h_session):
