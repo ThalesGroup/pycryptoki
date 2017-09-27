@@ -24,7 +24,7 @@ from .cryptoki import (CK_SLOT_ID,
                        CA_SetDestructiveHSMPolicy, CA_SetDestructiveHSMPolicies,
                        CA_GetHSMCapabilitySet, CA_GetHSMCapabilitySetting,
                        CA_GetHSMPolicySet, CA_GetHSMPolicySetting)
-from .test_functions import make_error_handle_function
+from .exceptions import make_error_handle_function
 
 
 def c_performselftest(slot,

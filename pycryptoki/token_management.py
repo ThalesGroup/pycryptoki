@@ -23,7 +23,7 @@ from .cryptoki import (C_InitToken,
                        C_GetMechanismInfo,
                        CA_GetTokenPolicies)
 from .session_management import c_get_token_info
-from .test_functions import make_error_handle_function
+from .exceptions import make_error_handle_function
 from .common_utils import AutoCArray
 from .common_utils import refresh_c_arrays
 

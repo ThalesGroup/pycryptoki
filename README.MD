@@ -3,9 +3,6 @@
 
 Pycryptoki is a python wrapper around the PKCS11 library.
 
-## Documentation
-
-Latest documentation can be found on [readthedocs](http://pycryptoki.readthedocs.io/en/latest/index.html).
 
 
 ## Installation

@@ -72,6 +72,15 @@ class AutoCArray(object):
         If size is not None, and internal array is not None, returna pointer to the
         allocated memory of the internal array.
 
+        .. warning:: This will ONLY work properly if ``array`` is read before ``size``!
+            You can assign to temporary values to work around this if the PKCS call requires the
+            size first::
+
+                array, len = autoarray.array, autoarray.size
+
+            This is because after ``size`` is read, ``array`` is initialized to a C array of the
+            given value.
+
 
         :return: pointer to the internal array.
         :rtype: POINTER
@@ -91,6 +100,16 @@ class AutoCArray(object):
     def size(self):
         """
         Return a pointer to a c_ulong
+
+        .. warning:: This will ONLY work properly if ``array`` is read before ``size``!
+            You can assign to temporary values to work around this if the PKCS call requires the
+            size first::
+
+                array, len = autoarray.array, autoarray.size
+
+            This is because after ``size`` is read, ``array`` is initialized to a C array of the
+            given value.
+
 
         :return: Pointer to a CK_ULONG
         :rtype: pointer

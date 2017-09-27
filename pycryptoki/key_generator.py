@@ -12,7 +12,7 @@ from .default_templates import CKM_DES_KEY_GEN_TEMP, \
     get_default_key_pair_template
 from .defines import CKM_DES_KEY_GEN, CKM_RSA_PKCS_KEY_PAIR_GEN
 from .mechanism import parse_mechanism
-from .test_functions import make_error_handle_function
+from .exceptions import make_error_handle_function
 
 
 def c_destroy_object(h_session, h_object_value):

@@ -1328,6 +1328,8 @@ CK_CA_GetServerInstanceBySlotID = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG_PTR)
 CK_CA_GetSlotListFromServerInstance = CFUNCTYPE(CK_RV, CK_ULONG, CK_SLOT_ID_PTR, CK_ULONG_PTR)
 CK_CA_PerformSelfTest = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR,
                                   CK_ULONG_PTR)
+CK_CA_GetFirmwareVersion = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR)
+
 if 'win' in sys.platform:
     CK_SFNT_CA_FUNCTION_LIST._pack_ = 1
 CK_SFNT_CA_FUNCTION_LIST._fields_ = [
@@ -1564,6 +1566,7 @@ CK_SFNT_CA_FUNCTION_LIST._fields_ = [
     ('CA_GetServerInstanceBySlotID', CK_CA_GetServerInstanceBySlotID),
     ('CA_GetSlotListFromServerInstance', CK_CA_GetSlotListFromServerInstance),
     ('CA_PerformSelfTest', CK_CA_PerformSelfTest),
+    ('CA_GetFirmwareVersion', CK_CA_GetFirmwareVersion),
 ]
 CA_GetFunctionList = make_late_binding_function('CA_GetFunctionList')
 CA_GetFunctionList.restype = CK_RV
@@ -2355,6 +2358,11 @@ CA_DeriveKeyAndWrap.argtypes = [CK_SESSION_HANDLE, CK_MECHANISM_PTR, CK_OBJECT_H
 CA_Get = make_late_binding_function('CA_Get')
 CA_Get.restype = CK_RV
 CA_Get.argtypes = [CK_SLOT_ID, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR]
+
+CA_GetFirmwareVersion = make_late_binding_function('CA_GetFirmwareVersion')
+CA_GetFirmwareVersion.restype = CK_RV
+CA_GetFirmwareVersion.argtypes = [CK_SLOT_ID, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR]
+
 CK_GetTotalOperations = CFUNCTYPE(CK_RV, CK_SLOT_ID, POINTER(c_int))
 CK_ResetTotalOperations = CFUNCTYPE(CK_RV, CK_SLOT_ID)
 

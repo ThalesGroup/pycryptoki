@@ -25,8 +25,8 @@ from pycryptoki.default_templates import (CKM_DSA_KEY_PAIR_GEN_PRIVTEMP,
 
                                           MECHANISM_LOOKUP_EXT, get_default_key_template)
 
-from pycryptoki.return_values import ret_vals_dictionary
-
+from pycryptoki.lookup_dicts import ret_vals_dictionary
+from .util import get_session_template
 
 logger = logging.getLogger(__name__)
 
@@ -65,7 +65,7 @@ def sym_keys(auth_session):
     keys = {}
     try:
         for key_type in SYM_KEYS:
-            template = get_default_key_template(key_type)
+            template = get_session_template(get_default_key_template(key_type))
             ret, key_handle = c_generate_key(auth_session, key_type, template)
             if ret == CKR_OK:
                 keys[key_type] = key_handle
@@ -85,7 +85,10 @@ def asym_keys(auth_session):
     try:
         for params in ASYM_PARAMS:
             key_type, pub_temp, prv_temp, _ = params
-            ret, pub_key, prv_key = c_generate_key_pair(auth_session, key_type, pub_temp, prv_temp)
+            ret, pub_key, prv_key = c_generate_key_pair(auth_session,
+                                                        key_type,
+                                                        get_session_template(pub_temp),
+                                                        get_session_template(prv_temp))
             if ret == CKR_OK:
                 keys[key_type] = (pub_key, prv_key)
             else:
@@ -99,6 +102,9 @@ def asym_keys(auth_session):
 
 
 class TestSignVerify(object):
+    """
+    Creates key pairs, signs data, and verifies that data.
+    """
 
     def verify_ret(self, ret, expected_ret):
         """
@@ -126,7 +132,7 @@ class TestSignVerify(object):
         """
         # Auto-fail when key-generation fails
         if sym_keys.get(key_type) is None:
-            pytest.fail("No valid key found for {}".format(MECHANISM_LOOKUP_EXT[key_type][0]))
+            pytest.skip("No valid key found for {}".format(MECHANISM_LOOKUP_EXT[key_type][0]))
         h_key = sym_keys[key_type]
 
         ret, signature = c_sign(self.h_session, h_key, data,  mechanism=sign_flavor)
@@ -147,7 +153,7 @@ class TestSignVerify(object):
         """
         # Auto-fail when key-generation fails
         if asym_keys.get(k_type) is None:
-            pytest.fail("No valid key found for {}".format(MECHANISM_LOOKUP_EXT[k_type][0]))
+            pytest.skip("No valid key found for {}".format(MECHANISM_LOOKUP_EXT[k_type][0]))
         pub_key, prv_key = asym_keys[k_type]
 
         ret, signature = c_sign(self.h_session, prv_key, data, mechanism=sig_mech)
