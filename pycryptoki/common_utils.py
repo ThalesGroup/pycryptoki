@@ -2,11 +2,14 @@
 Utilities for pycryptoki
 """
 from six import b, string_types
+import logging
 from _ctypes import pointer, POINTER
 from ctypes import c_ulong, cast, create_string_buffer
 
 from .cryptoki import CK_CHAR
 from .defines import CKR_OK
+
+LOG = logging.getLogger(__name__)
 
 
 class CException(Exception):
@@ -93,6 +96,7 @@ class AutoCArray(object):
             # If we get to this point, we have a specified size, a ctype,
             # And our array is still none, but we're trying to access it.
             # Therefore, we go ahead & allocate the memory
+            LOG.debug("Allocating %s buffer of size: %s", self.ctype, self._size.value)
             self._array = (self.ctype * self._size.value)()
         return cast(self._array, POINTER(self.ctype))
 
