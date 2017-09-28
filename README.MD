@@ -5,7 +5,7 @@ Pycryptoki is a python wrapper around the PKCS11 library.
 
 ## Documentation
 
-Latest documentation can be found on [readthedocs](http://pycryptoki.readthedocs.io/en/latest/index.html).
+Latest API documentation can be found on [readthedocs](http://pycryptoki.readthedocs.io/en/latest/index.html).
 
 
 ## Installation
@@ -35,11 +35,19 @@ pub_template[CKA_LABEL] = "RSA PKCS Pub Key"
 pub_template[CKA_MODULUS_BITS] = 2048   # 2048 key size
  
 pubkey, privkey = c_generate_key_pair_ex(auth_session, CKM_RSA_PKCS_KEY_PAIR_GEN, pub_template, priv_template)
-print("Generated Private key at %s and Public key at %s", % (privkey, pubkey))
+print("Generated Private key at %s and Public key at %s" % (privkey, pubkey))
 
 c_logout_ex(auth_session)
 c_close_session_ex(auth_session)
 c_finalize_ex()
+```
+## Verbose logging
+
+If you want to see what calls to the C library are being performed, set pycryptoki logging to `DEBUG`:
+
+```py
+import logging
+logging.basicConfig(level=logging.DEBUG)
 ```
 
 ## Tests
