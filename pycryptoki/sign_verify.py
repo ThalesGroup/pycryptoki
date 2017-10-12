@@ -123,7 +123,8 @@ def do_multipart_sign_or_digest(h_session, c_update_function, c_final_function,
         if ret != CKR_OK:
             LOG.debug("%s call on chunk %.20s (%s/%s) Failed w/ ret %s (%s)",
                       c_update_function.__name__,
-                      chunk, index + 1, len(input_data_list), ret_vals_dictionary[ret], ret)
+                      chunk, index + 1, len(input_data_list),
+                      ret_vals_dictionary.get(ret, "Unknown retcode"), str(hex(ret)))
             error = ret
             break
 
@@ -135,7 +136,8 @@ def do_multipart_sign_or_digest(h_session, c_update_function, c_final_function,
                                CK_ULONG(MAX_BUFFER))
         LOG.debug("%s call after a %s failure returned: %s (%s)",
                   c_final_function.__name__,
-                  c_update_function.__name__, ret_vals_dictionary[ret], ret)
+                  c_update_function.__name__,
+                  ret_vals_dictionary.get(ret, "Unknown retcode"), str(hex(ret)))
         return error, None
 
     if output_buffer is not None:
@@ -192,7 +194,7 @@ def do_multipart_verify(h_session, input_data_list, signature):
                             cast(create_string_buffer(b"", MAX_BUFFER), CK_BYTE_PTR),
                             CK_ULONG(MAX_BUFFER))
         LOG.debug("C_VerifyFinal call after a C_VerifyUpdate failure returned:"
-                  " %s (%s)", ret_vals_dictionary[ret], ret)
+                  " %s (%s)", ret_vals_dictionary.get(ret, "Unknown retcode"), str(hex(ret)))
         return error, None
 
     # Finalizing multipart decrypt operation
