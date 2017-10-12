@@ -265,7 +265,8 @@ def do_multipart_operation(h_session,
         if ret != CKR_OK:
             LOG.debug("%s call on chunk %.20s (%s/%s) Failed w/ ret %s (%s)",
                       c_update_function.__name__,
-                      chunk, index + 1, len(input_data_list), ret_vals_dictionary[ret], ret)
+                      chunk, index + 1, len(input_data_list),
+                      ret_vals_dictionary.get(ret, "Unknown retcode"), str(hex(ret)))
             error = ret
             break
 
@@ -279,7 +280,8 @@ def do_multipart_operation(h_session,
             if ret != CKR_OK:
                 LOG.debug("%s call on chunk %.20s (%s/%s) Failed w/ ret %s (%s)",
                           c_update_function.__name__,
-                          chunk, index + 1, len(input_data_list), ret_vals_dictionary[ret], ret)
+                          chunk, index + 1, len(input_data_list),
+                          ret_vals_dictionary.get(ret, "Unknown retcode"), str(hex(ret)))
                 error = ret
                 break
 
@@ -293,7 +295,8 @@ def do_multipart_operation(h_session,
                                   CK_ULONG(MAX_BUFFER))
         LOG.debug("%s call after a %s failure returned: %s (%s)",
                   c_finalize_function.__name__,
-                  c_update_function.__name__, ret_vals_dictionary[ret], ret)
+                  c_update_function.__name__,
+                  ret_vals_dictionary.get(ret, "Unknown retcode"), str(hex(ret)))
         return error, b"".join(python_data)
 
     if output_buffer:
