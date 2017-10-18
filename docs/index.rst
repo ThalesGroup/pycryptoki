@@ -41,6 +41,7 @@ data sizes, buffers, or other low-level memory manipulation, you simply need to 
    c_close_session_ex(auth_session)
    c_finalize_ex()
 
+
 .. toctree::
    :maxdepth: 4
    :includehidden:
