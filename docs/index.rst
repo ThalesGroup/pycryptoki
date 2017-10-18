@@ -1,6 +1,16 @@
 Pycryptoki
 ==========
 
+
+.. toctree::
+   :maxdepth: 4
+   :includehidden:
+
+   Getting Started      <getting_started>
+   Examples             <examples>
+   API Reference        <api>
+
+
 Overview
 --------
 
@@ -12,7 +22,6 @@ It provides automatic conversion to C types for the most commonly used functions
 
 The primary function of pycryptoki is to *simplify* PKCS11 calls. Rather than needing to calculate
 data sizes, buffers, or other low-level memory manipulation, you simply need to pass in data.
-
 
 .. code-block:: python
 
@@ -42,11 +51,4 @@ data sizes, buffers, or other low-level memory manipulation, you simply need to 
    c_finalize_ex()
 
 
-.. toctree::
-   :maxdepth: 4
-   :includehidden:
-
-   Getting Started      <getting_started>
-   Examples             <examples>
-   API Reference        <api>
 
