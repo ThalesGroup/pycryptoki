@@ -4,7 +4,7 @@ Methods responsible for managing a user's session and login/c_logout
 import logging
 import re
 from ctypes import cast, c_char_p, c_void_p, create_string_buffer, \
-    byref, pointer
+    byref, pointer, string_at
 
 from .common_utils import AutoCArray, refresh_c_arrays
 # cryptoki constants
@@ -149,9 +149,9 @@ def c_get_info():
     ret = C_GetInfo(byref(info_struct))
     if ret == CKR_OK:
         info['cryptokiVersion'] = info_struct.cryptokiVersion
-        info['manufacturerID'] = info_struct.manufacturerID
+        info['manufacturerID'] = string_at(info_struct.manufacturerID)
         info['flags'] = info_struct.flags
-        info['libraryDescription'] = info_struct.libraryDescription
+        info['libraryDescription'] = string_at(info_struct.libraryDescription)
         info['libraryVersion'] = info_struct.libraryVersion
     return ret, info
 
@@ -218,13 +218,10 @@ def c_get_token_info(slot_id):
     ret = C_GetTokenInfo(CK_ULONG(slot_id), byref(c_token_info))
 
     if ret == CKR_OK:
-        token_info['label'] = str(cast(c_token_info.label, c_char_p).value)[0:32].strip()
-        token_info['manufacturerID'] = str(cast(c_token_info.manufacturerID,
-                                                c_char_p).value)[0:32].strip()
-        token_info['model'] = str(cast(c_token_info.model,
-                                       c_char_p).value)[0:16].strip()
-        token_info['serialNumber'] = str(cast(c_token_info.serialNumber,
-                                              c_char_p).value)[0:16].strip()
+        token_info['label'] = string_at(c_token_info.label)
+        token_info['manufacturerID'] = string_at(c_token_info.manufacturerID)
+        token_info['model'] = string_at(c_token_info.model)
+        token_info['serialNumber'] = string_at(c_token_info.serialNumber)
         token_info['flags'] = c_token_info.flags
         token_info['ulFreePrivateMemory'] = c_token_info.ulFreePrivateMemory
         token_info['ulTotalPrivateMemory'] = c_token_info.ulTotalPrivateMemory
@@ -238,7 +235,7 @@ def c_get_token_info(slot_id):
         token_info['ulFreePublicMemory'] = c_token_info.ulFreePublicMemory
         token_info['hardwareVersion'] = c_token_info.hardwareVersion
         token_info['firmwareVersion'] = c_token_info.firmwareVersion
-        token_info['utcTime'] = str(cast(c_token_info.utcTime, c_char_p).value)[0:16].strip()
+        token_info['utcTime'] = string_at(c_token_info.utcTime)
 
     return ret, token_info
 

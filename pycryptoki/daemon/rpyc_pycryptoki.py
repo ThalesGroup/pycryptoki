@@ -3,13 +3,13 @@
 RPYC-based daemon that allows for remote execution
 of pycryptoki commands.
 
-Start via "./rpyc\_pycryptoki.py -i <ip> -p <port>"
-or "python rpyc\_pycryptoki.py -i <ip> -p <port>"
+Start via ``./rpyc_pycryptoki.py -i <ip> -p <port>``
+or ``python rpyc_pycryptoki.py -i <ip> -p <port>``
 
-All methods starting with 'exposed\_' are useable via just
-rpyc\_conn.<method> instead of rpyc\_conn.exposed_<method>
+All methods starting with ``exposed_`` are useable via just
+``rpyc_conn.<method>`` instead of ``rpyc_conn.exposed_<method>``
 
-All methods ending with '\_ex' will automatically check the return code from
+All methods ending with ``_ex`` will automatically check the return code from
 cryptoki & raise an exception if it is not CKR_OK. It will *NOT* give you the return code, instead
 just returning the second part of the regular return tuple::
 

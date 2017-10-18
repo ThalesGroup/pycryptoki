@@ -5,6 +5,7 @@ error codes and other constants within pycryptoki.
 
 from .defines import *
 
+#:
 ret_vals_dictionary = {
     CKR_OK: 'CKR_OK',
     CKR_CANCEL: 'CKR_CANCEL',
@@ -206,6 +207,7 @@ ret_vals_dictionary = {
     CKR_RNG_RESEED_TOO_EARLY: 'CKR_RNG_RESEED_TOO_EARLY'
 }
 
+#:
 ATTR_NAME_LOOKUP = {
     CKA_CLASS: 'CKA_CLASS',
     CKA_CERTIFICATE_TYPE: 'CKA_CERTIFICATE_TYPE',
