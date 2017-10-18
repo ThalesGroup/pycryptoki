@@ -2,15 +2,6 @@ Pycryptoki
 ==========
 
 
-.. toctree::
-   :maxdepth: 4
-   :includehidden:
-
-   Getting Started      <getting_started>
-   Examples             <examples>
-   API Reference        <api>
-
-
 Overview
 --------
 
@@ -51,4 +42,12 @@ data sizes, buffers, or other low-level memory manipulation, you simply need to 
    c_finalize_ex()
 
 
+
+.. toctree::
+   :maxdepth: 4
+   :includehidden:
+
+   Getting Started      <getting_started>
+   Examples             <examples>
+   API Reference        <api>
 
