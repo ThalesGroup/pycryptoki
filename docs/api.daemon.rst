@@ -1,17 +1,17 @@
 Pycryptoki Daemon Package
 =========================
 
-Start the following daemon on your remote client, then connect to it
+Start ``pycryptoki.daemon.rpyc_pycryptoki.py`` on your remote client, then connect to it
 using :class:`~pycryptoki.pycryptoki_client.RemotePycryptokiClient`. You can then
 use the RemotePycryptokiClient as if it were local::
 
     pycryptoki = RemotePycryptokiClient('10.2.96.130', port=8001)
     pycryptoki.c_initialize_ex()  # Executed on the daemon!
-    session = pycryptoki.c_open_session_ex(SLOT)
+    session = pycryptoki.c_open_session_ex(0)
     #etc
 
 
-rpyc_pycryptoki
+daemon.rpyc_pycryptoki
 ---------------
 
 .. automodule:: pycryptoki.daemon.rpyc_pycryptoki
