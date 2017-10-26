@@ -56,7 +56,7 @@ be stripped off and used to create the mechanism for decryption::
     iv = enc_data[-16:] # Strip off the last 16 bytes of the encrypted data.
     decrypt_mech = Mechanism(CKM_AES_KW,
                              params={"iv": iv})
-    decrypted_data = c_decrypt_ex(session, key, enc_data, decrypt_mech)
+    decrypted_data = c_decrypt_ex(session, key, enc_data[:-16], decrypt_mech)
 
 
 PKCS11 Calling Conventions
