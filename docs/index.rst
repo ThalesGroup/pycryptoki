@@ -1,6 +1,7 @@
 Pycryptoki
 ==========
 
+
 Overview
 --------
 
@@ -40,6 +41,8 @@ and other concepts are unchanged from PKCS11.
    c_logout_ex(auth_session)
    c_close_session_ex(auth_session)
    c_finalize_ex()
+
+
 
 .. toctree::
    :maxdepth: 4
