@@ -218,10 +218,10 @@ def c_get_token_info(slot_id):
     ret = C_GetTokenInfo(CK_ULONG(slot_id), byref(c_token_info))
 
     if ret == CKR_OK:
-        token_info['label'] = string_at(c_token_info.label)
-        token_info['manufacturerID'] = string_at(c_token_info.manufacturerID)
-        token_info['model'] = string_at(c_token_info.model)
-        token_info['serialNumber'] = string_at(c_token_info.serialNumber)
+        token_info['label'] = string_at(c_token_info.label, 32).rstrip()
+        token_info['manufacturerID'] = string_at(c_token_info.manufacturerID, 32).rstrip()
+        token_info['model'] = string_at(c_token_info.model, 16).rstrip()
+        token_info['serialNumber'] = string_at(c_token_info.serialNumber, 16).rstrip()
         token_info['flags'] = c_token_info.flags
         token_info['ulFreePrivateMemory'] = c_token_info.ulFreePrivateMemory
         token_info['ulTotalPrivateMemory'] = c_token_info.ulTotalPrivateMemory
@@ -235,7 +235,7 @@ def c_get_token_info(slot_id):
         token_info['ulFreePublicMemory'] = c_token_info.ulFreePublicMemory
         token_info['hardwareVersion'] = c_token_info.hardwareVersion
         token_info['firmwareVersion'] = c_token_info.firmwareVersion
-        token_info['utcTime'] = string_at(c_token_info.utcTime)
+        token_info['utcTime'] = string_at(c_token_info.utcTime, 16).rstrip()
 
     return ret, token_info
 
