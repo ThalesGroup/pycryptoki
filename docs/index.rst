@@ -11,7 +11,7 @@ we can simplify memory management, and provide easy, pythonic access to a PKCS11
 The primary function of pycryptoki is to *simplify* PKCS11 calls. Rather than needing to calculate
 data sizes, buffers, or other low-level memory manipulation, you simply need to pass in data.
 
-It's highly recommended that you have the `PKCS11<https://www.cryptsoft.com/pkcs11doc/v220/>`_ documentation
+It's highly recommended that you have the `PKCS11 <https://www.cryptsoft.com/pkcs11doc/v220/>`_ documentation
 handy, as pycryptoki uses that as the underlying C interface. Session management, object management,
 and other concepts are unchanged from PKCS11.
 
