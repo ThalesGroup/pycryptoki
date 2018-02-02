@@ -362,6 +362,8 @@ class PycryptokiService(rpyc.SlaveService):
     exposed_ca_generatemofn_ex = staticmethod(ca_generatemofn_ex)
     exposed_ca_modifyusagecount = staticmethod(ca_modifyusagecount)
     exposed_ca_modifyusagecount_ex = staticmethod(ca_modifyusagecount_ex)
+    exposed_ca_destroy_multiple_objects = staticmethod(ca_destroymultipleobjects)
+    exposed_ca_destroy_multiple_objects_ex = staticmethod(ca_destroymultipleobjects_ex)
 
     # key_usage.py
     exposed_ca_clonemofn = staticmethod(ca_clonemofn)
