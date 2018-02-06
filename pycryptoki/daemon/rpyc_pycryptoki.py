@@ -68,7 +68,8 @@ from pycryptoki.key_generator import (c_destroy_object, c_destroy_object_ex,
                                       c_generate_key_pair, c_generate_key_pair_ex,
                                       c_generate_key, c_generate_key_ex,
                                       c_derive_key, c_derive_key_ex,
-                                      c_copy_object_ex, c_copy_object)
+                                      c_copy_object_ex, c_copy_object, ca_destroy_multiple_objects,
+                                      ca_destroy_multiple_objects_ex)
 from pycryptoki.key_management import (ca_generatemofn, ca_generatemofn_ex,
                                        ca_modifyusagecount, ca_modifyusagecount_ex)
 from pycryptoki.key_usage import (ca_clonemofn, ca_clonemofn_ex,
@@ -362,8 +363,8 @@ class PycryptokiService(rpyc.SlaveService):
     exposed_ca_generatemofn_ex = staticmethod(ca_generatemofn_ex)
     exposed_ca_modifyusagecount = staticmethod(ca_modifyusagecount)
     exposed_ca_modifyusagecount_ex = staticmethod(ca_modifyusagecount_ex)
-    exposed_ca_destroy_multiple_objects = staticmethod(ca_destroymultipleobjects)
-    exposed_ca_destroy_multiple_objects_ex = staticmethod(ca_destroymultipleobjects_ex)
+    exposed_ca_destroy_multiple_objects = staticmethod(ca_destroy_multiple_objects)
+    exposed_ca_destroy_multiple_objects_ex = staticmethod(ca_destroy_multiple_objects_ex)
 
     # key_usage.py
     exposed_ca_clonemofn = staticmethod(ca_clonemofn)
