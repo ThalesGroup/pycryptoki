@@ -35,5 +35,23 @@ class TestSessionManagement(object):
     def test_get_slot_dict(self):
         """ get_slot_dict() """
         ret, slot_dict = sess_mang.get_slot_dict()
+        logger.debug("Slots: %s", slot_dict)
         assert ret == CKR_OK
         assert isinstance(slot_dict, dict)
+
+    def test_get_slot_dict_token_present(self):
+        """
+        Verify this also works with token_present = True
+        """
+        slot_dict = sess_mang.get_slot_dict_ex(token_present=True)
+        for slot in slot_dict.keys():
+            assert sess_mang.c_get_token_info(slot)[0] == CKR_OK
+
+    def test_get_slot_list(self):
+        """
+        Verify get slot list works as expected.
+        """
+        slot_list = sess_mang.c_get_slot_list_ex(token_present=True)
+        for slot in slot_list:
+            assert isinstance(slot, integer_types)
+            assert sess_mang.c_get_token_info(slot)[0] == CKR_OK

@@ -125,7 +125,10 @@ from pycryptoki.session_management import (c_initialize, c_initialize_ex,
                                            ca_openapplicationID_ex, ca_openapplicationID,
                                            ca_closeapplicationID, ca_closeapplicationID_ex,
                                            ca_restart, ca_restart_ex,
-                                           ca_setapplicationID, ca_setapplicationID_ex)
+                                           ca_setapplicationID, ca_setapplicationID_ex,
+                                           c_get_slot_list, c_get_slot_list_ex,
+                                           c_get_slot_info, c_get_slot_info_ex,
+                                           c_get_info, c_get_info_ex)
 from pycryptoki.sign_verify import (c_sign, c_sign_ex,
                                     c_verify, c_verify_ex)
 from pycryptoki.token_management import (c_init_token, c_init_token_ex,
@@ -238,6 +241,12 @@ class PycryptokiService(rpyc.SlaveService):
     exposed_ca_setapplicationID = staticmethod(ca_setapplicationID)
     exposed_ca_restart_ex = staticmethod(ca_restart_ex)
     exposed_ca_restart = staticmethod(ca_restart)
+    exposed_c_get_slot_list = staticmethod(c_get_slot_list)
+    exposed_c_get_slot_list_ex = staticmethod(c_get_slot_list_ex)
+    exposed_c_get_slot_info = staticmethod(c_get_slot_info)
+    exposed_c_get_slot_info_ex = staticmethod(c_get_slot_info_ex)
+    exposed_c_get_info = staticmethod(c_get_info)
+    exposed_c_get_info_ex = staticmethod(c_get_info_ex)
 
     # object_attr_lookup.py
     exposed_c_find_objects = staticmethod(c_find_objects)
