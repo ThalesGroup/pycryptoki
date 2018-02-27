@@ -2,8 +2,7 @@
 Methods responsible for managing a user's session and login/c_logout
 """
 import logging
-import re
-from ctypes import cast, c_char_p, c_void_p, create_string_buffer, \
+from ctypes import cast, c_void_p, create_string_buffer, \
     byref, pointer, string_at
 
 from .common_utils import AutoCArray
@@ -207,6 +206,7 @@ def c_get_slot_info(slot):
     slot_info_dict['firmwareVersion'] = fw_version
     return ret, slot_info_dict
 
+
 c_get_slot_info_ex = make_error_handle_function(c_get_slot_info)
 
 
@@ -233,10 +233,11 @@ def c_get_session_info(session):
 c_get_session_info_ex = make_error_handle_function(c_get_session_info)
 
 
-def c_get_token_info(slot_id):
+def c_get_token_info(slot_id, rstrip=True):
     """Gets the token info for a given slot id
 
-    :param int slot_id: Slot index to get the token info for
+    :param int slot_id: Token slot ID
+    :param bool rstrip: If true, will strip trailing whitespace from char data.
     :returns: (retcode, A python dictionary representing the token info)
     :rtype: tuple
     """
@@ -246,10 +247,10 @@ def c_get_token_info(slot_id):
     ret = C_GetTokenInfo(CK_ULONG(slot_id), byref(c_token_info))
 
     if ret == CKR_OK:
-        token_info['label'] = string_at(c_token_info.label, 32).rstrip()
-        token_info['manufacturerID'] = string_at(c_token_info.manufacturerID, 32).rstrip()
-        token_info['model'] = string_at(c_token_info.model, 16).rstrip()
-        token_info['serialNumber'] = string_at(c_token_info.serialNumber, 16).rstrip()
+        token_info['label'] = string_at(c_token_info.label, 32)
+        token_info['manufacturerID'] = string_at(c_token_info.manufacturerID, 32)
+        token_info['model'] = string_at(c_token_info.model, 16)
+        token_info['serialNumber'] = string_at(c_token_info.serialNumber, 16)
         token_info['flags'] = c_token_info.flags
         token_info['ulFreePrivateMemory'] = c_token_info.ulFreePrivateMemory
         token_info['ulTotalPrivateMemory'] = c_token_info.ulTotalPrivateMemory
@@ -263,7 +264,13 @@ def c_get_token_info(slot_id):
         token_info['ulFreePublicMemory'] = c_token_info.ulFreePublicMemory
         token_info['hardwareVersion'] = c_token_info.hardwareVersion
         token_info['firmwareVersion'] = c_token_info.firmwareVersion
-        token_info['utcTime'] = string_at(c_token_info.utcTime, 16).rstrip()
+        token_info['utcTime'] = string_at(c_token_info.utcTime, 16)
+        if rstrip:
+            token_info['label'] = token_info['label'].rstrip()
+            token_info['manufacturerID'] = token_info['manufacturerID'].rstrip()
+            token_info['model'] = token_info['model'].rstrip()
+            token_info['serialNumber'] = token_info['serialNumber'].rstrip()
+            token_info['utcTime'] = token_info['utcTime'].rstrip()
 
     return ret, token_info
 
