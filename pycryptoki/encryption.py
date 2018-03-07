@@ -265,7 +265,8 @@ def do_multipart_operation(h_session,
         if ret != CKR_OK:
             LOG.debug("%s call on chunk %.20s (%s/%s) Failed w/ ret %s (%s)",
                       c_update_function.__name__,
-                      chunk, index + 1, len(input_data_list), ret_vals_dictionary[ret], ret)
+                      chunk, index + 1, len(input_data_list),
+                      ret_vals_dictionary.get(ret, "Unknown retcode"), str(hex(ret)))
             error = ret
             break
 
@@ -279,7 +280,8 @@ def do_multipart_operation(h_session,
             if ret != CKR_OK:
                 LOG.debug("%s call on chunk %.20s (%s/%s) Failed w/ ret %s (%s)",
                           c_update_function.__name__,
-                          chunk, index + 1, len(input_data_list), ret_vals_dictionary[ret], ret)
+                          chunk, index + 1, len(input_data_list),
+                          ret_vals_dictionary.get(ret, "Unknown retcode"), str(hex(ret)))
                 error = ret
                 break
 
@@ -293,21 +295,31 @@ def do_multipart_operation(h_session,
                                   CK_ULONG(MAX_BUFFER))
         LOG.debug("%s call after a %s failure returned: %s (%s)",
                   c_finalize_function.__name__,
-                  c_update_function.__name__, ret_vals_dictionary[ret], ret)
+                  c_update_function.__name__,
+                  ret_vals_dictionary.get(ret, "Unknown retcode"), str(hex(ret)))
         return error, b"".join(python_data)
 
-    # Finalizing multipart decrypt operation
-    fin_out_data_len = CK_ULONG()
-    # Get buffer size for data
-    ret = c_finalize_function(h_session, None, byref(fin_out_data_len))
-    if ret != CKR_OK:
-        return ret, b"".join(python_data)
+    if output_buffer:
+        fin_out_data_len = CK_ULONG(max(output_buffer))
+        fin_out_data = create_string_buffer(b"", fin_out_data_len.value)
 
-    fin_out_data = create_string_buffer(b"", fin_out_data_len.value)
-    output = cast(fin_out_data, CK_BYTE_PTR)
-    ret = c_finalize_function(h_session, output, byref(fin_out_data_len))
-    if ret != CKR_OK:
-        return ret, b"".join(python_data)
+        ret = c_finalize_function(h_session, cast(fin_out_data, CK_BYTE_PTR),
+                                  byref(fin_out_data_len))
+        if ret != CKR_OK:
+            return ret, b"".join(python_data)
+    else:
+        # Finalizing multipart decrypt operation
+        fin_out_data_len = CK_ULONG()
+        # Get buffer size for data
+        ret = c_finalize_function(h_session, None, byref(fin_out_data_len))
+        if ret != CKR_OK:
+            return ret, b"".join(python_data)
+
+        fin_out_data = create_string_buffer(b"", fin_out_data_len.value)
+        output = cast(fin_out_data, CK_BYTE_PTR)
+        ret = c_finalize_function(h_session, output, byref(fin_out_data_len))
+        if ret != CKR_OK:
+            return ret, b"".join(python_data)
 
     if fin_out_data_len.value > 0:
         python_data.append(string_at(fin_out_data, fin_out_data_len.value))

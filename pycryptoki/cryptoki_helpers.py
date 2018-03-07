@@ -204,8 +204,9 @@ def make_late_binding_function(function_name):
             return_value = late_binded_function(*args)
             return return_value
         except Exception as e:
-            raise CryptokiDLLException("Call to '%s(%s)' failed.".format(function_name,
-                                                                         ", ".join(args)), e)
+            raise CryptokiDLLException("Call to '{}({})' "
+                                       "failed.".format(function_name,
+                                                        ", ".join([str(arg) for arg in args])), e)
 
     luna_function.__name__ = function_name
     return luna_function
