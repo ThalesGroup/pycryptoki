@@ -32,9 +32,9 @@ from pycryptoki.defines import \
 from pycryptoki.encryption import c_encrypt_ex, c_decrypt_ex
 from pycryptoki.key_generator import \
     c_generate_key, c_generate_key_pair, c_derive_key, c_generate_key_ex, c_destroy_object, \
-    c_derive_key_ex, c_generate_key_pair_ex
+    c_derive_key_ex, c_generate_key_pair_ex, ca_destroy_multiple_objects_ex
 from pycryptoki.mechanism import NullMech
-from pycryptoki.object_attr_lookup import c_get_attribute_value_ex
+from pycryptoki.object_attr_lookup import c_get_attribute_value_ex, c_find_objects_ex
 from pycryptoki.return_values import ret_vals_dictionary
 from pycryptoki.test_functions import verify_object_attributes
 from .util import get_session_template
@@ -316,3 +316,29 @@ class TestKeys(object):
             for key in (pub_key1, prv_key1, pub_key2, prv_key2, derived_key1, derived_key2):
                 if key:
                     c_destroy_object(auth_session, key)
+
+    def test_destroymultipleobjects(self):
+        """
+        Test deletion of multiple keys
+        Tested by RSA key pair
+        """
+
+        key_type, pub_key_temp, priv_key_temp = pair_params(CKM_RSA_PKCS_KEY_PAIR_GEN)
+        session_pub_template = get_session_template(pub_key_temp)
+        session_priv_template = get_session_template(priv_key_temp)
+        ret, pub_key, prv_key = c_generate_key_pair(self.h_session, key_type,
+                                                    session_pub_template,
+                                                    session_priv_template)
+
+        try:
+
+            ret = ca_destroy_multiple_objects_ex(self.h_session, [pub_key, prv_key])
+            self.verify_ret(ret, CKR_OK)
+            for templ in (session_pub_template, session_priv_template):
+                objs = c_find_objects_ex(self.h_session, templ, 1)
+                assert len(objs) == 0
+
+        except Exception:
+            for key in (pub_key, prv_key):
+                c_destroy_object(self.h_session, key)
+

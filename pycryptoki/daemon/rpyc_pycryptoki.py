@@ -68,7 +68,8 @@ from pycryptoki.key_generator import (c_destroy_object, c_destroy_object_ex,
                                       c_generate_key_pair, c_generate_key_pair_ex,
                                       c_generate_key, c_generate_key_ex,
                                       c_derive_key, c_derive_key_ex,
-                                      c_copy_object_ex, c_copy_object)
+                                      c_copy_object_ex, c_copy_object, ca_destroy_multiple_objects,
+                                      ca_destroy_multiple_objects_ex)
 from pycryptoki.key_management import (ca_generatemofn, ca_generatemofn_ex,
                                        ca_modifyusagecount, ca_modifyusagecount_ex)
 from pycryptoki.key_usage import (ca_clonemofn, ca_clonemofn_ex,
@@ -124,7 +125,10 @@ from pycryptoki.session_management import (c_initialize, c_initialize_ex,
                                            ca_openapplicationID_ex, ca_openapplicationID,
                                            ca_closeapplicationID, ca_closeapplicationID_ex,
                                            ca_restart, ca_restart_ex,
-                                           ca_setapplicationID, ca_setapplicationID_ex)
+                                           ca_setapplicationID, ca_setapplicationID_ex,
+                                           c_get_slot_list, c_get_slot_list_ex,
+                                           c_get_slot_info, c_get_slot_info_ex,
+                                           c_get_info, c_get_info_ex)
 from pycryptoki.sign_verify import (c_sign, c_sign_ex,
                                     c_verify, c_verify_ex)
 from pycryptoki.token_management import (c_init_token, c_init_token_ex,
@@ -237,6 +241,12 @@ class PycryptokiService(rpyc.SlaveService):
     exposed_ca_setapplicationID = staticmethod(ca_setapplicationID)
     exposed_ca_restart_ex = staticmethod(ca_restart_ex)
     exposed_ca_restart = staticmethod(ca_restart)
+    exposed_c_get_slot_list = staticmethod(c_get_slot_list)
+    exposed_c_get_slot_list_ex = staticmethod(c_get_slot_list_ex)
+    exposed_c_get_slot_info = staticmethod(c_get_slot_info)
+    exposed_c_get_slot_info_ex = staticmethod(c_get_slot_info_ex)
+    exposed_c_get_info = staticmethod(c_get_info)
+    exposed_c_get_info_ex = staticmethod(c_get_info_ex)
 
     # object_attr_lookup.py
     exposed_c_find_objects = staticmethod(c_find_objects)
@@ -362,6 +372,8 @@ class PycryptokiService(rpyc.SlaveService):
     exposed_ca_generatemofn_ex = staticmethod(ca_generatemofn_ex)
     exposed_ca_modifyusagecount = staticmethod(ca_modifyusagecount)
     exposed_ca_modifyusagecount_ex = staticmethod(ca_modifyusagecount_ex)
+    exposed_ca_destroy_multiple_objects = staticmethod(ca_destroy_multiple_objects)
+    exposed_ca_destroy_multiple_objects_ex = staticmethod(ca_destroy_multiple_objects_ex)
 
     # key_usage.py
     exposed_ca_clonemofn = staticmethod(ca_clonemofn)

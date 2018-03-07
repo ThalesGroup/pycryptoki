@@ -132,7 +132,7 @@ def check_luna_exception(ret, luna_function, args, kwargs):
 
     arg_string = "({})".format("\n".join(log_list))
     LOG.debug("Call to %s returned %s (%s)", luna_function,
-              ret_vals_dictionary.get(ret, "Unknown"), ret)
+              ret_vals_dictionary.get(ret, "Unknown retcode"), str(hex(ret)))
     if ret != CKR_OK:
         raise LunaCallException(ret, luna_function.__name__, arg_string)
 

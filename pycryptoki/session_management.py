@@ -2,11 +2,10 @@
 Methods responsible for managing a user's session and login/c_logout
 """
 import logging
-import re
-from ctypes import cast, c_char_p, c_void_p, create_string_buffer, \
+from ctypes import cast, c_void_p, create_string_buffer, \
     byref, pointer, string_at
 
-from .common_utils import AutoCArray, refresh_c_arrays
+from .common_utils import AutoCArray
 # cryptoki constants
 from .cryptoki import (CK_ULONG,
                        CK_BBOOL,
@@ -159,27 +158,56 @@ def c_get_info():
 c_get_info_ex = make_error_handle_function(c_get_info)
 
 
-def get_slot_info(description):
-    """Returns a slot with a certain descriptor
-
-    Limitation: Only returns the first slot it finds that fits the description
-
-    :param description: The name of the slot to find
-    :returns: THe result code, a Python dictionary representing the slots
-
+def c_get_slot_list(token_present=True):
     """
-    ret, slot_dict = get_slot_dict()
+    Get a list of all slots.
 
-    return_dict = {}
+    :param bool token_present: If true, will only return slots that have a token present.
+    :return: List of slots
+    """
+    slots = AutoCArray(ctype=CK_ULONG)
 
-    for key in slot_dict:
-        if re.match(description, slot_dict[key]):
-            return_dict[key] = slot_dict[key]
+    rc = C_GetSlotList(CK_BBOOL(token_present),
+                       slots.array,
+                       slots.size)
+    if rc != CKR_OK:
+        return rc, []
+    rc = C_GetSlotList(CK_BBOOL(token_present),
+                       slots.array,
+                       slots.size)
+    return rc, [x for x in slots]
 
-    return ret, return_dict
+
+c_get_slot_list_ex = make_error_handle_function(c_get_slot_list)
 
 
-get_slot_info_ex = make_error_handle_function(get_slot_info)
+def c_get_slot_info(slot):
+    """
+    Get information about the given slot number.
+
+    :param int slot: Target slot
+    :return: Dictionary of slot information
+    """
+    slot_info = CK_SLOT_INFO()
+    slot_info_dict = {}
+    ret = C_GetSlotInfo(slot, byref(slot_info))
+    if ret != CKR_OK:
+        return ret, {}
+
+    slot_info_dict['slotDescription'] = string_at(slot_info.slotDescription, 64).rstrip()
+    slot_info_dict['manufacturerID'] = string_at(slot_info.manufacturerID, 32).rstrip()
+    slot_info_dict['flags'] = slot_info.flags
+    hw_version = "{}.{}".format(slot_info.hardwareVersion.major,
+                                slot_info.hardwareVersion.minor)
+    slot_info_dict['hardwareVersion'] = hw_version
+    fw_version = "{}.{}.{}".format(slot_info.firmwareVersion.major,
+                                   slot_info.firmwareVersion.minor / 10,
+                                   slot_info.firmwareVersion.minor % 10)
+    slot_info_dict['firmwareVersion'] = fw_version
+    return ret, slot_info_dict
+
+
+c_get_slot_info_ex = make_error_handle_function(c_get_slot_info)
 
 
 def c_get_session_info(session):
@@ -205,10 +233,11 @@ def c_get_session_info(session):
 c_get_session_info_ex = make_error_handle_function(c_get_session_info)
 
 
-def c_get_token_info(slot_id):
+def c_get_token_info(slot_id, rstrip=True):
     """Gets the token info for a given slot id
 
-    :param int slot_id: Slot index to get the token info for
+    :param int slot_id: Token slot ID
+    :param bool rstrip: If true, will strip trailing whitespace from char data.
     :returns: (retcode, A python dictionary representing the token info)
     :rtype: tuple
     """
@@ -218,10 +247,10 @@ def c_get_token_info(slot_id):
     ret = C_GetTokenInfo(CK_ULONG(slot_id), byref(c_token_info))
 
     if ret == CKR_OK:
-        token_info['label'] = string_at(c_token_info.label)
-        token_info['manufacturerID'] = string_at(c_token_info.manufacturerID)
-        token_info['model'] = string_at(c_token_info.model)
-        token_info['serialNumber'] = string_at(c_token_info.serialNumber)
+        token_info['label'] = string_at(c_token_info.label, 32)
+        token_info['manufacturerID'] = string_at(c_token_info.manufacturerID, 32)
+        token_info['model'] = string_at(c_token_info.model, 16)
+        token_info['serialNumber'] = string_at(c_token_info.serialNumber, 16)
         token_info['flags'] = c_token_info.flags
         token_info['ulFreePrivateMemory'] = c_token_info.ulFreePrivateMemory
         token_info['ulTotalPrivateMemory'] = c_token_info.ulTotalPrivateMemory
@@ -235,7 +264,13 @@ def c_get_token_info(slot_id):
         token_info['ulFreePublicMemory'] = c_token_info.ulFreePublicMemory
         token_info['hardwareVersion'] = c_token_info.hardwareVersion
         token_info['firmwareVersion'] = c_token_info.firmwareVersion
-        token_info['utcTime'] = string_at(c_token_info.utcTime)
+        token_info['utcTime'] = string_at(c_token_info.utcTime, 16)
+        if rstrip:
+            token_info['label'] = token_info['label'].rstrip()
+            token_info['manufacturerID'] = token_info['manufacturerID'].rstrip()
+            token_info['model'] = token_info['model'].rstrip()
+            token_info['serialNumber'] = token_info['serialNumber'].rstrip()
+            token_info['utcTime'] = token_info['utcTime'].rstrip()
 
     return ret, token_info
 
@@ -243,31 +278,21 @@ def c_get_token_info(slot_id):
 c_get_token_info_ex = make_error_handle_function(c_get_token_info)
 
 
-def get_slot_dict():
+def get_slot_dict(token_present=False):
     """Compiles a dictionary of the available slots
 
 
     :returns: A python dictionary of the available slots
     """
-    slot_list = AutoCArray()
-
-    @refresh_c_arrays(1)
-    def _get_slot_list():
-        """
-        Closure to refresh properties.
-        """
-        return C_GetSlotList(CK_BBOOL(0), slot_list.array, slot_list.size)
-
-    ret = _get_slot_list()
-    if ret != CKR_OK:
-        return ret, None
-
-    slot_info = CK_SLOT_INFO()
+    slot_list = c_get_slot_list_ex(token_present)
     slot_dict = {}
+    ret = CKR_OK
     for slot in slot_list:
-        C_GetSlotInfo(slot, byref(slot_info))
-        slot_description = str(cast(slot_info.slotDescription, c_char_p).value)[0:63].strip()
-        slot_dict[slot] = slot_description
+        ret, data = c_get_slot_info(slot)
+        if ret != CKR_OK:
+            LOG.error("C_GetSlotInfo failed at slot %s")
+            break
+        slot_dict[slot] = data
 
     return ret, slot_dict
 
