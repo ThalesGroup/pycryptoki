@@ -3,7 +3,7 @@ Methods responsible for managing a user's session and login/c_logout
 """
 import logging
 from ctypes import cast, c_void_p, create_string_buffer, \
-    byref, pointer, string_at, POINTER
+    byref, pointer, string_at
 
 from .common_utils import AutoCArray
 # cryptoki constants
@@ -37,8 +37,8 @@ from .cryptoki import (C_Initialize,
                        CA_OpenApplicationID,
                        CA_CloseApplicationID,
                        CA_Restart,
-                       CA_SetApplicationID,
-                       CA_RetrieveLicenseList)
+                       CA_SetApplicationID)
+
 from .defines import CKR_OK, CKF_RW_SESSION, CKF_SERIAL_SESSION
 from .exceptions import make_error_handle_function, LunaCallException
 
@@ -523,25 +523,3 @@ def get_firmware_version(slot):
         subminor = raw_firmware.minor % 10
 
     return "{}.{}.{}".format(major, minor, subminor)
-
-def ca_retrieve_license_list(slot):
-    """Gets the license info for a given slot id
-
-    :param int slot_id: Slot index to get the license id's
-    :returns: (A python list representing the license id's)
-    :rtype: list
-    """
-
-    license_len = c_ulong()
-    ret = CA_RetrieveLicenseList(slot, byref(license_len), None)
-    if ret == CKR_OK:
-        licenses = (c_ulong * license_len.value)()
-        ret = CA_RetrieveLicenseList(slot, license_len, cast(licenses, POINTER(c_ulong)))
-        LOG.info("Getting license id. slot=%s", slot)
-        if ret != CKR_OK:
-            return ret, []
-    else:
-        return ret, []
-    return ret, [(licenses[x], licenses[x+1])for x in range(0, license_len.value, 2)]
-
-ca_retrieve_license_list_ex = make_error_handle_function(ca_retrieve_license_list)
