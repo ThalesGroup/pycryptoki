@@ -3,7 +3,8 @@ Methods responsible for retrieving hsm info from the K7 card
 """
 import logging
 from ctypes import c_ulong, byref, cast, POINTER
-from pycryptoki.cryptoki import CA_GetNumberOfAllowedContainers, CA_RetrieveLicenseList
+from pycryptoki.cryptoki import (CA_GetNumberOfAllowedContainers, CA_RetrieveLicenseList,
+                                 CA_GetHSMStorageInformation)
 from pycryptoki.exceptions import make_error_handle_function
 from pycryptoki.defines import CKR_OK
 
@@ -47,4 +48,34 @@ def ca_retrieve_allowed_containers(slot):
     LOG.info("Getting allowed maximum container number. slot=%s", slot)
     return ret, allowed_partition_number
 
+
 ca_retrieve_allowed_containers_ex = make_error_handle_function(ca_retrieve_allowed_containers)
+
+
+def ca_retrieve_hsm_storage_info(slot):
+    """Gets the hsm storage info for a given slot id
+
+    :param int slot_id: Slot index to get the hsm storage info
+    :returns: (ret code, hsm_storage_info dictionary)
+    :rtype: dictionary
+    """
+
+    hsm_storage_info = {}
+
+    container_overhead = c_ulong()
+    total_hsm_storage = c_ulong()
+    used_hsm_storage = c_ulong()
+    free_hsm_storage = c_ulong()
+    ret = CA_GetHSMStorageInformation(slot, byref(container_overhead), byref(total_hsm_storage),
+                                      byref(used_hsm_storage), byref(free_hsm_storage))
+    LOG.info("Getting allowed maximum container number. slot=%s", slot)
+
+    if ret == CKR_OK:
+        hsm_storage_info['ContainerOverhead'] = container_overhead
+        hsm_storage_info['TotalHsmStorage'] = total_hsm_storage
+        hsm_storage_info['UsedHsmStorage'] = used_hsm_storage
+        hsm_storage_info['FreeHsmStorage'] = free_hsm_storage
+    return ret, hsm_storage_info
+
+
+ca_retrieve_hsm_storage_info_ex = make_error_handle_function(ca_retrieve_hsm_storage_info)
