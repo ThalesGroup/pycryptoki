@@ -4,7 +4,7 @@ Methods responsible for retrieving hsm info from the K7 card
 import logging
 from ctypes import c_ulong, byref, cast, POINTER
 from pycryptoki.cryptoki import (CA_GetNumberOfAllowedContainers, CA_RetrieveLicenseList,
-                                 CA_GetHSMStorageInformation)
+                                 CA_GetHSMStorageInformation, CA_GetTSV)
 from pycryptoki.exceptions import make_error_handle_function
 from pycryptoki.defines import CKR_OK
 
@@ -79,3 +79,20 @@ def ca_retrieve_hsm_storage_info(slot):
 
 
 ca_retrieve_hsm_storage_info_ex = make_error_handle_function(ca_retrieve_hsm_storage_info)
+
+
+def ca_get_tsv(slot):
+    """Get the TSV(Module State Vector) for a given slot id
+
+    :param int slot_id: Slot index to get the TSV(Module State Vector)
+    :returns: (ret code, TSV)
+    :rtype: tuple
+    """
+
+    tsv = c_ulong()
+    ret = CA_GetTSV(slot, byref(tsv))
+    LOG.info("Getting Module state vector. slot=%s", slot)
+    return ret, tsv
+
+
+ca_get_tsv_ex = make_error_handle_function(ca_get_tsv)
