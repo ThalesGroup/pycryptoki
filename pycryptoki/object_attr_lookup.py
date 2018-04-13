@@ -94,3 +94,4 @@ def c_set_attribute_value(h_session, h_object, template):
 
 
 c_set_attribute_value_ex = make_error_handle_function(c_set_attribute_value)
+

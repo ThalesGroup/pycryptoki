@@ -29,10 +29,11 @@ from pycryptoki.defines import \
      CKR_OK, CKA_VALUE_LEN, CKR_KEY_SIZE_RANGE, CKD_NULL, CKM_ECDH1_DERIVE, CKA_CLASS,
      CKO_SECRET_KEY, CKA_EC_POINT, CKA_SENSITIVE, CKA_PRIVATE, CKA_DECRYPT, CKA_ENCRYPT, CKK_DES,
      CKA_KEY_TYPE, CKM_DES_ECB, CKR_MECHANISM_INVALID)
+from pycryptoki.ca_extensions.object_handler import ca_destroy_multiple_objects_ex
 from pycryptoki.encryption import c_encrypt_ex, c_decrypt_ex
 from pycryptoki.key_generator import \
     c_generate_key, c_generate_key_pair, c_derive_key, c_generate_key_ex, c_destroy_object, \
-    c_derive_key_ex, c_generate_key_pair_ex, ca_destroy_multiple_objects_ex
+    c_derive_key_ex, c_generate_key_pair_ex
 from pycryptoki.mechanism import NullMech
 from pycryptoki.object_attr_lookup import c_get_attribute_value_ex, c_find_objects_ex
 from pycryptoki.return_values import ret_vals_dictionary
