@@ -40,7 +40,7 @@ from pycryptoki.backup import (ca_open_secure_token, ca_open_secure_token_ex,
                                ca_extract, ca_extract_ex,
                                ca_insert, ca_insert_ex, ca_sim_insert, ca_sim_insert_ex,
                                ca_sim_extract_ex, ca_sim_extract)
-from pycryptoki.ca_extensions.session_info import ca_get_session_info, ca_get_session_info_ex
+from pycryptoki.ca_extensions.session import ca_get_session_info, ca_get_session_info_ex
 from pycryptoki.ca_extensions.object_handler import ca_destroy_multiple_objects, \
     ca_destroy_multiple_objects_ex, ca_get_object_handle, ca_get_object_handle_ex
 from pycryptoki.cryptoki import CK_ULONG
