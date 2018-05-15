@@ -109,3 +109,6 @@ _docbuild
 # PyBuilder
 target/
 
+#eclipse
+.project
+.pydevproject

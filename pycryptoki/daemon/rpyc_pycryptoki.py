@@ -67,6 +67,13 @@ from pycryptoki.hsm_management import (c_performselftest, c_performselftest_ex,
                                        ca_get_hsm_capability_setting_ex, ca_set_hsm_policies,
                                        ca_set_hsm_policies_ex, ca_set_destructive_hsm_policies,
                                        ca_set_destructive_hsm_policies_ex)
+from pycryptoki.ca_extensions.utilization_metrics \
+                                        import (ca_read_all_utilization_counters,
+                                                ca_read_all_utilization_counters_ex,
+                                                ca_read_utilization_metrics,
+                                                ca_read_utilization_metrics_ex,
+                                                ca_read_and_reset_utilization_metrics,
+                                                ca_read_and_reset_utilization_metrics_ex)
 from pycryptoki.key_generator import (c_destroy_object, c_destroy_object_ex,
                                       c_generate_key_pair, c_generate_key_pair_ex,
                                       c_generate_key, c_generate_key_ex,
@@ -391,6 +398,14 @@ class PycryptokiService(rpyc.SlaveService):
     exposed_ca_get_session_info = staticmethod(ca_get_session_info)
     exposed_ca_get_session_info_ex = staticmethod(ca_get_session_info_ex)
 
+    exposed_ca_read_all_utilization_counters = staticmethod(ca_read_all_utilization_counters)
+    exposed_ca_read_all_utilization_counters_ex = staticmethod(ca_read_all_utilization_counters_ex)
+    exposed_ca_read_utilization_metrics = staticmethod(ca_read_utilization_metrics)
+    exposed_ca_read_utilization_metrics_ex = staticmethod(ca_read_utilization_metrics_ex)
+    exposed_ca_read_and_reset_utilization_metrics =\
+                                    staticmethod(ca_read_and_reset_utilization_metrics)
+    exposed_ca_read_and_reset_utilization_metrics_ex =\
+                                    staticmethod(ca_read_and_reset_utilization_metrics_ex)
 
 def server_launch(service, ip, port, config):
     """
