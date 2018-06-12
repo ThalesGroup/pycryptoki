@@ -19,5 +19,5 @@ setup(name='pycryptoki',
                 'pycryptoki.ca_extensions'],
       scripts=['pycryptoki/daemon/rpyc_pycryptoki.py'],
       tests_require=['pytest', 'hypothesis', 'mock', 'pytz'],
-      install_requires=['future', 'rpyc', 'six']
+      install_requires=['future', 'rpyc==3.4.4', 'six']
       )
