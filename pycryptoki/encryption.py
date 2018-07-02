@@ -5,6 +5,7 @@ import logging
 from _ctypes import POINTER
 from ctypes import create_string_buffer, cast, byref, string_at, c_ubyte
 
+from .string_helpers import _coerce_mech_to_str
 from .attributes import Attributes, to_byte_array
 from .common_utils import AutoCArray, refresh_c_arrays
 from .conversions import from_bytestring
@@ -57,6 +58,7 @@ def c_encrypt(h_session, h_key, data, mechanism, output_buffer=None):
     :returns: (Retcode, Python bytestring of encrypted data)
     :rtype: tuple
     """
+    LOG.debug("Encrypting data with mechanism:\n%s", _coerce_mech_to_str(mechanism))
     mech = parse_mechanism(mechanism)
     # if a list is passed out do an encrypt operation on each string in the list, otherwise just
     # do one encrypt operation

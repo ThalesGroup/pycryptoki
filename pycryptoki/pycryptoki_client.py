@@ -2,6 +2,8 @@ from __future__ import print_function
 
 from six import string_types, binary_type
 
+from pycryptoki.string_helpers import _decode, _coerce_mech_to_str
+
 """
 Contains both a local and remote pycryptoki client
 """
@@ -92,14 +94,14 @@ def log_args(funcname, arg_dict):
     This will run through each of the key, value pairs of the argument spec passed into
     pycryptoki and perform the following checks:
 
-        if key is a template, format the template data through a dict lookup
-        if key is password, set the log data to be '*'
-        if value is longer than 10 characters, shorten it.
+        * if key is a template, format the template data through a dict lookup
+        * if key is password, set the log data to be '*'
+        * if value is longer than 40 characters, abbreviate it.
 
     :param arg_dict:
     :return:
     """
-    log_msg = "Running remote pycryptoki command {}()".format(funcname)
+    log_msg = "Remote pycryptoki command: {}()".format(funcname)
     if arg_dict:
         log_msg += " with args:"
     log_list = [log_msg]
@@ -113,11 +115,20 @@ def log_args(funcname, arg_dict):
                                                 template_value))
         elif "password" in key:
             log_list.append("\t%s: *" % key)
+        elif "mechanism" in key:
+            log_list.append("\t%s: " % key)
+            nice_mech = _coerce_mech_to_str(arg_dict[key]).splitlines()
+            log_list.extend(["\t\t%s" % x for x in nice_mech])
         else:
-            if isinstance(value, (string_types, binary_type)) and len(value) > 20:
-                msg = "\t%s: %s[...]%s" % (key, value[:10], value[-10:])
+            if isinstance(value, binary_type):
+                log_val = _decode(value)
             else:
-                msg = "\t%s: %s" % (key, value)
+                log_val = value
+
+            if isinstance(log_val, (string_types, binary_type)) and len(log_val) > 40:
+                msg = "\t%s: %s[...]%s" % (key, log_val[:20], log_val[-20:])
+            else:
+                msg = "\t%s: %s" % (key, log_val)
             log_list.append(msg)
 
     LOG.debug("\n".join(log_list))
