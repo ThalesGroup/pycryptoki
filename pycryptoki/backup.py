@@ -2,7 +2,7 @@
 Backup related commands
 """
 import logging
-from ctypes import byref
+from ctypes import byref, c_ulong
 
 from .common_utils import AutoCArray, refresh_c_arrays
 from .cryptoki import CA_OpenSecureToken, CA_CloseSecureToken, CA_Extract, CA_Insert, \
@@ -124,7 +124,8 @@ def ca_sim_extract(h_session, key_handles, authform, auth_secrets=None, subset_s
     if subset_size > len(auth_secrets):
         raise ValueError("Subset size cannot be larger than the N value (length of auth secrets)")
 
-    auth_secrets = AutoCArray(data=[cast(pointer(create_string_buffer(x, len(x))),
+    auth_secret_sizes = AutoCArray(data=[c_ulong(len(x)) for x in auth_secrets])
+    c_auth_secrets = AutoCArray(data=[cast(pointer(create_string_buffer(x, len(x))),
                                          CK_BYTE_PTR) for x in auth_secrets],
                               ctype=POINTER(CK_BYTE))
     c_key_handles = AutoCArray(key_handles)
@@ -140,7 +141,7 @@ def ca_sim_extract(h_session, key_handles, authform, auth_secrets=None, subset_s
                              len(c_key_handles), c_key_handles.array,
                              CK_ULONG(len(auth_secrets)), CK_ULONG(subset_size),
                              authform,
-                             auth_secrets.size, auth_secrets.array,
+                             auth_secret_sizes.array, c_auth_secrets.array,
                              delete_after_extract,
                              bloblen, blobarr)
 
@@ -175,7 +176,8 @@ def ca_sim_insert(h_session, blob_data, authform, auth_secrets=None):
         raise ValueError("Invalid authform, import and use SIM_AUTH to select an authentication "
                          "type.")
 
-    auth_secrets = AutoCArray(data=[cast(pointer(create_string_buffer(x, len(x))),
+    auth_secret_sizes = AutoCArray(data=[c_ulong(len(x)) for x in auth_secrets])
+    c_auth_secrets = AutoCArray(data=[cast(pointer(create_string_buffer(x, len(x))),
                                          CK_BYTE_PTR) for x in auth_secrets],
                               ctype=POINTER(CK_BYTE))
     c_key_handles = AutoCArray()
@@ -189,7 +191,7 @@ def ca_sim_insert(h_session, blob_data, authform, auth_secrets=None):
         key_array, key_array_len = c_key_handles.array, c_key_handles.size
         return CA_SIMInsert(h_session,
                             CK_ULONG(len(auth_secrets)), authform,
-                            auth_secrets.size, auth_secrets.array,
+                            auth_secret_sizes.array, c_auth_secrets.array,
                             len(blob_data), cast(c_blob_data, POINTER(CK_BYTE)),
                             key_array_len, key_array)
 
