@@ -63,6 +63,7 @@ from .aes import (AESECBEncryptDataMechanism,
                   AESXTSMechanism,
                   Iv16Mechanism,
                   IvMechanism, AESCTRMechanism)
+from .des import DES3CTRMechanism
 from .dh import ECDH1DeriveMechanism
 from .generic import (ConcatenationDeriveMechanism,
                       StringDataDerivationMechanism,
@@ -135,6 +136,7 @@ from ..defines import (CKM_DES_CBC,
 
                        CKM_ECDH1_DERIVE,
                        CKM_AES_CTR,
+                       CKM_DES3_CTR,
                        CKM_AES_GMAC,
 
                        CKM_PRF_KDF)
@@ -159,6 +161,7 @@ MECH_LOOKUP = {
     CKM_AES_CFB128: IvMechanism,
     CKM_AES_OFB: IvMechanism,
     CKM_AES_CTR: AESCTRMechanism,
+    CKM_DES3_CTR: DES3CTRMechanism,
     CKM_ARIA_CFB8: IvMechanism,
     CKM_ARIA_CFB128: IvMechanism,
     CKM_ARIA_OFB: IvMechanism,
