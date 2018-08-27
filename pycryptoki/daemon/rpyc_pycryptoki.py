@@ -39,7 +39,8 @@ from pycryptoki.backup import (ca_open_secure_token, ca_open_secure_token_ex,
                                ca_close_secure_token, ca_close_secure_token_ex,
                                ca_extract, ca_extract_ex,
                                ca_insert, ca_insert_ex, ca_sim_insert, ca_sim_insert_ex,
-                               ca_sim_extract_ex, ca_sim_extract)
+                               ca_sim_extract_ex, ca_sim_extract, ca_sim_multisign,
+                               ca_sim_multisign_ex)
 from pycryptoki.ca_extensions.session import ca_get_session_info, ca_get_session_info_ex
 from pycryptoki.ca_extensions.object_handler import ca_destroy_multiple_objects, \
     ca_destroy_multiple_objects_ex, ca_get_object_handle, ca_get_object_handle_ex
@@ -300,6 +301,8 @@ class PycryptokiService(rpyc.SlaveService):
     exposed_ca_sim_insert_ex = staticmethod(ca_sim_insert_ex)
     exposed_ca_sim_extract = staticmethod(ca_sim_extract)
     exposed_ca_sim_extract_ex = staticmethod(ca_sim_extract_ex)
+    exposed_ca_sim_multisign = staticmethod(ca_sim_multisign)
+    exposed_ca_sim_multisign_ex = staticmethod(ca_sim_multisign_ex)
 
     # audit_handling.py
     exposed_ca_get_time = staticmethod(ca_get_time)
