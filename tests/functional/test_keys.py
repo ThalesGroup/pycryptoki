@@ -13,7 +13,7 @@ from pycryptoki.default_templates import \
      CKM_KCDSA_KEY_PAIR_GEN_PUBTEMP_1024_160, CKM_KCDSA_KEY_PAIR_GEN_PUBTEMP_2048_256,
 
      curve_list, get_default_key_template, get_default_key_pair_template,
-     MECHANISM_LOOKUP_EXT)
+     MECHANISM_LOOKUP_EXT, CKM_DES2_KEY_GEN_TEMP, CKM_AES_KEY_GEN_TEMP)
 from pycryptoki.defines import \
     (CKM_DES_KEY_GEN, CKM_DES2_KEY_GEN, CKM_DES3_KEY_GEN, CKM_CAST3_KEY_GEN, CKM_CAST5_KEY_GEN,
      CKM_RC2_KEY_GEN, CKM_RC4_KEY_GEN, CKM_RC5_KEY_GEN, CKM_GENERIC_SECRET_KEY_GEN,
@@ -26,15 +26,15 @@ from pycryptoki.defines import \
      CKM_SHA384_KEY_DERIVATION, CKM_SHA512_KEY_DERIVATION, CKM_MD5_KEY_DERIVATION,
      CKM_MD2_KEY_DERIVATION,
 
-     CKR_OK, CKA_VALUE_LEN, CKR_KEY_SIZE_RANGE, CKD_NULL, CKM_ECDH1_DERIVE, CKA_CLASS,
+     CKR_OK, CKA_VALUE_LEN, CKR_KEY_SIZE_RANGE, CKD_NULL, CKM_ECDH1_DERIVE, CKA_CLASS, CKA_LABEL,
      CKO_SECRET_KEY, CKA_EC_POINT, CKA_SENSITIVE, CKA_PRIVATE, CKA_DECRYPT, CKA_ENCRYPT, CKK_DES,
-     CKA_KEY_TYPE, CKM_DES_ECB, CKR_MECHANISM_INVALID)
+     CKA_KEY_TYPE, CKM_DES_ECB, CKR_MECHANISM_INVALID, CKM_DES2_DUKPT_IPEK)
 from pycryptoki.ca_extensions.object_handler import ca_destroy_multiple_objects_ex
 from pycryptoki.encryption import c_encrypt_ex, c_decrypt_ex
 from pycryptoki.key_generator import \
     c_generate_key, c_generate_key_pair, c_derive_key, c_generate_key_ex, c_destroy_object, \
     c_derive_key_ex, c_generate_key_pair_ex
-from pycryptoki.mechanism import NullMech
+from pycryptoki.mechanism import NullMech, StringDataDerivationMechanism
 from pycryptoki.object_attr_lookup import c_get_attribute_value_ex, c_find_objects_ex
 from pycryptoki.return_values import ret_vals_dictionary
 from pycryptoki.test_functions import verify_object_attributes
@@ -103,6 +103,32 @@ class TestKeys(object):
     @pytest.fixture(autouse=True)
     def setup_teardown(self, auth_session):
         self.h_session = auth_session
+
+    def test_derive_dukpt_ipek(self, valid_mechanisms):
+        """
+        Test derive key for the new dukpt ipek mechanism
+        """
+        if CKM_DES2_DUKPT_IPEK not in valid_mechanisms:
+             pytest.skip('This test is only valid for FWs that support CKM_DES2_DUKPT_IPEK')
+        key_template = get_session_template(get_default_key_template(CKM_DES2_KEY_GEN))
+        ret, h_base_key = c_generate_key(self.h_session, CKM_DES2_KEY_GEN, key_template)
+        mech = StringDataDerivationMechanism(mech_type=CKM_DES2_DUKPT_IPEK,
+                                             params={'data': 0xffff9876543210e00000}).to_c_mech()
+        derived_key_template = key_template.copy()
+        del derived_key_template[CKA_VALUE_LEN]
+        derived_key_template[CKA_LABEL] = b"DUKPT IPEK"
+        ret, h_derived_key = c_derive_key(self.h_session,
+                                          h_base_key,
+                                          derived_key_template,
+                                          mechanism=mech)
+        try:
+            self.verify_ret(ret, CKR_OK)
+            verify_object_attributes(self.h_session, h_derived_key, derived_key_template)
+        finally:
+            if h_base_key:
+                c_destroy_object(self.h_session, h_base_key)
+            if h_derived_key:
+                c_destroy_object(self.h_session, h_derived_key)
 
     @pytest.mark.parametrize("key_type", KEYS, ids=[MECHANISM_LOOKUP_EXT[k][0] for k in KEYS])
     def test_generate_key(self, key_type, valid_mechanisms):

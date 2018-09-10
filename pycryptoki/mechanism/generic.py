@@ -49,7 +49,7 @@ class StringDataDerivationMechanism(Mechanism):
         data, length = to_byte_array(self.params['data'])
         parameters.pData = cast(data, POINTER(c_ubyte))
         parameters.ulLen = length
-        self.mech.pParameter = parameters
+        self.mech.pParameter = cast(pointer(parameters), c_void_p)
         self.mech.usParameterLen = sizeof(parameters)
         return self.mech
 

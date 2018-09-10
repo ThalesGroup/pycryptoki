@@ -139,7 +139,8 @@ from ..defines import (CKM_DES_CBC,
                        CKM_DES3_CTR,
                        CKM_AES_GMAC,
 
-                       CKM_PRF_KDF)
+                       CKM_PRF_KDF,
+                       CKM_DES2_DUKPT_IPEK)
 
 MECH_LOOKUP = {
     # Iv
@@ -205,7 +206,7 @@ MECH_LOOKUP = {
     CKM_CONCATENATE_BASE_AND_DATA: StringDataDerivationMechanism,
     CKM_XOR_BASE_AND_DATA: StringDataDerivationMechanism,
     CKM_CONCATENATE_DATA_AND_BASE: StringDataDerivationMechanism,
-
+    CKM_DES2_DUKPT_IPEK: StringDataDerivationMechanism,
     CKM_ECDH1_DERIVE: ECDH1DeriveMechanism,
 
     CKM_PRF_KDF: PRFKDFDeriveMechanism,
