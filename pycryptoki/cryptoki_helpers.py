@@ -17,6 +17,8 @@ LOG = logging.getLogger(__name__)
 
 IS_64B = 8 * struct.calcsize("P") == 64
 
+CRYSTOKI_CONF_DLL = "CHRYSTOKI_CONF_DLL"
+
 
 class CryptokiConfigException(LunaException):
     """
@@ -141,22 +143,22 @@ class CryptokiDLLException(Exception):
 
 class CryptokiDLLSingleton(object):
     """A singleton class which holds an instance of the loaded cryptoki DLL object."""
-
-    _instance = None
+    _instance_map = {}
     loaded_dll_library = None
 
     def __new__(cls, *args, **kwargs):
-        if not cls._instance:
-            cls._instance = super(CryptokiDLLSingleton, cls).__new__(cls, *args, **kwargs)
+        if not cls._instance_map.get(CRYSTOKI_CONF_DLL):
+            new_instance = super(CryptokiDLLSingleton, cls).__new__(cls, *args, **kwargs)
 
             dll_path = parse_chrystoki_conf()
-            cls._instance.dll_path = dll_path
+            new_instance.dll_path = dll_path
             if 'win' in sys.platform and IS_64B:
                 import ctypes
-                cls._instance.loaded_dll_library = ctypes.WinDLL(dll_path)
+                new_instance.loaded_dll_library = ctypes.WinDLL(dll_path)
             else:
-                cls._instance.loaded_dll_library = CDLL(dll_path)
-        return cls._instance
+                new_instance.loaded_dll_library = CDLL(dll_path)
+            cls._instance_map[CRYSTOKI_CONF_DLL] = new_instance
+        return cls._instance_map[CRYSTOKI_CONF_DLL]
 
     def get_dll(self):
         """Get the loaded library (parsed from crystoki.ini/Chrystoki.conf)"""
@@ -167,6 +169,19 @@ class CryptokiDLLSingleton(object):
                 "2. Can python read the Luna HSM Client config file?\n"
                 "3. Is there a LibUNIX/LibNT field in the Luna HSM Client config file")
         return self.loaded_dll_library
+
+    @classmethod
+    def from_path(cls, path):
+        if not cls._instance_map.get(path):
+            new_instance = super(CryptokiDLLSingleton, cls).__new__(cls)
+            cls._instance_map[path] = new_instance
+            new_instance.dll_path = path
+            if 'win' in sys.platform and IS_64B:
+                import ctypes
+                new_instance.loaded_dll_library = ctypes.WinDLL(path)
+            else:
+                new_instance.loaded_dll_library = CDLL(path)
+        return cls._instance_map[path]
 
 
 def log_args(funcname, args):
