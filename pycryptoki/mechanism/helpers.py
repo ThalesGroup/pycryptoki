@@ -6,8 +6,9 @@ to pycryptoki functions.
 import logging
 from ctypes import c_void_p, cast, pointer, POINTER, sizeof, create_string_buffer, c_char
 
-from six import integer_types
+from six import integer_types, binary_type
 
+from pycryptoki.string_helpers import _decode
 from pycryptoki.lookup_dicts import MECH_NAME_LOOKUP
 from ..cryptoki import CK_AES_CBC_PAD_EXTRACT_PARAMS, CK_MECHANISM, \
     CK_ULONG, CK_ULONG_PTR, CK_AES_CBC_PAD_INSERT_PARAMS, CK_BYTE, CK_BYTE_PTR, CK_MECHANISM_TYPE
@@ -98,6 +99,24 @@ class Mechanism(object):
                " {})".format(self.__class__.__name__,
                              MECH_NAME_LOOKUP.get(self.mech_type, "UNKNOWN"),
                              ", ".join("{}: {}".format(k, v) for k, v in self.params.items()))
+
+    def __str__(self):
+        """
+        Formatted string representation of a mechanism.
+        """
+        nice_params = []
+        msg = "{}(mech_type: {}".format(self.__class__.__name__,
+                                        MECH_NAME_LOOKUP.get(self.mech_type, "UNKNOWN"))
+        # +1 for the opening (
+        msg_buff = len(self.__class__.__name__) + 1
+        for key, value in self.params.items():
+            if isinstance(value, binary_type):
+                value = _decode(value)
+            nice_params.append("{}{}: {}".format(" " * msg_buff, key, value))
+        if self.params:
+            msg += ",\n" + "\n".join(nice_params)
+        msg += ")"
+        return msg
 
     def to_c_mech(self):
         """

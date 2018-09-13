@@ -981,6 +981,19 @@ CK_LKM_TOKEN_ID_S._fields_ = [
 CK_LKM_TOKEN_ID = CK_LKM_TOKEN_ID_S
 CK_LKM_TOKEN_ID_PTR = POINTER(CK_LKM_TOKEN_ID)
 
+#utilization
+CK_ULONGLONG = c_ulonglong
+class CK_UTILIZATION_COUNTER(Structure):
+    pass
+
+CK_UTILIZATION_COUNTER._fields_ = [
+    ('ullSerialNumber', CK_ULONGLONG),
+    ('label', CK_CHAR * 66),
+    ('ulBindId', CK_ULONG),
+    ('ulCounterId', CK_ULONG),
+    ('ullCount', CK_ULONGLONG),
+]
+CK_UTILIZATION_COUNTER_PTR = POINTER(CK_UTILIZATION_COUNTER)
 
 class CK_SFNT_CA_FUNCTION_LIST(Structure):
     pass
@@ -1036,6 +1049,11 @@ CK_CA_CloseApplicationIDForContainer = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG, CK
 CK_CA_OpenApplicationID = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG, CK_ULONG)
 CK_CA_OpenApplicationIDForContainer = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG, CK_ULONG, CK_ULONG)
 CK_CA_SetApplicationID = CFUNCTYPE(CK_RV, CK_ULONG, CK_ULONG)
+#utilization_metrics
+CK_CA_DescribeUtilizationBinId = CFUNCTYPE(CK_RV, CK_ULONG, CK_CHAR_PTR)
+CK_CA_ReadUtilizationMetrics = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE)
+CK_CA_ReadAndResetUtilizationMetrics = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE)
+CK_CA_ReadAllUtilizationCounters = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_UTILIZATION_COUNTER_PTR, CK_ULONG_PTR)
 CK_CA_ManualKCV = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE)
 CK_CA_SetLKCV = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG)
 CK_CA_SetKCV = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG)
@@ -1365,6 +1383,10 @@ CK_SFNT_CA_FUNCTION_LIST._fields_ = [
     ('CA_OpenApplicationID', CK_CA_OpenApplicationID),
     ('CA_OpenApplicationIDForContainer', CK_CA_OpenApplicationIDForContainer),
     ('CA_SetApplicationID', CK_CA_SetApplicationID),
+    ('CA_ReadUtilizationMetrics', CK_CA_ReadUtilizationMetrics),
+    ('CA_DescribeUtilizationBinId', CK_CA_DescribeUtilizationBinId),
+    ('CA_ReadAndResetUtilizationMetrics', CK_CA_ReadAndResetUtilizationMetrics),
+    ('CA_ReadAllUtilizationCounters', CK_CA_ReadAllUtilizationCounters),
     ('CA_ManualKCV', CK_CA_ManualKCV),
     ('CA_SetLKCV', CK_CA_SetLKCV),
     ('CA_SetKCV', CK_CA_SetKCV),
@@ -1665,6 +1687,18 @@ CA_OpenApplicationIDForContainer.argtypes = [CK_SLOT_ID, CK_ULONG, CK_ULONG, CK_
 CA_SetApplicationID = make_late_binding_function('CA_SetApplicationID')
 CA_SetApplicationID.restype = CK_RV
 CA_SetApplicationID.argtypes = [CK_ULONG, CK_ULONG]
+CA_DescribeUtilizationBinId = make_late_binding_function('CA_DescribeUtilizationBinId')
+CA_DescribeUtilizationBinId.restype = CK_RV
+CA_DescribeUtilizationBinId.argtypes = [CK_ULONG, CK_CHAR_PTR]
+CA_ReadUtilizationMetrics = make_late_binding_function('CA_ReadUtilizationMetrics')
+CA_ReadUtilizationMetrics.restype = CK_RV
+CA_ReadUtilizationMetrics.argtypes = [CK_SESSION_HANDLE]
+CA_ReadAndResetUtilizationMetrics = make_late_binding_function('CA_ReadAndResetUtilizationMetrics')
+CA_ReadAndResetUtilizationMetrics.restype = CK_RV
+CA_ReadAndResetUtilizationMetrics.argtypes = [CK_SESSION_HANDLE]
+CA_ReadAllUtilizationCounters = make_late_binding_function('CA_ReadAllUtilizationCounters')
+CA_ReadAllUtilizationCounters.restype = CK_RV
+CA_ReadAllUtilizationCounters.argtypes = [CK_SESSION_HANDLE, CK_UTILIZATION_COUNTER_PTR, CK_ULONG_PTR]
 CA_ManualKCV = make_late_binding_function('CA_ManualKCV')
 CA_ManualKCV.restype = CK_RV
 CA_ManualKCV.argtypes = [CK_SESSION_HANDLE]

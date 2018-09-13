@@ -1,5 +1,6 @@
 # Created by https://www.gitignore.io
 .gitreview
+.pytest_cache
 ### PyCharm ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm
 
@@ -109,3 +110,6 @@ _docbuild
 # PyBuilder
 target/
 
+#eclipse
+.project
+.pydevproject

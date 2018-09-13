@@ -39,7 +39,11 @@ from pycryptoki.backup import (ca_open_secure_token, ca_open_secure_token_ex,
                                ca_close_secure_token, ca_close_secure_token_ex,
                                ca_extract, ca_extract_ex,
                                ca_insert, ca_insert_ex, ca_sim_insert, ca_sim_insert_ex,
-                               ca_sim_extract_ex, ca_sim_extract)
+                               ca_sim_extract_ex, ca_sim_extract, ca_sim_multisign,
+                               ca_sim_multisign_ex)
+from pycryptoki.ca_extensions.session import ca_get_session_info, ca_get_session_info_ex
+from pycryptoki.ca_extensions.object_handler import ca_destroy_multiple_objects, \
+    ca_destroy_multiple_objects_ex, ca_get_object_handle, ca_get_object_handle_ex
 from pycryptoki.cryptoki import CK_ULONG
 from pycryptoki.encryption import (c_encrypt, c_encrypt_ex,
                                    c_decrypt, c_decrypt_ex,
@@ -64,12 +68,18 @@ from pycryptoki.hsm_management import (c_performselftest, c_performselftest_ex,
                                        ca_get_hsm_capability_setting_ex, ca_set_hsm_policies,
                                        ca_set_hsm_policies_ex, ca_set_destructive_hsm_policies,
                                        ca_set_destructive_hsm_policies_ex)
+from pycryptoki.ca_extensions.utilization_metrics \
+                                        import (ca_read_all_utilization_counters,
+                                                ca_read_all_utilization_counters_ex,
+                                                ca_read_utilization_metrics,
+                                                ca_read_utilization_metrics_ex,
+                                                ca_read_and_reset_utilization_metrics,
+                                                ca_read_and_reset_utilization_metrics_ex)
 from pycryptoki.key_generator import (c_destroy_object, c_destroy_object_ex,
                                       c_generate_key_pair, c_generate_key_pair_ex,
                                       c_generate_key, c_generate_key_ex,
                                       c_derive_key, c_derive_key_ex,
-                                      c_copy_object_ex, c_copy_object, ca_destroy_multiple_objects,
-                                      ca_destroy_multiple_objects_ex)
+                                      c_copy_object_ex, c_copy_object)
 from pycryptoki.key_management import (ca_generatemofn, ca_generatemofn_ex,
                                        ca_modifyusagecount, ca_modifyusagecount_ex)
 from pycryptoki.key_usage import (ca_clonemofn, ca_clonemofn_ex,
@@ -291,6 +301,8 @@ class PycryptokiService(rpyc.SlaveService):
     exposed_ca_sim_insert_ex = staticmethod(ca_sim_insert_ex)
     exposed_ca_sim_extract = staticmethod(ca_sim_extract)
     exposed_ca_sim_extract_ex = staticmethod(ca_sim_extract_ex)
+    exposed_ca_sim_multisign = staticmethod(ca_sim_multisign)
+    exposed_ca_sim_multisign_ex = staticmethod(ca_sim_multisign_ex)
 
     # audit_handling.py
     exposed_ca_get_time = staticmethod(ca_get_time)
@@ -372,8 +384,6 @@ class PycryptokiService(rpyc.SlaveService):
     exposed_ca_generatemofn_ex = staticmethod(ca_generatemofn_ex)
     exposed_ca_modifyusagecount = staticmethod(ca_modifyusagecount)
     exposed_ca_modifyusagecount_ex = staticmethod(ca_modifyusagecount_ex)
-    exposed_ca_destroy_multiple_objects = staticmethod(ca_destroy_multiple_objects)
-    exposed_ca_destroy_multiple_objects_ex = staticmethod(ca_destroy_multiple_objects_ex)
 
     # key_usage.py
     exposed_ca_clonemofn = staticmethod(ca_clonemofn)
@@ -383,6 +393,22 @@ class PycryptokiService(rpyc.SlaveService):
     exposed_c_derive_key = staticmethod(c_derive_key)
     exposed_c_derive_key_ex = staticmethod(c_derive_key_ex)
 
+    # CA extensions
+    exposed_ca_destroy_multiple_objects = staticmethod(ca_destroy_multiple_objects)
+    exposed_ca_destroy_multiple_objects_ex = staticmethod(ca_destroy_multiple_objects_ex)
+    exposed_ca_get_object_handle = staticmethod(ca_get_object_handle)
+    exposed_ca_get_object_handle_ex = staticmethod(ca_get_object_handle_ex)
+    exposed_ca_get_session_info = staticmethod(ca_get_session_info)
+    exposed_ca_get_session_info_ex = staticmethod(ca_get_session_info_ex)
+
+    exposed_ca_read_all_utilization_counters = staticmethod(ca_read_all_utilization_counters)
+    exposed_ca_read_all_utilization_counters_ex = staticmethod(ca_read_all_utilization_counters_ex)
+    exposed_ca_read_utilization_metrics = staticmethod(ca_read_utilization_metrics)
+    exposed_ca_read_utilization_metrics_ex = staticmethod(ca_read_utilization_metrics_ex)
+    exposed_ca_read_and_reset_utilization_metrics =\
+                                    staticmethod(ca_read_and_reset_utilization_metrics)
+    exposed_ca_read_and_reset_utilization_metrics_ex =\
+                                    staticmethod(ca_read_and_reset_utilization_metrics_ex)
 
 def server_launch(service, ip, port, config):
     """

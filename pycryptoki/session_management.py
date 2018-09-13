@@ -18,7 +18,8 @@ from .cryptoki import (CK_ULONG,
                        CK_USER_TYPE,
                        CK_TOKEN_INFO,
                        CK_VOID_PTR,
-                       CK_BYTE, CK_INFO, C_GetInfo, CA_GetFirmwareVersion, c_ulong)
+                       CK_BYTE, CK_INFO, C_GetInfo, CA_GetFirmwareVersion, c_ulong,
+                       CK_C_INITIALIZE_ARGS, CK_C_INITIALIZE_ARGS_PTR)
 # Cryptoki Functions
 from .cryptoki import (C_Initialize,
                        C_GetSlotList,
@@ -38,20 +39,38 @@ from .cryptoki import (C_Initialize,
                        CA_CloseApplicationID,
                        CA_Restart,
                        CA_SetApplicationID)
+
 from .defines import CKR_OK, CKF_RW_SESSION, CKF_SERIAL_SESSION
 from .exceptions import make_error_handle_function, LunaCallException
 
 LOG = logging.getLogger(__name__)
 
 
-def c_initialize():
-    """Initializes current process for use with PKCS11
+def c_initialize(flags=None, init_struct=None):
+    """Initializes current process for use with PKCS11.
 
-    :returns: retcode
+    Some sample flags:
+
+        CKF_LIBRARY_CANT_CREATE_OS_THREADS
+        CKF_OS_LOCKING_OK
+
+    See the `PKCS11 documentation <https://www.cryptsoft.com/pkcs11doc/v220/pkcs11__all_8h.html#aC_Initialize>`_
+    for more details.
+
+    :param int flags: Flags to be set within InitArgs Struct. (Default = None)
+    :param init_struct: InitArgs structure (Default = None)
+    :returns: Cryptoki return code.
     """
-    # INITIALIZE
-    LOG.info("C_Initialize: Initializing HSM")
-    ret = C_Initialize(0)
+    if flags:
+        if not init_struct:
+            init_struct = CK_C_INITIALIZE_ARGS()
+        init_struct.flags = flags
+    if init_struct:
+        init_struct_p = cast(init_struct, c_void_p)
+    else:
+        init_struct_p = None
+    LOG.info("Initializing Cryptoki Library")
+    ret = C_Initialize(init_struct_p)
     return ret
 
 
@@ -59,12 +78,11 @@ c_initialize_ex = make_error_handle_function(c_initialize)
 
 
 def c_finalize():
-    """Finalizes PKCS11 usage.
+    """Finalizes PKCS11 library.
 
-    :return: retcode
+    :return: Cryptoki return code
     """
-
-    LOG.info("C_Finalize: Finalizing HSM")
+    LOG.info("Finalizing Library")
     ret = C_Finalize(0)
     return ret
 
