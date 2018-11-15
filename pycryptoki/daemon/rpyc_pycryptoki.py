@@ -41,6 +41,7 @@ from pycryptoki.backup import (ca_open_secure_token, ca_open_secure_token_ex,
                                ca_insert, ca_insert_ex, ca_sim_insert, ca_sim_insert_ex,
                                ca_sim_extract_ex, ca_sim_extract, ca_sim_multisign,
                                ca_sim_multisign_ex)
+from pycryptoki.ca_extensions.derive_wrap import ca_derive_key_and_wrap, ca_derive_key_and_wrap_ex
 from pycryptoki.ca_extensions.session import ca_get_session_info, ca_get_session_info_ex
 from pycryptoki.ca_extensions.object_handler import ca_destroy_multiple_objects, \
     ca_destroy_multiple_objects_ex, ca_get_object_handle, ca_get_object_handle_ex
@@ -400,6 +401,8 @@ class PycryptokiService(rpyc.SlaveService):
     exposed_ca_get_object_handle_ex = staticmethod(ca_get_object_handle_ex)
     exposed_ca_get_session_info = staticmethod(ca_get_session_info)
     exposed_ca_get_session_info_ex = staticmethod(ca_get_session_info_ex)
+    exposed_ca_derive_key_and_wrap = staticmethod(ca_derive_key_and_wrap)
+    exposed_ca_derive_key_and_wrap_ex = staticmethod(ca_derive_key_and_wrap_ex)
 
     exposed_ca_read_all_utilization_counters = staticmethod(ca_read_all_utilization_counters)
     exposed_ca_read_all_utilization_counters_ex = staticmethod(ca_read_all_utilization_counters_ex)
