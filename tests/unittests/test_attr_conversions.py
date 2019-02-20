@@ -2,17 +2,17 @@
 Unit tests for python/c type conversions
 """
 import logging
-from _ctypes import POINTER
+from ctypes import POINTER
 from binascii import hexlify
 from collections import defaultdict
 from ctypes import cast, c_void_p, c_ulong, sizeof
+from datetime import date
 from string import ascii_letters as letters
 
 import mock
 import pytest
 from hypothesis import given
-from hypothesis.extra.datetime import dates
-from hypothesis.strategies import integers, floats, text, booleans, lists, dictionaries, one_of
+from hypothesis.strategies import integers, dates, floats, text, booleans, lists, dictionaries, one_of
 from six import b, integer_types
 
 from pycryptoki.attributes import (CK_ATTRIBUTE,
@@ -170,7 +170,7 @@ class TestAttrConversions(object):
         """
         self.force_fail(object(), to_char_array, TypeError)
 
-    @given(dates(min_year=1900))
+    @given(dates(min_value=date(1900, 1, 1)))
     def test_to_ck_date_string(self, date_val):
         """
         to_ck_date() with param:
@@ -183,7 +183,7 @@ class TestAttrConversions(object):
         py_date = self.reverse_case(pointer, leng, to_ck_date)
         assert b(date_string) == py_date
 
-    @given(dates(min_year=1900))
+    @given(dates(min_value=date(1900, 1, 1)))
     def test_to_ck_date_dict(self, date_val):
         """
         to_ck_date() with param:
@@ -196,7 +196,7 @@ class TestAttrConversions(object):
         py_date = self.reverse_case(pointer, leng, to_ck_date)
         assert b(date_val.strftime("%Y%m%d")) == py_date
 
-    @given(dates(min_year=1900))
+    @given(dates(min_value=date(1900, 1, 1)))
     def test_to_ck_date(self, date_val):
         """
         to_ck_date() with param:

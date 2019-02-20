@@ -18,6 +18,6 @@ setup(name='pycryptoki',
                 'pycryptoki.mechanism',
                 'pycryptoki.ca_extensions'],
       scripts=['pycryptoki/daemon/rpyc_pycryptoki.py'],
-      tests_require=['pytest', 'hypothesis', 'mock', 'pytz'],
+      tests_require=['pytest==3.10.1', 'hypothesis==4.6.1', 'mock', 'pytz'],
       install_requires=['future', 'rpyc==3.4.4', 'six']
       )
