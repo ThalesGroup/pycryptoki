@@ -671,7 +671,8 @@ CK_AES_GCM_PARAMS._fields_ = [
     ('ulTagBits', CK_ULONG),
 ]
 CK_AES_GCM_PARAMS_PTR = CK_AES_GCM_PARAMS
-
+CK_UTF8CHAR = CK_BYTE
+CK_UTF8CHAR_PTR = POINTER(CK_UTF8CHAR)
 
 class CK_XOR_BASE_DATA_KDF_PARAMS(Structure):
     pass
@@ -1054,6 +1055,11 @@ CK_CA_DescribeUtilizationBinId = CFUNCTYPE(CK_RV, CK_ULONG, CK_CHAR_PTR)
 CK_CA_ReadUtilizationMetrics = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE)
 CK_CA_ReadAndResetUtilizationMetrics = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE)
 CK_CA_ReadAllUtilizationCounters = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_UTILIZATION_COUNTER_PTR, CK_ULONG_PTR)
+#pka
+CK_CA_SetAuthorizationData = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_OBJECT_HANDLE,
+                                       CK_UTF8CHAR_PTR, CK_ULONG, CK_UTF8CHAR_PTR, CK_ULONG)
+CK_CA_AuthorizeKey = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_OBJECT_HANDLE,
+                               CK_UTF8CHAR_PTR, CK_ULONG)
 CK_CA_ManualKCV = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE)
 CK_CA_SetLKCV = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG)
 CK_CA_SetKCV = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG)
@@ -1387,6 +1393,8 @@ CK_SFNT_CA_FUNCTION_LIST._fields_ = [
     ('CA_DescribeUtilizationBinId', CK_CA_DescribeUtilizationBinId),
     ('CA_ReadAndResetUtilizationMetrics', CK_CA_ReadAndResetUtilizationMetrics),
     ('CA_ReadAllUtilizationCounters', CK_CA_ReadAllUtilizationCounters),
+    ('CA_SetAuthorizationData', CK_CA_SetAuthorizationData),
+    ('CA_AuthorizeKey', CK_CA_AuthorizeKey),
     ('CA_ManualKCV', CK_CA_ManualKCV),
     ('CA_SetLKCV', CK_CA_SetLKCV),
     ('CA_SetKCV', CK_CA_SetKCV),
@@ -1699,6 +1707,14 @@ CA_ReadAndResetUtilizationMetrics.argtypes = [CK_SESSION_HANDLE]
 CA_ReadAllUtilizationCounters = make_late_binding_function('CA_ReadAllUtilizationCounters')
 CA_ReadAllUtilizationCounters.restype = CK_RV
 CA_ReadAllUtilizationCounters.argtypes = [CK_SESSION_HANDLE, CK_UTILIZATION_COUNTER_PTR, CK_ULONG_PTR]
+#pka
+CA_SetAuthorizationData = make_late_binding_function('CA_SetAuthorizationData')
+CA_SetAuthorizationData.restype = CK_RV
+CA_SetAuthorizationData.argtypes = [CK_SESSION_HANDLE, CK_OBJECT_HANDLE,
+                                    CK_UTF8CHAR_PTR, CK_ULONG, CK_UTF8CHAR_PTR, CK_ULONG]
+CA_AuthorizeKey = make_late_binding_function('CA_AuthorizeKey')
+CA_AuthorizeKey.restype = CK_RV
+CA_AuthorizeKey.argtypes = [CK_SESSION_HANDLE, CK_OBJECT_HANDLE, CK_UTF8CHAR_PTR, CK_ULONG]
 CA_ManualKCV = make_late_binding_function('CA_ManualKCV')
 CA_ManualKCV.restype = CK_RV
 CA_ManualKCV.argtypes = [CK_SESSION_HANDLE]
@@ -2491,8 +2507,6 @@ class CK_MECHANISM_INFO(Structure):
 
 CK_MECHANISM_INFO_PTR = POINTER(CK_MECHANISM_INFO)
 CK_C_GetMechanismInfo = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_MECHANISM_TYPE, CK_MECHANISM_INFO_PTR)
-CK_UTF8CHAR = CK_BYTE
-CK_UTF8CHAR_PTR = POINTER(CK_UTF8CHAR)
 CK_C_InitToken = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_UTF8CHAR_PTR, CK_ULONG, CK_UTF8CHAR_PTR)
 CK_C_InitPIN = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_UTF8CHAR_PTR, CK_ULONG)
 CK_C_SetPIN = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_UTF8CHAR_PTR, CK_ULONG, CK_UTF8CHAR_PTR,

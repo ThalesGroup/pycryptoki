@@ -41,6 +41,7 @@ from pycryptoki.backup import (ca_open_secure_token, ca_open_secure_token_ex,
                                ca_insert, ca_insert_ex, ca_sim_insert, ca_sim_insert_ex,
                                ca_sim_extract_ex, ca_sim_extract, ca_sim_multisign,
                                ca_sim_multisign_ex)
+from pycryptoki.ca_extensions.derive_wrap import ca_derive_key_and_wrap, ca_derive_key_and_wrap_ex
 from pycryptoki.ca_extensions.session import ca_get_session_info, ca_get_session_info_ex
 from pycryptoki.ca_extensions.object_handler import ca_destroy_multiple_objects, \
     ca_destroy_multiple_objects_ex, ca_get_object_handle, ca_get_object_handle_ex
@@ -75,6 +76,10 @@ from pycryptoki.ca_extensions.utilization_metrics \
                                                 ca_read_utilization_metrics_ex,
                                                 ca_read_and_reset_utilization_metrics,
                                                 ca_read_and_reset_utilization_metrics_ex)
+from pycryptoki.ca_extensions.per_key_auth import (ca_set_authorization_data,
+                                                   ca_set_authorization_data_ex,
+                                                   ca_authorize_key,
+                                                   ca_authorize_key_ex)
 from pycryptoki.key_generator import (c_destroy_object, c_destroy_object_ex,
                                       c_generate_key_pair, c_generate_key_pair_ex,
                                       c_generate_key, c_generate_key_ex,
@@ -400,6 +405,8 @@ class PycryptokiService(rpyc.SlaveService):
     exposed_ca_get_object_handle_ex = staticmethod(ca_get_object_handle_ex)
     exposed_ca_get_session_info = staticmethod(ca_get_session_info)
     exposed_ca_get_session_info_ex = staticmethod(ca_get_session_info_ex)
+    exposed_ca_derive_key_and_wrap = staticmethod(ca_derive_key_and_wrap)
+    exposed_ca_derive_key_and_wrap_ex = staticmethod(ca_derive_key_and_wrap_ex)
 
     exposed_ca_read_all_utilization_counters = staticmethod(ca_read_all_utilization_counters)
     exposed_ca_read_all_utilization_counters_ex = staticmethod(ca_read_all_utilization_counters_ex)
@@ -409,6 +416,11 @@ class PycryptokiService(rpyc.SlaveService):
                                     staticmethod(ca_read_and_reset_utilization_metrics)
     exposed_ca_read_and_reset_utilization_metrics_ex =\
                                     staticmethod(ca_read_and_reset_utilization_metrics_ex)
+
+    exposed_ca_set_authorization_data = staticmethod(ca_set_authorization_data)
+    exposed_ca_set_authorization_data_ex = staticmethod(ca_set_authorization_data_ex)
+    exposed_ca_authorize_key = staticmethod(ca_authorize_key)
+    exposed_ca_authorize_key_ex = staticmethod(ca_authorize_key_ex)
 
 def server_launch(service, ip, port, config):
     """

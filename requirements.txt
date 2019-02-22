@@ -1,6 +1,6 @@
 rpyc==3.4.4
-hypothesis
-pytest
+hypothesis==4.6
+pytest==3.10
 future
 mock
 six
