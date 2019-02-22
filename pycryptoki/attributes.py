@@ -8,30 +8,83 @@ import collections
 import datetime
 import logging
 from collections import defaultdict
-from ctypes import cast, c_void_p, create_string_buffer, c_bool, \
-    c_ulong, pointer, POINTER, sizeof, c_char, string_at, c_ubyte
+from ctypes import (
+    cast,
+    c_void_p,
+    create_string_buffer,
+    c_bool,
+    c_ulong,
+    pointer,
+    POINTER,
+    sizeof,
+    c_char,
+    string_at,
+    c_ubyte,
+)
 from functools import wraps
 
-from six import b, string_types, integer_types, text_type, binary_type
+from six import b, string_types, integer_types, binary_type
 
 from pycryptoki.conversions import from_bytestring
-from .cryptoki import CK_ATTRIBUTE, CK_BBOOL, CK_ATTRIBUTE_TYPE, CK_ULONG, \
-    CK_BYTE, CK_CHAR
-from .defines import CKA_EKM_UID, CKA_GENERIC_1, CKA_GENERIC_2, \
-    CKA_GENERIC_3
-from .defines import CKA_USAGE_LIMIT, CKA_USAGE_COUNT, CKA_CLASS, CKA_TOKEN, \
-    CKA_PRIVATE, CKA_LABEL, CKA_APPLICATION, CKA_CERTIFICATE_TYPE, \
-    CKA_ISSUER, CKA_SERIAL_NUMBER, CKA_KEY_TYPE, CKA_SUBJECT, CKA_ID, CKA_SENSITIVE, \
-    CKA_ENCRYPT, CKA_DECRYPT, CKA_WRAP, CKA_UNWRAP, CKA_SIGN, CKA_SIGN_RECOVER, \
-    CKA_VERIFY, CKA_VERIFY_RECOVER, CKA_DERIVE, CKA_START_DATE, CKA_END_DATE, \
-    CKA_MODULUS, CKA_MODULUS_BITS, CKA_PUBLIC_EXPONENT, CKA_PRIVATE_EXPONENT, \
-    CKA_PRIME_1, CKA_PRIME_2, CKA_EXPONENT_1, CKA_EXPONENT_2, CKA_COEFFICIENT, \
-    CKA_PRIME, CKA_SUBPRIME, CKA_BASE, CKA_PRIME_BITS, CKA_SUBPRIME_BITS, \
-    CKA_VALUE_BITS, CKA_VALUE_LEN, CKA_LOCAL, \
-    CKA_MODIFIABLE, CKA_EXTRACTABLE, CKA_ALWAYS_SENSITIVE, CKA_NEVER_EXTRACTABLE, \
-    CKA_CCM_PRIVATE, CKA_FINGERPRINT_SHA1, CKA_FINGERPRINT_SHA256, CKA_OUID, CKA_UNWRAP_TEMPLATE, \
-    CKA_DERIVE_TEMPLATE, \
-    CKA_X9_31_GENERATED, CKA_VALUE, CKA_BYTES_REMAINING
+from .cryptoki import CK_ATTRIBUTE, CK_BBOOL, CK_ATTRIBUTE_TYPE, CK_ULONG, CK_BYTE, CK_CHAR
+from .defines import CKA_EKM_UID, CKA_GENERIC_1, CKA_GENERIC_2, CKA_GENERIC_3
+from .defines import (
+    CKA_USAGE_LIMIT,
+    CKA_USAGE_COUNT,
+    CKA_CLASS,
+    CKA_TOKEN,
+    CKA_PRIVATE,
+    CKA_LABEL,
+    CKA_APPLICATION,
+    CKA_CERTIFICATE_TYPE,
+    CKA_ISSUER,
+    CKA_SERIAL_NUMBER,
+    CKA_KEY_TYPE,
+    CKA_SUBJECT,
+    CKA_ID,
+    CKA_SENSITIVE,
+    CKA_ENCRYPT,
+    CKA_DECRYPT,
+    CKA_WRAP,
+    CKA_UNWRAP,
+    CKA_SIGN,
+    CKA_SIGN_RECOVER,
+    CKA_VERIFY,
+    CKA_VERIFY_RECOVER,
+    CKA_DERIVE,
+    CKA_START_DATE,
+    CKA_END_DATE,
+    CKA_MODULUS,
+    CKA_MODULUS_BITS,
+    CKA_PUBLIC_EXPONENT,
+    CKA_PRIVATE_EXPONENT,
+    CKA_PRIME_1,
+    CKA_PRIME_2,
+    CKA_EXPONENT_1,
+    CKA_EXPONENT_2,
+    CKA_COEFFICIENT,
+    CKA_PRIME,
+    CKA_SUBPRIME,
+    CKA_BASE,
+    CKA_PRIME_BITS,
+    CKA_SUBPRIME_BITS,
+    CKA_VALUE_BITS,
+    CKA_VALUE_LEN,
+    CKA_LOCAL,
+    CKA_MODIFIABLE,
+    CKA_EXTRACTABLE,
+    CKA_ALWAYS_SENSITIVE,
+    CKA_NEVER_EXTRACTABLE,
+    CKA_CCM_PRIVATE,
+    CKA_FINGERPRINT_SHA1,
+    CKA_FINGERPRINT_SHA256,
+    CKA_OUID,
+    CKA_UNWRAP_TEMPLATE,
+    CKA_DERIVE_TEMPLATE,
+    CKA_X9_31_GENERATED,
+    CKA_VALUE,
+    CKA_BYTES_REMAINING,
+)
 
 LOG = logging.getLogger(__name__)
 
@@ -118,9 +171,12 @@ def to_char_array(val, reverse=False):
     :class:`ctypes.c_ulong` size of array)
     """
     if reverse:
-        LOG.debug("Attempting to convert CK_ATTRIBUTE(len:%s, data:%s, type:%s) "
-                  "back to ascii string",
-                  val.usValueLen, val.pValue, val.type)
+        LOG.debug(
+            "Attempting to convert CK_ATTRIBUTE(len:%s, data:%s, type:%s) back to ascii string",
+            val.usValueLen,
+            val.pValue,
+            val.type,
+        )
 
         data = cast(val.pValue, POINTER(CK_CHAR))
         ret_data = string_at(data, val.usValueLen)
@@ -158,7 +214,7 @@ def to_ck_date(val, reverse=False):
         return string_at(cast(val.pValue, POINTER(c_char)), val.usValueLen)
 
     if isinstance(val, dict):
-        val = datetime.date(year=val['year'], month=val['month'], day=val['day'])
+        val = datetime.date(year=val["year"], month=val["month"], day=val["day"])
 
     if isinstance(val, string_types):
         if len(val) != 8:
@@ -191,9 +247,13 @@ def to_byte_array(val, reverse=False):
     :class:`ctypes.c_ulong` size of array)
     """
     if reverse:
-        LOG.debug("Attempting to convert CK_ATTRIBUTE(len:%s, data:%s, type:%s) back to hex",
-                  val.usValueLen, val.pValue, val.type)
-        data_list = list(cast(val.pValue, POINTER(c_ubyte))[0:val.usValueLen])
+        LOG.debug(
+            "Attempting to convert CK_ATTRIBUTE(len:%s, data:%s, type:%s) back to hex",
+            val.usValueLen,
+            val.pValue,
+            val.type,
+        )
+        data_list = list(cast(val.pValue, POINTER(c_ubyte))[0 : val.usValueLen])
         fin = binascii.hexlify(bytearray(data_list))
         LOG.debug("Final hex data: %s", fin)
         return fin
@@ -226,7 +286,7 @@ def to_byte_array(val, reverse=False):
         fmt = "{:0%sb}" % width
         str_val = fmt.format(val)
         n = 8
-        str_array = [str_val[i:i + n] for i in range(0, len(str_val), n)]
+        str_array = [str_val[i : i + n] for i in range(0, len(str_val), n)]
         byte_array = (CK_BYTE * len(str_array))(*[int(x, 2) for x in str_array])
 
     return cast(pointer(byte_array), c_void_p), CK_ULONG(sizeof(byte_array))
@@ -254,84 +314,77 @@ def to_sub_attributes(val, reverse=False):
 # Default any unset transform to :func:`to_byte_array`
 KEY_TRANSFORMS = defaultdict(lambda: to_byte_array)
 
-KEY_TRANSFORMS.update({
-    # int, long
-    CKA_CLASS: to_long,
-    CKA_CERTIFICATE_TYPE: to_long,
-    CKA_KEY_TYPE: to_long,
-    CKA_VALUE_LEN: to_long,
-    CKA_MODULUS_BITS: to_long,
-    CKA_PRIME_BITS: to_long,
-    CKA_SUBPRIME_BITS: to_long,
-    CKA_VALUE_BITS: to_long,
-    CKA_USAGE_COUNT: to_long,
-    CKA_USAGE_LIMIT: to_long,
-    CKA_BYTES_REMAINING: to_long,
+KEY_TRANSFORMS.update(
+    {
+        # int, long
+        CKA_CLASS: to_long,
+        CKA_CERTIFICATE_TYPE: to_long,
+        CKA_KEY_TYPE: to_long,
+        CKA_VALUE_LEN: to_long,
+        CKA_MODULUS_BITS: to_long,
+        CKA_PRIME_BITS: to_long,
+        CKA_SUBPRIME_BITS: to_long,
+        CKA_VALUE_BITS: to_long,
+        CKA_USAGE_COUNT: to_long,
+        CKA_USAGE_LIMIT: to_long,
+        CKA_BYTES_REMAINING: to_long,
+        # int, bool
+        CKA_TOKEN: to_bool,
+        CKA_PRIVATE: to_bool,
+        CKA_SENSITIVE: to_bool,
+        CKA_ENCRYPT: to_bool,
+        CKA_DECRYPT: to_bool,
+        CKA_WRAP: to_bool,
+        CKA_UNWRAP: to_bool,
+        CKA_SIGN: to_bool,
+        CKA_SIGN_RECOVER: to_bool,
+        CKA_VERIFY: to_bool,
+        CKA_VERIFY_RECOVER: to_bool,
+        CKA_DERIVE: to_bool,
+        CKA_CCM_PRIVATE: to_bool,
+        CKA_LOCAL: to_bool,
+        CKA_MODIFIABLE: to_bool,
+        CKA_EXTRACTABLE: to_bool,
+        CKA_ALWAYS_SENSITIVE: to_bool,
+        CKA_NEVER_EXTRACTABLE: to_bool,
+        CKA_X9_31_GENERATED: to_bool,
+        # str, list(?)
+        CKA_LABEL: to_char_array,
+        CKA_APPLICATION: to_char_array,
+        CKA_ISSUER: to_char_array,
+        CKA_SUBJECT: to_char_array,
+        CKA_ID: to_char_array,
+        CKA_EKM_UID: to_char_array,
+        CKA_GENERIC_1: to_char_array,
+        CKA_GENERIC_2: to_char_array,
+        CKA_GENERIC_3: to_char_array,
+        # str, dict, datetime
+        CKA_START_DATE: to_ck_date,
+        CKA_END_DATE: to_ck_date,
+        # Generic data.
+        CKA_VALUE: to_byte_array,
+        CKA_SERIAL_NUMBER: to_byte_array,
+        CKA_MODULUS: to_byte_array,
+        CKA_PUBLIC_EXPONENT: to_byte_array,
+        CKA_PRIVATE_EXPONENT: to_byte_array,
+        CKA_PRIME_1: to_byte_array,
+        CKA_PRIME_2: to_byte_array,
+        CKA_EXPONENT_1: to_byte_array,
+        CKA_EXPONENT_2: to_byte_array,
+        CKA_COEFFICIENT: to_byte_array,
+        CKA_PRIME: to_byte_array,
+        CKA_SUBPRIME: to_byte_array,
+        CKA_BASE: to_byte_array,
+        CKA_FINGERPRINT_SHA1: to_byte_array,
+        CKA_FINGERPRINT_SHA256: to_byte_array,
+        CKA_OUID: to_byte_array,
+        # Dict
+        CKA_UNWRAP_TEMPLATE: to_sub_attributes,
+        CKA_DERIVE_TEMPLATE: to_sub_attributes,
+    }
+)
 
-    # int, bool
-    CKA_TOKEN: to_bool,
-    CKA_PRIVATE: to_bool,
-    CKA_SENSITIVE: to_bool,
-    CKA_ENCRYPT: to_bool,
-    CKA_DECRYPT: to_bool,
-    CKA_WRAP: to_bool,
-    CKA_UNWRAP: to_bool,
-    CKA_SIGN: to_bool,
-    CKA_SIGN_RECOVER: to_bool,
-    CKA_VERIFY: to_bool,
-    CKA_VERIFY_RECOVER: to_bool,
-    CKA_DERIVE: to_bool,
-    CKA_CCM_PRIVATE: to_bool,
-    CKA_LOCAL: to_bool,
-    CKA_MODIFIABLE: to_bool,
-    CKA_EXTRACTABLE: to_bool,
-    CKA_ALWAYS_SENSITIVE: to_bool,
-    CKA_NEVER_EXTRACTABLE: to_bool,
-    CKA_X9_31_GENERATED: to_bool,
-
-    # str, list(?)
-    CKA_LABEL: to_char_array,
-    CKA_APPLICATION: to_char_array,
-    CKA_ISSUER: to_char_array,
-    CKA_SUBJECT: to_char_array,
-    CKA_ID: to_char_array,
-    CKA_EKM_UID: to_char_array,
-    CKA_GENERIC_1: to_char_array,
-    CKA_GENERIC_2: to_char_array,
-    CKA_GENERIC_3: to_char_array,
-
-    # str, dict, datetime
-    CKA_START_DATE: to_ck_date,
-    CKA_END_DATE: to_ck_date,
-
-    # Generic data.
-    CKA_VALUE: to_byte_array,
-    CKA_SERIAL_NUMBER: to_byte_array,
-    CKA_MODULUS: to_byte_array,
-    CKA_PUBLIC_EXPONENT: to_byte_array,
-    CKA_PRIVATE_EXPONENT: to_byte_array,
-    CKA_PRIME_1: to_byte_array,
-    CKA_PRIME_2: to_byte_array,
-    CKA_EXPONENT_1: to_byte_array,
-    CKA_EXPONENT_2: to_byte_array,
-    CKA_COEFFICIENT: to_byte_array,
-    CKA_PRIME: to_byte_array,
-    CKA_SUBPRIME: to_byte_array,
-    CKA_BASE: to_byte_array,
-    CKA_FINGERPRINT_SHA1: to_byte_array,
-    CKA_FINGERPRINT_SHA256: to_byte_array,
-    CKA_OUID: to_byte_array,
-
-    # Dict
-    CKA_UNWRAP_TEMPLATE: to_sub_attributes,
-    CKA_DERIVE_TEMPLATE: to_sub_attributes,
-})
-
-CONVERSIONS = {CK_ULONG: to_long,
-               CK_BBOOL: to_bool,
-               c_char: to_char_array,
-               CK_BYTE: to_byte_array
-               }
+CONVERSIONS = {CK_ULONG: to_long, CK_BBOOL: to_bool, c_char: to_char_array, CK_BYTE: to_byte_array}
 
 
 class Attributes(dict):
@@ -373,8 +426,8 @@ class Attributes(dict):
             args = []
         if kwargs is None:
             kwargs = {}
-        if 'new_transforms' in kwargs:
-            self.new_transforms = kwargs.pop('new_transforms')
+        if "new_transforms" in kwargs:
+            self.new_transforms = kwargs.pop("new_transforms")
         else:
             self.new_transforms = {}
         super(Attributes, self).__init__(*args, **kwargs)
@@ -396,17 +449,16 @@ class Attributes(dict):
                 ret_struct[index] = blank_attr
             elif key in self.new_transforms:
                 p_value, ul_length = self.new_transforms[key](value)
-                ret_struct[index] = CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE(key),
-                                                 p_value,
-                                                 ul_length)
+                ret_struct[index] = CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE(key), p_value, ul_length)
             else:
                 if key not in KEY_TRANSFORMS:
-                    LOG.warning("Using default `to_byte_array` transformation for key %s "
-                                "and data %s", key, value)
+                    LOG.warning(
+                        "Using default `to_byte_array` transformation for key %s and data %s",
+                        key,
+                        value,
+                    )
                 p_value, ul_length = KEY_TRANSFORMS[key](value)
-                ret_struct[index] = CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE(key),
-                                                 p_value,
-                                                 ul_length)
+                ret_struct[index] = CK_ATTRIBUTE(CK_ATTRIBUTE_TYPE(key), p_value, ul_length)
         return ret_struct
 
     @staticmethod
