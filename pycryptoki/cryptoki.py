@@ -996,6 +996,15 @@ CK_UTILIZATION_COUNTER._fields_ = [
 ]
 CK_UTILIZATION_COUNTER_PTR = POINTER(CK_UTILIZATION_COUNTER)
 
+#pka
+class CK_KEY_STATUS(Structure):
+    _fields_ = [
+        ('flags', CK_BYTE),
+        ('failedAuthCountLimit', CK_BYTE),
+        ('reserved1', CK_BYTE),
+        ('reserved2', CK_BYTE)
+]
+
 class CK_SFNT_CA_FUNCTION_LIST(Structure):
     pass
 
