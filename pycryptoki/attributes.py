@@ -25,8 +25,9 @@ from functools import wraps
 
 from six import b, string_types, integer_types, binary_type
 
-from pycryptoki.conversions import from_bytestring
-from .cryptoki import CK_ATTRIBUTE, CK_BBOOL, CK_ATTRIBUTE_TYPE, CK_ULONG, CK_BYTE, CK_CHAR
+from pycryptoki.conversions import (from_bytestring, from_hex, to_bytestring)
+from .cryptoki import (CK_ATTRIBUTE, CK_BBOOL, CK_ATTRIBUTE_TYPE, CK_ULONG, CK_BYTE, CK_CHAR,
+                       CK_KEY_STATUS)
 from .defines import CKA_EKM_UID, CKA_GENERIC_1, CKA_GENERIC_2, CKA_GENERIC_3
 from .defines import (
     CKA_USAGE_LIMIT,
@@ -84,6 +85,8 @@ from .defines import (
     CKA_X9_31_GENERATED,
     CKA_VALUE,
     CKA_BYTES_REMAINING,
+    CKA_FAILED_KEY_AUTH_COUNT,
+    CKA_KEY_STATUS
 )
 
 LOG = logging.getLogger(__name__)
@@ -231,6 +234,24 @@ def to_ck_date(val, reverse=False):
     return cast(pointer(date_val), c_void_p), CK_ULONG(sizeof(date_val))
 
 
+@ret_type(CK_KEY_STATUS)
+def to_pka_key_status(val, reverse=False):
+    """Transform a Per Key Authorization Key Status object into
+    a PKCS11 readable byte string
+
+    :param val: Value to convert
+    :param reverse: Whether to convert from C -> Python
+    :return: (:class:`ctypes.c_void_p` ptr to :class:`pycryptoki.cryptoki.CK_KEY_STATUS` object,
+    :class:`ctypes.c_ulong` size of array)
+    """
+    if reverse:
+        interm = from_hex(to_byte_array(val, reverse))
+        bytestr = bytearray(to_bytestring(interm))
+
+        return CK_KEY_STATUS.from_buffer(bytestr)
+
+    return to_byte_array(val, reverse)
+
 @ret_type(CK_BYTE)
 def to_byte_array(val, reverse=False):
     """Converts an arbitrarily sized integer, list, or byte array
@@ -328,6 +349,7 @@ KEY_TRANSFORMS.update(
         CKA_USAGE_COUNT: to_long,
         CKA_USAGE_LIMIT: to_long,
         CKA_BYTES_REMAINING: to_long,
+        CKA_FAILED_KEY_AUTH_COUNT: to_long,
         # int, bool
         CKA_TOKEN: to_bool,
         CKA_PRIVATE: to_bool,
@@ -381,6 +403,8 @@ KEY_TRANSFORMS.update(
         # Dict
         CKA_UNWRAP_TEMPLATE: to_sub_attributes,
         CKA_DERIVE_TEMPLATE: to_sub_attributes,
+        #pka
+        CKA_KEY_STATUS: to_pka_key_status
     }
 )
 
