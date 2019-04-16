@@ -76,6 +76,7 @@ def connection_test(func):
     :param func:
     :return:
     """
+
     @wraps(func)
     def wrapper(self, *args, **kwargs):
         """
@@ -139,7 +140,7 @@ class RemotePycryptokiClient(object):
 
     After instantiation, you can use it directly to make calls to a remote
     cryptoki library via RPYC (no need to do any imports or anything like that, just
-    use the direct pycryptoki call like c\_initialize_ex() )
+    use the direct pycryptoki call like client.c_initialize_ex() )
 
     :param ip: IP Address of the client the remote daemon is running on.
     :param port: What Port the daemon is running on.
@@ -213,6 +214,7 @@ class RemotePycryptokiClient(object):
                 nice_args = inspect.getcallargs(func, *args, **kwargs)
 
                 log_args(name, nice_args)
+
                 ret = getattr(self.server, name)(*args, **kwargs)
                 # Two major calling types for pycryptoki:
                 # 1. with _ex appended, which will raise an exception if retcode != 0

@@ -90,7 +90,7 @@ def _search_for_dll_in_chrystoki_conf(conf_path):
     else:
         with open(conf_path) as conf_file:
             chrystoki_conf_text = conf_file.read()
-        chrystoki2_segments = re.findall("\s*Chrystoki2\s*=\s*\{([^\}]*)", chrystoki_conf_text)
+        chrystoki2_segments = re.findall(r"\s*Chrystoki2\s*=\s*\{([^\}]*)", chrystoki_conf_text)
 
         if len(chrystoki2_segments) > 1:
             raise CryptokiConfigException("Found %d Chrystoki2 sections in the config file: "
@@ -104,9 +104,9 @@ def _search_for_dll_in_chrystoki_conf(conf_path):
         for line in chrystoki2:
             is_64bits = sys.maxsize > 2 ** 32
             if is_64bits:
-                lib_unix_line = re.findall("^\s*Lib(?:UNIX64|HPUX)\s*=\s*([^\n]+)", line)
+                lib_unix_line = re.findall(r"^\s*Lib(?:UNIX64|HPUX)\s*=\s*([^\n]+)", line)
             else:
-                lib_unix_line = re.findall("^\s*Lib(?:UNIX|HPUX)\s*=\s*([^\n]+)", line)
+                lib_unix_line = re.findall(r"^\s*Lib(?:UNIX|HPUX)\s*=\s*([^\n]+)", line)
 
             if len(lib_unix_line) > 1:
                 raise CryptokiConfigException("Found more than one"

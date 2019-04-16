@@ -4,13 +4,16 @@ Module to work with PKA / Per key authorization
 from ctypes import cast
 from _ctypes import POINTER
 from pycryptoki.attributes import to_byte_array
-from pycryptoki.cryptoki import (CA_SetAuthorizationData,
-                                 CA_ResetAuthorizationData,
-                                 CA_AuthorizeKey,
-                                 CA_AssignKey,
-                                 CA_IncrementFailedAuthCount)
-from pycryptoki.cryptoki import (CK_SESSION_HANDLE, CK_OBJECT_HANDLE, CK_UTF8CHAR)
+from pycryptoki.cryptoki import (
+    CA_SetAuthorizationData,
+    CA_ResetAuthorizationData,
+    CA_AuthorizeKey,
+    CA_AssignKey,
+    CA_IncrementFailedAuthCount,
+)
+from pycryptoki.cryptoki import CK_SESSION_HANDLE, CK_OBJECT_HANDLE, CK_UTF8CHAR
 from pycryptoki.exceptions import make_error_handle_function
+
 
 def ca_set_authorization_data(h_session, h_object, old_auth_data, new_auth_data):
     """
@@ -31,10 +34,18 @@ def ca_set_authorization_data(h_session, h_object, old_auth_data, new_auth_data)
     h_object = CK_OBJECT_HANDLE(h_object)
     h_session = CK_SESSION_HANDLE(h_session)
 
-    return CA_SetAuthorizationData(h_session, h_object, old_auth_data_ptr, old_auth_data_length,
-                                   new_auth_data_ptr, new_auth_data_length)
+    return CA_SetAuthorizationData(
+        h_session,
+        h_object,
+        old_auth_data_ptr,
+        old_auth_data_length,
+        new_auth_data_ptr,
+        new_auth_data_length,
+    )
+
 
 ca_set_authorization_data_ex = make_error_handle_function(ca_set_authorization_data)
+
 
 def ca_reset_authorization_data(h_session, h_object, auth_data):
     """
@@ -51,10 +62,13 @@ def ca_reset_authorization_data(h_session, h_object, auth_data):
     h_object = CK_OBJECT_HANDLE(h_object)
     h_session = CK_SESSION_HANDLE(h_session)
 
-    return CA_ResetAuthorizationData(h_session, h_object,
-                                     auth_data_ptr, auth_data_length)
+    return CA_ResetAuthorizationData(
+        h_session, h_object, auth_data_ptr, auth_data_length
+    )
+
 
 ca_reset_authorization_data_ex = make_error_handle_function(ca_reset_authorization_data)
+
 
 def ca_increment_failed_auth_count(h_session, h_object):
     """
@@ -69,7 +83,11 @@ def ca_increment_failed_auth_count(h_session, h_object):
 
     return CA_IncrementFailedAuthCount(h_session, h_object)
 
-ca_increment_failed_auth_count_ex = make_error_handle_function(ca_increment_failed_auth_count)
+
+ca_increment_failed_auth_count_ex = make_error_handle_function(
+    ca_increment_failed_auth_count
+)
+
 
 def ca_authorize_key(h_session, h_object, auth_data):
     """
@@ -88,7 +106,9 @@ def ca_authorize_key(h_session, h_object, auth_data):
 
     return CA_AuthorizeKey(h_session, h_object, auth_data_ptr, auth_data_length)
 
+
 ca_authorize_key_ex = make_error_handle_function(ca_authorize_key)
+
 
 def ca_assign_key(h_session, h_object):
     """
@@ -103,5 +123,6 @@ def ca_assign_key(h_session, h_object):
     h_session = CK_SESSION_HANDLE(h_session)
 
     return CA_AssignKey(h_session, h_object)
+
 
 ca_assign_key_ex = make_error_handle_function(ca_assign_key)
