@@ -1069,6 +1069,7 @@ CK_CA_SetAuthorizationData = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_OBJECT_HANDL
                                        CK_UTF8CHAR_PTR, CK_ULONG, CK_UTF8CHAR_PTR, CK_ULONG)
 CK_CA_AuthorizeKey = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_OBJECT_HANDLE,
                                CK_UTF8CHAR_PTR, CK_ULONG)
+CK_CA_AssignKey = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_OBJECT_HANDLE)
 CK_CA_ManualKCV = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE)
 CK_CA_SetLKCV = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG)
 CK_CA_SetKCV = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG)
@@ -1724,6 +1725,9 @@ CA_SetAuthorizationData.argtypes = [CK_SESSION_HANDLE, CK_OBJECT_HANDLE,
 CA_AuthorizeKey = make_late_binding_function('CA_AuthorizeKey')
 CA_AuthorizeKey.restype = CK_RV
 CA_AuthorizeKey.argtypes = [CK_SESSION_HANDLE, CK_OBJECT_HANDLE, CK_UTF8CHAR_PTR, CK_ULONG]
+CA_AssignKey = make_late_binding_function('CA_AssignKey')
+CA_AssignKey.restype = CK_RV
+CA_AssignKey.argtypes = [CK_SESSION_HANDLE, CK_OBJECT_HANDLE]
 CA_ManualKCV = make_late_binding_function('CA_ManualKCV')
 CA_ManualKCV.restype = CK_RV
 CA_ManualKCV.argtypes = [CK_SESSION_HANDLE]
