@@ -5,7 +5,8 @@ from ctypes import cast
 from _ctypes import POINTER
 from pycryptoki.attributes import to_byte_array
 from pycryptoki.cryptoki import (CA_SetAuthorizationData,
-                                 CA_AuthorizeKey)
+                                 CA_AuthorizeKey,
+                                 CA_AssignKey)
 from pycryptoki.cryptoki import (CK_SESSION_HANDLE, CK_OBJECT_HANDLE, CK_UTF8CHAR)
 from pycryptoki.exceptions import make_error_handle_function
 
@@ -51,3 +52,19 @@ def ca_authorize_key(h_session, h_object, auth_data):
     return CA_AuthorizeKey(h_session, h_object, auth_data_ptr, auth_data_length)
 
 ca_authorize_key_ex = make_error_handle_function(ca_authorize_key)
+
+def ca_assign_key(h_session, h_object):
+    """
+    Crypto Officer assigns a key
+
+    :param h_session: session handle
+    :param object: key handle to assign
+    :return: Ret code
+    """
+
+    h_object = CK_OBJECT_HANDLE(h_object)
+    h_session = CK_SESSION_HANDLE(h_session)
+
+    return CA_AssignKey(h_session, h_object)
+
+ca_assign_key_ex = make_error_handle_function(ca_assign_key)
