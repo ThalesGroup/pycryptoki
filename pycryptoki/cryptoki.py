@@ -1067,9 +1067,12 @@ CK_CA_ReadAllUtilizationCounters = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_UTILIZ
 #pka
 CK_CA_SetAuthorizationData = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_OBJECT_HANDLE,
                                        CK_UTF8CHAR_PTR, CK_ULONG, CK_UTF8CHAR_PTR, CK_ULONG)
+CK_CA_ResetAuthorizationData = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_OBJECT_HANDLE,
+                                         CK_UTF8CHAR_PTR, CK_ULONG)
 CK_CA_AuthorizeKey = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_OBJECT_HANDLE,
                                CK_UTF8CHAR_PTR, CK_ULONG)
 CK_CA_AssignKey = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_OBJECT_HANDLE)
+CK_CA_IncrementFailedAuthCount = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_OBJECT_HANDLE)
 CK_CA_ManualKCV = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE)
 CK_CA_SetLKCV = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG)
 CK_CA_SetKCV = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG)
@@ -1722,12 +1725,19 @@ CA_SetAuthorizationData = make_late_binding_function('CA_SetAuthorizationData')
 CA_SetAuthorizationData.restype = CK_RV
 CA_SetAuthorizationData.argtypes = [CK_SESSION_HANDLE, CK_OBJECT_HANDLE,
                                     CK_UTF8CHAR_PTR, CK_ULONG, CK_UTF8CHAR_PTR, CK_ULONG]
+CA_ResetAuthorizationData = make_late_binding_function('CA_ResetAuthorizationData')
+CA_ResetAuthorizationData.restype = CK_RV
+CA_ResetAuthorizationData.argtypes = [CK_SESSION_HANDLE, CK_OBJECT_HANDLE,
+                                      CK_UTF8CHAR_PTR, CK_ULONG]
 CA_AuthorizeKey = make_late_binding_function('CA_AuthorizeKey')
 CA_AuthorizeKey.restype = CK_RV
 CA_AuthorizeKey.argtypes = [CK_SESSION_HANDLE, CK_OBJECT_HANDLE, CK_UTF8CHAR_PTR, CK_ULONG]
 CA_AssignKey = make_late_binding_function('CA_AssignKey')
 CA_AssignKey.restype = CK_RV
 CA_AssignKey.argtypes = [CK_SESSION_HANDLE, CK_OBJECT_HANDLE]
+CA_IncrementFailedAuthCount = make_late_binding_function('CA_IncrementFailedAuthCount')
+CA_IncrementFailedAuthCount.restype = CK_RV
+CA_IncrementFailedAuthCount.argtypes = [CK_SESSION_HANDLE, CK_OBJECT_HANDLE]
 CA_ManualKCV = make_late_binding_function('CA_ManualKCV')
 CA_ManualKCV.restype = CK_RV
 CA_ManualKCV.argtypes = [CK_SESSION_HANDLE]
