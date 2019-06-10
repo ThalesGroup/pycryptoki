@@ -1173,6 +1173,7 @@ CK_CA_GetContainerStatus = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG, CK_ULONG_PTR, 
 CK_CA_GetTokenStatus = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR)
 CK_CA_GetSessionInfo = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR,
                                  CK_ULONG_PTR)
+CK_CA_GetCVFirmwareVersion = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR)
 CK_CA_ReadCommonStore = CFUNCTYPE(CK_RV, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR)
 CK_CA_WriteCommonStore = CFUNCTYPE(CK_RV, CK_ULONG, CK_BYTE_PTR, CK_ULONG)
 CK_CA_GetPrimarySlot = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_SLOT_ID_PTR)
@@ -1476,6 +1477,7 @@ CK_SFNT_CA_FUNCTION_LIST._fields_ = [
     ('CA_GetContainerStatus', CK_CA_GetContainerStatus),
     ('CA_GetTokenStatus', CK_CA_GetTokenStatus),
     ('CA_GetSessionInfo', CK_CA_GetSessionInfo),
+    ('CA_GetCVFirmwareVersion', CK_CA_GetCVFirmwareVersion),
     ('CA_ReadCommonStore', CK_CA_ReadCommonStore),
     ('CA_WriteCommonStore', CK_CA_WriteCommonStore),
     ('CA_GetPrimarySlot', CK_CA_GetPrimarySlot),
@@ -1970,6 +1972,9 @@ CA_GetSessionInfo = make_late_binding_function('CA_GetSessionInfo')
 CA_GetSessionInfo.restype = CK_RV
 CA_GetSessionInfo.argtypes = [CK_SESSION_HANDLE, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR,
                               CK_ULONG_PTR]
+CA_GetCVFirmwareVersion = make_late_binding_function('CA_GetCVFirmwareVersion')
+CA_GetCVFirmwareVersion.restype = CK_RV
+CA_GetCVFirmwareVersion.argtypes = [CK_SLOT_ID, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR]
 CA_ReadCommonStore = make_late_binding_function('CA_ReadCommonStore')
 CA_ReadCommonStore.restype = CK_RV
 CA_ReadCommonStore.argtypes = [CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR]
@@ -3820,6 +3825,7 @@ __all__ = ['CA_InvokeService', 'LUNA_RET_PED_UNSUPPORTED_PROTOCOL',
            'LUNA_RET_RC4_SELF_TEST_FAILURE',
            'CA_HAAnswerLoginChallenge', 'BYTE',
            'CK_CA_GetSessionInfo', 'C_SignEncryptUpdate',
+           'CK_CA_GetCVFirmwareVersion',
            'RC_SHUTTING_DOWN', 'CK_MECHANISM_TYPE_PTR',
            'MSG_RTC_CANT_GET_TAMPER_TIMER',
            'LUNA_RET_RM_BAD_HSM_PARAMS',
@@ -4020,6 +4026,7 @@ __all__ = ['CA_InvokeService', 'LUNA_RET_PED_UNSUPPORTED_PROTOCOL',
            'CK_OTP_SIGNATURE_INFO_PTR',
            'LUNA_RET_CHALLENGE_TYPE_INVALID',
            'LUNA_RET_SM_UNKNOWN_SESSION_TYPE', 'CA_GetSessionInfo',
+           'CA_GetCVFirmwareVersion',
            'CK_WTLS_RANDOM_DATA', 'CK_USHORT', 'LUNA_RET_NO_INVERSE',
            'LUNA_RET_SEED_SELF_TEST_FAILURE',
            'LUNA_RET_PED_UNSUPPORTED_CRYPTO_PROTOCOL',
