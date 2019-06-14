@@ -42,8 +42,9 @@ from pycryptoki.backup import (ca_open_secure_token, ca_open_secure_token_ex,
                                ca_sim_extract_ex, ca_sim_extract, ca_sim_multisign,
                                ca_sim_multisign_ex)
 from pycryptoki.ca_extensions.derive_wrap import ca_derive_key_and_wrap, ca_derive_key_and_wrap_ex
-from pycryptoki.ca_extensions.session import ca_get_session_info, ca_get_session_info_ex, \
-    ca_get_cv_firmware_version, ca_get_cv_firmware_version_ex
+from pycryptoki.ca_extensions.session import ca_get_session_info, ca_get_session_info_ex
+from pycryptoki.ca_extensions.hsm_info import ca_get_cv_firmware_version, \
+    ca_get_cv_firmware_version_ex
 from pycryptoki.ca_extensions.object_handler import ca_destroy_multiple_objects, \
     ca_destroy_multiple_objects_ex, ca_get_object_handle, ca_get_object_handle_ex
 from pycryptoki.cryptoki import CK_ULONG
