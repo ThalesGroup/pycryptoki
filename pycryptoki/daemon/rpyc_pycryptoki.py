@@ -274,8 +274,6 @@ from pycryptoki.token_management import (
     ca_get_token_policies,
 )
 
-CRYPTO_OPS = pycryptoki.cryptoki.__all__[:]
-
 MAX_LOG_SIZE = 5242880
 
 

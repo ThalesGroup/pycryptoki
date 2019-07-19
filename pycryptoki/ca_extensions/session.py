@@ -3,25 +3,20 @@ Module to work with sessions, specifically dealing with ca_extension functions
 """
 
 import logging
-import sys
-from ctypes import byref, string_at
+from ctypes import byref, string_at, sizeof
 
 from pycryptoki.cryptoki import (
     CK_ULONG,
     CK_SESSION_HANDLE,
     CA_GetSessionInfo,
-    Structure,
-    CK_BYTE,
     CA_GetApplicationID,
     CK_APPLICATION_ID,
-    sizeof,
     CK_SLOT_ID,
     CA_OpenApplicationIDV2,
     CA_CloseApplicationIDV2,
 )
 from pycryptoki.defines import CKR_OK
 from pycryptoki.exceptions import make_error_handle_function
-
 
 LOG = logging.getLogger(__name__)
 
@@ -76,8 +71,8 @@ def ca_open_application_id_v2(slot, appid):
     """
     Set the current process's AccessID.
 
-    :param slot: Slot #. 
-    :param appid: bytestring of length 16. 
+    :param slot: Slot #.
+    :param appid: bytestring of length 16.
     :return: Retcode.
     """
     access_id = CK_APPLICATION_ID(appid)
@@ -91,8 +86,8 @@ def ca_close_application_id_v2(slot, appid):
     """
     Set the current process's AccessID.
 
-    :param slot: Slot #. 
-    :param appid: bytestring of length 16. 
+    :param slot: Slot #.
+    :param appid: bytestring of length 16.
     :return: Retcode.
     """
     access_id = CK_APPLICATION_ID(appid)
