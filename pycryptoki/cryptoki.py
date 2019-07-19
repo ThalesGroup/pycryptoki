@@ -660,31 +660,32 @@ class CK_AES_GCM_PARAMS(Structure):
 CK_BYTE = c_ubyte
 CK_BYTE_PTR = POINTER(CK_BYTE)
 CK_ULONG = c_ulong
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_AES_GCM_PARAMS._pack_ = 1
 CK_AES_GCM_PARAMS._fields_ = [
-    ('pIv', CK_BYTE_PTR),
-    ('ulIvLen', CK_ULONG),
-    ('ulIvBits', CK_ULONG),
-    ('pAAD', CK_BYTE_PTR),
-    ('ulAADLen', CK_ULONG),
-    ('ulTagBits', CK_ULONG),
+    ("pIv", CK_BYTE_PTR),
+    ("ulIvLen", CK_ULONG),
+    ("ulIvBits", CK_ULONG),
+    ("pAAD", CK_BYTE_PTR),
+    ("ulAADLen", CK_ULONG),
+    ("ulTagBits", CK_ULONG),
 ]
 CK_AES_GCM_PARAMS_PTR = CK_AES_GCM_PARAMS
 CK_UTF8CHAR = CK_BYTE
 CK_UTF8CHAR_PTR = POINTER(CK_UTF8CHAR)
+
 
 class CK_XOR_BASE_DATA_KDF_PARAMS(Structure):
     pass
 
 
 CK_EC_KDF_TYPE = CK_ULONG
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_XOR_BASE_DATA_KDF_PARAMS._pack_ = 1
 CK_XOR_BASE_DATA_KDF_PARAMS._fields_ = [
-    ('kdf', CK_EC_KDF_TYPE),
-    ('ulSharedDataLen', CK_ULONG),
-    ('pSharedData', CK_BYTE_PTR),
+    ("kdf", CK_EC_KDF_TYPE),
+    ("ulSharedDataLen", CK_ULONG),
+    ("pSharedData", CK_BYTE_PTR),
 ]
 CK_XOR_BASE_DATA_KDF_PARAMS_PTR = POINTER(CK_XOR_BASE_DATA_KDF_PARAMS)
 
@@ -694,12 +695,9 @@ class CK_AES_XTS_PARAMS(Structure):
 
 
 CK_OBJECT_HANDLE = CK_ULONG
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_AES_XTS_PARAMS._pack_ = 1
-CK_AES_XTS_PARAMS._fields_ = [
-    ('hTweakKey', CK_OBJECT_HANDLE),
-    ('cb', CK_BYTE * 16),
-]
+CK_AES_XTS_PARAMS._fields_ = [("hTweakKey", CK_OBJECT_HANDLE), ("cb", CK_BYTE * 16)]
 CK_AES_XTS_PARAMS_PTR = POINTER(CK_AES_XTS_PARAMS)
 CK_EC_DH_PRIMITIVE = CK_ULONG
 CK_EC_ENC_SCHEME = CK_ULONG
@@ -710,20 +708,20 @@ class CK_ECIES_PARAMS(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_ECIES_PARAMS._pack_ = 1
 CK_ECIES_PARAMS._fields_ = [
-    ('dhPrimitive', CK_EC_DH_PRIMITIVE),
-    ('kdf', CK_EC_KDF_TYPE),
-    ('ulSharedDataLen1', CK_ULONG),
-    ('pSharedData1', CK_BYTE_PTR),
-    ('encScheme', CK_EC_ENC_SCHEME),
-    ('ulEncKeyLenInBits', CK_ULONG),
-    ('macScheme', CK_EC_MAC_SCHEME),
-    ('ulMacKeyLenInBits', CK_ULONG),
-    ('ulMacLenInBits', CK_ULONG),
-    ('ulSharedDataLen2', CK_ULONG),
-    ('pSharedData2', CK_BYTE_PTR),
+    ("dhPrimitive", CK_EC_DH_PRIMITIVE),
+    ("kdf", CK_EC_KDF_TYPE),
+    ("ulSharedDataLen1", CK_ULONG),
+    ("pSharedData1", CK_BYTE_PTR),
+    ("encScheme", CK_EC_ENC_SCHEME),
+    ("ulEncKeyLenInBits", CK_ULONG),
+    ("macScheme", CK_EC_MAC_SCHEME),
+    ("ulMacKeyLenInBits", CK_ULONG),
+    ("ulMacLenInBits", CK_ULONG),
+    ("ulSharedDataLen2", CK_ULONG),
+    ("pSharedData2", CK_BYTE_PTR),
 ]
 CK_ECIES_PARAMS_PTR = POINTER(CK_ECIES_PARAMS)
 CK_KDF_PRF_TYPE = CK_ULONG
@@ -734,16 +732,16 @@ class CK_KDF_PRF_PARAMS(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_KDF_PRF_PARAMS._pack_ = 1
 CK_KDF_PRF_PARAMS._fields_ = [
-    ('prfType', CK_KDF_PRF_TYPE),
-    ('pLabel', CK_BYTE_PTR),
-    ('ulLabelLen', CK_ULONG),
-    ('pContext', CK_BYTE_PTR),
-    ('ulContextLen', CK_ULONG),
-    ('ulCounter', CK_ULONG),
-    ('ulEncodingScheme', CK_KDF_PRF_ENCODING_SCHEME),
+    ("prfType", CK_KDF_PRF_TYPE),
+    ("pLabel", CK_BYTE_PTR),
+    ("ulLabelLen", CK_ULONG),
+    ("pContext", CK_BYTE_PTR),
+    ("ulContextLen", CK_ULONG),
+    ("ulCounter", CK_ULONG),
+    ("ulEncodingScheme", CK_KDF_PRF_ENCODING_SCHEME),
 ]
 CK_PRF_KDF_PARAMS = CK_KDF_PRF_PARAMS
 CK_KDF_PRF_PARAMS_PTR = POINTER(CK_PRF_KDF_PARAMS)
@@ -763,12 +761,9 @@ class CK_DES_CTR_PARAMS(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_DES_CTR_PARAMS._pack_ = 1
-CK_DES_CTR_PARAMS._fields_ = [
-    ('ulCounterBits', CK_ULONG),
-    ('cb', CK_BYTE * 8),
-]
+CK_DES_CTR_PARAMS._fields_ = [("ulCounterBits", CK_ULONG), ("cb", CK_BYTE * 8)]
 CK_DES_CTR_PARAMS_PTR = POINTER(CK_DES_CTR_PARAMS)
 CK_AES_GMAC_PARAMS = CK_AES_GCM_PARAMS
 CK_AES_GMAC_PARAMS_PTR = POINTER(CK_AES_GMAC_PARAMS)
@@ -778,12 +773,12 @@ class HSM_STATS_PARAMS(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     HSM_STATS_PARAMS._pack_ = 1
 HSM_STATS_PARAMS._fields_ = [
-    ('ulId', CK_ULONG),
-    ('ulHighValue', CK_ULONG),
-    ('ulLowValue', CK_ULONG),
+    ("ulId", CK_ULONG),
+    ("ulHighValue", CK_ULONG),
+    ("ulLowValue", CK_ULONG),
 ]
 
 
@@ -791,13 +786,13 @@ class CA_ROLE_STATE(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CA_ROLE_STATE._pack_ = 1
 CA_ROLE_STATE._fields_ = [
-    ('flags', CK_BYTE),
-    ('loginAttemptsLeft', CK_BYTE),
-    ('primaryAuthMech', CK_BYTE),
-    ('secondaryAuthMech', CK_BYTE),
+    ("flags", CK_BYTE),
+    ("loginAttemptsLeft", CK_BYTE),
+    ("primaryAuthMech", CK_BYTE),
+    ("secondaryAuthMech", CK_BYTE),
 ]
 
 
@@ -805,12 +800,12 @@ class CA_MOFN_GENERATION(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CA_MOFN_GENERATION._pack_ = 1
 CA_MOFN_GENERATION._fields_ = [
-    ('ulWeight', CK_ULONG),
-    ('pVector', CK_BYTE_PTR),
-    ('ulVectorLen', CK_ULONG),
+    ("ulWeight", CK_ULONG),
+    ("pVector", CK_BYTE_PTR),
+    ("ulVectorLen", CK_ULONG),
 ]
 CA_MOFN_GENERATION_PTR = POINTER(CA_MOFN_GENERATION)
 
@@ -819,12 +814,9 @@ class CA_MOFN_ACTIVATION(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CA_MOFN_ACTIVATION._pack_ = 1
-CA_MOFN_ACTIVATION._fields_ = [
-    ('pVector', CK_BYTE_PTR),
-    ('ulVectorLen', CK_ULONG),
-]
+CA_MOFN_ACTIVATION._fields_ = [("pVector", CK_BYTE_PTR), ("ulVectorLen", CK_ULONG)]
 CA_MOFN_ACTIVATION_PTR = POINTER(CA_MOFN_ACTIVATION)
 
 
@@ -832,14 +824,14 @@ class CA_M_OF_N_STATUS(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CA_M_OF_N_STATUS._pack_ = 1
 CA_M_OF_N_STATUS._fields_ = [
-    ('ulID', CK_ULONG),
-    ('ulM', CK_ULONG),
-    ('ulN', CK_ULONG),
-    ('ulSecretSize', CK_ULONG),
-    ('ulFlag', CK_ULONG),
+    ("ulID", CK_ULONG),
+    ("ulM", CK_ULONG),
+    ("ulN", CK_ULONG),
+    ("ulSecretSize", CK_ULONG),
+    ("ulFlag", CK_ULONG),
 ]
 CA_MOFN_STATUS = CA_M_OF_N_STATUS
 CA_MOFN_STATUS_PTR = POINTER(CA_MOFN_STATUS)
@@ -858,19 +850,16 @@ class CK_VERSION(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_VERSION._pack_ = 1
-CK_VERSION._fields_ = [
-    ('major', CK_BYTE),
-    ('minor', CK_BYTE),
-]
-if 'win' in sys.platform:
+CK_VERSION._fields_ = [("major", CK_BYTE), ("minor", CK_BYTE)]
+if "win" in sys.platform:
     CKCA_MODULE_INFO._pack_ = 1
 CKCA_MODULE_INFO._fields_ = [
-    ('ulModuleSize', CK_ULONG),
-    ('developerName', CK_CHAR * 32),
-    ('moduleDescription', CK_CHAR * 32),
-    ('moduleVersion', CK_VERSION),
+    ("ulModuleSize", CK_ULONG),
+    ("developerName", CK_CHAR * 32),
+    ("moduleDescription", CK_CHAR * 32),
+    ("moduleVersion", CK_VERSION),
 ]
 CKCA_MODULE_INFO_PTR = POINTER(CKCA_MODULE_INFO)
 
@@ -880,24 +869,21 @@ class CK_HA_MEMBER(Structure):
 
 
 CK_RV = CK_ULONG
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_HA_MEMBER._pack_ = 1
-CK_HA_MEMBER._fields_ = [
-    ('memberSerial', CK_CHAR * 20),
-    ('memberStatus', CK_RV),
-]
+CK_HA_MEMBER._fields_ = [("memberSerial", CK_CHAR * 20), ("memberStatus", CK_RV)]
 
 
 class CK_HA_STATUS(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_HA_STATUS._pack_ = 1
 CK_HA_STATUS._fields_ = [
-    ('groupSerial', CK_CHAR * 20),
-    ('memberList', CK_HA_MEMBER * 32),
-    ('listSize', CK_ULONG),
+    ("groupSerial", CK_CHAR * 20),
+    ("memberList", CK_HA_MEMBER * 32),
+    ("listSize", CK_ULONG),
 ]
 CK_HA_MEMBER_PTR = POINTER(CK_HA_MEMBER)
 CK_HA_STATE_PTR = POINTER(CK_HA_STATUS)
@@ -908,10 +894,9 @@ class CT_Token(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CT_Token._pack_ = 1
-CT_Token._fields_ = [
-]
+CT_Token._fields_ = []
 CT_TokenHndle = POINTER(CT_Token)
 
 
@@ -920,18 +905,18 @@ class CK_AES_CBC_PAD_EXTRACT_PARAMS(Structure):
 
 
 CK_ULONG_PTR = POINTER(CK_ULONG)
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_AES_CBC_PAD_EXTRACT_PARAMS._pack_ = 1
 CK_AES_CBC_PAD_EXTRACT_PARAMS._fields_ = [
-    ('ulType', CK_ULONG),
-    ('ulHandle', CK_ULONG),
-    ('ulDeleteAfterExtract', CK_ULONG),
-    ('pBuffer', CK_BYTE_PTR),
-    ('pulBufferLen', CK_ULONG_PTR),
-    ('ulStorage', CK_ULONG),
-    ('pedId', CK_ULONG),
-    ('pbFileName', CK_BYTE_PTR),
-    ('ctxID', CK_ULONG),
+    ("ulType", CK_ULONG),
+    ("ulHandle", CK_ULONG),
+    ("ulDeleteAfterExtract", CK_ULONG),
+    ("pBuffer", CK_BYTE_PTR),
+    ("pulBufferLen", CK_ULONG_PTR),
+    ("ulStorage", CK_ULONG),
+    ("pedId", CK_ULONG),
+    ("pbFileName", CK_BYTE_PTR),
+    ("ctxID", CK_ULONG),
 ]
 CK_AES_CBC_PAD_EXTRACT_PARAMS_PTR = POINTER(CK_AES_CBC_PAD_EXTRACT_PARAMS)
 
@@ -940,19 +925,19 @@ class CK_AES_CBC_PAD_INSERT_PARAMS(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_AES_CBC_PAD_INSERT_PARAMS._pack_ = 1
 CK_AES_CBC_PAD_INSERT_PARAMS._fields_ = [
-    ('ulStorageType', CK_ULONG),
-    ('ulContainerState', CK_ULONG),
-    ('pBuffer', CK_BYTE_PTR),
-    ('ulBufferLen', CK_ULONG),
-    ('pulType', CK_ULONG_PTR),
-    ('pulHandle', CK_ULONG_PTR),
-    ('ulStorage', CK_ULONG),
-    ('pedId', CK_ULONG),
-    ('pbFileName', CK_BYTE_PTR),
-    ('ctxID', CK_ULONG),
+    ("ulStorageType", CK_ULONG),
+    ("ulContainerState", CK_ULONG),
+    ("pBuffer", CK_BYTE_PTR),
+    ("ulBufferLen", CK_ULONG),
+    ("pulType", CK_ULONG_PTR),
+    ("pulHandle", CK_ULONG_PTR),
+    ("ulStorage", CK_ULONG),
+    ("pedId", CK_ULONG),
+    ("pbFileName", CK_BYTE_PTR),
+    ("ctxID", CK_ULONG),
 ]
 CK_AES_CBC_PAD_INSERT_PARAMS_PTR = POINTER(CK_AES_CBC_PAD_INSERT_PARAMS)
 
@@ -961,12 +946,9 @@ class CK_CLUSTER_STATE(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_CLUSTER_STATE._pack_ = 1
-CK_CLUSTER_STATE._fields_ = [
-    ('bMembers', CK_BYTE * 32 * 8),
-    ('ulMemberStatus', CK_ULONG * 8),
-]
+CK_CLUSTER_STATE._fields_ = [("bMembers", CK_BYTE * 32 * 8), ("ulMemberStatus", CK_ULONG * 8)]
 CK_CLUSTER_STATE_PTR = POINTER(CK_CLUSTER_STATE)
 
 
@@ -974,36 +956,38 @@ class CK_LKM_TOKEN_ID_S(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_LKM_TOKEN_ID_S._pack_ = 1
-CK_LKM_TOKEN_ID_S._fields_ = [
-    ('id', CK_BYTE * 20),
-]
+CK_LKM_TOKEN_ID_S._fields_ = [("id", CK_BYTE * 20)]
 CK_LKM_TOKEN_ID = CK_LKM_TOKEN_ID_S
 CK_LKM_TOKEN_ID_PTR = POINTER(CK_LKM_TOKEN_ID)
 
-#utilization
+# utilization
 CK_ULONGLONG = c_ulonglong
+
+
 class CK_UTILIZATION_COUNTER(Structure):
     pass
 
+
 CK_UTILIZATION_COUNTER._fields_ = [
-    ('ullSerialNumber', CK_ULONGLONG),
-    ('label', CK_CHAR * 66),
-    ('ulBindId', CK_ULONG),
-    ('ulCounterId', CK_ULONG),
-    ('ullCount', CK_ULONGLONG),
+    ("ullSerialNumber", CK_ULONGLONG),
+    ("label", CK_CHAR * 66),
+    ("ulBindId", CK_ULONG),
+    ("ulCounterId", CK_ULONG),
+    ("ullCount", CK_ULONGLONG),
 ]
 CK_UTILIZATION_COUNTER_PTR = POINTER(CK_UTILIZATION_COUNTER)
 
-#pka
+# pka
 class CK_KEY_STATUS(Structure):
     _fields_ = [
-        ('flags', CK_BYTE),
-        ('failedAuthCountLimit', CK_BYTE),
-        ('reserved1', CK_BYTE),
-        ('reserved2', CK_BYTE)
-]
+        ("flags", CK_BYTE),
+        ("failedAuthCountLimit", CK_BYTE),
+        ("reserved1", CK_BYTE),
+        ("reserved2", CK_BYTE),
+    ]
+
 
 class CK_SFNT_CA_FUNCTION_LIST(Structure):
     pass
@@ -1019,20 +1003,32 @@ CK_VOID_PTR = c_void_p
 CK_CA_WaitForSlotEvent = CFUNCTYPE(CK_RV, CK_FLAGS, POINTER(CK_ULONG), CK_SLOT_ID_PTR, CK_VOID_PTR)
 CK_CHAR_PTR = POINTER(CK_CHAR)
 CK_SESSION_HANDLE = CK_ULONG
-CK_CA_InitIndirectToken = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_CHAR_PTR, CK_ULONG, CK_CHAR_PTR,
-                                    CK_SESSION_HANDLE)
-CK_CA_InitIndirectPIN = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_CHAR_PTR, CK_ULONG,
-                                  CK_SESSION_HANDLE)
+CK_CA_InitIndirectToken = CFUNCTYPE(
+    CK_RV, CK_SLOT_ID, CK_CHAR_PTR, CK_ULONG, CK_CHAR_PTR, CK_SESSION_HANDLE
+)
+CK_CA_InitIndirectPIN = CFUNCTYPE(
+    CK_RV, CK_SESSION_HANDLE, CK_CHAR_PTR, CK_ULONG, CK_SESSION_HANDLE
+)
 CK_CA_ResetPIN = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_CHAR_PTR, CK_ULONG)
 CK_USER_TYPE = CK_ULONG
 CK_CA_InitRolePIN = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_USER_TYPE, CK_CHAR_PTR, CK_ULONG)
-CK_CA_InitSlotRolePIN = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_SLOT_ID, CK_USER_TYPE, CK_CHAR_PTR,
-                                  CK_ULONG)
+CK_CA_InitSlotRolePIN = CFUNCTYPE(
+    CK_RV, CK_SESSION_HANDLE, CK_SLOT_ID, CK_USER_TYPE, CK_CHAR_PTR, CK_ULONG
+)
 CK_CA_RoleStateGet = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_USER_TYPE, POINTER(CA_ROLE_STATE))
-CK_CA_CreateLoginChallenge = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_USER_TYPE, CK_ULONG,
-                                       CK_CHAR_PTR, CK_ULONG_PTR, CK_CHAR_PTR)
-CK_CA_CreateContainerLoginChallenge = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_SLOT_ID, CK_USER_TYPE,
-                                                CK_ULONG, CK_CHAR_PTR, CK_ULONG_PTR, CK_CHAR_PTR)
+CK_CA_CreateLoginChallenge = CFUNCTYPE(
+    CK_RV, CK_SESSION_HANDLE, CK_USER_TYPE, CK_ULONG, CK_CHAR_PTR, CK_ULONG_PTR, CK_CHAR_PTR
+)
+CK_CA_CreateContainerLoginChallenge = CFUNCTYPE(
+    CK_RV,
+    CK_SESSION_HANDLE,
+    CK_SLOT_ID,
+    CK_USER_TYPE,
+    CK_ULONG,
+    CK_CHAR_PTR,
+    CK_ULONG_PTR,
+    CK_CHAR_PTR,
+)
 CK_CA_Deactivate = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_USER_TYPE)
 CK_CA_FindAdminSlotForSlot = CFUNCTYPE(CK_RV, CK_SLOT_ID, POINTER(CK_SLOT_ID), POINTER(CK_SLOT_ID))
 CK_CA_TokenInsert = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CT_TokenHndle, CK_SLOT_ID)
@@ -1042,10 +1038,12 @@ CK_CA_TokenDelete = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_SLOT_ID)
 CK_NOTIFICATION = CK_ULONG
 CK_NOTIFY = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_NOTIFICATION, CK_VOID_PTR)
 CK_SESSION_HANDLE_PTR = POINTER(CK_SESSION_HANDLE)
-CK_CA_OpenSession = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG, CK_FLAGS, CK_VOID_PTR, CK_NOTIFY,
-                              CK_SESSION_HANDLE_PTR)
-CK_CA_OpenSessionWithAppID = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_FLAGS, CK_ULONG, CK_ULONG, CK_VOID_PTR,
-                                       CK_NOTIFY, CK_SESSION_HANDLE_PTR)
+CK_CA_OpenSession = CFUNCTYPE(
+    CK_RV, CK_SLOT_ID, CK_ULONG, CK_FLAGS, CK_VOID_PTR, CK_NOTIFY, CK_SESSION_HANDLE_PTR
+)
+CK_CA_OpenSessionWithAppID = CFUNCTYPE(
+    CK_RV, CK_SLOT_ID, CK_FLAGS, CK_ULONG, CK_ULONG, CK_VOID_PTR, CK_NOTIFY, CK_SESSION_HANDLE_PTR
+)
 CK_CA_IndirectLogin = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_USER_TYPE, CK_SESSION_HANDLE)
 CK_CA_InitializeRemotePEDVector = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE)
 CK_CA_DeleteRemotePEDVector = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE)
@@ -1059,18 +1057,23 @@ CK_CA_CloseApplicationIDForContainer = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG, CK
 CK_CA_OpenApplicationID = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG, CK_ULONG)
 CK_CA_OpenApplicationIDForContainer = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG, CK_ULONG, CK_ULONG)
 CK_CA_SetApplicationID = CFUNCTYPE(CK_RV, CK_ULONG, CK_ULONG)
-#utilization_metrics
+# utilization_metrics
 CK_CA_DescribeUtilizationBinId = CFUNCTYPE(CK_RV, CK_ULONG, CK_CHAR_PTR)
 CK_CA_ReadUtilizationMetrics = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE)
 CK_CA_ReadAndResetUtilizationMetrics = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE)
-CK_CA_ReadAllUtilizationCounters = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_UTILIZATION_COUNTER_PTR, CK_ULONG_PTR)
-#pka
-CK_CA_SetAuthorizationData = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_OBJECT_HANDLE,
-                                       CK_UTF8CHAR_PTR, CK_ULONG, CK_UTF8CHAR_PTR, CK_ULONG)
-CK_CA_ResetAuthorizationData = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_OBJECT_HANDLE,
-                                         CK_UTF8CHAR_PTR, CK_ULONG)
-CK_CA_AuthorizeKey = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_OBJECT_HANDLE,
-                               CK_UTF8CHAR_PTR, CK_ULONG)
+CK_CA_ReadAllUtilizationCounters = CFUNCTYPE(
+    CK_RV, CK_SESSION_HANDLE, CK_UTILIZATION_COUNTER_PTR, CK_ULONG_PTR
+)
+# pka
+CK_CA_SetAuthorizationData = CFUNCTYPE(
+    CK_RV, CK_SESSION_HANDLE, CK_OBJECT_HANDLE, CK_UTF8CHAR_PTR, CK_ULONG, CK_UTF8CHAR_PTR, CK_ULONG
+)
+CK_CA_ResetAuthorizationData = CFUNCTYPE(
+    CK_RV, CK_SESSION_HANDLE, CK_OBJECT_HANDLE, CK_UTF8CHAR_PTR, CK_ULONG
+)
+CK_CA_AuthorizeKey = CFUNCTYPE(
+    CK_RV, CK_SESSION_HANDLE, CK_OBJECT_HANDLE, CK_UTF8CHAR_PTR, CK_ULONG
+)
 CK_CA_AssignKey = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_OBJECT_HANDLE)
 CK_CA_IncrementFailedAuthCount = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_OBJECT_HANDLE)
 CK_CA_ManualKCV = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE)
@@ -1079,25 +1082,58 @@ CK_CA_SetKCV = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG)
 CK_CA_SetRDK = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, POINTER(CK_BYTE), CK_ULONG)
 CK_CA_SetCloningDomain = CFUNCTYPE(CK_RV, CK_BYTE_PTR, CK_ULONG)
 CK_OBJECT_HANDLE_PTR = POINTER(CK_OBJECT_HANDLE)
-CK_CA_ClonePrivateKey = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_SESSION_HANDLE, CK_OBJECT_HANDLE,
-                                  CK_OBJECT_HANDLE_PTR)
-CK_CA_CloneObject = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_SESSION_HANDLE, CK_ULONG,
-                              CK_OBJECT_HANDLE, CK_OBJECT_HANDLE_PTR)
+CK_CA_ClonePrivateKey = CFUNCTYPE(
+    CK_RV, CK_SESSION_HANDLE, CK_SESSION_HANDLE, CK_OBJECT_HANDLE, CK_OBJECT_HANDLE_PTR
+)
+CK_CA_CloneObject = CFUNCTYPE(
+    CK_RV, CK_SESSION_HANDLE, CK_SESSION_HANDLE, CK_ULONG, CK_OBJECT_HANDLE, CK_OBJECT_HANDLE_PTR
+)
 CK_CA_GenerateCloningKEV = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG_PTR)
 CK_BBOOL = CK_BYTE
-CK_CA_CloneAsTargetInit = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR,
-                                    CK_ULONG, CK_BBOOL, CK_BYTE_PTR, CK_ULONG_PTR)
-CK_CA_CloneAsSource = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ULONG, CK_ULONG, CK_BYTE_PTR, CK_ULONG,
-                                CK_BBOOL, CK_BYTE_PTR, CK_ULONG_PTR)
-CK_CA_CloneAsTarget = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR,
-                                CK_ULONG, CK_ULONG, CK_ULONG, CK_BBOOL, CK_OBJECT_HANDLE_PTR)
+CK_CA_CloneAsTargetInit = CFUNCTYPE(
+    CK_RV,
+    CK_SESSION_HANDLE,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BBOOL,
+    CK_BYTE_PTR,
+    CK_ULONG_PTR,
+)
+CK_CA_CloneAsSource = CFUNCTYPE(
+    CK_RV,
+    CK_SESSION_HANDLE,
+    CK_ULONG,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BBOOL,
+    CK_BYTE_PTR,
+    CK_ULONG_PTR,
+)
+CK_CA_CloneAsTarget = CFUNCTYPE(
+    CK_RV,
+    CK_SESSION_HANDLE,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_ULONG,
+    CK_ULONG,
+    CK_BBOOL,
+    CK_OBJECT_HANDLE_PTR,
+)
 CK_CA_SetMofN = CFUNCTYPE(CK_RV, CK_BBOOL)
-CK_CA_GenerateMofN = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ULONG, CA_MOFN_GENERATION_PTR, CK_ULONG,
-                               CK_ULONG, CK_VOID_PTR)
-CK_CA_GenerateCloneableMofN = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ULONG, CA_MOFN_GENERATION_PTR,
-                                        CK_ULONG, CK_ULONG, CK_VOID_PTR)
-CK_CA_ModifyMofN = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ULONG, CA_MOFN_GENERATION_PTR, CK_ULONG,
-                             CK_ULONG, CK_VOID_PTR)
+CK_CA_GenerateMofN = CFUNCTYPE(
+    CK_RV, CK_SESSION_HANDLE, CK_ULONG, CA_MOFN_GENERATION_PTR, CK_ULONG, CK_ULONG, CK_VOID_PTR
+)
+CK_CA_GenerateCloneableMofN = CFUNCTYPE(
+    CK_RV, CK_SESSION_HANDLE, CK_ULONG, CA_MOFN_GENERATION_PTR, CK_ULONG, CK_ULONG, CK_VOID_PTR
+)
+CK_CA_ModifyMofN = CFUNCTYPE(
+    CK_RV, CK_SESSION_HANDLE, CK_ULONG, CA_MOFN_GENERATION_PTR, CK_ULONG, CK_ULONG, CK_VOID_PTR
+)
 CK_CA_CloneMofN = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_SESSION_HANDLE, CK_VOID_PTR)
 CK_CA_CloneModifyMofN = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_SESSION_HANDLE, CK_VOID_PTR)
 CK_CA_ActivateMofN = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CA_MOFN_ACTIVATION_PTR, CK_ULONG)
@@ -1109,23 +1145,64 @@ CK_CA_IsMofNRequired = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG_PTR)
 
 CK_CA_GenerateTokenKeys = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ATTRIBUTE_PTR, CK_ULONG)
 CK_CA_GetTokenCertificateInfo = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR)
-CK_CA_SetTokenCertificateSignature = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ULONG, CK_ULONG,
-                                               CK_ATTRIBUTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG)
+CK_CA_SetTokenCertificateSignature = CFUNCTYPE(
+    CK_RV, CK_SESSION_HANDLE, CK_ULONG, CK_ULONG, CK_ATTRIBUTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG
+)
 CK_CA_GetModuleList = CFUNCTYPE(CK_RV, CK_SLOT_ID, CKCA_MODULE_ID_PTR, CK_ULONG, CK_ULONG_PTR)
 CK_CA_GetModuleInfo = CFUNCTYPE(CK_RV, CK_SLOT_ID, CKCA_MODULE_ID, CKCA_MODULE_INFO_PTR)
-CK_CA_LoadModule = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG,
-                             CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG, CKCA_MODULE_ID_PTR)
-CK_CA_LoadEncryptedModule = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_OBJECT_HANDLE, CK_BYTE_PTR,
-                                      CK_ULONG, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG,
-                                      CK_BYTE_PTR, CK_ULONG, CKCA_MODULE_ID_PTR)
+CK_CA_LoadModule = CFUNCTYPE(
+    CK_RV,
+    CK_SESSION_HANDLE,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CKCA_MODULE_ID_PTR,
+)
+CK_CA_LoadEncryptedModule = CFUNCTYPE(
+    CK_RV,
+    CK_SESSION_HANDLE,
+    CK_OBJECT_HANDLE,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CKCA_MODULE_ID_PTR,
+)
 CK_CA_UnloadModule = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CKCA_MODULE_ID)
-CK_CA_PerformModuleCall = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CKCA_MODULE_ID, CK_BYTE_PTR, CK_ULONG,
-                                    CK_BYTE_PTR, CK_ULONG, CK_ULONG_PTR)
-CK_CA_FirmwareUpdate = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ULONG, CK_ULONG, CK_BYTE_PTR,
-                                 CK_ULONG, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR)
+CK_CA_PerformModuleCall = CFUNCTYPE(
+    CK_RV,
+    CK_SESSION_HANDLE,
+    CKCA_MODULE_ID,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_ULONG_PTR,
+)
+CK_CA_FirmwareUpdate = CFUNCTYPE(
+    CK_RV,
+    CK_SESSION_HANDLE,
+    CK_ULONG,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+)
 CK_CA_FirmwareRollback = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE)
-CK_CA_CapabilityUpdate = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ULONG, CK_BYTE_PTR, CK_ULONG,
-                                   CK_BYTE_PTR)
+CK_CA_CapabilityUpdate = CFUNCTYPE(
+    CK_RV, CK_SESSION_HANDLE, CK_ULONG, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR
+)
 CK_CA_GetUserContainerNumber = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG_PTR)
 CK_CA_GetUserContainerName = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_BYTE_PTR, CK_ULONG_PTR)
 CK_CA_SetUserContainerName = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_BYTE_PTR, CK_ULONG)
@@ -1134,45 +1211,65 @@ CK_CA_GetRollbackFirmwareVersion = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG_PTR)
 CK_CA_GetFPV = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG_PTR)
 CK_CA_GetTPV = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG_PTR)
 CK_CA_GetExtendedTPV = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG_PTR, CK_ULONG_PTR)
-CK_CA_GetConfigurationElementDescription = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG, CK_ULONG,
-                                                     CK_ULONG, CK_ULONG_PTR, CK_ULONG_PTR,
-                                                     CK_ULONG_PTR, CK_CHAR_PTR)
-CK_CA_GetHSMCapabilitySet = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR,
-                                      CK_ULONG_PTR)
+CK_CA_GetConfigurationElementDescription = CFUNCTYPE(
+    CK_RV,
+    CK_SLOT_ID,
+    CK_ULONG,
+    CK_ULONG,
+    CK_ULONG,
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+    CK_CHAR_PTR,
+)
+CK_CA_GetHSMCapabilitySet = CFUNCTYPE(
+    CK_RV, CK_SLOT_ID, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR
+)
 CK_CA_GetHSMCapabilitySetting = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG, CK_ULONG_PTR)
-CK_CA_GetHSMPolicySet = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR,
-                                  CK_ULONG_PTR)
+CK_CA_GetHSMPolicySet = CFUNCTYPE(
+    CK_RV, CK_SLOT_ID, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR
+)
 CK_CA_GetHSMPolicySetting = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG, CK_ULONG_PTR)
-CK_CA_GetContainerCapabilitySet = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG, CK_ULONG_PTR, CK_ULONG_PTR,
-                                            CK_ULONG_PTR, CK_ULONG_PTR)
+CK_CA_GetContainerCapabilitySet = CFUNCTYPE(
+    CK_RV, CK_SLOT_ID, CK_ULONG, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR
+)
 CK_CA_GetContainerCapabilitySetting = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG, CK_ULONG, CK_ULONG_PTR)
-CK_CA_GetContainerPolicySet = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG, CK_ULONG_PTR, CK_ULONG_PTR,
-                                        CK_ULONG_PTR, CK_ULONG_PTR)
+CK_CA_GetContainerPolicySet = CFUNCTYPE(
+    CK_RV, CK_SLOT_ID, CK_ULONG, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR
+)
 CK_CA_GetContainerPolicySetting = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG, CK_ULONG, CK_ULONG_PTR)
 CK_CA_SetTPV = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ULONG)
 CK_CA_SetExtendedTPV = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ULONG, CK_ULONG)
 CK_CA_SetHSMPolicy = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ULONG, CK_ULONG)
 CK_CA_SetHSMPolicies = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ULONG, CK_ULONG_PTR, CK_ULONG_PTR)
 CK_CA_SetDestructiveHSMPolicy = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ULONG, CK_ULONG)
-CK_CA_SetDestructiveHSMPolicies = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ULONG, CK_ULONG_PTR,
-                                            CK_ULONG_PTR)
+CK_CA_SetDestructiveHSMPolicies = CFUNCTYPE(
+    CK_RV, CK_SESSION_HANDLE, CK_ULONG, CK_ULONG_PTR, CK_ULONG_PTR
+)
 CK_CA_SetContainerPolicy = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ULONG, CK_ULONG, CK_ULONG)
-CK_CA_SetContainerPolicies = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ULONG, CK_ULONG, CK_ULONG_PTR,
-                                       CK_ULONG_PTR)
-CK_CA_GetTokenCapabilities = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR,
-                                       CK_ULONG_PTR)
-CK_CA_SetTokenPolicies = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_SLOT_ID, CK_ULONG, CK_ULONG_PTR,
-                                   CK_ULONG_PTR)
-CK_CA_GetTokenPolicies = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR,
-                                   CK_ULONG_PTR)
+CK_CA_SetContainerPolicies = CFUNCTYPE(
+    CK_RV, CK_SESSION_HANDLE, CK_ULONG, CK_ULONG, CK_ULONG_PTR, CK_ULONG_PTR
+)
+CK_CA_GetTokenCapabilities = CFUNCTYPE(
+    CK_RV, CK_SLOT_ID, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR
+)
+CK_CA_SetTokenPolicies = CFUNCTYPE(
+    CK_RV, CK_SESSION_HANDLE, CK_SLOT_ID, CK_ULONG, CK_ULONG_PTR, CK_ULONG_PTR
+)
+CK_CA_GetTokenPolicies = CFUNCTYPE(
+    CK_RV, CK_SLOT_ID, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR
+)
 CK_CA_RetrieveLicenseList = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG_PTR, CK_ULONG_PTR)
-CK_CA_QueryLicense = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG, CK_ULONG, CK_ULONG_PTR, CK_ULONG_PTR,
-                               CK_ULONG_PTR, CK_BYTE_PTR)
-CK_CA_GetContainerStatus = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG, CK_ULONG_PTR, CK_ULONG_PTR,
-                                     CK_ULONG_PTR, CK_ULONG_PTR)
+CK_CA_QueryLicense = CFUNCTYPE(
+    CK_RV, CK_SLOT_ID, CK_ULONG, CK_ULONG, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR, CK_BYTE_PTR
+)
+CK_CA_GetContainerStatus = CFUNCTYPE(
+    CK_RV, CK_SLOT_ID, CK_ULONG, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR
+)
 CK_CA_GetTokenStatus = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR)
-CK_CA_GetSessionInfo = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR,
-                                 CK_ULONG_PTR)
+CK_CA_GetSessionInfo = CFUNCTYPE(
+    CK_RV, CK_SESSION_HANDLE, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR
+)
 CK_CA_GetCVFirmwareVersion = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR)
 CK_CA_ReadCommonStore = CFUNCTYPE(CK_RV, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR)
 CK_CA_WriteCommonStore = CFUNCTYPE(CK_RV, CK_ULONG, CK_BYTE_PTR, CK_ULONG)
@@ -1193,54 +1290,122 @@ CK_CA_GetPedId = CFUNCTYPE(CK_RV, CK_SLOT_ID, POINTER(CK_ULONG))
 CK_CA_SpRawRead = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG_PTR)
 CK_CA_SpRawWrite = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG_PTR)
 CK_CA_CheckOperationState = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ULONG, POINTER(CK_BBOOL))
-CK_CA_DestroyMultipleObjects = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ULONG, CK_OBJECT_HANDLE_PTR,
-                                         CK_ULONG_PTR)
-CK_CA_OpenSecureToken = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ULONG, CK_ULONG, CK_ULONG, CK_ULONG,
-                                  CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG, CK_CHAR_PTR)
+CK_CA_DestroyMultipleObjects = CFUNCTYPE(
+    CK_RV, CK_SESSION_HANDLE, CK_ULONG, CK_OBJECT_HANDLE_PTR, CK_ULONG_PTR
+)
+CK_CA_OpenSecureToken = CFUNCTYPE(
+    CK_RV,
+    CK_SESSION_HANDLE,
+    CK_ULONG,
+    CK_ULONG,
+    CK_ULONG,
+    CK_ULONG,
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+    CK_ULONG,
+    CK_CHAR_PTR,
+)
 CK_CA_CloseSecureToken = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ULONG)
-CK_CA_ListSecureTokenInit = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ULONG, CK_ULONG, CK_ULONG_PTR,
-                                      CK_ULONG_PTR, CK_BYTE_PTR)
-CK_CA_ListSecureTokenUpdate = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ULONG, CK_ULONG, CK_BYTE_PTR,
-                                        CK_ULONG)
+CK_CA_ListSecureTokenInit = CFUNCTYPE(
+    CK_RV, CK_SESSION_HANDLE, CK_ULONG, CK_ULONG, CK_ULONG_PTR, CK_ULONG_PTR, CK_BYTE_PTR
+)
+CK_CA_ListSecureTokenUpdate = CFUNCTYPE(
+    CK_RV, CK_SESSION_HANDLE, CK_ULONG, CK_ULONG, CK_BYTE_PTR, CK_ULONG
+)
 
-CK_CA_GetSecureElementMeta = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ULONG, CK_MECHANISM_PTR,
-                                       CK_ULONG_PTR, CK_ULONG_PTR, CK_BYTE_PTR, CK_ULONG)
+CK_CA_GetSecureElementMeta = CFUNCTYPE(
+    CK_RV,
+    CK_SESSION_HANDLE,
+    CK_ULONG,
+    CK_MECHANISM_PTR,
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+    CK_BYTE_PTR,
+    CK_ULONG,
+)
 CK_CA_HAInit = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_OBJECT_HANDLE)
 CK_CA_HAGetMasterPublic = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_BYTE_PTR, CK_ULONG_PTR)
-CK_CA_HAGetLoginChallenge = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_USER_TYPE, CK_BYTE_PTR, CK_ULONG,
-                                      CK_BYTE_PTR, CK_ULONG_PTR)
-CK_CA_HAAnswerLoginChallenge = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_OBJECT_HANDLE, CK_BYTE_PTR,
-                                         CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR)
-CK_CA_HALogin = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR,
-                          CK_ULONG_PTR)
-CK_CA_HAAnswerMofNChallenge = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG,
-                                        CK_BYTE_PTR, CK_ULONG_PTR)
+CK_CA_HAGetLoginChallenge = CFUNCTYPE(
+    CK_RV, CK_SESSION_HANDLE, CK_USER_TYPE, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR
+)
+CK_CA_HAAnswerLoginChallenge = CFUNCTYPE(
+    CK_RV, CK_SESSION_HANDLE, CK_OBJECT_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR
+)
+CK_CA_HALogin = CFUNCTYPE(
+    CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR
+)
+CK_CA_HAAnswerMofNChallenge = CFUNCTYPE(
+    CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR
+)
 CK_CA_HAActivateMofN = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG)
 CK_CA_GetHAState = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_HA_STATE_PTR)
 CK_CA_GetTokenCertificates = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR)
 CK_CA_ExtractMaskedObject = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR)
 CK_CA_InsertMaskedObject = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ULONG_PTR, CK_BYTE_PTR, CK_ULONG)
-CK_CA_MultisignValue = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_MECHANISM_PTR, CK_ULONG, CK_BYTE_PTR,
-                                 CK_ULONG_PTR, CK_ULONG_PTR, POINTER(CK_BYTE_PTR), CK_ULONG_PTR,
-                                 POINTER(CK_BYTE_PTR))
-CK_CA_SIMExtract = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ULONG, CK_OBJECT_HANDLE_PTR, CK_ULONG,
-                             CK_ULONG, CKA_SIM_AUTH_FORM, CK_ULONG_PTR, POINTER(CK_BYTE_PTR),
-                             CK_BBOOL, CK_ULONG_PTR, CK_BYTE_PTR)
-CK_CA_SIMInsert = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ULONG, CKA_SIM_AUTH_FORM, CK_ULONG_PTR,
-                            POINTER(CK_BYTE_PTR), CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR,
-                            CK_OBJECT_HANDLE_PTR)
-CK_CA_SIMMultiSign = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_MECHANISM_PTR, CK_ULONG,
-                               CKA_SIM_AUTH_FORM, CK_ULONG_PTR, POINTER(CK_BYTE_PTR), CK_ULONG,
-                               CK_BYTE_PTR, CK_ULONG, CK_ULONG_PTR, POINTER(CK_BYTE_PTR),
-                               CK_ULONG_PTR, POINTER(CK_BYTE_PTR))
+CK_CA_MultisignValue = CFUNCTYPE(
+    CK_RV,
+    CK_SESSION_HANDLE,
+    CK_MECHANISM_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+    POINTER(CK_BYTE_PTR),
+    CK_ULONG_PTR,
+    POINTER(CK_BYTE_PTR),
+)
+CK_CA_SIMExtract = CFUNCTYPE(
+    CK_RV,
+    CK_SESSION_HANDLE,
+    CK_ULONG,
+    CK_OBJECT_HANDLE_PTR,
+    CK_ULONG,
+    CK_ULONG,
+    CKA_SIM_AUTH_FORM,
+    CK_ULONG_PTR,
+    POINTER(CK_BYTE_PTR),
+    CK_BBOOL,
+    CK_ULONG_PTR,
+    CK_BYTE_PTR,
+)
+CK_CA_SIMInsert = CFUNCTYPE(
+    CK_RV,
+    CK_SESSION_HANDLE,
+    CK_ULONG,
+    CKA_SIM_AUTH_FORM,
+    CK_ULONG_PTR,
+    POINTER(CK_BYTE_PTR),
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG_PTR,
+    CK_OBJECT_HANDLE_PTR,
+)
+CK_CA_SIMMultiSign = CFUNCTYPE(
+    CK_RV,
+    CK_SESSION_HANDLE,
+    CK_MECHANISM_PTR,
+    CK_ULONG,
+    CKA_SIM_AUTH_FORM,
+    CK_ULONG_PTR,
+    POINTER(CK_BYTE_PTR),
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_ULONG_PTR,
+    POINTER(CK_BYTE_PTR),
+    CK_ULONG_PTR,
+    POINTER(CK_BYTE_PTR),
+)
 CK_CA_Extract = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_MECHANISM_PTR)
 CK_CA_Insert = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_MECHANISM_PTR)
 CK_CA_GetTokenObjectUID = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG, CK_ULONG, POINTER(CK_BYTE))
-CK_CA_GetTokenObjectHandle = CFUNCTYPE(CK_RV, CK_SLOT_ID, POINTER(CK_BYTE), CK_ULONG_PTR,
-                                       CK_ULONG_PTR)
+CK_CA_GetTokenObjectHandle = CFUNCTYPE(
+    CK_RV, CK_SLOT_ID, POINTER(CK_BYTE), CK_ULONG_PTR, CK_ULONG_PTR
+)
 CK_CA_GetObjectUID = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG, CK_ULONG, CK_ULONG, POINTER(CK_BYTE))
-CK_CA_GetObjectHandle = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG, POINTER(CK_BYTE), CK_ULONG_PTR,
-                                  CK_ULONG_PTR)
+CK_CA_GetObjectHandle = CFUNCTYPE(
+    CK_RV, CK_SLOT_ID, CK_ULONG, POINTER(CK_BYTE), CK_ULONG_PTR, CK_ULONG_PTR
+)
 CK_CA_DeleteContainer = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE)
 CK_CA_MTKSetStorage = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ULONG)
 CK_CA_MTKRestore = CFUNCTYPE(CK_RV, CK_SLOT_ID)
@@ -1254,30 +1419,87 @@ CK_CA_InvokeServiceInit = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ULONG)
 CK_CA_InvokeService = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_ULONG_PTR)
 CK_CA_InvokeServiceFinal = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG_PTR)
 CK_CA_InvokeServiceAsynch = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ULONG, CK_BYTE_PTR, CK_ULONG)
-CK_CA_InvokeServiceSinglePart = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ULONG, CK_BYTE_PTR, CK_ULONG,
-                                          CK_BYTE_PTR, CK_ULONG_PTR)
-CK_CA_EncodeECPrimeParams = CFUNCTYPE(CK_RV, CK_BYTE_PTR, CK_ULONG_PTR, CK_BYTE_PTR, CK_ULONG,
-                                      CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR,
-                                      CK_ULONG, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG,
-                                      CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG)
-CK_CA_EncodeECChar2Params = CFUNCTYPE(CK_RV, CK_BYTE_PTR, CK_ULONG_PTR, CK_ULONG, CK_ULONG,
-                                      CK_ULONG, CK_ULONG, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR,
-                                      CK_ULONG, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG,
-                                      CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR,
-                                      CK_ULONG)
+CK_CA_InvokeServiceSinglePart = CFUNCTYPE(
+    CK_RV, CK_SESSION_HANDLE, CK_ULONG, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR
+)
+CK_CA_EncodeECPrimeParams = CFUNCTYPE(
+    CK_RV,
+    CK_BYTE_PTR,
+    CK_ULONG_PTR,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+)
+CK_CA_EncodeECChar2Params = CFUNCTYPE(
+    CK_RV,
+    CK_BYTE_PTR,
+    CK_ULONG_PTR,
+    CK_ULONG,
+    CK_ULONG,
+    CK_ULONG,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+)
 CK_CA_EncodeECParamsFromFile = CFUNCTYPE(CK_RV, CK_BYTE_PTR, CK_ULONG_PTR, CK_BYTE_PTR)
 CK_CA_GetHSMStats = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG, CK_ULONG_PTR, POINTER(HSM_STATS_PARAMS))
-CK_CA_GetHSMStorageInformation = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG_PTR, CK_ULONG_PTR,
-                                           CK_ULONG_PTR, CK_ULONG_PTR)
-CK_CA_GetTokenStorageInformation = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG_PTR, CK_ULONG_PTR,
-                                             CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR)
-CK_CA_GetContainerStorageInformation = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG, CK_ULONG_PTR,
-                                                 CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR,
-                                                 CK_ULONG_PTR)
+CK_CA_GetHSMStorageInformation = CFUNCTYPE(
+    CK_RV, CK_SLOT_ID, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR
+)
+CK_CA_GetTokenStorageInformation = CFUNCTYPE(
+    CK_RV, CK_SLOT_ID, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR
+)
+CK_CA_GetContainerStorageInformation = CFUNCTYPE(
+    CK_RV,
+    CK_SLOT_ID,
+    CK_ULONG,
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+)
 CK_CA_SetContainerSize = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ULONG, CK_ULONG)
-CK_CA_CreateContainer = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ULONG, CK_CHAR_PTR, CK_ULONG,
-                                  CK_CHAR_PTR, CK_ULONG, CK_ULONG, CK_ULONG, CK_ULONG, CK_ULONG,
-                                  CK_ULONG, CK_ULONG_PTR)
+CK_CA_CreateContainer = CFUNCTYPE(
+    CK_RV,
+    CK_SESSION_HANDLE,
+    CK_ULONG,
+    CK_CHAR_PTR,
+    CK_ULONG,
+    CK_CHAR_PTR,
+    CK_ULONG,
+    CK_ULONG,
+    CK_ULONG,
+    CK_ULONG,
+    CK_ULONG,
+    CK_ULONG,
+    CK_ULONG_PTR,
+)
 CK_CA_InitAudit = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_CHAR_PTR, CK_ULONG, CK_CHAR_PTR)
 CK_CA_LogVerify = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_ULONG, CK_ULONG_PTR)
 CK_CA_LogVerifyFile = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_CHAR_PTR, CK_ULONG_PTR)
@@ -1286,61 +1508,152 @@ CK_CA_LogImportSecret = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULON
 CK_CA_LogExportSecret = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG_PTR)
 CK_CA_TimeSync = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ULONG)
 CK_CA_GetTime = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ULONG_PTR)
-CK_CA_LogSetConfig = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ULONG, CK_ULONG, CK_ULONG, CK_ULONG,
-                               CK_BYTE_PTR)
-CK_CA_LogGetConfig = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, POINTER(CK_ULONG), POINTER(CK_ULONG),
-                               POINTER(CK_ULONG), POINTER(CK_ULONG), CK_BYTE_PTR)
+CK_CA_LogSetConfig = CFUNCTYPE(
+    CK_RV, CK_SESSION_HANDLE, CK_ULONG, CK_ULONG, CK_ULONG, CK_ULONG, CK_BYTE_PTR
+)
+CK_CA_LogGetConfig = CFUNCTYPE(
+    CK_RV,
+    CK_SESSION_HANDLE,
+    POINTER(CK_ULONG),
+    POINTER(CK_ULONG),
+    POINTER(CK_ULONG),
+    POINTER(CK_ULONG),
+    CK_BYTE_PTR,
+)
 CK_CA_ReplaceFastPathKEK = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE)
-CK_CA_LogGetStatus = CFUNCTYPE(CK_RV, CK_SLOT_ID, POINTER(CK_ULONG), POINTER(CK_ULONG),
-                               POINTER(CK_ULONG), POINTER(CK_ULONG), POINTER(CK_ULONG))
+CK_CA_LogGetStatus = CFUNCTYPE(
+    CK_RV,
+    CK_SLOT_ID,
+    POINTER(CK_ULONG),
+    POINTER(CK_ULONG),
+    POINTER(CK_ULONG),
+    POINTER(CK_ULONG),
+    POINTER(CK_ULONG),
+)
 CK_CA_DeleteContainerWithHandle = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ULONG)
-CK_CA_GetContainerList = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG, CK_ULONG, CK_ULONG_PTR,
-                                   CK_ULONG_PTR)
+CK_CA_GetContainerList = CFUNCTYPE(
+    CK_RV, CK_SLOT_ID, CK_ULONG, CK_ULONG, CK_ULONG_PTR, CK_ULONG_PTR
+)
 CK_CA_GetContainerName = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR)
 CK_CA_GetNumberOfAllowedContainers = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG_PTR)
 CK_CA_GetTunnelSlotNumber = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_SLOT_ID_PTR)
 CK_CA_GetClusterState = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_CLUSTER_STATE_PTR)
 CK_CA_LockClusteredSlot = CFUNCTYPE(CK_RV, CK_SLOT_ID)
 CK_CA_UnlockClusteredSlot = CFUNCTYPE(CK_RV, CK_SLOT_ID)
-CK_CA_LKMInitiatorChallenge = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_OBJECT_HANDLE,
-                                        CK_OBJECT_HANDLE, CK_ULONG, CK_LKM_TOKEN_ID_PTR,
-                                        CK_LKM_TOKEN_ID_PTR, CK_CHAR_PTR, CK_ULONG_PTR)
-CK_CA_LKMReceiverResponse = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_OBJECT_HANDLE, CK_OBJECT_HANDLE,
-                                      CK_ULONG, CK_LKM_TOKEN_ID_PTR, CK_CHAR_PTR, CK_ULONG,
-                                      CK_CHAR_PTR, CK_ULONG_PTR)
-CK_CA_LKMInitiatorComplete = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_CHAR_PTR, CK_ULONG,
-                                       CK_ATTRIBUTE_PTR, CK_ULONG, CK_ATTRIBUTE_PTR, CK_ULONG,
-                                       CK_CHAR_PTR, CK_ULONG_PTR, CK_OBJECT_HANDLE_PTR,
-                                       CK_OBJECT_HANDLE_PTR)
-CK_CA_LKMReceiverComplete = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_CHAR_PTR, CK_ULONG,
-                                      CK_ATTRIBUTE_PTR, CK_ULONG, CK_ATTRIBUTE_PTR, CK_ULONG,
-                                      CK_OBJECT_HANDLE_PTR, CK_OBJECT_HANDLE_PTR)
+CK_CA_LKMInitiatorChallenge = CFUNCTYPE(
+    CK_RV,
+    CK_SESSION_HANDLE,
+    CK_OBJECT_HANDLE,
+    CK_OBJECT_HANDLE,
+    CK_ULONG,
+    CK_LKM_TOKEN_ID_PTR,
+    CK_LKM_TOKEN_ID_PTR,
+    CK_CHAR_PTR,
+    CK_ULONG_PTR,
+)
+CK_CA_LKMReceiverResponse = CFUNCTYPE(
+    CK_RV,
+    CK_SESSION_HANDLE,
+    CK_OBJECT_HANDLE,
+    CK_OBJECT_HANDLE,
+    CK_ULONG,
+    CK_LKM_TOKEN_ID_PTR,
+    CK_CHAR_PTR,
+    CK_ULONG,
+    CK_CHAR_PTR,
+    CK_ULONG_PTR,
+)
+CK_CA_LKMInitiatorComplete = CFUNCTYPE(
+    CK_RV,
+    CK_SESSION_HANDLE,
+    CK_CHAR_PTR,
+    CK_ULONG,
+    CK_ATTRIBUTE_PTR,
+    CK_ULONG,
+    CK_ATTRIBUTE_PTR,
+    CK_ULONG,
+    CK_CHAR_PTR,
+    CK_ULONG_PTR,
+    CK_OBJECT_HANDLE_PTR,
+    CK_OBJECT_HANDLE_PTR,
+)
+CK_CA_LKMReceiverComplete = CFUNCTYPE(
+    CK_RV,
+    CK_SESSION_HANDLE,
+    CK_CHAR_PTR,
+    CK_ULONG,
+    CK_ATTRIBUTE_PTR,
+    CK_ULONG,
+    CK_ATTRIBUTE_PTR,
+    CK_ULONG,
+    CK_OBJECT_HANDLE_PTR,
+    CK_OBJECT_HANDLE_PTR,
+)
 CK_CA_ModifyUsageCount = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_OBJECT_HANDLE, CK_ULONG, CK_ULONG)
 CK_CA_EnableUnauthTokenInsertion = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ULONG, CK_ULONG_PTR)
-CK_CA_GetUnauthTokenInsertionStatus = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ULONG,
-                                                POINTER(CK_ULONG), POINTER(CK_ULONG))
+CK_CA_GetUnauthTokenInsertionStatus = CFUNCTYPE(
+    CK_RV, CK_SESSION_HANDLE, CK_ULONG, POINTER(CK_ULONG), POINTER(CK_ULONG)
+)
 CK_CA_DisableUnauthTokenInsertion = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ULONG)
-CK_CA_STCRegister = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_SLOT_ID, POINTER(CK_CHAR), CK_ULONG,
-                              POINTER(CK_CHAR), CK_ULONG, POINTER(CK_CHAR), CK_ULONG)
+CK_CA_STCRegister = CFUNCTYPE(
+    CK_RV,
+    CK_SESSION_HANDLE,
+    CK_SLOT_ID,
+    POINTER(CK_CHAR),
+    CK_ULONG,
+    POINTER(CK_CHAR),
+    CK_ULONG,
+    POINTER(CK_CHAR),
+    CK_ULONG,
+)
 CK_CA_STCDeregister = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_SLOT_ID, POINTER(CK_CHAR))
-CK_CA_STCGetPubKey = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_SLOT_ID, POINTER(CK_CHAR),
-                               POINTER(CK_CHAR), CK_ULONG_PTR, POINTER(CK_CHAR), CK_ULONG_PTR)
-CK_CA_STCGetClientsList = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_SLOT_ID, CK_ULONG_PTR,
-                                    CK_ULONG_PTR)
-CK_CA_STCGetClientInfo = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_SLOT_ID, CK_ULONG, POINTER(CK_CHAR),
-                                   CK_ULONG_PTR, CK_ULONG_PTR, POINTER(CK_CHAR), CK_ULONG_PTR,
-                                   POINTER(CK_CHAR), CK_ULONG_PTR)
-CK_CA_STCGetPartPubKey = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_SLOT_ID, POINTER(CK_CHAR),
-                                   CK_ULONG_PTR, POINTER(CK_CHAR), CK_ULONG_PTR)
-CK_CA_STCGetAdminPubKey = CFUNCTYPE(CK_RV, CK_SLOT_ID, POINTER(CK_CHAR), CK_ULONG_PTR,
-                                    POINTER(CK_CHAR), CK_ULONG_PTR)
+CK_CA_STCGetPubKey = CFUNCTYPE(
+    CK_RV,
+    CK_SESSION_HANDLE,
+    CK_SLOT_ID,
+    POINTER(CK_CHAR),
+    POINTER(CK_CHAR),
+    CK_ULONG_PTR,
+    POINTER(CK_CHAR),
+    CK_ULONG_PTR,
+)
+CK_CA_STCGetClientsList = CFUNCTYPE(
+    CK_RV, CK_SESSION_HANDLE, CK_SLOT_ID, CK_ULONG_PTR, CK_ULONG_PTR
+)
+CK_CA_STCGetClientInfo = CFUNCTYPE(
+    CK_RV,
+    CK_SESSION_HANDLE,
+    CK_SLOT_ID,
+    CK_ULONG,
+    POINTER(CK_CHAR),
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+    POINTER(CK_CHAR),
+    CK_ULONG_PTR,
+    POINTER(CK_CHAR),
+    CK_ULONG_PTR,
+)
+CK_CA_STCGetPartPubKey = CFUNCTYPE(
+    CK_RV,
+    CK_SESSION_HANDLE,
+    CK_SLOT_ID,
+    POINTER(CK_CHAR),
+    CK_ULONG_PTR,
+    POINTER(CK_CHAR),
+    CK_ULONG_PTR,
+)
+CK_CA_STCGetAdminPubKey = CFUNCTYPE(
+    CK_RV, CK_SLOT_ID, POINTER(CK_CHAR), CK_ULONG_PTR, POINTER(CK_CHAR), CK_ULONG_PTR
+)
 CK_CA_STCSetCipherAlgorithm = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ULONG, CK_ULONG)
-CK_CA_STCGetCipherAlgorithm = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ULONG, CK_BYTE_PTR,
-                                        CK_ULONG_PTR)
+CK_CA_STCGetCipherAlgorithm = CFUNCTYPE(
+    CK_RV, CK_SESSION_HANDLE, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR
+)
 CK_CA_STCClearCipherAlgorithm = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ULONG, CK_ULONG)
 CK_CA_STCSetDigestAlgorithm = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ULONG, CK_ULONG)
-CK_CA_STCGetDigestAlgorithm = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ULONG, CK_BYTE_PTR,
-                                        CK_ULONG_PTR)
+CK_CA_STCGetDigestAlgorithm = CFUNCTYPE(
+    CK_RV, CK_SESSION_HANDLE, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR
+)
 CK_CA_STCClearDigestAlgorithm = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ULONG, CK_ULONG)
 CK_CA_STCSetKeyLifeTime = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ULONG, CK_ULONG)
 CK_CA_STCGetKeyLifeTime = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ULONG, CK_ULONG_PTR)
@@ -1364,1080 +1677,1529 @@ CK_CA_STCGetDigestIDs = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG_PTR, CK_BYTE_PTR)
 CK_CA_STCGetDigestNameByID = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG, CK_CHAR_PTR, CK_BYTE)
 CK_CA_GetServerInstanceBySlotID = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG_PTR)
 CK_CA_GetSlotListFromServerInstance = CFUNCTYPE(CK_RV, CK_ULONG, CK_SLOT_ID_PTR, CK_ULONG_PTR)
-CK_CA_PerformSelfTest = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR,
-                                  CK_ULONG_PTR)
+CK_CA_PerformSelfTest = CFUNCTYPE(
+    CK_RV, CK_SLOT_ID, CK_ULONG, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR
+)
 CK_CA_GetFirmwareVersion = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR)
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_SFNT_CA_FUNCTION_LIST._pack_ = 1
 CK_SFNT_CA_FUNCTION_LIST._fields_ = [
-    ('version', CK_VERSION),
-    ('CA_GetFunctionList', CK_CA_GetFunctionList),
-    ('CA_WaitForSlotEvent', CK_CA_WaitForSlotEvent),
-    ('CA_InitIndirectToken', CK_CA_InitIndirectToken),
-    ('CA_InitIndirectPIN', CK_CA_InitIndirectPIN),
-    ('CA_ResetPIN', CK_CA_ResetPIN),
-    ('CA_InitRolePIN', CK_CA_InitRolePIN),
-    ('CA_InitSlotRolePIN', CK_CA_InitSlotRolePIN),
-    ('CA_RoleStateGet', CK_CA_RoleStateGet),
-    ('CA_CreateLoginChallenge', CK_CA_CreateLoginChallenge),
-    ('CA_CreateContainerLoginChallenge', CK_CA_CreateContainerLoginChallenge),
-    ('CA_Deactivate', CK_CA_Deactivate),
-    ('CA_FindAdminSlotForSlot', CK_CA_FindAdminSlotForSlot),
-    ('CA_TokenInsert', CK_CA_TokenInsert),
-    ('CA_TokenInsertNoAuth', CK_CA_TokenInsertNoAuth),
-    ('CA_TokenZeroize', CK_CA_TokenZeroize),
-    ('CA_TokenDelete', CK_CA_TokenDelete),
-    ('CA_OpenSession', CK_CA_OpenSession),
-    ('CA_OpenSessionWithAppID', CK_CA_OpenSessionWithAppID),
-    ('CA_IndirectLogin', CK_CA_IndirectLogin),
-    ('CA_InitializeRemotePEDVector', CK_CA_InitializeRemotePEDVector),
-    ('CA_DeleteRemotePEDVector', CK_CA_DeleteRemotePEDVector),
-    ('CA_GetRemotePEDVectorStatus', CK_CA_GetRemotePEDVectorStatus),
-    ('CA_ConfigureRemotePED', CK_CA_ConfigureRemotePED),
-    ('CA_DismantleRemotePED', CK_CA_DismantleRemotePED),
-    ('CA_Restart', CK_CA_Restart),
-    ('CA_RestartForContainer', CK_CA_RestartForContainer),
-    ('CA_CloseApplicationID', CK_CA_CloseApplicationID),
-    ('CA_CloseApplicationIDForContainer', CK_CA_CloseApplicationIDForContainer),
-    ('CA_OpenApplicationID', CK_CA_OpenApplicationID),
-    ('CA_OpenApplicationIDForContainer', CK_CA_OpenApplicationIDForContainer),
-    ('CA_SetApplicationID', CK_CA_SetApplicationID),
-    ('CA_ReadUtilizationMetrics', CK_CA_ReadUtilizationMetrics),
-    ('CA_DescribeUtilizationBinId', CK_CA_DescribeUtilizationBinId),
-    ('CA_ReadAndResetUtilizationMetrics', CK_CA_ReadAndResetUtilizationMetrics),
-    ('CA_ReadAllUtilizationCounters', CK_CA_ReadAllUtilizationCounters),
-    ('CA_SetAuthorizationData', CK_CA_SetAuthorizationData),
-    ('CA_AuthorizeKey', CK_CA_AuthorizeKey),
-    ('CA_ManualKCV', CK_CA_ManualKCV),
-    ('CA_SetLKCV', CK_CA_SetLKCV),
-    ('CA_SetKCV', CK_CA_SetKCV),
-    ('CA_SetRDK', CK_CA_SetRDK),
-    ('CA_SetCloningDomain', CK_CA_SetCloningDomain),
-    ('CA_ClonePrivateKey', CK_CA_ClonePrivateKey),
-    ('CA_CloneObject', CK_CA_CloneObject),
-    ('CA_GenerateCloningKEV', CK_CA_GenerateCloningKEV),
-    ('CA_CloneAsTargetInit', CK_CA_CloneAsTargetInit),
-    ('CA_CloneAsSource', CK_CA_CloneAsSource),
-    ('CA_CloneAsTarget', CK_CA_CloneAsTarget),
-    ('CA_SetMofN', CK_CA_SetMofN),
-    ('CA_GenerateMofN', CK_CA_GenerateMofN),
-    ('CA_GenerateCloneableMofN', CK_CA_GenerateCloneableMofN),
-    ('CA_ModifyMofN', CK_CA_ModifyMofN),
-    ('CA_CloneMofN', CK_CA_CloneMofN),
-    ('CA_CloneModifyMofN', CK_CA_CloneModifyMofN),
-    ('CA_ActivateMofN', CK_CA_ActivateMofN),
-    ('CA_DeactivateMofN', CK_CA_DeactivateMofN),
-    ('CA_GetMofNStatus', CK_CA_GetMofNStatus),
-    ('CA_DuplicateMofN', CK_CA_DuplicateMofN),
-    ('CA_IsMofNEnabled', CK_CA_IsMofNEnabled),
-    ('CA_IsMofNRequired', CK_CA_IsMofNRequired),
-    ('CA_GenerateTokenKeys', CK_CA_GenerateTokenKeys),
-    ('CA_GetTokenCertificateInfo', CK_CA_GetTokenCertificateInfo),
-    ('CA_SetTokenCertificateSignature', CK_CA_SetTokenCertificateSignature),
-    ('CA_GetModuleList', CK_CA_GetModuleList),
-    ('CA_GetModuleInfo', CK_CA_GetModuleInfo),
-    ('CA_LoadModule', CK_CA_LoadModule),
-    ('CA_LoadEncryptedModule', CK_CA_LoadEncryptedModule),
-    ('CA_UnloadModule', CK_CA_UnloadModule),
-    ('CA_PerformModuleCall', CK_CA_PerformModuleCall),
-    ('CA_FirmwareUpdate', CK_CA_FirmwareUpdate),
-    ('CA_FirmwareRollback', CK_CA_FirmwareRollback),
-    ('CA_CapabilityUpdate', CK_CA_CapabilityUpdate),
-    ('CA_GetUserContainerNumber', CK_CA_GetUserContainerNumber),
-    ('CA_GetUserContainerName', CK_CA_GetUserContainerName),
-    ('CA_SetUserContainerName', CK_CA_SetUserContainerName),
-    ('CA_GetTokenInsertionCount', CK_CA_GetTokenInsertionCount),
-    ('CA_GetRollbackFirmwareVersion', CK_CA_GetRollbackFirmwareVersion),
-    ('CA_GetFPV', CK_CA_GetFPV),
-    ('CA_GetTPV', CK_CA_GetTPV),
-    ('CA_GetExtendedTPV', CK_CA_GetExtendedTPV),
-    ('CA_GetConfigurationElementDescription', CK_CA_GetConfigurationElementDescription),
-    ('CA_GetHSMCapabilitySet', CK_CA_GetHSMCapabilitySet),
-    ('CA_GetHSMCapabilitySetting', CK_CA_GetHSMCapabilitySetting),
-    ('CA_GetHSMPolicySet', CK_CA_GetHSMPolicySet),
-    ('CA_GetHSMPolicySetting', CK_CA_GetHSMPolicySetting),
-    ('CA_GetContainerCapabilitySet', CK_CA_GetContainerCapabilitySet),
-    ('CA_GetContainerCapabilitySetting', CK_CA_GetContainerCapabilitySetting),
-    ('CA_GetContainerPolicySet', CK_CA_GetContainerPolicySet),
-    ('CA_GetContainerPolicySetting', CK_CA_GetContainerPolicySetting),
-    ('CA_SetTPV', CK_CA_SetTPV),
-    ('CA_SetExtendedTPV', CK_CA_SetExtendedTPV),
-    ('CA_SetHSMPolicy', CK_CA_SetHSMPolicy),
-    ('CA_SetHSMPolicies', CK_CA_SetHSMPolicies),
-    ('CA_SetDestructiveHSMPolicy', CK_CA_SetDestructiveHSMPolicy),
-    ('CA_SetDestructiveHSMPolicies', CK_CA_SetDestructiveHSMPolicies),
-    ('CA_SetContainerPolicy', CK_CA_SetContainerPolicy),
-    ('CA_SetContainerPolicies', CK_CA_SetContainerPolicies),
-    ('CA_GetTokenCapabilities', CK_CA_GetTokenCapabilities),
-    ('CA_SetTokenPolicies', CK_CA_SetTokenPolicies),
-    ('CA_GetTokenPolicies', CK_CA_GetTokenPolicies),
-    ('CA_RetrieveLicenseList', CK_CA_RetrieveLicenseList),
-    ('CA_QueryLicense', CK_CA_QueryLicense),
-    ('CA_GetContainerStatus', CK_CA_GetContainerStatus),
-    ('CA_GetTokenStatus', CK_CA_GetTokenStatus),
-    ('CA_GetSessionInfo', CK_CA_GetSessionInfo),
-    ('CA_GetCVFirmwareVersion', CK_CA_GetCVFirmwareVersion),
-    ('CA_ReadCommonStore', CK_CA_ReadCommonStore),
-    ('CA_WriteCommonStore', CK_CA_WriteCommonStore),
-    ('CA_GetPrimarySlot', CK_CA_GetPrimarySlot),
-    ('CA_GetSecondarySlot', CK_CA_GetSecondarySlot),
-    ('CA_SwitchSecondarySlot', CK_CA_SwitchSecondarySlot),
-    ('CA_CloseSecondarySession', CK_CA_CloseSecondarySession),
-    ('CA_CloseAllSecondarySessions', CK_CA_CloseAllSecondarySessions),
-    ('CA_ChoosePrimarySlot', CK_CA_ChoosePrimarySlot),
-    ('CA_ChooseSecondarySlot', CK_CA_ChooseSecondarySlot),
-    ('CA_CloneObjectToAllSessions', CK_CA_CloneObjectToAllSessions),
-    ('CA_CloneAllObjectsToSession', CK_CA_CloneAllObjectsToSession),
-    ('CA_ResetDevice', CK_CA_ResetDevice),
-    ('CA_Zeroize', CK_CA_Zeroize),
-    ('CA_FactoryReset', CK_CA_FactoryReset),
-    ('CA_SetPedId', CK_CA_SetPedId),
-    ('CA_GetPedId', CK_CA_GetPedId),
-    ('CA_SpRawRead', CK_CA_SpRawRead),
-    ('CA_SpRawWrite', CK_CA_SpRawWrite),
-    ('CA_CheckOperationState', CK_CA_CheckOperationState),
-    ('CA_DestroyMultipleObjects', CK_CA_DestroyMultipleObjects),
-    ('CA_OpenSecureToken', CK_CA_OpenSecureToken),
-    ('CA_CloseSecureToken', CK_CA_CloseSecureToken),
-    ('CA_ListSecureTokenInit', CK_CA_ListSecureTokenInit),
-    ('CA_ListSecureTokenUpdate', CK_CA_ListSecureTokenUpdate),
-    ('CA_GetSecureElementMeta', CK_CA_GetSecureElementMeta),
-    ('CA_HAInit', CK_CA_HAInit),
-    ('CA_HAGetMasterPublic', CK_CA_HAGetMasterPublic),
-    ('CA_HAGetLoginChallenge', CK_CA_HAGetLoginChallenge),
-    ('CA_HAAnswerLoginChallenge', CK_CA_HAAnswerLoginChallenge),
-    ('CA_HALogin', CK_CA_HALogin),
-    ('CA_HAAnswerMofNChallenge', CK_CA_HAAnswerMofNChallenge),
-    ('CA_HAActivateMofN', CK_CA_HAActivateMofN),
-    ('CA_GetHAState', CK_CA_GetHAState),
-    ('CA_GetTokenCertificates', CK_CA_GetTokenCertificates),
-    ('CA_ExtractMaskedObject', CK_CA_ExtractMaskedObject),
-    ('CA_InsertMaskedObject', CK_CA_InsertMaskedObject),
-    ('CA_MultisignValue', CK_CA_MultisignValue),
-    ('CA_SIMExtract', CK_CA_SIMExtract),
-    ('CA_SIMInsert', CK_CA_SIMInsert),
-    ('CA_SIMMultiSign', CK_CA_SIMMultiSign),
-    ('CA_Extract', CK_CA_Extract),
-    ('CA_Insert', CK_CA_Insert),
-    ('CA_GetTokenObjectUID', CK_CA_GetTokenObjectUID),
-    ('CA_GetTokenObjectHandle', CK_CA_GetTokenObjectHandle),
-    ('CA_GetObjectUID', CK_CA_GetObjectUID),
-    ('CA_GetObjectHandle', CK_CA_GetObjectHandle),
-    ('CA_DeleteContainer', CK_CA_DeleteContainer),
-    ('CA_MTKSetStorage', CK_CA_MTKSetStorage),
-    ('CA_MTKRestore', CK_CA_MTKRestore),
-    ('CA_MTKResplit', CK_CA_MTKResplit),
-    ('CA_MTKZeroize', CK_CA_MTKZeroize),
-    ('CA_MTKGetState', CK_CA_MTKGetState),
-    ('CA_STMToggle', CK_CA_STMToggle),
-    ('CA_STMGetState', CK_CA_STMGetState),
-    ('CA_GetTSV', CK_CA_GetTSV),
-    ('CA_InvokeServiceInit', CK_CA_InvokeServiceInit),
-    ('CA_InvokeService', CK_CA_InvokeService),
-    ('CA_InvokeServiceFinal', CK_CA_InvokeServiceFinal),
-    ('CA_InvokeServiceAsynch', CK_CA_InvokeServiceAsynch),
-    ('CA_InvokeServiceSinglePart', CK_CA_InvokeServiceSinglePart),
-    ('CA_EncodeECPrimeParams', CK_CA_EncodeECPrimeParams),
-    ('CA_EncodeECChar2Params', CK_CA_EncodeECChar2Params),
-    ('CA_EncodeECParamsFromFile', CK_CA_EncodeECParamsFromFile),
-    ('CA_GetHSMStats', CK_CA_GetHSMStats),
-    ('CA_GetHSMStorageInformation', CK_CA_GetHSMStorageInformation),
-    ('CA_GetTokenStorageInformation', CK_CA_GetTokenStorageInformation),
-    ('CA_GetContainerStorageInformation', CK_CA_GetContainerStorageInformation),
-    ('CA_SetContainerSize', CK_CA_SetContainerSize),
-    ('CA_CreateContainer', CK_CA_CreateContainer),
-    ('CA_InitAudit', CK_CA_InitAudit),
-    ('CA_LogVerify', CK_CA_LogVerify),
-    ('CA_LogVerifyFile', CK_CA_LogVerifyFile),
-    ('CA_LogExternal', CK_CA_LogExternal),
-    ('CA_LogImportSecret', CK_CA_LogImportSecret),
-    ('CA_LogExportSecret', CK_CA_LogExportSecret),
-    ('CA_TimeSync', CK_CA_TimeSync),
-    ('CA_GetTime', CK_CA_GetTime),
-    ('CA_LogSetConfig', CK_CA_LogSetConfig),
-    ('CA_LogGetConfig', CK_CA_LogGetConfig),
-    ('CA_ReplaceFastPathKEK', CK_CA_ReplaceFastPathKEK),
-    ('CA_LogGetStatus', CK_CA_LogGetStatus),
-    ('CA_DeleteContainerWithHandle', CK_CA_DeleteContainerWithHandle),
-    ('CA_GetContainerList', CK_CA_GetContainerList),
-    ('CA_GetContainerName', CK_CA_GetContainerName),
-    ('CA_GetNumberOfAllowedContainers', CK_CA_GetNumberOfAllowedContainers),
-    ('CA_GetTunnelSlotNumber', CK_CA_GetTunnelSlotNumber),
-    ('CA_GetClusterState', CK_CA_GetClusterState),
-    ('CA_LockClusteredSlot', CK_CA_LockClusteredSlot),
-    ('CA_UnlockClusteredSlot', CK_CA_UnlockClusteredSlot),
-    ('CA_LKMInitiatorChallenge', CK_CA_LKMInitiatorChallenge),
-    ('CA_LKMReceiverResponse', CK_CA_LKMReceiverResponse),
-    ('CA_LKMInitiatorComplete', CK_CA_LKMInitiatorComplete),
-    ('CA_LKMReceiverComplete', CK_CA_LKMReceiverComplete),
-    ('CA_ModifyUsageCount', CK_CA_ModifyUsageCount),
-    ('CA_EnableUnauthTokenInsertion', CK_CA_EnableUnauthTokenInsertion),
-    ('CA_GetUnauthTokenInsertionStatus', CK_CA_GetUnauthTokenInsertionStatus),
-    ('CA_DisableUnauthTokenInsertion', CK_CA_DisableUnauthTokenInsertion),
-    ('CA_STCRegister', CK_CA_STCRegister),
-    ('CA_STCDeregister', CK_CA_STCDeregister),
-    ('CA_STCGetPubKey', CK_CA_STCGetPubKey),
-    ('CA_STCGetClientsList', CK_CA_STCGetClientsList),
-    ('CA_STCGetClientInfo', CK_CA_STCGetClientInfo),
-    ('CA_STCGetPartPubKey', CK_CA_STCGetPartPubKey),
-    ('CA_STCGetAdminPubKey', CK_CA_STCGetAdminPubKey),
-    ('CA_STCSetCipherAlgorithm', CK_CA_STCSetCipherAlgorithm),
-    ('CA_STCGetCipherAlgorithm', CK_CA_STCGetCipherAlgorithm),
-    ('CA_STCClearCipherAlgorithm', CK_CA_STCClearCipherAlgorithm),
-    ('CA_STCSetDigestAlgorithm', CK_CA_STCSetDigestAlgorithm),
-    ('CA_STCGetDigestAlgorithm', CK_CA_STCGetDigestAlgorithm),
-    ('CA_STCClearDigestAlgorithm', CK_CA_STCClearDigestAlgorithm),
-    ('CA_STCSetKeyLifeTime', CK_CA_STCSetKeyLifeTime),
-    ('CA_STCGetKeyLifeTime', CK_CA_STCGetKeyLifeTime),
-    ('CA_STCSetKeyActivationTimeOut', CK_CA_STCSetKeyActivationTimeOut),
-    ('CA_STCGetKeyActivationTimeOut', CK_CA_STCGetKeyActivationTimeOut),
-    ('CA_STCSetMaxSessions', CK_CA_STCSetMaxSessions),
-    ('CA_STCGetMaxSessions', CK_CA_STCGetMaxSessions),
-    ('CA_STCSetSequenceWindowSize', CK_CA_STCSetSequenceWindowSize),
-    ('CA_STCGetSequenceWindowSize', CK_CA_STCGetSequenceWindowSize),
-    ('CA_STCIsEnabled', CK_CA_STCIsEnabled),
-    ('CA_STCGetState', CK_CA_STCGetState),
-    ('CA_STCGetCurrentKeyLife', CK_CA_STCGetCurrentKeyLife),
-    ('CA_GetSlotIdForPhysicalSlot', CK_CA_GetSlotIdForPhysicalSlot),
-    ('CA_GetSlotIdForContainer', CK_CA_GetSlotIdForContainer),
-    ('CA_STCGetChannelID', CK_CA_STCGetChannelID),
-    ('CA_STCGetCipherID', CK_CA_STCGetCipherID),
-    ('CA_STCGetDigestID', CK_CA_STCGetDigestID),
-    ('CA_STCGetCipherIDs', CK_CA_STCGetCipherIDs),
-    ('CA_STCGetCipherNameByID', CK_CA_STCGetCipherNameByID),
-    ('CA_STCGetDigestIDs', CK_CA_STCGetDigestIDs),
-    ('CA_STCGetDigestNameByID', CK_CA_STCGetDigestNameByID),
-    ('CA_GetServerInstanceBySlotID', CK_CA_GetServerInstanceBySlotID),
-    ('CA_GetSlotListFromServerInstance', CK_CA_GetSlotListFromServerInstance),
-    ('CA_PerformSelfTest', CK_CA_PerformSelfTest),
-    ('CA_GetFirmwareVersion', CK_CA_GetFirmwareVersion),
+    ("version", CK_VERSION),
+    ("CA_GetFunctionList", CK_CA_GetFunctionList),
+    ("CA_WaitForSlotEvent", CK_CA_WaitForSlotEvent),
+    ("CA_InitIndirectToken", CK_CA_InitIndirectToken),
+    ("CA_InitIndirectPIN", CK_CA_InitIndirectPIN),
+    ("CA_ResetPIN", CK_CA_ResetPIN),
+    ("CA_InitRolePIN", CK_CA_InitRolePIN),
+    ("CA_InitSlotRolePIN", CK_CA_InitSlotRolePIN),
+    ("CA_RoleStateGet", CK_CA_RoleStateGet),
+    ("CA_CreateLoginChallenge", CK_CA_CreateLoginChallenge),
+    ("CA_CreateContainerLoginChallenge", CK_CA_CreateContainerLoginChallenge),
+    ("CA_Deactivate", CK_CA_Deactivate),
+    ("CA_FindAdminSlotForSlot", CK_CA_FindAdminSlotForSlot),
+    ("CA_TokenInsert", CK_CA_TokenInsert),
+    ("CA_TokenInsertNoAuth", CK_CA_TokenInsertNoAuth),
+    ("CA_TokenZeroize", CK_CA_TokenZeroize),
+    ("CA_TokenDelete", CK_CA_TokenDelete),
+    ("CA_OpenSession", CK_CA_OpenSession),
+    ("CA_OpenSessionWithAppID", CK_CA_OpenSessionWithAppID),
+    ("CA_IndirectLogin", CK_CA_IndirectLogin),
+    ("CA_InitializeRemotePEDVector", CK_CA_InitializeRemotePEDVector),
+    ("CA_DeleteRemotePEDVector", CK_CA_DeleteRemotePEDVector),
+    ("CA_GetRemotePEDVectorStatus", CK_CA_GetRemotePEDVectorStatus),
+    ("CA_ConfigureRemotePED", CK_CA_ConfigureRemotePED),
+    ("CA_DismantleRemotePED", CK_CA_DismantleRemotePED),
+    ("CA_Restart", CK_CA_Restart),
+    ("CA_RestartForContainer", CK_CA_RestartForContainer),
+    ("CA_CloseApplicationID", CK_CA_CloseApplicationID),
+    ("CA_CloseApplicationIDForContainer", CK_CA_CloseApplicationIDForContainer),
+    ("CA_OpenApplicationID", CK_CA_OpenApplicationID),
+    ("CA_OpenApplicationIDForContainer", CK_CA_OpenApplicationIDForContainer),
+    ("CA_SetApplicationID", CK_CA_SetApplicationID),
+    ("CA_ReadUtilizationMetrics", CK_CA_ReadUtilizationMetrics),
+    ("CA_DescribeUtilizationBinId", CK_CA_DescribeUtilizationBinId),
+    ("CA_ReadAndResetUtilizationMetrics", CK_CA_ReadAndResetUtilizationMetrics),
+    ("CA_ReadAllUtilizationCounters", CK_CA_ReadAllUtilizationCounters),
+    ("CA_SetAuthorizationData", CK_CA_SetAuthorizationData),
+    ("CA_AuthorizeKey", CK_CA_AuthorizeKey),
+    ("CA_ManualKCV", CK_CA_ManualKCV),
+    ("CA_SetLKCV", CK_CA_SetLKCV),
+    ("CA_SetKCV", CK_CA_SetKCV),
+    ("CA_SetRDK", CK_CA_SetRDK),
+    ("CA_SetCloningDomain", CK_CA_SetCloningDomain),
+    ("CA_ClonePrivateKey", CK_CA_ClonePrivateKey),
+    ("CA_CloneObject", CK_CA_CloneObject),
+    ("CA_GenerateCloningKEV", CK_CA_GenerateCloningKEV),
+    ("CA_CloneAsTargetInit", CK_CA_CloneAsTargetInit),
+    ("CA_CloneAsSource", CK_CA_CloneAsSource),
+    ("CA_CloneAsTarget", CK_CA_CloneAsTarget),
+    ("CA_SetMofN", CK_CA_SetMofN),
+    ("CA_GenerateMofN", CK_CA_GenerateMofN),
+    ("CA_GenerateCloneableMofN", CK_CA_GenerateCloneableMofN),
+    ("CA_ModifyMofN", CK_CA_ModifyMofN),
+    ("CA_CloneMofN", CK_CA_CloneMofN),
+    ("CA_CloneModifyMofN", CK_CA_CloneModifyMofN),
+    ("CA_ActivateMofN", CK_CA_ActivateMofN),
+    ("CA_DeactivateMofN", CK_CA_DeactivateMofN),
+    ("CA_GetMofNStatus", CK_CA_GetMofNStatus),
+    ("CA_DuplicateMofN", CK_CA_DuplicateMofN),
+    ("CA_IsMofNEnabled", CK_CA_IsMofNEnabled),
+    ("CA_IsMofNRequired", CK_CA_IsMofNRequired),
+    ("CA_GenerateTokenKeys", CK_CA_GenerateTokenKeys),
+    ("CA_GetTokenCertificateInfo", CK_CA_GetTokenCertificateInfo),
+    ("CA_SetTokenCertificateSignature", CK_CA_SetTokenCertificateSignature),
+    ("CA_GetModuleList", CK_CA_GetModuleList),
+    ("CA_GetModuleInfo", CK_CA_GetModuleInfo),
+    ("CA_LoadModule", CK_CA_LoadModule),
+    ("CA_LoadEncryptedModule", CK_CA_LoadEncryptedModule),
+    ("CA_UnloadModule", CK_CA_UnloadModule),
+    ("CA_PerformModuleCall", CK_CA_PerformModuleCall),
+    ("CA_FirmwareUpdate", CK_CA_FirmwareUpdate),
+    ("CA_FirmwareRollback", CK_CA_FirmwareRollback),
+    ("CA_CapabilityUpdate", CK_CA_CapabilityUpdate),
+    ("CA_GetUserContainerNumber", CK_CA_GetUserContainerNumber),
+    ("CA_GetUserContainerName", CK_CA_GetUserContainerName),
+    ("CA_SetUserContainerName", CK_CA_SetUserContainerName),
+    ("CA_GetTokenInsertionCount", CK_CA_GetTokenInsertionCount),
+    ("CA_GetRollbackFirmwareVersion", CK_CA_GetRollbackFirmwareVersion),
+    ("CA_GetFPV", CK_CA_GetFPV),
+    ("CA_GetTPV", CK_CA_GetTPV),
+    ("CA_GetExtendedTPV", CK_CA_GetExtendedTPV),
+    ("CA_GetConfigurationElementDescription", CK_CA_GetConfigurationElementDescription),
+    ("CA_GetHSMCapabilitySet", CK_CA_GetHSMCapabilitySet),
+    ("CA_GetHSMCapabilitySetting", CK_CA_GetHSMCapabilitySetting),
+    ("CA_GetHSMPolicySet", CK_CA_GetHSMPolicySet),
+    ("CA_GetHSMPolicySetting", CK_CA_GetHSMPolicySetting),
+    ("CA_GetContainerCapabilitySet", CK_CA_GetContainerCapabilitySet),
+    ("CA_GetContainerCapabilitySetting", CK_CA_GetContainerCapabilitySetting),
+    ("CA_GetContainerPolicySet", CK_CA_GetContainerPolicySet),
+    ("CA_GetContainerPolicySetting", CK_CA_GetContainerPolicySetting),
+    ("CA_SetTPV", CK_CA_SetTPV),
+    ("CA_SetExtendedTPV", CK_CA_SetExtendedTPV),
+    ("CA_SetHSMPolicy", CK_CA_SetHSMPolicy),
+    ("CA_SetHSMPolicies", CK_CA_SetHSMPolicies),
+    ("CA_SetDestructiveHSMPolicy", CK_CA_SetDestructiveHSMPolicy),
+    ("CA_SetDestructiveHSMPolicies", CK_CA_SetDestructiveHSMPolicies),
+    ("CA_SetContainerPolicy", CK_CA_SetContainerPolicy),
+    ("CA_SetContainerPolicies", CK_CA_SetContainerPolicies),
+    ("CA_GetTokenCapabilities", CK_CA_GetTokenCapabilities),
+    ("CA_SetTokenPolicies", CK_CA_SetTokenPolicies),
+    ("CA_GetTokenPolicies", CK_CA_GetTokenPolicies),
+    ("CA_RetrieveLicenseList", CK_CA_RetrieveLicenseList),
+    ("CA_QueryLicense", CK_CA_QueryLicense),
+    ("CA_GetContainerStatus", CK_CA_GetContainerStatus),
+    ("CA_GetTokenStatus", CK_CA_GetTokenStatus),
+    ("CA_GetSessionInfo", CK_CA_GetSessionInfo),
+    ("CA_GetCVFirmwareVersion", CK_CA_GetCVFirmwareVersion),
+    ("CA_ReadCommonStore", CK_CA_ReadCommonStore),
+    ("CA_WriteCommonStore", CK_CA_WriteCommonStore),
+    ("CA_GetPrimarySlot", CK_CA_GetPrimarySlot),
+    ("CA_GetSecondarySlot", CK_CA_GetSecondarySlot),
+    ("CA_SwitchSecondarySlot", CK_CA_SwitchSecondarySlot),
+    ("CA_CloseSecondarySession", CK_CA_CloseSecondarySession),
+    ("CA_CloseAllSecondarySessions", CK_CA_CloseAllSecondarySessions),
+    ("CA_ChoosePrimarySlot", CK_CA_ChoosePrimarySlot),
+    ("CA_ChooseSecondarySlot", CK_CA_ChooseSecondarySlot),
+    ("CA_CloneObjectToAllSessions", CK_CA_CloneObjectToAllSessions),
+    ("CA_CloneAllObjectsToSession", CK_CA_CloneAllObjectsToSession),
+    ("CA_ResetDevice", CK_CA_ResetDevice),
+    ("CA_Zeroize", CK_CA_Zeroize),
+    ("CA_FactoryReset", CK_CA_FactoryReset),
+    ("CA_SetPedId", CK_CA_SetPedId),
+    ("CA_GetPedId", CK_CA_GetPedId),
+    ("CA_SpRawRead", CK_CA_SpRawRead),
+    ("CA_SpRawWrite", CK_CA_SpRawWrite),
+    ("CA_CheckOperationState", CK_CA_CheckOperationState),
+    ("CA_DestroyMultipleObjects", CK_CA_DestroyMultipleObjects),
+    ("CA_OpenSecureToken", CK_CA_OpenSecureToken),
+    ("CA_CloseSecureToken", CK_CA_CloseSecureToken),
+    ("CA_ListSecureTokenInit", CK_CA_ListSecureTokenInit),
+    ("CA_ListSecureTokenUpdate", CK_CA_ListSecureTokenUpdate),
+    ("CA_GetSecureElementMeta", CK_CA_GetSecureElementMeta),
+    ("CA_HAInit", CK_CA_HAInit),
+    ("CA_HAGetMasterPublic", CK_CA_HAGetMasterPublic),
+    ("CA_HAGetLoginChallenge", CK_CA_HAGetLoginChallenge),
+    ("CA_HAAnswerLoginChallenge", CK_CA_HAAnswerLoginChallenge),
+    ("CA_HALogin", CK_CA_HALogin),
+    ("CA_HAAnswerMofNChallenge", CK_CA_HAAnswerMofNChallenge),
+    ("CA_HAActivateMofN", CK_CA_HAActivateMofN),
+    ("CA_GetHAState", CK_CA_GetHAState),
+    ("CA_GetTokenCertificates", CK_CA_GetTokenCertificates),
+    ("CA_ExtractMaskedObject", CK_CA_ExtractMaskedObject),
+    ("CA_InsertMaskedObject", CK_CA_InsertMaskedObject),
+    ("CA_MultisignValue", CK_CA_MultisignValue),
+    ("CA_SIMExtract", CK_CA_SIMExtract),
+    ("CA_SIMInsert", CK_CA_SIMInsert),
+    ("CA_SIMMultiSign", CK_CA_SIMMultiSign),
+    ("CA_Extract", CK_CA_Extract),
+    ("CA_Insert", CK_CA_Insert),
+    ("CA_GetTokenObjectUID", CK_CA_GetTokenObjectUID),
+    ("CA_GetTokenObjectHandle", CK_CA_GetTokenObjectHandle),
+    ("CA_GetObjectUID", CK_CA_GetObjectUID),
+    ("CA_GetObjectHandle", CK_CA_GetObjectHandle),
+    ("CA_DeleteContainer", CK_CA_DeleteContainer),
+    ("CA_MTKSetStorage", CK_CA_MTKSetStorage),
+    ("CA_MTKRestore", CK_CA_MTKRestore),
+    ("CA_MTKResplit", CK_CA_MTKResplit),
+    ("CA_MTKZeroize", CK_CA_MTKZeroize),
+    ("CA_MTKGetState", CK_CA_MTKGetState),
+    ("CA_STMToggle", CK_CA_STMToggle),
+    ("CA_STMGetState", CK_CA_STMGetState),
+    ("CA_GetTSV", CK_CA_GetTSV),
+    ("CA_InvokeServiceInit", CK_CA_InvokeServiceInit),
+    ("CA_InvokeService", CK_CA_InvokeService),
+    ("CA_InvokeServiceFinal", CK_CA_InvokeServiceFinal),
+    ("CA_InvokeServiceAsynch", CK_CA_InvokeServiceAsynch),
+    ("CA_InvokeServiceSinglePart", CK_CA_InvokeServiceSinglePart),
+    ("CA_EncodeECPrimeParams", CK_CA_EncodeECPrimeParams),
+    ("CA_EncodeECChar2Params", CK_CA_EncodeECChar2Params),
+    ("CA_EncodeECParamsFromFile", CK_CA_EncodeECParamsFromFile),
+    ("CA_GetHSMStats", CK_CA_GetHSMStats),
+    ("CA_GetHSMStorageInformation", CK_CA_GetHSMStorageInformation),
+    ("CA_GetTokenStorageInformation", CK_CA_GetTokenStorageInformation),
+    ("CA_GetContainerStorageInformation", CK_CA_GetContainerStorageInformation),
+    ("CA_SetContainerSize", CK_CA_SetContainerSize),
+    ("CA_CreateContainer", CK_CA_CreateContainer),
+    ("CA_InitAudit", CK_CA_InitAudit),
+    ("CA_LogVerify", CK_CA_LogVerify),
+    ("CA_LogVerifyFile", CK_CA_LogVerifyFile),
+    ("CA_LogExternal", CK_CA_LogExternal),
+    ("CA_LogImportSecret", CK_CA_LogImportSecret),
+    ("CA_LogExportSecret", CK_CA_LogExportSecret),
+    ("CA_TimeSync", CK_CA_TimeSync),
+    ("CA_GetTime", CK_CA_GetTime),
+    ("CA_LogSetConfig", CK_CA_LogSetConfig),
+    ("CA_LogGetConfig", CK_CA_LogGetConfig),
+    ("CA_ReplaceFastPathKEK", CK_CA_ReplaceFastPathKEK),
+    ("CA_LogGetStatus", CK_CA_LogGetStatus),
+    ("CA_DeleteContainerWithHandle", CK_CA_DeleteContainerWithHandle),
+    ("CA_GetContainerList", CK_CA_GetContainerList),
+    ("CA_GetContainerName", CK_CA_GetContainerName),
+    ("CA_GetNumberOfAllowedContainers", CK_CA_GetNumberOfAllowedContainers),
+    ("CA_GetTunnelSlotNumber", CK_CA_GetTunnelSlotNumber),
+    ("CA_GetClusterState", CK_CA_GetClusterState),
+    ("CA_LockClusteredSlot", CK_CA_LockClusteredSlot),
+    ("CA_UnlockClusteredSlot", CK_CA_UnlockClusteredSlot),
+    ("CA_LKMInitiatorChallenge", CK_CA_LKMInitiatorChallenge),
+    ("CA_LKMReceiverResponse", CK_CA_LKMReceiverResponse),
+    ("CA_LKMInitiatorComplete", CK_CA_LKMInitiatorComplete),
+    ("CA_LKMReceiverComplete", CK_CA_LKMReceiverComplete),
+    ("CA_ModifyUsageCount", CK_CA_ModifyUsageCount),
+    ("CA_EnableUnauthTokenInsertion", CK_CA_EnableUnauthTokenInsertion),
+    ("CA_GetUnauthTokenInsertionStatus", CK_CA_GetUnauthTokenInsertionStatus),
+    ("CA_DisableUnauthTokenInsertion", CK_CA_DisableUnauthTokenInsertion),
+    ("CA_STCRegister", CK_CA_STCRegister),
+    ("CA_STCDeregister", CK_CA_STCDeregister),
+    ("CA_STCGetPubKey", CK_CA_STCGetPubKey),
+    ("CA_STCGetClientsList", CK_CA_STCGetClientsList),
+    ("CA_STCGetClientInfo", CK_CA_STCGetClientInfo),
+    ("CA_STCGetPartPubKey", CK_CA_STCGetPartPubKey),
+    ("CA_STCGetAdminPubKey", CK_CA_STCGetAdminPubKey),
+    ("CA_STCSetCipherAlgorithm", CK_CA_STCSetCipherAlgorithm),
+    ("CA_STCGetCipherAlgorithm", CK_CA_STCGetCipherAlgorithm),
+    ("CA_STCClearCipherAlgorithm", CK_CA_STCClearCipherAlgorithm),
+    ("CA_STCSetDigestAlgorithm", CK_CA_STCSetDigestAlgorithm),
+    ("CA_STCGetDigestAlgorithm", CK_CA_STCGetDigestAlgorithm),
+    ("CA_STCClearDigestAlgorithm", CK_CA_STCClearDigestAlgorithm),
+    ("CA_STCSetKeyLifeTime", CK_CA_STCSetKeyLifeTime),
+    ("CA_STCGetKeyLifeTime", CK_CA_STCGetKeyLifeTime),
+    ("CA_STCSetKeyActivationTimeOut", CK_CA_STCSetKeyActivationTimeOut),
+    ("CA_STCGetKeyActivationTimeOut", CK_CA_STCGetKeyActivationTimeOut),
+    ("CA_STCSetMaxSessions", CK_CA_STCSetMaxSessions),
+    ("CA_STCGetMaxSessions", CK_CA_STCGetMaxSessions),
+    ("CA_STCSetSequenceWindowSize", CK_CA_STCSetSequenceWindowSize),
+    ("CA_STCGetSequenceWindowSize", CK_CA_STCGetSequenceWindowSize),
+    ("CA_STCIsEnabled", CK_CA_STCIsEnabled),
+    ("CA_STCGetState", CK_CA_STCGetState),
+    ("CA_STCGetCurrentKeyLife", CK_CA_STCGetCurrentKeyLife),
+    ("CA_GetSlotIdForPhysicalSlot", CK_CA_GetSlotIdForPhysicalSlot),
+    ("CA_GetSlotIdForContainer", CK_CA_GetSlotIdForContainer),
+    ("CA_STCGetChannelID", CK_CA_STCGetChannelID),
+    ("CA_STCGetCipherID", CK_CA_STCGetCipherID),
+    ("CA_STCGetDigestID", CK_CA_STCGetDigestID),
+    ("CA_STCGetCipherIDs", CK_CA_STCGetCipherIDs),
+    ("CA_STCGetCipherNameByID", CK_CA_STCGetCipherNameByID),
+    ("CA_STCGetDigestIDs", CK_CA_STCGetDigestIDs),
+    ("CA_STCGetDigestNameByID", CK_CA_STCGetDigestNameByID),
+    ("CA_GetServerInstanceBySlotID", CK_CA_GetServerInstanceBySlotID),
+    ("CA_GetSlotListFromServerInstance", CK_CA_GetSlotListFromServerInstance),
+    ("CA_PerformSelfTest", CK_CA_PerformSelfTest),
+    ("CA_GetFirmwareVersion", CK_CA_GetFirmwareVersion),
 ]
-CA_GetFunctionList = make_late_binding_function('CA_GetFunctionList')
+CA_GetFunctionList = make_late_binding_function("CA_GetFunctionList")
 CA_GetFunctionList.restype = CK_RV
 CA_GetFunctionList.argtypes = [CK_SFNT_CA_FUNCTION_LIST_PTR_PTR]
-CA_WaitForSlotEvent = make_late_binding_function('CA_WaitForSlotEvent')
+CA_WaitForSlotEvent = make_late_binding_function("CA_WaitForSlotEvent")
 CA_WaitForSlotEvent.restype = CK_RV
 CA_WaitForSlotEvent.argtypes = [CK_FLAGS, POINTER(CK_ULONG), CK_SLOT_ID_PTR, CK_VOID_PTR]
-CA_InitIndirectToken = make_late_binding_function('CA_InitIndirectToken')
+CA_InitIndirectToken = make_late_binding_function("CA_InitIndirectToken")
 CA_InitIndirectToken.restype = CK_RV
 CA_InitIndirectToken.argtypes = [CK_SLOT_ID, CK_CHAR_PTR, CK_ULONG, CK_CHAR_PTR, CK_SESSION_HANDLE]
-CA_InitIndirectPIN = make_late_binding_function('CA_InitIndirectPIN')
+CA_InitIndirectPIN = make_late_binding_function("CA_InitIndirectPIN")
 CA_InitIndirectPIN.restype = CK_RV
 CA_InitIndirectPIN.argtypes = [CK_SESSION_HANDLE, CK_CHAR_PTR, CK_ULONG, CK_SESSION_HANDLE]
-CA_ResetPIN = make_late_binding_function('CA_ResetPIN')
+CA_ResetPIN = make_late_binding_function("CA_ResetPIN")
 CA_ResetPIN.restype = CK_RV
 CA_ResetPIN.argtypes = [CK_SESSION_HANDLE, CK_CHAR_PTR, CK_ULONG]
-CA_InitRolePIN = make_late_binding_function('CA_InitRolePIN')
+CA_InitRolePIN = make_late_binding_function("CA_InitRolePIN")
 CA_InitRolePIN.restype = CK_RV
 CA_InitRolePIN.argtypes = [CK_SESSION_HANDLE, CK_USER_TYPE, CK_CHAR_PTR, CK_ULONG]
-CA_InitSlotRolePIN = make_late_binding_function('CA_InitSlotRolePIN')
+CA_InitSlotRolePIN = make_late_binding_function("CA_InitSlotRolePIN")
 CA_InitSlotRolePIN.restype = CK_RV
 CA_InitSlotRolePIN.argtypes = [CK_SESSION_HANDLE, CK_SLOT_ID, CK_USER_TYPE, CK_CHAR_PTR, CK_ULONG]
-CA_RoleStateGet = make_late_binding_function('CA_RoleStateGet')
+CA_RoleStateGet = make_late_binding_function("CA_RoleStateGet")
 CA_RoleStateGet.restype = CK_RV
 CA_RoleStateGet.argtypes = [CK_SLOT_ID, CK_USER_TYPE, POINTER(CA_ROLE_STATE)]
-CA_CreateLoginChallenge = make_late_binding_function('CA_CreateLoginChallenge')
+CA_CreateLoginChallenge = make_late_binding_function("CA_CreateLoginChallenge")
 CA_CreateLoginChallenge.restype = CK_RV
-CA_CreateLoginChallenge.argtypes = [CK_SESSION_HANDLE, CK_USER_TYPE, CK_ULONG, CK_CHAR_PTR,
-                                    CK_ULONG_PTR, CK_CHAR_PTR]
-CA_CreateContainerLoginChallenge = make_late_binding_function('CA_CreateContainerLoginChallenge')
+CA_CreateLoginChallenge.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_USER_TYPE,
+    CK_ULONG,
+    CK_CHAR_PTR,
+    CK_ULONG_PTR,
+    CK_CHAR_PTR,
+]
+CA_CreateContainerLoginChallenge = make_late_binding_function("CA_CreateContainerLoginChallenge")
 CA_CreateContainerLoginChallenge.restype = CK_RV
-CA_CreateContainerLoginChallenge.argtypes = [CK_SESSION_HANDLE, CK_SLOT_ID, CK_USER_TYPE, CK_ULONG,
-                                             CK_CHAR_PTR, CK_ULONG_PTR, CK_CHAR_PTR]
-CA_Deactivate = make_late_binding_function('CA_Deactivate')
+CA_CreateContainerLoginChallenge.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_SLOT_ID,
+    CK_USER_TYPE,
+    CK_ULONG,
+    CK_CHAR_PTR,
+    CK_ULONG_PTR,
+    CK_CHAR_PTR,
+]
+CA_Deactivate = make_late_binding_function("CA_Deactivate")
 CA_Deactivate.restype = CK_RV
 CA_Deactivate.argtypes = [CK_SLOT_ID, CK_USER_TYPE]
-CA_FindAdminSlotForSlot = make_late_binding_function('CA_FindAdminSlotForSlot')
+CA_FindAdminSlotForSlot = make_late_binding_function("CA_FindAdminSlotForSlot")
 CA_FindAdminSlotForSlot.restype = CK_RV
 CA_FindAdminSlotForSlot.argtypes = [CK_SLOT_ID, POINTER(CK_SLOT_ID), POINTER(CK_SLOT_ID)]
-CA_TokenInsert = make_late_binding_function('CA_TokenInsert')
+CA_TokenInsert = make_late_binding_function("CA_TokenInsert")
 CA_TokenInsert.restype = CK_RV
 CA_TokenInsert.argtypes = [CK_SESSION_HANDLE, CT_TokenHndle, CK_SLOT_ID]
-CA_TokenInsertNoAuth = make_late_binding_function('CA_TokenInsertNoAuth')
+CA_TokenInsertNoAuth = make_late_binding_function("CA_TokenInsertNoAuth")
 CA_TokenInsertNoAuth.restype = CK_RV
 CA_TokenInsertNoAuth.argtypes = [CT_TokenHndle, CK_SLOT_ID]
-CA_TokenZeroize = make_late_binding_function('CA_TokenZeroize')
+CA_TokenZeroize = make_late_binding_function("CA_TokenZeroize")
 CA_TokenZeroize.restype = CK_RV
 CA_TokenZeroize.argtypes = [CK_SESSION_HANDLE, CK_SLOT_ID, CK_FLAGS]
-CA_TokenDelete = make_late_binding_function('CA_TokenDelete')
+CA_TokenDelete = make_late_binding_function("CA_TokenDelete")
 CA_TokenDelete.restype = CK_RV
 CA_TokenDelete.argtypes = [CK_SESSION_HANDLE, CK_SLOT_ID]
-CA_OpenSession = make_late_binding_function('CA_OpenSession')
+CA_OpenSession = make_late_binding_function("CA_OpenSession")
 CA_OpenSession.restype = CK_RV
-CA_OpenSession.argtypes = [CK_SLOT_ID, CK_ULONG, CK_FLAGS, CK_VOID_PTR, CK_NOTIFY,
-                           CK_SESSION_HANDLE_PTR]
-CA_OpenSessionWithAppID = make_late_binding_function('CA_OpenSessionWithAppID')
+CA_OpenSession.argtypes = [
+    CK_SLOT_ID,
+    CK_ULONG,
+    CK_FLAGS,
+    CK_VOID_PTR,
+    CK_NOTIFY,
+    CK_SESSION_HANDLE_PTR,
+]
+CA_OpenSessionWithAppID = make_late_binding_function("CA_OpenSessionWithAppID")
 CA_OpenSessionWithAppID.restype = CK_RV
-CA_OpenSessionWithAppID.argtypes = [CK_SLOT_ID, CK_FLAGS, CK_ULONG, CK_ULONG, CK_VOID_PTR,
-                                    CK_NOTIFY, CK_SESSION_HANDLE_PTR]
-CA_IndirectLogin = make_late_binding_function('CA_IndirectLogin')
+CA_OpenSessionWithAppID.argtypes = [
+    CK_SLOT_ID,
+    CK_FLAGS,
+    CK_ULONG,
+    CK_ULONG,
+    CK_VOID_PTR,
+    CK_NOTIFY,
+    CK_SESSION_HANDLE_PTR,
+]
+CA_IndirectLogin = make_late_binding_function("CA_IndirectLogin")
 CA_IndirectLogin.restype = CK_RV
 CA_IndirectLogin.argtypes = [CK_SESSION_HANDLE, CK_USER_TYPE, CK_SESSION_HANDLE]
-CA_InitializeRemotePEDVector = make_late_binding_function('CA_InitializeRemotePEDVector')
+CA_InitializeRemotePEDVector = make_late_binding_function("CA_InitializeRemotePEDVector")
 CA_InitializeRemotePEDVector.restype = CK_RV
 CA_InitializeRemotePEDVector.argtypes = [CK_SESSION_HANDLE]
-CA_DeleteRemotePEDVector = make_late_binding_function('CA_DeleteRemotePEDVector')
+CA_DeleteRemotePEDVector = make_late_binding_function("CA_DeleteRemotePEDVector")
 CA_DeleteRemotePEDVector.restype = CK_RV
 CA_DeleteRemotePEDVector.argtypes = [CK_SESSION_HANDLE]
-CA_GetRemotePEDVectorStatus = make_late_binding_function('CA_GetRemotePEDVectorStatus')
+CA_GetRemotePEDVectorStatus = make_late_binding_function("CA_GetRemotePEDVectorStatus")
 CA_GetRemotePEDVectorStatus.restype = CK_RV
 CA_GetRemotePEDVectorStatus.argtypes = [CK_SLOT_ID, CK_ULONG_PTR]
-CA_ConfigureRemotePED = make_late_binding_function('CA_ConfigureRemotePED')
+CA_ConfigureRemotePED = make_late_binding_function("CA_ConfigureRemotePED")
 CA_ConfigureRemotePED.restype = CK_RV
 CA_ConfigureRemotePED.argtypes = [CK_SLOT_ID, CK_CHAR_PTR, CK_ULONG, CK_ULONG_PTR]
-CA_DismantleRemotePED = make_late_binding_function('CA_DismantleRemotePED')
+CA_DismantleRemotePED = make_late_binding_function("CA_DismantleRemotePED")
 CA_DismantleRemotePED.restype = CK_RV
 CA_DismantleRemotePED.argtypes = [CK_SLOT_ID, CK_ULONG]
-CA_Restart = make_late_binding_function('CA_Restart')
+CA_Restart = make_late_binding_function("CA_Restart")
 CA_Restart.restype = CK_RV
 CA_Restart.argtypes = [CK_SLOT_ID]
-CA_RestartForContainer = make_late_binding_function('CA_RestartForContainer')
+CA_RestartForContainer = make_late_binding_function("CA_RestartForContainer")
 CA_RestartForContainer.restype = CK_RV
 CA_RestartForContainer.argtypes = [CK_SLOT_ID, CK_ULONG]
-CA_CloseApplicationID = make_late_binding_function('CA_CloseApplicationID')
+CA_CloseApplicationID = make_late_binding_function("CA_CloseApplicationID")
 CA_CloseApplicationID.restype = CK_RV
 CA_CloseApplicationID.argtypes = [CK_SLOT_ID, CK_ULONG, CK_ULONG]
-CA_CloseApplicationIDForContainer = make_late_binding_function('CA_CloseApplicationIDForContainer')
+CA_CloseApplicationIDForContainer = make_late_binding_function("CA_CloseApplicationIDForContainer")
 CA_CloseApplicationIDForContainer.restype = CK_RV
 CA_CloseApplicationIDForContainer.argtypes = [CK_SLOT_ID, CK_ULONG, CK_ULONG, CK_ULONG]
-CA_OpenApplicationID = make_late_binding_function('CA_OpenApplicationID')
+CA_OpenApplicationID = make_late_binding_function("CA_OpenApplicationID")
 CA_OpenApplicationID.restype = CK_RV
 CA_OpenApplicationID.argtypes = [CK_SLOT_ID, CK_ULONG, CK_ULONG]
-CA_OpenApplicationIDForContainer = make_late_binding_function('CA_OpenApplicationIDForContainer')
+CA_OpenApplicationIDForContainer = make_late_binding_function("CA_OpenApplicationIDForContainer")
 CA_OpenApplicationIDForContainer.restype = CK_RV
 CA_OpenApplicationIDForContainer.argtypes = [CK_SLOT_ID, CK_ULONG, CK_ULONG, CK_ULONG]
-CA_SetApplicationID = make_late_binding_function('CA_SetApplicationID')
+CA_SetApplicationID = make_late_binding_function("CA_SetApplicationID")
 CA_SetApplicationID.restype = CK_RV
 CA_SetApplicationID.argtypes = [CK_ULONG, CK_ULONG]
-CA_DescribeUtilizationBinId = make_late_binding_function('CA_DescribeUtilizationBinId')
+CA_DescribeUtilizationBinId = make_late_binding_function("CA_DescribeUtilizationBinId")
 CA_DescribeUtilizationBinId.restype = CK_RV
 CA_DescribeUtilizationBinId.argtypes = [CK_ULONG, CK_CHAR_PTR]
-CA_ReadUtilizationMetrics = make_late_binding_function('CA_ReadUtilizationMetrics')
+CA_ReadUtilizationMetrics = make_late_binding_function("CA_ReadUtilizationMetrics")
 CA_ReadUtilizationMetrics.restype = CK_RV
 CA_ReadUtilizationMetrics.argtypes = [CK_SESSION_HANDLE]
-CA_ReadAndResetUtilizationMetrics = make_late_binding_function('CA_ReadAndResetUtilizationMetrics')
+CA_ReadAndResetUtilizationMetrics = make_late_binding_function("CA_ReadAndResetUtilizationMetrics")
 CA_ReadAndResetUtilizationMetrics.restype = CK_RV
 CA_ReadAndResetUtilizationMetrics.argtypes = [CK_SESSION_HANDLE]
-CA_ReadAllUtilizationCounters = make_late_binding_function('CA_ReadAllUtilizationCounters')
+CA_ReadAllUtilizationCounters = make_late_binding_function("CA_ReadAllUtilizationCounters")
 CA_ReadAllUtilizationCounters.restype = CK_RV
-CA_ReadAllUtilizationCounters.argtypes = [CK_SESSION_HANDLE, CK_UTILIZATION_COUNTER_PTR, CK_ULONG_PTR]
-#pka
-CA_SetAuthorizationData = make_late_binding_function('CA_SetAuthorizationData')
+CA_ReadAllUtilizationCounters.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_UTILIZATION_COUNTER_PTR,
+    CK_ULONG_PTR,
+]
+# pka
+CA_SetAuthorizationData = make_late_binding_function("CA_SetAuthorizationData")
 CA_SetAuthorizationData.restype = CK_RV
-CA_SetAuthorizationData.argtypes = [CK_SESSION_HANDLE, CK_OBJECT_HANDLE,
-                                    CK_UTF8CHAR_PTR, CK_ULONG, CK_UTF8CHAR_PTR, CK_ULONG]
-CA_ResetAuthorizationData = make_late_binding_function('CA_ResetAuthorizationData')
+CA_SetAuthorizationData.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_OBJECT_HANDLE,
+    CK_UTF8CHAR_PTR,
+    CK_ULONG,
+    CK_UTF8CHAR_PTR,
+    CK_ULONG,
+]
+CA_ResetAuthorizationData = make_late_binding_function("CA_ResetAuthorizationData")
 CA_ResetAuthorizationData.restype = CK_RV
-CA_ResetAuthorizationData.argtypes = [CK_SESSION_HANDLE, CK_OBJECT_HANDLE,
-                                      CK_UTF8CHAR_PTR, CK_ULONG]
-CA_AuthorizeKey = make_late_binding_function('CA_AuthorizeKey')
+CA_ResetAuthorizationData.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_OBJECT_HANDLE,
+    CK_UTF8CHAR_PTR,
+    CK_ULONG,
+]
+CA_AuthorizeKey = make_late_binding_function("CA_AuthorizeKey")
 CA_AuthorizeKey.restype = CK_RV
 CA_AuthorizeKey.argtypes = [CK_SESSION_HANDLE, CK_OBJECT_HANDLE, CK_UTF8CHAR_PTR, CK_ULONG]
-CA_AssignKey = make_late_binding_function('CA_AssignKey')
+CA_AssignKey = make_late_binding_function("CA_AssignKey")
 CA_AssignKey.restype = CK_RV
 CA_AssignKey.argtypes = [CK_SESSION_HANDLE, CK_OBJECT_HANDLE]
-CA_IncrementFailedAuthCount = make_late_binding_function('CA_IncrementFailedAuthCount')
+CA_IncrementFailedAuthCount = make_late_binding_function("CA_IncrementFailedAuthCount")
 CA_IncrementFailedAuthCount.restype = CK_RV
 CA_IncrementFailedAuthCount.argtypes = [CK_SESSION_HANDLE, CK_OBJECT_HANDLE]
-CA_ManualKCV = make_late_binding_function('CA_ManualKCV')
+CA_ManualKCV = make_late_binding_function("CA_ManualKCV")
 CA_ManualKCV.restype = CK_RV
 CA_ManualKCV.argtypes = [CK_SESSION_HANDLE]
-CA_SetLKCV = make_late_binding_function('CA_SetLKCV')
+CA_SetLKCV = make_late_binding_function("CA_SetLKCV")
 CA_SetLKCV.restype = CK_RV
 CA_SetLKCV.argtypes = [CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG]
-CA_SetKCV = make_late_binding_function('CA_SetKCV')
+CA_SetKCV = make_late_binding_function("CA_SetKCV")
 CA_SetKCV.restype = CK_RV
 CA_SetKCV.argtypes = [CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG]
-CA_SetRDK = make_late_binding_function('CA_SetRDK')
+CA_SetRDK = make_late_binding_function("CA_SetRDK")
 CA_SetRDK.restype = CK_RV
 CA_SetRDK.argtypes = [CK_SESSION_HANDLE, POINTER(CK_BYTE), CK_ULONG]
-CA_SetCloningDomain = make_late_binding_function('CA_SetCloningDomain')
+CA_SetCloningDomain = make_late_binding_function("CA_SetCloningDomain")
 CA_SetCloningDomain.restype = CK_RV
 CA_SetCloningDomain.argtypes = [CK_BYTE_PTR, CK_ULONG]
-CA_ClonePrivateKey = make_late_binding_function('CA_ClonePrivateKey')
+CA_ClonePrivateKey = make_late_binding_function("CA_ClonePrivateKey")
 CA_ClonePrivateKey.restype = CK_RV
-CA_ClonePrivateKey.argtypes = [CK_SESSION_HANDLE, CK_SESSION_HANDLE, CK_OBJECT_HANDLE,
-                               CK_OBJECT_HANDLE_PTR]
-CA_CloneObject = make_late_binding_function('CA_CloneObject')
+CA_ClonePrivateKey.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_SESSION_HANDLE,
+    CK_OBJECT_HANDLE,
+    CK_OBJECT_HANDLE_PTR,
+]
+CA_CloneObject = make_late_binding_function("CA_CloneObject")
 CA_CloneObject.restype = CK_RV
-CA_CloneObject.argtypes = [CK_SESSION_HANDLE, CK_SESSION_HANDLE, CK_ULONG, CK_OBJECT_HANDLE,
-                           CK_OBJECT_HANDLE_PTR]
-CA_GenerateCloningKEV = make_late_binding_function('CA_GenerateCloningKEV')
+CA_CloneObject.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_SESSION_HANDLE,
+    CK_ULONG,
+    CK_OBJECT_HANDLE,
+    CK_OBJECT_HANDLE_PTR,
+]
+CA_GenerateCloningKEV = make_late_binding_function("CA_GenerateCloningKEV")
 CA_GenerateCloningKEV.restype = CK_RV
 CA_GenerateCloningKEV.argtypes = [CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG_PTR]
-CA_CloneAsTargetInit = make_late_binding_function('CA_CloneAsTargetInit')
+CA_CloneAsTargetInit = make_late_binding_function("CA_CloneAsTargetInit")
 CA_CloneAsTargetInit.restype = CK_RV
-CA_CloneAsTargetInit.argtypes = [CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG,
-                                 CK_BBOOL, CK_BYTE_PTR, CK_ULONG_PTR]
-CA_CloneAsSource = make_late_binding_function('CA_CloneAsSource')
+CA_CloneAsTargetInit.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BBOOL,
+    CK_BYTE_PTR,
+    CK_ULONG_PTR,
+]
+CA_CloneAsSource = make_late_binding_function("CA_CloneAsSource")
 CA_CloneAsSource.restype = CK_RV
-CA_CloneAsSource.argtypes = [CK_SESSION_HANDLE, CK_ULONG, CK_ULONG, CK_BYTE_PTR, CK_ULONG, CK_BBOOL,
-                             CK_BYTE_PTR, CK_ULONG_PTR]
-CA_CloneAsTarget = make_late_binding_function('CA_CloneAsTarget')
+CA_CloneAsSource.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_ULONG,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BBOOL,
+    CK_BYTE_PTR,
+    CK_ULONG_PTR,
+]
+CA_CloneAsTarget = make_late_binding_function("CA_CloneAsTarget")
 CA_CloneAsTarget.restype = CK_RV
-CA_CloneAsTarget.argtypes = [CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG,
-                             CK_ULONG, CK_ULONG, CK_BBOOL, CK_OBJECT_HANDLE_PTR]
-CA_SetMofN = make_late_binding_function('CA_SetMofN')
+CA_CloneAsTarget.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_ULONG,
+    CK_ULONG,
+    CK_BBOOL,
+    CK_OBJECT_HANDLE_PTR,
+]
+CA_SetMofN = make_late_binding_function("CA_SetMofN")
 CA_SetMofN.restype = CK_RV
 CA_SetMofN.argtypes = [CK_BBOOL]
-CA_GenerateMofN = make_late_binding_function('CA_GenerateMofN')
+CA_GenerateMofN = make_late_binding_function("CA_GenerateMofN")
 CA_GenerateMofN.restype = CK_RV
-CA_GenerateMofN.argtypes = [CK_SESSION_HANDLE, CK_ULONG, CA_MOFN_GENERATION_PTR, CK_ULONG, CK_ULONG,
-                            CK_VOID_PTR]
-CA_GenerateCloneableMofN = make_late_binding_function('CA_GenerateCloneableMofN')
+CA_GenerateMofN.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_ULONG,
+    CA_MOFN_GENERATION_PTR,
+    CK_ULONG,
+    CK_ULONG,
+    CK_VOID_PTR,
+]
+CA_GenerateCloneableMofN = make_late_binding_function("CA_GenerateCloneableMofN")
 CA_GenerateCloneableMofN.restype = CK_RV
-CA_GenerateCloneableMofN.argtypes = [CK_SESSION_HANDLE, CK_ULONG, CA_MOFN_GENERATION_PTR, CK_ULONG,
-                                     CK_ULONG, CK_VOID_PTR]
-CA_ModifyMofN = make_late_binding_function('CA_ModifyMofN')
+CA_GenerateCloneableMofN.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_ULONG,
+    CA_MOFN_GENERATION_PTR,
+    CK_ULONG,
+    CK_ULONG,
+    CK_VOID_PTR,
+]
+CA_ModifyMofN = make_late_binding_function("CA_ModifyMofN")
 CA_ModifyMofN.restype = CK_RV
-CA_ModifyMofN.argtypes = [CK_SESSION_HANDLE, CK_ULONG, CA_MOFN_GENERATION_PTR, CK_ULONG, CK_ULONG,
-                          CK_VOID_PTR]
-CA_CloneMofN = make_late_binding_function('CA_CloneMofN')
+CA_ModifyMofN.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_ULONG,
+    CA_MOFN_GENERATION_PTR,
+    CK_ULONG,
+    CK_ULONG,
+    CK_VOID_PTR,
+]
+CA_CloneMofN = make_late_binding_function("CA_CloneMofN")
 CA_CloneMofN.restype = CK_RV
 CA_CloneMofN.argtypes = [CK_SESSION_HANDLE, CK_SESSION_HANDLE, CK_VOID_PTR]
-CA_CloneModifyMofN = make_late_binding_function('CA_CloneModifyMofN')
+CA_CloneModifyMofN = make_late_binding_function("CA_CloneModifyMofN")
 CA_CloneModifyMofN.restype = CK_RV
 CA_CloneModifyMofN.argtypes = [CK_SESSION_HANDLE, CK_SESSION_HANDLE, CK_VOID_PTR]
-CA_ActivateMofN = make_late_binding_function('CA_ActivateMofN')
+CA_ActivateMofN = make_late_binding_function("CA_ActivateMofN")
 CA_ActivateMofN.restype = CK_RV
 CA_ActivateMofN.argtypes = [CK_SESSION_HANDLE, CA_MOFN_ACTIVATION_PTR, CK_ULONG]
-CA_DeactivateMofN = make_late_binding_function('CA_DeactivateMofN')
+CA_DeactivateMofN = make_late_binding_function("CA_DeactivateMofN")
 CA_DeactivateMofN.restype = CK_RV
 CA_DeactivateMofN.argtypes = [CK_SESSION_HANDLE]
-CA_GetMofNStatus = make_late_binding_function('CA_GetMofNStatus')
+CA_GetMofNStatus = make_late_binding_function("CA_GetMofNStatus")
 CA_GetMofNStatus.restype = CK_RV
 CA_GetMofNStatus.argtypes = [CK_SLOT_ID, CA_MOFN_STATUS_PTR]
-CA_DuplicateMofN = make_late_binding_function('CA_DuplicateMofN')
+CA_DuplicateMofN = make_late_binding_function("CA_DuplicateMofN")
 CA_DuplicateMofN.restype = CK_RV
 CA_DuplicateMofN.argtypes = [CK_SESSION_HANDLE]
-CA_IsMofNEnabled = make_late_binding_function('CA_IsMofNEnabled')
+CA_IsMofNEnabled = make_late_binding_function("CA_IsMofNEnabled")
 CA_IsMofNEnabled.restype = CK_RV
 CA_IsMofNEnabled.argtypes = [CK_SLOT_ID, CK_ULONG_PTR]
-CA_IsMofNRequired = make_late_binding_function('CA_IsMofNRequired')
+CA_IsMofNRequired = make_late_binding_function("CA_IsMofNRequired")
 CA_IsMofNRequired.restype = CK_RV
 CA_IsMofNRequired.argtypes = [CK_SLOT_ID, CK_ULONG_PTR]
-CA_GenerateTokenKeys = make_late_binding_function('CA_GenerateTokenKeys')
+CA_GenerateTokenKeys = make_late_binding_function("CA_GenerateTokenKeys")
 CA_GenerateTokenKeys.restype = CK_RV
 CA_GenerateTokenKeys.argtypes = [CK_SESSION_HANDLE, CK_ATTRIBUTE_PTR, CK_ULONG]
-CA_GetTokenCertificateInfo = make_late_binding_function('CA_GetTokenCertificateInfo')
+CA_GetTokenCertificateInfo = make_late_binding_function("CA_GetTokenCertificateInfo")
 CA_GetTokenCertificateInfo.restype = CK_RV
 CA_GetTokenCertificateInfo.argtypes = [CK_SLOT_ID, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR]
-CA_SetTokenCertificateSignature = make_late_binding_function('CA_SetTokenCertificateSignature')
+CA_SetTokenCertificateSignature = make_late_binding_function("CA_SetTokenCertificateSignature")
 CA_SetTokenCertificateSignature.restype = CK_RV
-CA_SetTokenCertificateSignature.argtypes = [CK_SESSION_HANDLE, CK_ULONG, CK_ULONG, CK_ATTRIBUTE_PTR,
-                                            CK_ULONG, CK_BYTE_PTR, CK_ULONG]
-CA_GetModuleList = make_late_binding_function('CA_GetModuleList')
+CA_SetTokenCertificateSignature.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_ULONG,
+    CK_ULONG,
+    CK_ATTRIBUTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+]
+CA_GetModuleList = make_late_binding_function("CA_GetModuleList")
 CA_GetModuleList.restype = CK_RV
 CA_GetModuleList.argtypes = [CK_SLOT_ID, CKCA_MODULE_ID_PTR, CK_ULONG, CK_ULONG_PTR]
-CA_GetModuleInfo = make_late_binding_function('CA_GetModuleInfo')
+CA_GetModuleInfo = make_late_binding_function("CA_GetModuleInfo")
 CA_GetModuleInfo.restype = CK_RV
 CA_GetModuleInfo.argtypes = [CK_SLOT_ID, CKCA_MODULE_ID, CKCA_MODULE_INFO_PTR]
-CA_LoadModule = make_late_binding_function('CA_LoadModule')
+CA_LoadModule = make_late_binding_function("CA_LoadModule")
 CA_LoadModule.restype = CK_RV
-CA_LoadModule.argtypes = [CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG,
-                          CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG, CKCA_MODULE_ID_PTR]
-CA_LoadEncryptedModule = make_late_binding_function('CA_LoadEncryptedModule')
+CA_LoadModule.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CKCA_MODULE_ID_PTR,
+]
+CA_LoadEncryptedModule = make_late_binding_function("CA_LoadEncryptedModule")
 CA_LoadEncryptedModule.restype = CK_RV
-CA_LoadEncryptedModule.argtypes = [CK_SESSION_HANDLE, CK_OBJECT_HANDLE, CK_BYTE_PTR, CK_ULONG,
-                                   CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR,
-                                   CK_ULONG, CKCA_MODULE_ID_PTR]
-CA_UnloadModule = make_late_binding_function('CA_UnloadModule')
+CA_LoadEncryptedModule.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_OBJECT_HANDLE,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CKCA_MODULE_ID_PTR,
+]
+CA_UnloadModule = make_late_binding_function("CA_UnloadModule")
 CA_UnloadModule.restype = CK_RV
 CA_UnloadModule.argtypes = [CK_SESSION_HANDLE, CKCA_MODULE_ID]
-CA_PerformModuleCall = make_late_binding_function('CA_PerformModuleCall')
+CA_PerformModuleCall = make_late_binding_function("CA_PerformModuleCall")
 CA_PerformModuleCall.restype = CK_RV
-CA_PerformModuleCall.argtypes = [CK_SESSION_HANDLE, CKCA_MODULE_ID, CK_BYTE_PTR, CK_ULONG,
-                                 CK_BYTE_PTR, CK_ULONG, CK_ULONG_PTR]
-CA_FirmwareUpdate = make_late_binding_function('CA_FirmwareUpdate')
+CA_PerformModuleCall.argtypes = [
+    CK_SESSION_HANDLE,
+    CKCA_MODULE_ID,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_ULONG_PTR,
+]
+CA_FirmwareUpdate = make_late_binding_function("CA_FirmwareUpdate")
 CA_FirmwareUpdate.restype = CK_RV
-CA_FirmwareUpdate.argtypes = [CK_SESSION_HANDLE, CK_ULONG, CK_ULONG, CK_BYTE_PTR, CK_ULONG,
-                              CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR]
-CA_FirmwareRollback = make_late_binding_function('CA_FirmwareRollback')
+CA_FirmwareUpdate.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_ULONG,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+]
+CA_FirmwareRollback = make_late_binding_function("CA_FirmwareRollback")
 CA_FirmwareRollback.restype = CK_RV
 CA_FirmwareRollback.argtypes = [CK_SESSION_HANDLE]
-CA_CapabilityUpdate = make_late_binding_function('CA_CapabilityUpdate')
+CA_CapabilityUpdate = make_late_binding_function("CA_CapabilityUpdate")
 CA_CapabilityUpdate.restype = CK_RV
 CA_CapabilityUpdate.argtypes = [CK_SESSION_HANDLE, CK_ULONG, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR]
-CA_GetUserContainerNumber = make_late_binding_function('CA_GetUserContainerNumber')
+CA_GetUserContainerNumber = make_late_binding_function("CA_GetUserContainerNumber")
 CA_GetUserContainerNumber.restype = CK_RV
 CA_GetUserContainerNumber.argtypes = [CK_SLOT_ID, CK_ULONG_PTR]
-CA_GetUserContainerName = make_late_binding_function('CA_GetUserContainerName')
+CA_GetUserContainerName = make_late_binding_function("CA_GetUserContainerName")
 CA_GetUserContainerName.restype = CK_RV
 CA_GetUserContainerName.argtypes = [CK_SLOT_ID, CK_BYTE_PTR, CK_ULONG_PTR]
-CA_SetUserContainerName = make_late_binding_function('CA_SetUserContainerName')
+CA_SetUserContainerName = make_late_binding_function("CA_SetUserContainerName")
 CA_SetUserContainerName.restype = CK_RV
 CA_SetUserContainerName.argtypes = [CK_SLOT_ID, CK_BYTE_PTR, CK_ULONG]
-CA_GetTokenInsertionCount = make_late_binding_function('CA_GetTokenInsertionCount')
+CA_GetTokenInsertionCount = make_late_binding_function("CA_GetTokenInsertionCount")
 CA_GetTokenInsertionCount.restype = CK_RV
 CA_GetTokenInsertionCount.argtypes = [CK_SLOT_ID, CK_ULONG_PTR]
-CA_GetRollbackFirmwareVersion = make_late_binding_function('CA_GetRollbackFirmwareVersion')
+CA_GetRollbackFirmwareVersion = make_late_binding_function("CA_GetRollbackFirmwareVersion")
 CA_GetRollbackFirmwareVersion.restype = CK_RV
 CA_GetRollbackFirmwareVersion.argtypes = [CK_SLOT_ID, CK_ULONG_PTR]
-CA_GetFPV = make_late_binding_function('CA_GetFPV')
+CA_GetFPV = make_late_binding_function("CA_GetFPV")
 CA_GetFPV.restype = CK_RV
 CA_GetFPV.argtypes = [CK_SLOT_ID, CK_ULONG_PTR]
-CA_GetTPV = make_late_binding_function('CA_GetTPV')
+CA_GetTPV = make_late_binding_function("CA_GetTPV")
 CA_GetTPV.restype = CK_RV
 CA_GetTPV.argtypes = [CK_SLOT_ID, CK_ULONG_PTR]
-CA_GetExtendedTPV = make_late_binding_function('CA_GetExtendedTPV')
+CA_GetExtendedTPV = make_late_binding_function("CA_GetExtendedTPV")
 CA_GetExtendedTPV.restype = CK_RV
 CA_GetExtendedTPV.argtypes = [CK_SLOT_ID, CK_ULONG_PTR, CK_ULONG_PTR]
 CA_GetConfigurationElementDescription = make_late_binding_function(
-    'CA_GetConfigurationElementDescription')
+    "CA_GetConfigurationElementDescription"
+)
 CA_GetConfigurationElementDescription.restype = CK_RV
-CA_GetConfigurationElementDescription.argtypes = [CK_SLOT_ID, CK_ULONG, CK_ULONG, CK_ULONG,
-                                                  CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR,
-                                                  CK_CHAR_PTR]
-CA_GetHSMCapabilitySet = make_late_binding_function('CA_GetHSMCapabilitySet')
+CA_GetConfigurationElementDescription.argtypes = [
+    CK_SLOT_ID,
+    CK_ULONG,
+    CK_ULONG,
+    CK_ULONG,
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+    CK_CHAR_PTR,
+]
+CA_GetHSMCapabilitySet = make_late_binding_function("CA_GetHSMCapabilitySet")
 CA_GetHSMCapabilitySet.restype = CK_RV
-CA_GetHSMCapabilitySet.argtypes = [CK_SLOT_ID, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR,
-                                   CK_ULONG_PTR]
-CA_GetHSMCapabilitySetting = make_late_binding_function('CA_GetHSMCapabilitySetting')
+CA_GetHSMCapabilitySet.argtypes = [
+    CK_SLOT_ID,
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+]
+CA_GetHSMCapabilitySetting = make_late_binding_function("CA_GetHSMCapabilitySetting")
 CA_GetHSMCapabilitySetting.restype = CK_RV
 CA_GetHSMCapabilitySetting.argtypes = [CK_SLOT_ID, CK_ULONG, CK_ULONG_PTR]
-CA_GetHSMPolicySet = make_late_binding_function('CA_GetHSMPolicySet')
+CA_GetHSMPolicySet = make_late_binding_function("CA_GetHSMPolicySet")
 CA_GetHSMPolicySet.restype = CK_RV
 CA_GetHSMPolicySet.argtypes = [CK_SLOT_ID, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR]
-CA_GetHSMPolicySetting = make_late_binding_function('CA_GetHSMPolicySetting')
+CA_GetHSMPolicySetting = make_late_binding_function("CA_GetHSMPolicySetting")
 CA_GetHSMPolicySetting.restype = CK_RV
 CA_GetHSMPolicySetting.argtypes = [CK_SLOT_ID, CK_ULONG, CK_ULONG_PTR]
-CA_GetContainerCapabilitySet = make_late_binding_function('CA_GetContainerCapabilitySet')
+CA_GetContainerCapabilitySet = make_late_binding_function("CA_GetContainerCapabilitySet")
 CA_GetContainerCapabilitySet.restype = CK_RV
-CA_GetContainerCapabilitySet.argtypes = [CK_SLOT_ID, CK_ULONG, CK_ULONG_PTR, CK_ULONG_PTR,
-                                         CK_ULONG_PTR, CK_ULONG_PTR]
-CA_GetContainerCapabilitySetting = make_late_binding_function('CA_GetContainerCapabilitySetting')
+CA_GetContainerCapabilitySet.argtypes = [
+    CK_SLOT_ID,
+    CK_ULONG,
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+]
+CA_GetContainerCapabilitySetting = make_late_binding_function("CA_GetContainerCapabilitySetting")
 CA_GetContainerCapabilitySetting.restype = CK_RV
 CA_GetContainerCapabilitySetting.argtypes = [CK_SLOT_ID, CK_ULONG, CK_ULONG, CK_ULONG_PTR]
-CA_GetContainerPolicySet = make_late_binding_function('CA_GetContainerPolicySet')
+CA_GetContainerPolicySet = make_late_binding_function("CA_GetContainerPolicySet")
 CA_GetContainerPolicySet.restype = CK_RV
-CA_GetContainerPolicySet.argtypes = [CK_SLOT_ID, CK_ULONG, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR,
-                                     CK_ULONG_PTR]
-CA_GetContainerPolicySetting = make_late_binding_function('CA_GetContainerPolicySetting')
+CA_GetContainerPolicySet.argtypes = [
+    CK_SLOT_ID,
+    CK_ULONG,
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+]
+CA_GetContainerPolicySetting = make_late_binding_function("CA_GetContainerPolicySetting")
 CA_GetContainerPolicySetting.restype = CK_RV
 CA_GetContainerPolicySetting.argtypes = [CK_SLOT_ID, CK_ULONG, CK_ULONG, CK_ULONG_PTR]
-CA_GetPartitionPolicyTemplate = make_late_binding_function('CA_GetPartitionPolicyTemplate')
+CA_GetPartitionPolicyTemplate = make_late_binding_function("CA_GetPartitionPolicyTemplate")
 CA_GetPartitionPolicyTemplate.restype = CK_RV
 CA_GetPartitionPolicyTemplate.argtypes = [CK_SLOT_ID, CK_ULONG_PTR, CK_ULONG_PTR, CK_BYTE_PTR]
-CA_SetTPV = make_late_binding_function('CA_SetTPV')
+CA_SetTPV = make_late_binding_function("CA_SetTPV")
 CA_SetTPV.restype = CK_RV
 CA_SetTPV.argtypes = [CK_SESSION_HANDLE, CK_ULONG]
-CA_SetExtendedTPV = make_late_binding_function('CA_SetExtendedTPV')
+CA_SetExtendedTPV = make_late_binding_function("CA_SetExtendedTPV")
 CA_SetExtendedTPV.restype = CK_RV
 CA_SetExtendedTPV.argtypes = [CK_SESSION_HANDLE, CK_ULONG, CK_ULONG]
-CA_SetHSMPolicy = make_late_binding_function('CA_SetHSMPolicy')
+CA_SetHSMPolicy = make_late_binding_function("CA_SetHSMPolicy")
 CA_SetHSMPolicy.restype = CK_RV
 CA_SetHSMPolicy.argtypes = [CK_SESSION_HANDLE, CK_ULONG, CK_ULONG]
-CA_SetHSMPolicies = make_late_binding_function('CA_SetHSMPolicies')
+CA_SetHSMPolicies = make_late_binding_function("CA_SetHSMPolicies")
 CA_SetHSMPolicies.restype = CK_RV
 CA_SetHSMPolicies.argtypes = [CK_SESSION_HANDLE, CK_ULONG, CK_ULONG_PTR, CK_ULONG_PTR]
-CA_SetDestructiveHSMPolicy = make_late_binding_function('CA_SetDestructiveHSMPolicy')
+CA_SetDestructiveHSMPolicy = make_late_binding_function("CA_SetDestructiveHSMPolicy")
 CA_SetDestructiveHSMPolicy.restype = CK_RV
 CA_SetDestructiveHSMPolicy.argtypes = [CK_SESSION_HANDLE, CK_ULONG, CK_ULONG]
-CA_SetDestructiveHSMPolicies = make_late_binding_function('CA_SetDestructiveHSMPolicies')
+CA_SetDestructiveHSMPolicies = make_late_binding_function("CA_SetDestructiveHSMPolicies")
 CA_SetDestructiveHSMPolicies.restype = CK_RV
 CA_SetDestructiveHSMPolicies.argtypes = [CK_SESSION_HANDLE, CK_ULONG, CK_ULONG_PTR, CK_ULONG_PTR]
-CA_SetContainerPolicy = make_late_binding_function('CA_SetContainerPolicy')
+CA_SetContainerPolicy = make_late_binding_function("CA_SetContainerPolicy")
 CA_SetContainerPolicy.restype = CK_RV
 CA_SetContainerPolicy.argtypes = [CK_SESSION_HANDLE, CK_ULONG, CK_ULONG, CK_ULONG]
-CA_SetContainerPolicies = make_late_binding_function('CA_SetContainerPolicies')
+CA_SetContainerPolicies = make_late_binding_function("CA_SetContainerPolicies")
 CA_SetContainerPolicies.restype = CK_RV
-CA_SetContainerPolicies.argtypes = [CK_SESSION_HANDLE, CK_ULONG, CK_ULONG, CK_ULONG_PTR,
-                                    CK_ULONG_PTR]
-CA_GetTokenCapabilities = make_late_binding_function('CA_GetTokenCapabilities')
+CA_SetContainerPolicies.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_ULONG,
+    CK_ULONG,
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+]
+CA_GetTokenCapabilities = make_late_binding_function("CA_GetTokenCapabilities")
 CA_GetTokenCapabilities.restype = CK_RV
-CA_GetTokenCapabilities.argtypes = [CK_SLOT_ID, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR,
-                                    CK_ULONG_PTR]
-CA_SetTokenPolicies = make_late_binding_function('CA_SetTokenPolicies')
+CA_GetTokenCapabilities.argtypes = [
+    CK_SLOT_ID,
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+]
+CA_SetTokenPolicies = make_late_binding_function("CA_SetTokenPolicies")
 CA_SetTokenPolicies.restype = CK_RV
 CA_SetTokenPolicies.argtypes = [CK_SESSION_HANDLE, CK_SLOT_ID, CK_ULONG, CK_ULONG_PTR, CK_ULONG_PTR]
-CA_GetTokenPolicies = make_late_binding_function('CA_GetTokenPolicies')
+CA_GetTokenPolicies = make_late_binding_function("CA_GetTokenPolicies")
 CA_GetTokenPolicies.restype = CK_RV
 CA_GetTokenPolicies.argtypes = [CK_SLOT_ID, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR]
-CA_RetrieveLicenseList = make_late_binding_function('CA_RetrieveLicenseList')
+CA_RetrieveLicenseList = make_late_binding_function("CA_RetrieveLicenseList")
 CA_RetrieveLicenseList.restype = CK_RV
 CA_RetrieveLicenseList.argtypes = [CK_SLOT_ID, CK_ULONG_PTR, CK_ULONG_PTR]
-CA_QueryLicense = make_late_binding_function('CA_QueryLicense')
+CA_QueryLicense = make_late_binding_function("CA_QueryLicense")
 CA_QueryLicense.restype = CK_RV
-CA_QueryLicense.argtypes = [CK_SLOT_ID, CK_ULONG, CK_ULONG, CK_ULONG_PTR, CK_ULONG_PTR,
-                            CK_ULONG_PTR, CK_BYTE_PTR]
-CA_GetContainerStatus = make_late_binding_function('CA_GetContainerStatus')
+CA_QueryLicense.argtypes = [
+    CK_SLOT_ID,
+    CK_ULONG,
+    CK_ULONG,
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+    CK_BYTE_PTR,
+]
+CA_GetContainerStatus = make_late_binding_function("CA_GetContainerStatus")
 CA_GetContainerStatus.restype = CK_RV
-CA_GetContainerStatus.argtypes = [CK_SLOT_ID, CK_ULONG, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR,
-                                  CK_ULONG_PTR]
-CA_GetTokenStatus = make_late_binding_function('CA_GetTokenStatus')
+CA_GetContainerStatus.argtypes = [
+    CK_SLOT_ID,
+    CK_ULONG,
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+]
+CA_GetTokenStatus = make_late_binding_function("CA_GetTokenStatus")
 CA_GetTokenStatus.restype = CK_RV
 CA_GetTokenStatus.argtypes = [CK_SLOT_ID, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR]
-CA_GetSessionInfo = make_late_binding_function('CA_GetSessionInfo')
+CA_GetSessionInfo = make_late_binding_function("CA_GetSessionInfo")
 CA_GetSessionInfo.restype = CK_RV
-CA_GetSessionInfo.argtypes = [CK_SESSION_HANDLE, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR,
-                              CK_ULONG_PTR]
-CA_GetCVFirmwareVersion = make_late_binding_function('CA_GetCVFirmwareVersion')
+CA_GetSessionInfo.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+]
+CA_GetCVFirmwareVersion = make_late_binding_function("CA_GetCVFirmwareVersion")
 CA_GetCVFirmwareVersion.restype = CK_RV
 CA_GetCVFirmwareVersion.argtypes = [CK_SLOT_ID, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR]
-CA_ReadCommonStore = make_late_binding_function('CA_ReadCommonStore')
+CA_ReadCommonStore = make_late_binding_function("CA_ReadCommonStore")
 CA_ReadCommonStore.restype = CK_RV
 CA_ReadCommonStore.argtypes = [CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR]
-CA_WriteCommonStore = make_late_binding_function('CA_WriteCommonStore')
+CA_WriteCommonStore = make_late_binding_function("CA_WriteCommonStore")
 CA_WriteCommonStore.restype = CK_RV
 CA_WriteCommonStore.argtypes = [CK_ULONG, CK_BYTE_PTR, CK_ULONG]
-CA_GetPrimarySlot = make_late_binding_function('CA_GetPrimarySlot')
+CA_GetPrimarySlot = make_late_binding_function("CA_GetPrimarySlot")
 CA_GetPrimarySlot.restype = CK_RV
 CA_GetPrimarySlot.argtypes = [CK_SESSION_HANDLE, CK_SLOT_ID_PTR]
-CA_GetSecondarySlot = make_late_binding_function('CA_GetSecondarySlot')
+CA_GetSecondarySlot = make_late_binding_function("CA_GetSecondarySlot")
 CA_GetSecondarySlot.restype = CK_RV
 CA_GetSecondarySlot.argtypes = [CK_SESSION_HANDLE, CK_SLOT_ID_PTR]
-CA_SwitchSecondarySlot = make_late_binding_function('CA_SwitchSecondarySlot')
+CA_SwitchSecondarySlot = make_late_binding_function("CA_SwitchSecondarySlot")
 CA_SwitchSecondarySlot.restype = CK_RV
 CA_SwitchSecondarySlot.argtypes = [CK_SESSION_HANDLE, CK_SLOT_ID, CK_ULONG]
-CA_CloseSecondarySession = make_late_binding_function('CA_CloseSecondarySession')
+CA_CloseSecondarySession = make_late_binding_function("CA_CloseSecondarySession")
 CA_CloseSecondarySession.restype = CK_RV
 CA_CloseSecondarySession.argtypes = [CK_SESSION_HANDLE, CK_SLOT_ID, CK_ULONG]
-CA_CloseAllSecondarySessions = make_late_binding_function('CA_CloseAllSecondarySessions')
+CA_CloseAllSecondarySessions = make_late_binding_function("CA_CloseAllSecondarySessions")
 CA_CloseAllSecondarySessions.restype = CK_RV
 CA_CloseAllSecondarySessions.argtypes = [CK_SESSION_HANDLE]
-CA_ChoosePrimarySlot = make_late_binding_function('CA_ChoosePrimarySlot')
+CA_ChoosePrimarySlot = make_late_binding_function("CA_ChoosePrimarySlot")
 CA_ChoosePrimarySlot.restype = CK_RV
 CA_ChoosePrimarySlot.argtypes = [CK_SESSION_HANDLE]
-CA_ChooseSecondarySlot = make_late_binding_function('CA_ChooseSecondarySlot')
+CA_ChooseSecondarySlot = make_late_binding_function("CA_ChooseSecondarySlot")
 CA_ChooseSecondarySlot.restype = CK_RV
 CA_ChooseSecondarySlot.argtypes = [CK_SESSION_HANDLE]
-CA_CloneObjectToAllSessions = make_late_binding_function('CA_CloneObjectToAllSessions')
+CA_CloneObjectToAllSessions = make_late_binding_function("CA_CloneObjectToAllSessions")
 CA_CloneObjectToAllSessions.restype = CK_RV
 CA_CloneObjectToAllSessions.argtypes = [CK_SESSION_HANDLE, CK_OBJECT_HANDLE]
-CA_CloneAllObjectsToSession = make_late_binding_function('CA_CloneAllObjectsToSession')
+CA_CloneAllObjectsToSession = make_late_binding_function("CA_CloneAllObjectsToSession")
 CA_CloneAllObjectsToSession.restype = CK_RV
 CA_CloneAllObjectsToSession.argtypes = [CK_SESSION_HANDLE, CK_SLOT_ID]
-CA_ResetDevice = make_late_binding_function('CA_ResetDevice')
+CA_ResetDevice = make_late_binding_function("CA_ResetDevice")
 CA_ResetDevice.restype = CK_RV
 CA_ResetDevice.argtypes = [CK_SLOT_ID, CK_FLAGS]
-CA_Zeroize = make_late_binding_function('CA_Zeroize')
+CA_Zeroize = make_late_binding_function("CA_Zeroize")
 CA_Zeroize.restype = CK_RV
 CA_Zeroize.argtypes = [CK_SLOT_ID, CK_FLAGS]
-CA_FactoryReset = make_late_binding_function('CA_FactoryReset')
+CA_FactoryReset = make_late_binding_function("CA_FactoryReset")
 CA_FactoryReset.restype = CK_RV
 CA_FactoryReset.argtypes = [CK_SLOT_ID, CK_FLAGS]
-CA_SetPedId = make_late_binding_function('CA_SetPedId')
+CA_SetPedId = make_late_binding_function("CA_SetPedId")
 CA_SetPedId.restype = CK_RV
 CA_SetPedId.argtypes = [CK_SLOT_ID, CK_ULONG]
-CA_GetPedId = make_late_binding_function('CA_GetPedId')
+CA_GetPedId = make_late_binding_function("CA_GetPedId")
 CA_GetPedId.restype = CK_RV
 CA_GetPedId.argtypes = [CK_SLOT_ID, POINTER(CK_ULONG)]
-CA_SpRawRead = make_late_binding_function('CA_SpRawRead')
+CA_SpRawRead = make_late_binding_function("CA_SpRawRead")
 CA_SpRawRead.restype = CK_RV
 CA_SpRawRead.argtypes = [CK_SLOT_ID, CK_ULONG_PTR]
-CA_SpRawWrite = make_late_binding_function('CA_SpRawWrite')
+CA_SpRawWrite = make_late_binding_function("CA_SpRawWrite")
 CA_SpRawWrite.restype = CK_RV
 CA_SpRawWrite.argtypes = [CK_SLOT_ID, CK_ULONG_PTR]
-CA_CheckOperationState = make_late_binding_function('CA_CheckOperationState')
+CA_CheckOperationState = make_late_binding_function("CA_CheckOperationState")
 CA_CheckOperationState.restype = CK_RV
 CA_CheckOperationState.argtypes = [CK_SESSION_HANDLE, CK_ULONG, POINTER(CK_BBOOL)]
-CA_DestroyMultipleObjects = make_late_binding_function('CA_DestroyMultipleObjects')
+CA_DestroyMultipleObjects = make_late_binding_function("CA_DestroyMultipleObjects")
 CA_DestroyMultipleObjects.restype = CK_RV
-CA_DestroyMultipleObjects.argtypes = [CK_SESSION_HANDLE, CK_ULONG, CK_OBJECT_HANDLE_PTR,
-                                      CK_ULONG_PTR]
-CA_OpenSecureToken = make_late_binding_function('CA_OpenSecureToken')
+CA_DestroyMultipleObjects.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_ULONG,
+    CK_OBJECT_HANDLE_PTR,
+    CK_ULONG_PTR,
+]
+CA_OpenSecureToken = make_late_binding_function("CA_OpenSecureToken")
 CA_OpenSecureToken.restype = CK_RV
-CA_OpenSecureToken.argtypes = [CK_SESSION_HANDLE, CK_ULONG, CK_ULONG, CK_ULONG, CK_ULONG,
-                               CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG, CK_CHAR_PTR]
-CA_CloseSecureToken = make_late_binding_function('CA_CloseSecureToken')
+CA_OpenSecureToken.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_ULONG,
+    CK_ULONG,
+    CK_ULONG,
+    CK_ULONG,
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+    CK_ULONG,
+    CK_CHAR_PTR,
+]
+CA_CloseSecureToken = make_late_binding_function("CA_CloseSecureToken")
 CA_CloseSecureToken.restype = CK_RV
 CA_CloseSecureToken.argtypes = [CK_SESSION_HANDLE, CK_ULONG]
-CA_ListSecureTokenInit = make_late_binding_function('CA_ListSecureTokenInit')
+CA_ListSecureTokenInit = make_late_binding_function("CA_ListSecureTokenInit")
 CA_ListSecureTokenInit.restype = CK_RV
-CA_ListSecureTokenInit.argtypes = [CK_SESSION_HANDLE, CK_ULONG, CK_ULONG, CK_ULONG_PTR,
-                                   CK_ULONG_PTR, CK_BYTE_PTR]
-CA_ListSecureTokenUpdate = make_late_binding_function('CA_ListSecureTokenUpdate')
+CA_ListSecureTokenInit.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_ULONG,
+    CK_ULONG,
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+    CK_BYTE_PTR,
+]
+CA_ListSecureTokenUpdate = make_late_binding_function("CA_ListSecureTokenUpdate")
 CA_ListSecureTokenUpdate.restype = CK_RV
 CA_ListSecureTokenUpdate.argtypes = [CK_SESSION_HANDLE, CK_ULONG, CK_ULONG, CK_BYTE_PTR, CK_ULONG]
-CA_GetSecureElementMeta = make_late_binding_function('CA_GetSecureElementMeta')
+CA_GetSecureElementMeta = make_late_binding_function("CA_GetSecureElementMeta")
 CA_GetSecureElementMeta.restype = CK_RV
-CA_GetSecureElementMeta.argtypes = [CK_SESSION_HANDLE, CK_ULONG, CK_MECHANISM_PTR, CK_ULONG_PTR,
-                                    CK_ULONG_PTR, CK_BYTE_PTR, CK_ULONG]
-CA_HAInit = make_late_binding_function('CA_HAInit')
+CA_GetSecureElementMeta.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_ULONG,
+    CK_MECHANISM_PTR,
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+    CK_BYTE_PTR,
+    CK_ULONG,
+]
+CA_HAInit = make_late_binding_function("CA_HAInit")
 CA_HAInit.restype = CK_RV
 CA_HAInit.argtypes = [CK_SESSION_HANDLE, CK_OBJECT_HANDLE]
-CA_HAGetMasterPublic = make_late_binding_function('CA_HAGetMasterPublic')
+CA_HAGetMasterPublic = make_late_binding_function("CA_HAGetMasterPublic")
 CA_HAGetMasterPublic.restype = CK_RV
 CA_HAGetMasterPublic.argtypes = [CK_SLOT_ID, CK_BYTE_PTR, CK_ULONG_PTR]
-CA_HAGetLoginChallenge = make_late_binding_function('CA_HAGetLoginChallenge')
+CA_HAGetLoginChallenge = make_late_binding_function("CA_HAGetLoginChallenge")
 CA_HAGetLoginChallenge.restype = CK_RV
-CA_HAGetLoginChallenge.argtypes = [CK_SESSION_HANDLE, CK_USER_TYPE, CK_BYTE_PTR, CK_ULONG,
-                                   CK_BYTE_PTR, CK_ULONG_PTR]
-CA_HAAnswerLoginChallenge = make_late_binding_function('CA_HAAnswerLoginChallenge')
+CA_HAGetLoginChallenge.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_USER_TYPE,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG_PTR,
+]
+CA_HAAnswerLoginChallenge = make_late_binding_function("CA_HAAnswerLoginChallenge")
 CA_HAAnswerLoginChallenge.restype = CK_RV
-CA_HAAnswerLoginChallenge.argtypes = [CK_SESSION_HANDLE, CK_OBJECT_HANDLE, CK_BYTE_PTR, CK_ULONG,
-                                      CK_BYTE_PTR, CK_ULONG_PTR]
-CA_HALogin = make_late_binding_function('CA_HALogin')
+CA_HAAnswerLoginChallenge.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_OBJECT_HANDLE,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG_PTR,
+]
+CA_HALogin = make_late_binding_function("CA_HALogin")
 CA_HALogin.restype = CK_RV
 CA_HALogin.argtypes = [CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR]
-CA_HAAnswerMofNChallenge = make_late_binding_function('CA_HAAnswerMofNChallenge')
+CA_HAAnswerMofNChallenge = make_late_binding_function("CA_HAAnswerMofNChallenge")
 CA_HAAnswerMofNChallenge.restype = CK_RV
-CA_HAAnswerMofNChallenge.argtypes = [CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR,
-                                     CK_ULONG_PTR]
-CA_HAActivateMofN = make_late_binding_function('CA_HAActivateMofN')
+CA_HAAnswerMofNChallenge.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG_PTR,
+]
+CA_HAActivateMofN = make_late_binding_function("CA_HAActivateMofN")
 CA_HAActivateMofN.restype = CK_RV
 CA_HAActivateMofN.argtypes = [CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG]
-CA_GetHAState = make_late_binding_function('CA_GetHAState')
+CA_GetHAState = make_late_binding_function("CA_GetHAState")
 CA_GetHAState.restype = CK_RV
 CA_GetHAState.argtypes = [CK_SLOT_ID, CK_HA_STATE_PTR]
-CA_GetTokenCertificates = make_late_binding_function('CA_GetTokenCertificates')
+CA_GetTokenCertificates = make_late_binding_function("CA_GetTokenCertificates")
 CA_GetTokenCertificates.restype = CK_RV
 CA_GetTokenCertificates.argtypes = [CK_SLOT_ID, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR]
-CA_ExtractMaskedObject = make_late_binding_function('CA_ExtractMaskedObject')
+CA_ExtractMaskedObject = make_late_binding_function("CA_ExtractMaskedObject")
 CA_ExtractMaskedObject.restype = CK_RV
 CA_ExtractMaskedObject.argtypes = [CK_SESSION_HANDLE, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR]
-CA_InsertMaskedObject = make_late_binding_function('CA_InsertMaskedObject')
+CA_InsertMaskedObject = make_late_binding_function("CA_InsertMaskedObject")
 CA_InsertMaskedObject.restype = CK_RV
 CA_InsertMaskedObject.argtypes = [CK_SESSION_HANDLE, CK_ULONG_PTR, CK_BYTE_PTR, CK_ULONG]
-CA_MultisignValue = make_late_binding_function('CA_MultisignValue')
+CA_MultisignValue = make_late_binding_function("CA_MultisignValue")
 CA_MultisignValue.restype = CK_RV
-CA_MultisignValue.argtypes = [CK_SESSION_HANDLE, CK_MECHANISM_PTR, CK_ULONG, CK_BYTE_PTR,
-                              CK_ULONG_PTR, CK_ULONG_PTR, POINTER(CK_BYTE_PTR), CK_ULONG_PTR,
-                              POINTER(CK_BYTE_PTR)]
-CA_SIMExtract = make_late_binding_function('CA_SIMExtract')
+CA_MultisignValue.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_MECHANISM_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+    POINTER(CK_BYTE_PTR),
+    CK_ULONG_PTR,
+    POINTER(CK_BYTE_PTR),
+]
+CA_SIMExtract = make_late_binding_function("CA_SIMExtract")
 CA_SIMExtract.restype = CK_RV
-CA_SIMExtract.argtypes = [CK_SESSION_HANDLE, CK_ULONG, CK_OBJECT_HANDLE_PTR, CK_ULONG, CK_ULONG,
-                          CKA_SIM_AUTH_FORM, CK_ULONG_PTR, POINTER(CK_BYTE_PTR), CK_BBOOL,
-                          CK_ULONG_PTR, CK_BYTE_PTR]
-CA_SIMInsert = make_late_binding_function('CA_SIMInsert')
+CA_SIMExtract.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_ULONG,
+    CK_OBJECT_HANDLE_PTR,
+    CK_ULONG,
+    CK_ULONG,
+    CKA_SIM_AUTH_FORM,
+    CK_ULONG_PTR,
+    POINTER(CK_BYTE_PTR),
+    CK_BBOOL,
+    CK_ULONG_PTR,
+    CK_BYTE_PTR,
+]
+CA_SIMInsert = make_late_binding_function("CA_SIMInsert")
 CA_SIMInsert.restype = CK_RV
-CA_SIMInsert.argtypes = [CK_SESSION_HANDLE, CK_ULONG, CKA_SIM_AUTH_FORM, CK_ULONG_PTR,
-                         POINTER(CK_BYTE_PTR), CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR,
-                         CK_OBJECT_HANDLE_PTR]
-CA_SIMMultiSign = make_late_binding_function('CA_SIMMultiSign')
+CA_SIMInsert.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_ULONG,
+    CKA_SIM_AUTH_FORM,
+    CK_ULONG_PTR,
+    POINTER(CK_BYTE_PTR),
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG_PTR,
+    CK_OBJECT_HANDLE_PTR,
+]
+CA_SIMMultiSign = make_late_binding_function("CA_SIMMultiSign")
 CA_SIMMultiSign.restype = CK_RV
-CA_SIMMultiSign.argtypes = [CK_SESSION_HANDLE, CK_MECHANISM_PTR, CK_ULONG, CKA_SIM_AUTH_FORM,
-                            CK_ULONG_PTR, POINTER(CK_BYTE_PTR), CK_ULONG, CK_BYTE_PTR, CK_ULONG,
-                            CK_ULONG_PTR, POINTER(CK_BYTE_PTR), CK_ULONG_PTR, POINTER(CK_BYTE_PTR)]
-CA_Extract = make_late_binding_function('CA_Extract')
+CA_SIMMultiSign.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_MECHANISM_PTR,
+    CK_ULONG,
+    CKA_SIM_AUTH_FORM,
+    CK_ULONG_PTR,
+    POINTER(CK_BYTE_PTR),
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_ULONG_PTR,
+    POINTER(CK_BYTE_PTR),
+    CK_ULONG_PTR,
+    POINTER(CK_BYTE_PTR),
+]
+CA_Extract = make_late_binding_function("CA_Extract")
 CA_Extract.restype = CK_RV
 CA_Extract.argtypes = [CK_SESSION_HANDLE, CK_MECHANISM_PTR]
-CA_Insert = make_late_binding_function('CA_Insert')
+CA_Insert = make_late_binding_function("CA_Insert")
 CA_Insert.restype = CK_RV
 CA_Insert.argtypes = [CK_SESSION_HANDLE, CK_MECHANISM_PTR]
-CA_GetTokenObjectUID = make_late_binding_function('CA_GetTokenObjectUID')
+CA_GetTokenObjectUID = make_late_binding_function("CA_GetTokenObjectUID")
 CA_GetTokenObjectUID.restype = CK_RV
 CA_GetTokenObjectUID.argtypes = [CK_SLOT_ID, CK_ULONG, CK_ULONG, POINTER(CK_BYTE)]
-CA_GetTokenObjectHandle = make_late_binding_function('CA_GetTokenObjectHandle')
+CA_GetTokenObjectHandle = make_late_binding_function("CA_GetTokenObjectHandle")
 CA_GetTokenObjectHandle.restype = CK_RV
 CA_GetTokenObjectHandle.argtypes = [CK_SLOT_ID, POINTER(CK_BYTE), CK_ULONG_PTR, CK_ULONG_PTR]
-CA_GetObjectUID = make_late_binding_function('CA_GetObjectUID')
+CA_GetObjectUID = make_late_binding_function("CA_GetObjectUID")
 CA_GetObjectUID.restype = CK_RV
 CA_GetObjectUID.argtypes = [CK_SLOT_ID, CK_ULONG, CK_ULONG, CK_ULONG, POINTER(CK_BYTE)]
-CA_GetObjectHandle = make_late_binding_function('CA_GetObjectHandle')
+CA_GetObjectHandle = make_late_binding_function("CA_GetObjectHandle")
 CA_GetObjectHandle.restype = CK_RV
 CA_GetObjectHandle.argtypes = [CK_SLOT_ID, CK_ULONG, POINTER(CK_BYTE), CK_ULONG_PTR, CK_ULONG_PTR]
-CA_DeleteContainer = make_late_binding_function('CA_DeleteContainer')
+CA_DeleteContainer = make_late_binding_function("CA_DeleteContainer")
 CA_DeleteContainer.restype = CK_RV
 CA_DeleteContainer.argtypes = [CK_SESSION_HANDLE]
-CA_MTKSetStorage = make_late_binding_function('CA_MTKSetStorage')
+CA_MTKSetStorage = make_late_binding_function("CA_MTKSetStorage")
 CA_MTKSetStorage.restype = CK_RV
 CA_MTKSetStorage.argtypes = [CK_SESSION_HANDLE, CK_ULONG]
-CA_MTKRestore = make_late_binding_function('CA_MTKRestore')
+CA_MTKRestore = make_late_binding_function("CA_MTKRestore")
 CA_MTKRestore.restype = CK_RV
 CA_MTKRestore.argtypes = [CK_SLOT_ID]
-CA_MTKResplit = make_late_binding_function('CA_MTKResplit')
+CA_MTKResplit = make_late_binding_function("CA_MTKResplit")
 CA_MTKResplit.restype = CK_RV
 CA_MTKResplit.argtypes = [CK_SLOT_ID]
-CA_MTKZeroize = make_late_binding_function('CA_MTKZeroize')
+CA_MTKZeroize = make_late_binding_function("CA_MTKZeroize")
 CA_MTKZeroize.restype = CK_RV
 CA_MTKZeroize.argtypes = [CK_SLOT_ID]
-CA_MTKGetState = make_late_binding_function('CA_MTKGetState')
+CA_MTKGetState = make_late_binding_function("CA_MTKGetState")
 CA_MTKGetState.restype = CK_RV
 CA_MTKGetState.argtypes = [CK_SLOT_ID, CK_ULONG_PTR]
-CA_TamperClear = make_late_binding_function('CA_TamperClear')
+CA_TamperClear = make_late_binding_function("CA_TamperClear")
 CA_TamperClear.restype = CK_RV
 CA_TamperClear.argtypes = [CK_SESSION_HANDLE]
-CA_STMToggle = make_late_binding_function('CA_STMToggle')
+CA_STMToggle = make_late_binding_function("CA_STMToggle")
 CA_STMToggle.restype = CK_RV
 CA_STMToggle.argtypes = [CK_SESSION_HANDLE, CK_ULONG]
-CA_STMGetState = make_late_binding_function('CA_STMGetState')
+CA_STMGetState = make_late_binding_function("CA_STMGetState")
 CA_STMGetState.restype = CK_RV
 CA_STMGetState.argtypes = [CK_SLOT_ID, CK_ULONG_PTR]
-CA_GetTSV = make_late_binding_function('CA_GetTSV')
+CA_GetTSV = make_late_binding_function("CA_GetTSV")
 CA_GetTSV.restype = CK_RV
 CA_GetTSV.argtypes = [CK_SLOT_ID, CK_ULONG_PTR]
-CA_InvokeServiceInit = make_late_binding_function('CA_InvokeServiceInit')
+CA_InvokeServiceInit = make_late_binding_function("CA_InvokeServiceInit")
 CA_InvokeServiceInit.restype = CK_RV
 CA_InvokeServiceInit.argtypes = [CK_SESSION_HANDLE, CK_ULONG]
-CA_InvokeService = make_late_binding_function('CA_InvokeService')
+CA_InvokeService = make_late_binding_function("CA_InvokeService")
 CA_InvokeService.restype = CK_RV
 CA_InvokeService.argtypes = [CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_ULONG_PTR]
-CA_InvokeServiceFinal = make_late_binding_function('CA_InvokeServiceFinal')
+CA_InvokeServiceFinal = make_late_binding_function("CA_InvokeServiceFinal")
 CA_InvokeServiceFinal.restype = CK_RV
 CA_InvokeServiceFinal.argtypes = [CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG_PTR]
-CA_InvokeServiceAsynch = make_late_binding_function('CA_InvokeServiceAsynch')
+CA_InvokeServiceAsynch = make_late_binding_function("CA_InvokeServiceAsynch")
 CA_InvokeServiceAsynch.restype = CK_RV
 CA_InvokeServiceAsynch.argtypes = [CK_SESSION_HANDLE, CK_ULONG, CK_BYTE_PTR, CK_ULONG]
-CA_InvokeServiceSinglePart = make_late_binding_function('CA_InvokeServiceSinglePart')
+CA_InvokeServiceSinglePart = make_late_binding_function("CA_InvokeServiceSinglePart")
 CA_InvokeServiceSinglePart.restype = CK_RV
-CA_InvokeServiceSinglePart.argtypes = [CK_SESSION_HANDLE, CK_ULONG, CK_BYTE_PTR, CK_ULONG,
-                                       CK_BYTE_PTR, CK_ULONG_PTR]
-CA_EncodeECPrimeParams = make_late_binding_function('CA_EncodeECPrimeParams')
+CA_InvokeServiceSinglePart.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG_PTR,
+]
+CA_EncodeECPrimeParams = make_late_binding_function("CA_EncodeECPrimeParams")
 CA_EncodeECPrimeParams.restype = CK_RV
-CA_EncodeECPrimeParams.argtypes = [CK_BYTE_PTR, CK_ULONG_PTR, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR,
-                                   CK_ULONG, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG,
-                                   CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR,
-                                   CK_ULONG, CK_BYTE_PTR, CK_ULONG]
-CA_EncodeECChar2Params = make_late_binding_function('CA_EncodeECChar2Params')
+CA_EncodeECPrimeParams.argtypes = [
+    CK_BYTE_PTR,
+    CK_ULONG_PTR,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+]
+CA_EncodeECChar2Params = make_late_binding_function("CA_EncodeECChar2Params")
 CA_EncodeECChar2Params.restype = CK_RV
-CA_EncodeECChar2Params.argtypes = [CK_BYTE_PTR, CK_ULONG_PTR, CK_ULONG, CK_ULONG, CK_ULONG,
-                                   CK_ULONG, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG,
-                                   CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR,
-                                   CK_ULONG, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG]
-CA_EncodeECParamsFromFile = make_late_binding_function('CA_EncodeECParamsFromFile')
+CA_EncodeECChar2Params.argtypes = [
+    CK_BYTE_PTR,
+    CK_ULONG_PTR,
+    CK_ULONG,
+    CK_ULONG,
+    CK_ULONG,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+]
+CA_EncodeECParamsFromFile = make_late_binding_function("CA_EncodeECParamsFromFile")
 CA_EncodeECParamsFromFile.restype = CK_RV
 CA_EncodeECParamsFromFile.argtypes = [CK_BYTE_PTR, CK_ULONG_PTR, CK_BYTE_PTR]
-CA_GetHSMStats = make_late_binding_function('CA_GetHSMStats')
+CA_GetHSMStats = make_late_binding_function("CA_GetHSMStats")
 CA_GetHSMStats.restype = CK_RV
 CA_GetHSMStats.argtypes = [CK_SLOT_ID, CK_ULONG, CK_ULONG_PTR, POINTER(HSM_STATS_PARAMS)]
-CA_GetHSMStorageInformation = make_late_binding_function('CA_GetHSMStorageInformation')
+CA_GetHSMStorageInformation = make_late_binding_function("CA_GetHSMStorageInformation")
 CA_GetHSMStorageInformation.restype = CK_RV
-CA_GetHSMStorageInformation.argtypes = [CK_SLOT_ID, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR,
-                                        CK_ULONG_PTR]
-CA_GetTokenStorageInformation = make_late_binding_function('CA_GetTokenStorageInformation')
+CA_GetHSMStorageInformation.argtypes = [
+    CK_SLOT_ID,
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+]
+CA_GetTokenStorageInformation = make_late_binding_function("CA_GetTokenStorageInformation")
 CA_GetTokenStorageInformation.restype = CK_RV
-CA_GetTokenStorageInformation.argtypes = [CK_SLOT_ID, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR,
-                                          CK_ULONG_PTR, CK_ULONG_PTR]
-CA_GetContainerStorageInformation = make_late_binding_function('CA_GetContainerStorageInformation')
+CA_GetTokenStorageInformation.argtypes = [
+    CK_SLOT_ID,
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+]
+CA_GetContainerStorageInformation = make_late_binding_function("CA_GetContainerStorageInformation")
 CA_GetContainerStorageInformation.restype = CK_RV
-CA_GetContainerStorageInformation.argtypes = [CK_SLOT_ID, CK_ULONG, CK_ULONG_PTR, CK_ULONG_PTR,
-                                              CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR]
-CA_SetContainerSize = make_late_binding_function('CA_SetContainerSize')
+CA_GetContainerStorageInformation.argtypes = [
+    CK_SLOT_ID,
+    CK_ULONG,
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+]
+CA_SetContainerSize = make_late_binding_function("CA_SetContainerSize")
 CA_SetContainerSize.restype = CK_RV
 CA_SetContainerSize.argtypes = [CK_SESSION_HANDLE, CK_ULONG, CK_ULONG]
-CA_CreateContainerWithPolicy = make_late_binding_function('CA_CreateContainerWithPolicy')
+CA_CreateContainerWithPolicy = make_late_binding_function("CA_CreateContainerWithPolicy")
 CA_CreateContainerWithPolicy.restype = CK_RV
-CA_CreateContainerWithPolicy.argtypes = [CK_SESSION_HANDLE, CK_ULONG, CK_CHAR_PTR, CK_ULONG,
-                                         CK_CHAR_PTR, CK_ULONG, CK_ULONG, CK_ULONG, CK_ULONG,
-                                         CK_ULONG, CK_ULONG, CK_ULONG_PTR, CK_ULONG, CK_ULONG,
-                                         CK_BYTE_PTR]
-CA_CreateContainer = make_late_binding_function('CA_CreateContainer')
+CA_CreateContainerWithPolicy.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_ULONG,
+    CK_CHAR_PTR,
+    CK_ULONG,
+    CK_CHAR_PTR,
+    CK_ULONG,
+    CK_ULONG,
+    CK_ULONG,
+    CK_ULONG,
+    CK_ULONG,
+    CK_ULONG,
+    CK_ULONG_PTR,
+    CK_ULONG,
+    CK_ULONG,
+    CK_BYTE_PTR,
+]
+CA_CreateContainer = make_late_binding_function("CA_CreateContainer")
 CA_CreateContainer.restype = CK_RV
-CA_CreateContainer.argtypes = [CK_SESSION_HANDLE, CK_ULONG, CK_CHAR_PTR, CK_ULONG, CK_CHAR_PTR,
-                               CK_ULONG, CK_ULONG, CK_ULONG, CK_ULONG, CK_ULONG, CK_ULONG,
-                               CK_ULONG_PTR]
-CA_InitAudit = make_late_binding_function('CA_InitAudit')
+CA_CreateContainer.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_ULONG,
+    CK_CHAR_PTR,
+    CK_ULONG,
+    CK_CHAR_PTR,
+    CK_ULONG,
+    CK_ULONG,
+    CK_ULONG,
+    CK_ULONG,
+    CK_ULONG,
+    CK_ULONG,
+    CK_ULONG_PTR,
+]
+CA_InitAudit = make_late_binding_function("CA_InitAudit")
 CA_InitAudit.restype = CK_RV
 CA_InitAudit.argtypes = [CK_SLOT_ID, CK_CHAR_PTR, CK_ULONG, CK_CHAR_PTR]
-CA_LogVerify = make_late_binding_function('CA_LogVerify')
+CA_LogVerify = make_late_binding_function("CA_LogVerify")
 CA_LogVerify.restype = CK_RV
 CA_LogVerify.argtypes = [CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_ULONG, CK_ULONG_PTR]
-CA_LogVerifyFile = make_late_binding_function('CA_LogVerifyFile')
+CA_LogVerifyFile = make_late_binding_function("CA_LogVerifyFile")
 CA_LogVerifyFile.restype = CK_RV
 CA_LogVerifyFile.argtypes = [CK_SESSION_HANDLE, CK_CHAR_PTR, CK_ULONG_PTR]
-CA_LogExternal = make_late_binding_function('CA_LogExternal')
+CA_LogExternal = make_late_binding_function("CA_LogExternal")
 CA_LogExternal.restype = CK_RV
 CA_LogExternal.argtypes = [CK_SLOT_ID, CK_SESSION_HANDLE, POINTER(CK_CHAR), CK_ULONG]
-CA_LogImportSecret = make_late_binding_function('CA_LogImportSecret')
+CA_LogImportSecret = make_late_binding_function("CA_LogImportSecret")
 CA_LogImportSecret.restype = CK_RV
 CA_LogImportSecret.argtypes = [CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG]
-CA_LogExportSecret = make_late_binding_function('CA_LogExportSecret')
+CA_LogExportSecret = make_late_binding_function("CA_LogExportSecret")
 CA_LogExportSecret.restype = CK_RV
 CA_LogExportSecret.argtypes = [CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG_PTR]
-CA_TimeSync = make_late_binding_function('CA_TimeSync')
+CA_TimeSync = make_late_binding_function("CA_TimeSync")
 CA_TimeSync.restype = CK_RV
 CA_TimeSync.argtypes = [CK_SESSION_HANDLE, CK_ULONG]
-CA_GetTime = make_late_binding_function('CA_GetTime')
+CA_GetTime = make_late_binding_function("CA_GetTime")
 CA_GetTime.restype = CK_RV
 CA_GetTime.argtypes = [CK_SESSION_HANDLE, CK_ULONG_PTR]
-CA_LogSetConfig = make_late_binding_function('CA_LogSetConfig')
+CA_LogSetConfig = make_late_binding_function("CA_LogSetConfig")
 CA_LogSetConfig.restype = CK_RV
 CA_LogSetConfig.argtypes = [CK_SESSION_HANDLE, CK_ULONG, CK_ULONG, CK_ULONG, CK_ULONG, CK_BYTE_PTR]
-CA_LogGetConfig = make_late_binding_function('CA_LogGetConfig')
+CA_LogGetConfig = make_late_binding_function("CA_LogGetConfig")
 CA_LogGetConfig.restype = CK_RV
-CA_LogGetConfig.argtypes = [CK_SESSION_HANDLE, POINTER(CK_ULONG), POINTER(CK_ULONG),
-                            POINTER(CK_ULONG), POINTER(CK_ULONG), CK_BYTE_PTR]
-CA_ReplaceFastPathKEK = make_late_binding_function('CA_ReplaceFastPathKEK')
+CA_LogGetConfig.argtypes = [
+    CK_SESSION_HANDLE,
+    POINTER(CK_ULONG),
+    POINTER(CK_ULONG),
+    POINTER(CK_ULONG),
+    POINTER(CK_ULONG),
+    CK_BYTE_PTR,
+]
+CA_ReplaceFastPathKEK = make_late_binding_function("CA_ReplaceFastPathKEK")
 CA_ReplaceFastPathKEK.restype = CK_RV
 CA_ReplaceFastPathKEK.argtypes = [CK_SESSION_HANDLE]
-CA_LogGetStatus = make_late_binding_function('CA_LogGetStatus')
+CA_LogGetStatus = make_late_binding_function("CA_LogGetStatus")
 CA_LogGetStatus.restype = CK_RV
-CA_LogGetStatus.argtypes = [CK_SLOT_ID, POINTER(CK_ULONG), POINTER(CK_ULONG), POINTER(CK_ULONG),
-                            POINTER(CK_ULONG), POINTER(CK_ULONG)]
-CA_DeleteContainerWithHandle = make_late_binding_function('CA_DeleteContainerWithHandle')
+CA_LogGetStatus.argtypes = [
+    CK_SLOT_ID,
+    POINTER(CK_ULONG),
+    POINTER(CK_ULONG),
+    POINTER(CK_ULONG),
+    POINTER(CK_ULONG),
+    POINTER(CK_ULONG),
+]
+CA_DeleteContainerWithHandle = make_late_binding_function("CA_DeleteContainerWithHandle")
 CA_DeleteContainerWithHandle.restype = CK_RV
 CA_DeleteContainerWithHandle.argtypes = [CK_SESSION_HANDLE, CK_ULONG]
-CA_GetContainerList = make_late_binding_function('CA_GetContainerList')
+CA_GetContainerList = make_late_binding_function("CA_GetContainerList")
 CA_GetContainerList.restype = CK_RV
 CA_GetContainerList.argtypes = [CK_SLOT_ID, CK_ULONG, CK_ULONG, CK_ULONG_PTR, CK_ULONG_PTR]
-CA_GetContainerName = make_late_binding_function('CA_GetContainerName')
+CA_GetContainerName = make_late_binding_function("CA_GetContainerName")
 CA_GetContainerName.restype = CK_RV
 CA_GetContainerName.argtypes = [CK_SLOT_ID, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR]
-CA_GetNumberOfAllowedContainers = make_late_binding_function('CA_GetNumberOfAllowedContainers')
+CA_GetNumberOfAllowedContainers = make_late_binding_function("CA_GetNumberOfAllowedContainers")
 CA_GetNumberOfAllowedContainers.restype = CK_RV
 CA_GetNumberOfAllowedContainers.argtypes = [CK_SLOT_ID, CK_ULONG_PTR]
-CA_GetTunnelSlotNumber = make_late_binding_function('CA_GetTunnelSlotNumber')
+CA_GetTunnelSlotNumber = make_late_binding_function("CA_GetTunnelSlotNumber")
 CA_GetTunnelSlotNumber.restype = CK_RV
 CA_GetTunnelSlotNumber.argtypes = [CK_SLOT_ID, CK_SLOT_ID_PTR]
-CA_GetClusterState = make_late_binding_function('CA_GetClusterState')
+CA_GetClusterState = make_late_binding_function("CA_GetClusterState")
 CA_GetClusterState.restype = CK_RV
 CA_GetClusterState.argtypes = [CK_SLOT_ID, CK_CLUSTER_STATE_PTR]
-CA_LockClusteredSlot = make_late_binding_function('CA_LockClusteredSlot')
+CA_LockClusteredSlot = make_late_binding_function("CA_LockClusteredSlot")
 CA_LockClusteredSlot.restype = CK_RV
 CA_LockClusteredSlot.argtypes = [CK_SLOT_ID]
-CA_UnlockClusteredSlot = make_late_binding_function('CA_UnlockClusteredSlot')
+CA_UnlockClusteredSlot = make_late_binding_function("CA_UnlockClusteredSlot")
 CA_UnlockClusteredSlot.restype = CK_RV
 CA_UnlockClusteredSlot.argtypes = [CK_SLOT_ID]
-CA_LKMInitiatorChallenge = make_late_binding_function('CA_LKMInitiatorChallenge')
+CA_LKMInitiatorChallenge = make_late_binding_function("CA_LKMInitiatorChallenge")
 CA_LKMInitiatorChallenge.restype = CK_RV
-CA_LKMInitiatorChallenge.argtypes = [CK_SESSION_HANDLE, CK_OBJECT_HANDLE, CK_OBJECT_HANDLE,
-                                     CK_ULONG, CK_LKM_TOKEN_ID_PTR, CK_LKM_TOKEN_ID_PTR,
-                                     CK_CHAR_PTR, CK_ULONG_PTR]
-CA_LKMReceiverResponse = make_late_binding_function('CA_LKMReceiverResponse')
+CA_LKMInitiatorChallenge.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_OBJECT_HANDLE,
+    CK_OBJECT_HANDLE,
+    CK_ULONG,
+    CK_LKM_TOKEN_ID_PTR,
+    CK_LKM_TOKEN_ID_PTR,
+    CK_CHAR_PTR,
+    CK_ULONG_PTR,
+]
+CA_LKMReceiverResponse = make_late_binding_function("CA_LKMReceiverResponse")
 CA_LKMReceiverResponse.restype = CK_RV
-CA_LKMReceiverResponse.argtypes = [CK_SESSION_HANDLE, CK_OBJECT_HANDLE, CK_OBJECT_HANDLE, CK_ULONG,
-                                   CK_LKM_TOKEN_ID_PTR, CK_CHAR_PTR, CK_ULONG, CK_CHAR_PTR,
-                                   CK_ULONG_PTR]
-CA_LKMInitiatorComplete = make_late_binding_function('CA_LKMInitiatorComplete')
+CA_LKMReceiverResponse.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_OBJECT_HANDLE,
+    CK_OBJECT_HANDLE,
+    CK_ULONG,
+    CK_LKM_TOKEN_ID_PTR,
+    CK_CHAR_PTR,
+    CK_ULONG,
+    CK_CHAR_PTR,
+    CK_ULONG_PTR,
+]
+CA_LKMInitiatorComplete = make_late_binding_function("CA_LKMInitiatorComplete")
 CA_LKMInitiatorComplete.restype = CK_RV
-CA_LKMInitiatorComplete.argtypes = [CK_SESSION_HANDLE, CK_CHAR_PTR, CK_ULONG, CK_ATTRIBUTE_PTR,
-                                    CK_ULONG, CK_ATTRIBUTE_PTR, CK_ULONG, CK_CHAR_PTR, CK_ULONG_PTR,
-                                    CK_OBJECT_HANDLE_PTR, CK_OBJECT_HANDLE_PTR]
-CA_LKMReceiverComplete = make_late_binding_function('CA_LKMReceiverComplete')
+CA_LKMInitiatorComplete.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_CHAR_PTR,
+    CK_ULONG,
+    CK_ATTRIBUTE_PTR,
+    CK_ULONG,
+    CK_ATTRIBUTE_PTR,
+    CK_ULONG,
+    CK_CHAR_PTR,
+    CK_ULONG_PTR,
+    CK_OBJECT_HANDLE_PTR,
+    CK_OBJECT_HANDLE_PTR,
+]
+CA_LKMReceiverComplete = make_late_binding_function("CA_LKMReceiverComplete")
 CA_LKMReceiverComplete.restype = CK_RV
-CA_LKMReceiverComplete.argtypes = [CK_SESSION_HANDLE, CK_CHAR_PTR, CK_ULONG, CK_ATTRIBUTE_PTR,
-                                   CK_ULONG, CK_ATTRIBUTE_PTR, CK_ULONG, CK_OBJECT_HANDLE_PTR,
-                                   CK_OBJECT_HANDLE_PTR]
-CA_ModifyUsageCount = make_late_binding_function('CA_ModifyUsageCount')
+CA_LKMReceiverComplete.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_CHAR_PTR,
+    CK_ULONG,
+    CK_ATTRIBUTE_PTR,
+    CK_ULONG,
+    CK_ATTRIBUTE_PTR,
+    CK_ULONG,
+    CK_OBJECT_HANDLE_PTR,
+    CK_OBJECT_HANDLE_PTR,
+]
+CA_ModifyUsageCount = make_late_binding_function("CA_ModifyUsageCount")
 CA_ModifyUsageCount.restype = CK_RV
 CA_ModifyUsageCount.argtypes = [CK_SESSION_HANDLE, CK_OBJECT_HANDLE, CK_ULONG, CK_ULONG]
-CA_EnableUnauthTokenInsertion = make_late_binding_function('CA_EnableUnauthTokenInsertion')
+CA_EnableUnauthTokenInsertion = make_late_binding_function("CA_EnableUnauthTokenInsertion")
 CA_EnableUnauthTokenInsertion.restype = CK_RV
 CA_EnableUnauthTokenInsertion.argtypes = [CK_SESSION_HANDLE, CK_ULONG, CK_ULONG_PTR]
-CA_GetUnauthTokenInsertionStatus = make_late_binding_function('CA_GetUnauthTokenInsertionStatus')
+CA_GetUnauthTokenInsertionStatus = make_late_binding_function("CA_GetUnauthTokenInsertionStatus")
 CA_GetUnauthTokenInsertionStatus.restype = CK_RV
-CA_GetUnauthTokenInsertionStatus.argtypes = [CK_SESSION_HANDLE, CK_ULONG, POINTER(CK_ULONG),
-                                             POINTER(CK_ULONG)]
-CA_DisableUnauthTokenInsertion = make_late_binding_function('CA_DisableUnauthTokenInsertion')
+CA_GetUnauthTokenInsertionStatus.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_ULONG,
+    POINTER(CK_ULONG),
+    POINTER(CK_ULONG),
+]
+CA_DisableUnauthTokenInsertion = make_late_binding_function("CA_DisableUnauthTokenInsertion")
 CA_DisableUnauthTokenInsertion.restype = CK_RV
 CA_DisableUnauthTokenInsertion.argtypes = [CK_SESSION_HANDLE, CK_ULONG]
-CA_STCRegister = make_late_binding_function('CA_STCRegister')
+CA_STCRegister = make_late_binding_function("CA_STCRegister")
 CA_STCRegister.restype = CK_RV
-CA_STCRegister.argtypes = [CK_SESSION_HANDLE, CK_SLOT_ID, POINTER(CK_CHAR), CK_ULONG,
-                           POINTER(CK_CHAR), CK_ULONG, POINTER(CK_CHAR), CK_ULONG]
-CA_STCDeregister = make_late_binding_function('CA_STCDeregister')
+CA_STCRegister.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_SLOT_ID,
+    POINTER(CK_CHAR),
+    CK_ULONG,
+    POINTER(CK_CHAR),
+    CK_ULONG,
+    POINTER(CK_CHAR),
+    CK_ULONG,
+]
+CA_STCDeregister = make_late_binding_function("CA_STCDeregister")
 CA_STCDeregister.restype = CK_RV
 CA_STCDeregister.argtypes = [CK_SESSION_HANDLE, CK_SLOT_ID, POINTER(CK_CHAR)]
-CA_STCGetPubKey = make_late_binding_function('CA_STCGetPubKey')
+CA_STCGetPubKey = make_late_binding_function("CA_STCGetPubKey")
 CA_STCGetPubKey.restype = CK_RV
-CA_STCGetPubKey.argtypes = [CK_SESSION_HANDLE, CK_SLOT_ID, POINTER(CK_CHAR), POINTER(CK_CHAR),
-                            CK_ULONG_PTR, POINTER(CK_CHAR), CK_ULONG_PTR]
-CA_STCGetClientsList = make_late_binding_function('CA_STCGetClientsList')
+CA_STCGetPubKey.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_SLOT_ID,
+    POINTER(CK_CHAR),
+    POINTER(CK_CHAR),
+    CK_ULONG_PTR,
+    POINTER(CK_CHAR),
+    CK_ULONG_PTR,
+]
+CA_STCGetClientsList = make_late_binding_function("CA_STCGetClientsList")
 CA_STCGetClientsList.restype = CK_RV
 CA_STCGetClientsList.argtypes = [CK_SESSION_HANDLE, CK_SLOT_ID, CK_ULONG_PTR, CK_ULONG_PTR]
-CA_STCGetClientInfo = make_late_binding_function('CA_STCGetClientInfo')
+CA_STCGetClientInfo = make_late_binding_function("CA_STCGetClientInfo")
 CA_STCGetClientInfo.restype = CK_RV
-CA_STCGetClientInfo.argtypes = [CK_SESSION_HANDLE, CK_SLOT_ID, CK_ULONG, POINTER(CK_CHAR),
-                                CK_ULONG_PTR, CK_ULONG_PTR, POINTER(CK_CHAR), CK_ULONG_PTR,
-                                POINTER(CK_CHAR), CK_ULONG_PTR]
-CA_STCGetPartPubKey = make_late_binding_function('CA_STCGetPartPubKey')
+CA_STCGetClientInfo.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_SLOT_ID,
+    CK_ULONG,
+    POINTER(CK_CHAR),
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+    POINTER(CK_CHAR),
+    CK_ULONG_PTR,
+    POINTER(CK_CHAR),
+    CK_ULONG_PTR,
+]
+CA_STCGetPartPubKey = make_late_binding_function("CA_STCGetPartPubKey")
 CA_STCGetPartPubKey.restype = CK_RV
-CA_STCGetPartPubKey.argtypes = [CK_SESSION_HANDLE, CK_SLOT_ID, POINTER(CK_CHAR), CK_ULONG_PTR,
-                                POINTER(CK_CHAR), CK_ULONG_PTR]
-CA_STCGetAdminPubKey = make_late_binding_function('CA_STCGetAdminPubKey')
+CA_STCGetPartPubKey.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_SLOT_ID,
+    POINTER(CK_CHAR),
+    CK_ULONG_PTR,
+    POINTER(CK_CHAR),
+    CK_ULONG_PTR,
+]
+CA_STCGetAdminPubKey = make_late_binding_function("CA_STCGetAdminPubKey")
 CA_STCGetAdminPubKey.restype = CK_RV
-CA_STCGetAdminPubKey.argtypes = [CK_SLOT_ID, POINTER(CK_CHAR), CK_ULONG_PTR, POINTER(CK_CHAR),
-                                 CK_ULONG_PTR]
-CA_STCSetCipherAlgorithm = make_late_binding_function('CA_STCSetCipherAlgorithm')
+CA_STCGetAdminPubKey.argtypes = [
+    CK_SLOT_ID,
+    POINTER(CK_CHAR),
+    CK_ULONG_PTR,
+    POINTER(CK_CHAR),
+    CK_ULONG_PTR,
+]
+CA_STCSetCipherAlgorithm = make_late_binding_function("CA_STCSetCipherAlgorithm")
 CA_STCSetCipherAlgorithm.restype = CK_RV
 CA_STCSetCipherAlgorithm.argtypes = [CK_SESSION_HANDLE, CK_ULONG, CK_ULONG]
-CA_STCGetCipherAlgorithm = make_late_binding_function('CA_STCGetCipherAlgorithm')
+CA_STCGetCipherAlgorithm = make_late_binding_function("CA_STCGetCipherAlgorithm")
 CA_STCGetCipherAlgorithm.restype = CK_RV
 CA_STCGetCipherAlgorithm.argtypes = [CK_SESSION_HANDLE, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR]
-CA_STCClearCipherAlgorithm = make_late_binding_function('CA_STCClearCipherAlgorithm')
+CA_STCClearCipherAlgorithm = make_late_binding_function("CA_STCClearCipherAlgorithm")
 CA_STCClearCipherAlgorithm.restype = CK_RV
 CA_STCClearCipherAlgorithm.argtypes = [CK_SESSION_HANDLE, CK_ULONG, CK_ULONG]
-CA_STCSetDigestAlgorithm = make_late_binding_function('CA_STCSetDigestAlgorithm')
+CA_STCSetDigestAlgorithm = make_late_binding_function("CA_STCSetDigestAlgorithm")
 CA_STCSetDigestAlgorithm.restype = CK_RV
 CA_STCSetDigestAlgorithm.argtypes = [CK_SESSION_HANDLE, CK_ULONG, CK_ULONG]
-CA_STCGetDigestAlgorithm = make_late_binding_function('CA_STCGetDigestAlgorithm')
+CA_STCGetDigestAlgorithm = make_late_binding_function("CA_STCGetDigestAlgorithm")
 CA_STCGetDigestAlgorithm.restype = CK_RV
 CA_STCGetDigestAlgorithm.argtypes = [CK_SESSION_HANDLE, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR]
-CA_STCClearDigestAlgorithm = make_late_binding_function('CA_STCClearDigestAlgorithm')
+CA_STCClearDigestAlgorithm = make_late_binding_function("CA_STCClearDigestAlgorithm")
 CA_STCClearDigestAlgorithm.restype = CK_RV
 CA_STCClearDigestAlgorithm.argtypes = [CK_SESSION_HANDLE, CK_ULONG, CK_ULONG]
-CA_STCSetKeyLifeTime = make_late_binding_function('CA_STCSetKeyLifeTime')
+CA_STCSetKeyLifeTime = make_late_binding_function("CA_STCSetKeyLifeTime")
 CA_STCSetKeyLifeTime.restype = CK_RV
 CA_STCSetKeyLifeTime.argtypes = [CK_SESSION_HANDLE, CK_ULONG, CK_ULONG]
-CA_STCGetKeyLifeTime = make_late_binding_function('CA_STCGetKeyLifeTime')
+CA_STCGetKeyLifeTime = make_late_binding_function("CA_STCGetKeyLifeTime")
 CA_STCGetKeyLifeTime.restype = CK_RV
 CA_STCGetKeyLifeTime.argtypes = [CK_SESSION_HANDLE, CK_ULONG, CK_ULONG_PTR]
-CA_STCSetKeyActivationTimeOut = make_late_binding_function('CA_STCSetKeyActivationTimeOut')
+CA_STCSetKeyActivationTimeOut = make_late_binding_function("CA_STCSetKeyActivationTimeOut")
 CA_STCSetKeyActivationTimeOut.restype = CK_RV
 CA_STCSetKeyActivationTimeOut.argtypes = [CK_SESSION_HANDLE, CK_ULONG, CK_ULONG]
-CA_STCGetKeyActivationTimeOut = make_late_binding_function('CA_STCGetKeyActivationTimeOut')
+CA_STCGetKeyActivationTimeOut = make_late_binding_function("CA_STCGetKeyActivationTimeOut")
 CA_STCGetKeyActivationTimeOut.restype = CK_RV
 CA_STCGetKeyActivationTimeOut.argtypes = [CK_SESSION_HANDLE, CK_ULONG, CK_ULONG_PTR]
-CA_STCSetMaxSessions = make_late_binding_function('CA_STCSetMaxSessions')
+CA_STCSetMaxSessions = make_late_binding_function("CA_STCSetMaxSessions")
 CA_STCSetMaxSessions.restype = CK_RV
 CA_STCSetMaxSessions.argtypes = [CK_SESSION_HANDLE, CK_ULONG, CK_ULONG]
-CA_STCGetMaxSessions = make_late_binding_function('CA_STCGetMaxSessions')
+CA_STCGetMaxSessions = make_late_binding_function("CA_STCGetMaxSessions")
 CA_STCGetMaxSessions.restype = CK_RV
 CA_STCGetMaxSessions.argtypes = [CK_SESSION_HANDLE, CK_ULONG, CK_ULONG_PTR]
-CA_STCSetSequenceWindowSize = make_late_binding_function('CA_STCSetSequenceWindowSize')
+CA_STCSetSequenceWindowSize = make_late_binding_function("CA_STCSetSequenceWindowSize")
 CA_STCSetSequenceWindowSize.restype = CK_RV
 CA_STCSetSequenceWindowSize.argtypes = [CK_SESSION_HANDLE, CK_ULONG, CK_ULONG]
-CA_STCGetSequenceWindowSize = make_late_binding_function('CA_STCGetSequenceWindowSize')
+CA_STCGetSequenceWindowSize = make_late_binding_function("CA_STCGetSequenceWindowSize")
 CA_STCGetSequenceWindowSize.restype = CK_RV
 CA_STCGetSequenceWindowSize.argtypes = [CK_SESSION_HANDLE, CK_ULONG, CK_ULONG_PTR]
-CA_STCIsEnabled = make_late_binding_function('CA_STCIsEnabled')
+CA_STCIsEnabled = make_late_binding_function("CA_STCIsEnabled")
 CA_STCIsEnabled.restype = CK_RV
 CA_STCIsEnabled.argtypes = [CK_ULONG, CK_BYTE_PTR]
-CA_STCGetState = make_late_binding_function('CA_STCGetState')
+CA_STCGetState = make_late_binding_function("CA_STCGetState")
 CA_STCGetState.restype = CK_RV
 CA_STCGetState.argtypes = [CK_ULONG, POINTER(CK_CHAR), CK_BYTE]
-CA_STCGetCurrentKeyLife = make_late_binding_function('CA_STCGetCurrentKeyLife')
+CA_STCGetCurrentKeyLife = make_late_binding_function("CA_STCGetCurrentKeyLife")
 CA_STCGetCurrentKeyLife.restype = CK_RV
 CA_STCGetCurrentKeyLife.argtypes = [CK_SESSION_HANDLE, CK_ULONG, CK_ULONG_PTR]
-CA_GetSlotIdForPhysicalSlot = make_late_binding_function('CA_GetSlotIdForPhysicalSlot')
+CA_GetSlotIdForPhysicalSlot = make_late_binding_function("CA_GetSlotIdForPhysicalSlot")
 CA_GetSlotIdForPhysicalSlot.restype = CK_RV
 CA_GetSlotIdForPhysicalSlot.argtypes = [CK_ULONG, CK_SLOT_ID_PTR]
-CA_GetSlotIdForContainer = make_late_binding_function('CA_GetSlotIdForContainer')
+CA_GetSlotIdForContainer = make_late_binding_function("CA_GetSlotIdForContainer")
 CA_GetSlotIdForContainer.restype = CK_RV
 CA_GetSlotIdForContainer.argtypes = [CK_ULONG, CK_ULONG, CK_SLOT_ID_PTR]
-CA_STCGetChannelID = make_late_binding_function('CA_STCGetChannelID')
+CA_STCGetChannelID = make_late_binding_function("CA_STCGetChannelID")
 CA_STCGetChannelID.restype = CK_RV
 CA_STCGetChannelID.argtypes = [CK_SLOT_ID, CK_ULONG_PTR]
-CA_STCGetCipherID = make_late_binding_function('CA_STCGetCipherID')
+CA_STCGetCipherID = make_late_binding_function("CA_STCGetCipherID")
 CA_STCGetCipherID.restype = CK_RV
 CA_STCGetCipherID.argtypes = [CK_SLOT_ID, CK_ULONG_PTR]
-CA_STCGetDigestID = make_late_binding_function('CA_STCGetDigestID')
+CA_STCGetDigestID = make_late_binding_function("CA_STCGetDigestID")
 CA_STCGetDigestID.restype = CK_RV
 CA_STCGetDigestID.argtypes = [CK_SLOT_ID, CK_ULONG_PTR]
-CA_STCGetCipherIDs = make_late_binding_function('CA_STCGetCipherIDs')
+CA_STCGetCipherIDs = make_late_binding_function("CA_STCGetCipherIDs")
 CA_STCGetCipherIDs.restype = CK_RV
 CA_STCGetCipherIDs.argtypes = [CK_SLOT_ID, CK_ULONG_PTR, CK_BYTE_PTR]
-CA_STCGetCipherNameByID = make_late_binding_function('CA_STCGetCipherNameByID')
+CA_STCGetCipherNameByID = make_late_binding_function("CA_STCGetCipherNameByID")
 CA_STCGetCipherNameByID.restype = CK_RV
 CA_STCGetCipherNameByID.argtypes = [CK_SLOT_ID, CK_ULONG, CK_CHAR_PTR, CK_BYTE]
-CA_STCGetDigestIDs = make_late_binding_function('CA_STCGetDigestIDs')
+CA_STCGetDigestIDs = make_late_binding_function("CA_STCGetDigestIDs")
 CA_STCGetDigestIDs.restype = CK_RV
 CA_STCGetDigestIDs.argtypes = [CK_SLOT_ID, CK_ULONG_PTR, CK_BYTE_PTR]
-CA_STCGetDigestNameByID = make_late_binding_function('CA_STCGetDigestNameByID')
+CA_STCGetDigestNameByID = make_late_binding_function("CA_STCGetDigestNameByID")
 CA_STCGetDigestNameByID.restype = CK_RV
 CA_STCGetDigestNameByID.argtypes = [CK_SLOT_ID, CK_ULONG, CK_CHAR_PTR, CK_BYTE]
-CA_GetServerInstanceBySlotID = make_late_binding_function('CA_GetServerInstanceBySlotID')
+CA_GetServerInstanceBySlotID = make_late_binding_function("CA_GetServerInstanceBySlotID")
 CA_GetServerInstanceBySlotID.restype = CK_RV
 CA_GetServerInstanceBySlotID.argtypes = [CK_SLOT_ID, CK_ULONG_PTR]
-CA_GetSlotListFromServerInstance = make_late_binding_function('CA_GetSlotListFromServerInstance')
+CA_GetSlotListFromServerInstance = make_late_binding_function("CA_GetSlotListFromServerInstance")
 CA_GetSlotListFromServerInstance.restype = CK_RV
 CA_GetSlotListFromServerInstance.argtypes = [CK_ULONG, CK_SLOT_ID_PTR, CK_ULONG_PTR]
-CA_PerformSelfTest = make_late_binding_function('CA_PerformSelfTest')
+CA_PerformSelfTest = make_late_binding_function("CA_PerformSelfTest")
 CA_PerformSelfTest.restype = CK_RV
-CA_PerformSelfTest.argtypes = [CK_SLOT_ID, CK_ULONG, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR,
-                               CK_ULONG_PTR]
-CA_DeriveKeyAndWrap = make_late_binding_function('CA_DeriveKeyAndWrap')
+CA_PerformSelfTest.argtypes = [
+    CK_SLOT_ID,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG_PTR,
+]
+CA_DeriveKeyAndWrap = make_late_binding_function("CA_DeriveKeyAndWrap")
 CA_DeriveKeyAndWrap.restype = CK_RV
-CA_DeriveKeyAndWrap.argtypes = [CK_SESSION_HANDLE, CK_MECHANISM_PTR, CK_OBJECT_HANDLE,
-                                CK_ATTRIBUTE_PTR, CK_ULONG, CK_MECHANISM_PTR, CK_OBJECT_HANDLE,
-                                CK_BYTE_PTR, CK_ULONG_PTR]
-CA_Get = make_late_binding_function('CA_Get')
+CA_DeriveKeyAndWrap.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_MECHANISM_PTR,
+    CK_OBJECT_HANDLE,
+    CK_ATTRIBUTE_PTR,
+    CK_ULONG,
+    CK_MECHANISM_PTR,
+    CK_OBJECT_HANDLE,
+    CK_BYTE_PTR,
+    CK_ULONG_PTR,
+]
+CA_Get = make_late_binding_function("CA_Get")
 CA_Get.restype = CK_RV
 CA_Get.argtypes = [CK_SLOT_ID, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR]
 
-CA_GetFirmwareVersion = make_late_binding_function('CA_GetFirmwareVersion')
+CA_GetFirmwareVersion = make_late_binding_function("CA_GetFirmwareVersion")
 CA_GetFirmwareVersion.restype = CK_RV
 CA_GetFirmwareVersion.argtypes = [CK_SLOT_ID, CK_ULONG_PTR, CK_ULONG_PTR, CK_ULONG_PTR]
 
@@ -2481,12 +3243,9 @@ class swapper(Union):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     swapper._pack_ = 1
-swapper._fields_ = [
-    ('bytes', c_char * 4),
-    ('words', c_int),
-]
+swapper._fields_ = [("bytes", c_char * 4), ("words", c_int)]
 HANDLE = c_int
 
 
@@ -2537,10 +3296,12 @@ CK_MECHANISM_INFO_PTR = POINTER(CK_MECHANISM_INFO)
 CK_C_GetMechanismInfo = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_MECHANISM_TYPE, CK_MECHANISM_INFO_PTR)
 CK_C_InitToken = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_UTF8CHAR_PTR, CK_ULONG, CK_UTF8CHAR_PTR)
 CK_C_InitPIN = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_UTF8CHAR_PTR, CK_ULONG)
-CK_C_SetPIN = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_UTF8CHAR_PTR, CK_ULONG, CK_UTF8CHAR_PTR,
-                        CK_ULONG)
-CK_C_OpenSession = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_FLAGS, CK_VOID_PTR, CK_NOTIFY,
-                             CK_SESSION_HANDLE_PTR)
+CK_C_SetPIN = CFUNCTYPE(
+    CK_RV, CK_SESSION_HANDLE, CK_UTF8CHAR_PTR, CK_ULONG, CK_UTF8CHAR_PTR, CK_ULONG
+)
+CK_C_OpenSession = CFUNCTYPE(
+    CK_RV, CK_SLOT_ID, CK_FLAGS, CK_VOID_PTR, CK_NOTIFY, CK_SESSION_HANDLE_PTR
+)
 CK_C_CloseSession = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE)
 CK_C_CloseAllSessions = CFUNCTYPE(CK_RV, CK_SLOT_ID)
 
@@ -2552,32 +3313,39 @@ class CK_SESSION_INFO(Structure):
 CK_SESSION_INFO_PTR = POINTER(CK_SESSION_INFO)
 CK_C_GetSessionInfo = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_SESSION_INFO_PTR)
 CK_C_GetOperationState = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG_PTR)
-CK_C_SetOperationState = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG,
-                                   CK_OBJECT_HANDLE, CK_OBJECT_HANDLE)
+CK_C_SetOperationState = CFUNCTYPE(
+    CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_OBJECT_HANDLE, CK_OBJECT_HANDLE
+)
 CK_C_Login = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_USER_TYPE, CK_UTF8CHAR_PTR, CK_ULONG)
 CK_C_Logout = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE)
-CK_C_CreateObject = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ATTRIBUTE_PTR, CK_ULONG,
-                              CK_OBJECT_HANDLE_PTR)
-CK_C_CopyObject = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_OBJECT_HANDLE, CK_ATTRIBUTE_PTR, CK_ULONG,
-                            CK_OBJECT_HANDLE_PTR)
+CK_C_CreateObject = CFUNCTYPE(
+    CK_RV, CK_SESSION_HANDLE, CK_ATTRIBUTE_PTR, CK_ULONG, CK_OBJECT_HANDLE_PTR
+)
+CK_C_CopyObject = CFUNCTYPE(
+    CK_RV, CK_SESSION_HANDLE, CK_OBJECT_HANDLE, CK_ATTRIBUTE_PTR, CK_ULONG, CK_OBJECT_HANDLE_PTR
+)
 CK_C_DestroyObject = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_OBJECT_HANDLE)
 CK_C_GetObjectSize = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_OBJECT_HANDLE, CK_ULONG_PTR)
-CK_C_GetAttributeValue = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_OBJECT_HANDLE, CK_ATTRIBUTE_PTR,
-                                   CK_ULONG)
-CK_C_SetAttributeValue = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_OBJECT_HANDLE, CK_ATTRIBUTE_PTR,
-                                   CK_ULONG)
+CK_C_GetAttributeValue = CFUNCTYPE(
+    CK_RV, CK_SESSION_HANDLE, CK_OBJECT_HANDLE, CK_ATTRIBUTE_PTR, CK_ULONG
+)
+CK_C_SetAttributeValue = CFUNCTYPE(
+    CK_RV, CK_SESSION_HANDLE, CK_OBJECT_HANDLE, CK_ATTRIBUTE_PTR, CK_ULONG
+)
 CK_C_FindObjectsInit = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_ATTRIBUTE_PTR, CK_ULONG)
 CK_C_FindObjects = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_OBJECT_HANDLE_PTR, CK_ULONG, CK_ULONG_PTR)
 CK_C_FindObjectsFinal = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE)
 CK_C_EncryptInit = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_MECHANISM_PTR, CK_OBJECT_HANDLE)
 CK_C_Encrypt = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR)
-CK_C_EncryptUpdate = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR,
-                               CK_ULONG_PTR)
+CK_C_EncryptUpdate = CFUNCTYPE(
+    CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR
+)
 CK_C_EncryptFinal = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG_PTR)
 CK_C_DecryptInit = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_MECHANISM_PTR, CK_OBJECT_HANDLE)
 CK_C_Decrypt = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR)
-CK_C_DecryptUpdate = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR,
-                               CK_ULONG_PTR)
+CK_C_DecryptUpdate = CFUNCTYPE(
+    CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR
+)
 CK_C_DecryptFinal = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG_PTR)
 CK_C_DigestInit = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_MECHANISM_PTR)
 CK_C_Digest = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR)
@@ -2589,378 +3357,473 @@ CK_C_Sign = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_BYTE_P
 CK_C_SignUpdate = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG)
 CK_C_SignFinal = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG_PTR)
 CK_C_SignRecoverInit = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_MECHANISM_PTR, CK_OBJECT_HANDLE)
-CK_C_SignRecover = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR,
-                             CK_ULONG_PTR)
+CK_C_SignRecover = CFUNCTYPE(
+    CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR
+)
 CK_C_VerifyInit = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_MECHANISM_PTR, CK_OBJECT_HANDLE)
 CK_C_Verify = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG)
 CK_C_VerifyUpdate = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG)
 CK_C_VerifyFinal = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG)
 CK_C_VerifyRecoverInit = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_MECHANISM_PTR, CK_OBJECT_HANDLE)
-CK_C_VerifyRecover = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR,
-                               CK_ULONG_PTR)
-CK_C_DigestEncryptUpdate = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR,
-                                     CK_ULONG_PTR)
-CK_C_DecryptDigestUpdate = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR,
-                                     CK_ULONG_PTR)
-CK_C_SignEncryptUpdate = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR,
-                                   CK_ULONG_PTR)
-CK_C_DecryptVerifyUpdate = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR,
-                                     CK_ULONG_PTR)
-CK_C_GenerateKey = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_MECHANISM_PTR, CK_ATTRIBUTE_PTR, CK_ULONG,
-                             CK_OBJECT_HANDLE_PTR)
-CK_C_GenerateKeyPair = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_MECHANISM_PTR, CK_ATTRIBUTE_PTR,
-                                 CK_ULONG, CK_ATTRIBUTE_PTR, CK_ULONG, CK_OBJECT_HANDLE_PTR,
-                                 CK_OBJECT_HANDLE_PTR)
-CK_C_WrapKey = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_MECHANISM_PTR, CK_OBJECT_HANDLE,
-                         CK_OBJECT_HANDLE, CK_BYTE_PTR, CK_ULONG_PTR)
-CK_C_UnwrapKey = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_MECHANISM_PTR, CK_OBJECT_HANDLE,
-                           CK_BYTE_PTR, CK_ULONG, CK_ATTRIBUTE_PTR, CK_ULONG, CK_OBJECT_HANDLE_PTR)
-CK_C_DeriveKey = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_MECHANISM_PTR, CK_OBJECT_HANDLE,
-                           CK_ATTRIBUTE_PTR, CK_ULONG, CK_OBJECT_HANDLE_PTR)
+CK_C_VerifyRecover = CFUNCTYPE(
+    CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR
+)
+CK_C_DigestEncryptUpdate = CFUNCTYPE(
+    CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR
+)
+CK_C_DecryptDigestUpdate = CFUNCTYPE(
+    CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR
+)
+CK_C_SignEncryptUpdate = CFUNCTYPE(
+    CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR
+)
+CK_C_DecryptVerifyUpdate = CFUNCTYPE(
+    CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR
+)
+CK_C_GenerateKey = CFUNCTYPE(
+    CK_RV, CK_SESSION_HANDLE, CK_MECHANISM_PTR, CK_ATTRIBUTE_PTR, CK_ULONG, CK_OBJECT_HANDLE_PTR
+)
+CK_C_GenerateKeyPair = CFUNCTYPE(
+    CK_RV,
+    CK_SESSION_HANDLE,
+    CK_MECHANISM_PTR,
+    CK_ATTRIBUTE_PTR,
+    CK_ULONG,
+    CK_ATTRIBUTE_PTR,
+    CK_ULONG,
+    CK_OBJECT_HANDLE_PTR,
+    CK_OBJECT_HANDLE_PTR,
+)
+CK_C_WrapKey = CFUNCTYPE(
+    CK_RV,
+    CK_SESSION_HANDLE,
+    CK_MECHANISM_PTR,
+    CK_OBJECT_HANDLE,
+    CK_OBJECT_HANDLE,
+    CK_BYTE_PTR,
+    CK_ULONG_PTR,
+)
+CK_C_UnwrapKey = CFUNCTYPE(
+    CK_RV,
+    CK_SESSION_HANDLE,
+    CK_MECHANISM_PTR,
+    CK_OBJECT_HANDLE,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_ATTRIBUTE_PTR,
+    CK_ULONG,
+    CK_OBJECT_HANDLE_PTR,
+)
+CK_C_DeriveKey = CFUNCTYPE(
+    CK_RV,
+    CK_SESSION_HANDLE,
+    CK_MECHANISM_PTR,
+    CK_OBJECT_HANDLE,
+    CK_ATTRIBUTE_PTR,
+    CK_ULONG,
+    CK_OBJECT_HANDLE_PTR,
+)
 CK_C_SeedRandom = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG)
 CK_C_GenerateRandom = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG)
 CK_C_GetFunctionStatus = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE)
 CK_C_CancelFunction = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE)
 CK_C_WaitForSlotEvent = CFUNCTYPE(CK_RV, CK_FLAGS, CK_SLOT_ID_PTR, CK_VOID_PTR)
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_FUNCTION_LIST._pack_ = 1
 CK_FUNCTION_LIST._fields_ = [
-    ('version', CK_VERSION),
-    ('C_Initialize', CK_C_Initialize),
-    ('C_Finalize', CK_C_Finalize),
-    ('C_GetInfo', CK_C_GetInfo),
-    ('C_GetFunctionList', CK_C_GetFunctionList),
-    ('C_GetSlotList', CK_C_GetSlotList),
-    ('C_GetSlotInfo', CK_C_GetSlotInfo),
-    ('C_GetTokenInfo', CK_C_GetTokenInfo),
-    ('C_GetMechanismList', CK_C_GetMechanismList),
-    ('C_GetMechanismInfo', CK_C_GetMechanismInfo),
-    ('C_InitToken', CK_C_InitToken),
-    ('C_InitPIN', CK_C_InitPIN),
-    ('C_SetPIN', CK_C_SetPIN),
-    ('C_OpenSession', CK_C_OpenSession),
-    ('C_CloseSession', CK_C_CloseSession),
-    ('C_CloseAllSessions', CK_C_CloseAllSessions),
-    ('C_GetSessionInfo', CK_C_GetSessionInfo),
-    ('C_GetOperationState', CK_C_GetOperationState),
-    ('C_SetOperationState', CK_C_SetOperationState),
-    ('C_Login', CK_C_Login),
-    ('C_Logout', CK_C_Logout),
-    ('C_CreateObject', CK_C_CreateObject),
-    ('C_CopyObject', CK_C_CopyObject),
-    ('C_DestroyObject', CK_C_DestroyObject),
-    ('C_GetObjectSize', CK_C_GetObjectSize),
-    ('C_GetAttributeValue', CK_C_GetAttributeValue),
-    ('C_SetAttributeValue', CK_C_SetAttributeValue),
-    ('C_FindObjectsInit', CK_C_FindObjectsInit),
-    ('C_FindObjects', CK_C_FindObjects),
-    ('C_FindObjectsFinal', CK_C_FindObjectsFinal),
-    ('C_EncryptInit', CK_C_EncryptInit),
-    ('C_Encrypt', CK_C_Encrypt),
-    ('C_EncryptUpdate', CK_C_EncryptUpdate),
-    ('C_EncryptFinal', CK_C_EncryptFinal),
-    ('C_DecryptInit', CK_C_DecryptInit),
-    ('C_Decrypt', CK_C_Decrypt),
-    ('C_DecryptUpdate', CK_C_DecryptUpdate),
-    ('C_DecryptFinal', CK_C_DecryptFinal),
-    ('C_DigestInit', CK_C_DigestInit),
-    ('C_Digest', CK_C_Digest),
-    ('C_DigestUpdate', CK_C_DigestUpdate),
-    ('C_DigestKey', CK_C_DigestKey),
-    ('C_DigestFinal', CK_C_DigestFinal),
-    ('C_SignInit', CK_C_SignInit),
-    ('C_Sign', CK_C_Sign),
-    ('C_SignUpdate', CK_C_SignUpdate),
-    ('C_SignFinal', CK_C_SignFinal),
-    ('C_SignRecoverInit', CK_C_SignRecoverInit),
-    ('C_SignRecover', CK_C_SignRecover),
-    ('C_VerifyInit', CK_C_VerifyInit),
-    ('C_Verify', CK_C_Verify),
-    ('C_VerifyUpdate', CK_C_VerifyUpdate),
-    ('C_VerifyFinal', CK_C_VerifyFinal),
-    ('C_VerifyRecoverInit', CK_C_VerifyRecoverInit),
-    ('C_VerifyRecover', CK_C_VerifyRecover),
-    ('C_DigestEncryptUpdate', CK_C_DigestEncryptUpdate),
-    ('C_DecryptDigestUpdate', CK_C_DecryptDigestUpdate),
-    ('C_SignEncryptUpdate', CK_C_SignEncryptUpdate),
-    ('C_DecryptVerifyUpdate', CK_C_DecryptVerifyUpdate),
-    ('C_GenerateKey', CK_C_GenerateKey),
-    ('C_GenerateKeyPair', CK_C_GenerateKeyPair),
-    ('C_WrapKey', CK_C_WrapKey),
-    ('C_UnwrapKey', CK_C_UnwrapKey),
-    ('C_DeriveKey', CK_C_DeriveKey),
-    ('C_SeedRandom', CK_C_SeedRandom),
-    ('C_GenerateRandom', CK_C_GenerateRandom),
-    ('C_GetFunctionStatus', CK_C_GetFunctionStatus),
-    ('C_CancelFunction', CK_C_CancelFunction),
-    ('C_WaitForSlotEvent', CK_C_WaitForSlotEvent),
+    ("version", CK_VERSION),
+    ("C_Initialize", CK_C_Initialize),
+    ("C_Finalize", CK_C_Finalize),
+    ("C_GetInfo", CK_C_GetInfo),
+    ("C_GetFunctionList", CK_C_GetFunctionList),
+    ("C_GetSlotList", CK_C_GetSlotList),
+    ("C_GetSlotInfo", CK_C_GetSlotInfo),
+    ("C_GetTokenInfo", CK_C_GetTokenInfo),
+    ("C_GetMechanismList", CK_C_GetMechanismList),
+    ("C_GetMechanismInfo", CK_C_GetMechanismInfo),
+    ("C_InitToken", CK_C_InitToken),
+    ("C_InitPIN", CK_C_InitPIN),
+    ("C_SetPIN", CK_C_SetPIN),
+    ("C_OpenSession", CK_C_OpenSession),
+    ("C_CloseSession", CK_C_CloseSession),
+    ("C_CloseAllSessions", CK_C_CloseAllSessions),
+    ("C_GetSessionInfo", CK_C_GetSessionInfo),
+    ("C_GetOperationState", CK_C_GetOperationState),
+    ("C_SetOperationState", CK_C_SetOperationState),
+    ("C_Login", CK_C_Login),
+    ("C_Logout", CK_C_Logout),
+    ("C_CreateObject", CK_C_CreateObject),
+    ("C_CopyObject", CK_C_CopyObject),
+    ("C_DestroyObject", CK_C_DestroyObject),
+    ("C_GetObjectSize", CK_C_GetObjectSize),
+    ("C_GetAttributeValue", CK_C_GetAttributeValue),
+    ("C_SetAttributeValue", CK_C_SetAttributeValue),
+    ("C_FindObjectsInit", CK_C_FindObjectsInit),
+    ("C_FindObjects", CK_C_FindObjects),
+    ("C_FindObjectsFinal", CK_C_FindObjectsFinal),
+    ("C_EncryptInit", CK_C_EncryptInit),
+    ("C_Encrypt", CK_C_Encrypt),
+    ("C_EncryptUpdate", CK_C_EncryptUpdate),
+    ("C_EncryptFinal", CK_C_EncryptFinal),
+    ("C_DecryptInit", CK_C_DecryptInit),
+    ("C_Decrypt", CK_C_Decrypt),
+    ("C_DecryptUpdate", CK_C_DecryptUpdate),
+    ("C_DecryptFinal", CK_C_DecryptFinal),
+    ("C_DigestInit", CK_C_DigestInit),
+    ("C_Digest", CK_C_Digest),
+    ("C_DigestUpdate", CK_C_DigestUpdate),
+    ("C_DigestKey", CK_C_DigestKey),
+    ("C_DigestFinal", CK_C_DigestFinal),
+    ("C_SignInit", CK_C_SignInit),
+    ("C_Sign", CK_C_Sign),
+    ("C_SignUpdate", CK_C_SignUpdate),
+    ("C_SignFinal", CK_C_SignFinal),
+    ("C_SignRecoverInit", CK_C_SignRecoverInit),
+    ("C_SignRecover", CK_C_SignRecover),
+    ("C_VerifyInit", CK_C_VerifyInit),
+    ("C_Verify", CK_C_Verify),
+    ("C_VerifyUpdate", CK_C_VerifyUpdate),
+    ("C_VerifyFinal", CK_C_VerifyFinal),
+    ("C_VerifyRecoverInit", CK_C_VerifyRecoverInit),
+    ("C_VerifyRecover", CK_C_VerifyRecover),
+    ("C_DigestEncryptUpdate", CK_C_DigestEncryptUpdate),
+    ("C_DecryptDigestUpdate", CK_C_DecryptDigestUpdate),
+    ("C_SignEncryptUpdate", CK_C_SignEncryptUpdate),
+    ("C_DecryptVerifyUpdate", CK_C_DecryptVerifyUpdate),
+    ("C_GenerateKey", CK_C_GenerateKey),
+    ("C_GenerateKeyPair", CK_C_GenerateKeyPair),
+    ("C_WrapKey", CK_C_WrapKey),
+    ("C_UnwrapKey", CK_C_UnwrapKey),
+    ("C_DeriveKey", CK_C_DeriveKey),
+    ("C_SeedRandom", CK_C_SeedRandom),
+    ("C_GenerateRandom", CK_C_GenerateRandom),
+    ("C_GetFunctionStatus", CK_C_GetFunctionStatus),
+    ("C_CancelFunction", CK_C_CancelFunction),
+    ("C_WaitForSlotEvent", CK_C_WaitForSlotEvent),
 ]
-C_Initialize = make_late_binding_function('C_Initialize')
+C_Initialize = make_late_binding_function("C_Initialize")
 C_Initialize.restype = CK_RV
 C_Initialize.argtypes = [CK_VOID_PTR]
-C_Finalize = make_late_binding_function('C_Finalize')
+C_Finalize = make_late_binding_function("C_Finalize")
 C_Finalize.restype = CK_RV
 C_Finalize.argtypes = [CK_VOID_PTR]
-C_GetInfo = make_late_binding_function('C_GetInfo')
+C_GetInfo = make_late_binding_function("C_GetInfo")
 C_GetInfo.restype = CK_RV
 C_GetInfo.argtypes = [CK_INFO_PTR]
-C_GetFunctionList = make_late_binding_function('C_GetFunctionList')
+C_GetFunctionList = make_late_binding_function("C_GetFunctionList")
 C_GetFunctionList.restype = CK_RV
 C_GetFunctionList.argtypes = [CK_FUNCTION_LIST_PTR_PTR]
-C_GetSlotList = make_late_binding_function('C_GetSlotList')
+C_GetSlotList = make_late_binding_function("C_GetSlotList")
 C_GetSlotList.restype = CK_RV
 C_GetSlotList.argtypes = [CK_BBOOL, CK_SLOT_ID_PTR, CK_ULONG_PTR]
-C_GetSlotInfo = make_late_binding_function('C_GetSlotInfo')
+C_GetSlotInfo = make_late_binding_function("C_GetSlotInfo")
 C_GetSlotInfo.restype = CK_RV
 C_GetSlotInfo.argtypes = [CK_SLOT_ID, CK_SLOT_INFO_PTR]
-C_GetTokenInfo = make_late_binding_function('C_GetTokenInfo')
+C_GetTokenInfo = make_late_binding_function("C_GetTokenInfo")
 C_GetTokenInfo.restype = CK_RV
 C_GetTokenInfo.argtypes = [CK_SLOT_ID, CK_TOKEN_INFO_PTR]
-C_GetMechanismList = make_late_binding_function('C_GetMechanismList')
+C_GetMechanismList = make_late_binding_function("C_GetMechanismList")
 C_GetMechanismList.restype = CK_RV
 C_GetMechanismList.argtypes = [CK_SLOT_ID, CK_MECHANISM_TYPE_PTR, CK_ULONG_PTR]
-C_GetMechanismInfo = make_late_binding_function('C_GetMechanismInfo')
+C_GetMechanismInfo = make_late_binding_function("C_GetMechanismInfo")
 C_GetMechanismInfo.restype = CK_RV
 C_GetMechanismInfo.argtypes = [CK_SLOT_ID, CK_MECHANISM_TYPE, CK_MECHANISM_INFO_PTR]
-C_InitToken = make_late_binding_function('C_InitToken')
+C_InitToken = make_late_binding_function("C_InitToken")
 C_InitToken.restype = CK_RV
 C_InitToken.argtypes = [CK_SLOT_ID, CK_UTF8CHAR_PTR, CK_ULONG, CK_UTF8CHAR_PTR]
-C_InitPIN = make_late_binding_function('C_InitPIN')
+C_InitPIN = make_late_binding_function("C_InitPIN")
 C_InitPIN.restype = CK_RV
 C_InitPIN.argtypes = [CK_SESSION_HANDLE, CK_UTF8CHAR_PTR, CK_ULONG]
-C_SetPIN = make_late_binding_function('C_SetPIN')
+C_SetPIN = make_late_binding_function("C_SetPIN")
 C_SetPIN.restype = CK_RV
 C_SetPIN.argtypes = [CK_SESSION_HANDLE, CK_UTF8CHAR_PTR, CK_ULONG, CK_UTF8CHAR_PTR, CK_ULONG]
-C_OpenSession = make_late_binding_function('C_OpenSession')
+C_OpenSession = make_late_binding_function("C_OpenSession")
 C_OpenSession.restype = CK_RV
 C_OpenSession.argtypes = [CK_SLOT_ID, CK_FLAGS, CK_VOID_PTR, CK_NOTIFY, CK_SESSION_HANDLE_PTR]
-C_CloseSession = make_late_binding_function('C_CloseSession')
+C_CloseSession = make_late_binding_function("C_CloseSession")
 C_CloseSession.restype = CK_RV
 C_CloseSession.argtypes = [CK_SESSION_HANDLE]
-C_CloseAllSessions = make_late_binding_function('C_CloseAllSessions')
+C_CloseAllSessions = make_late_binding_function("C_CloseAllSessions")
 C_CloseAllSessions.restype = CK_RV
 C_CloseAllSessions.argtypes = [CK_SLOT_ID]
-C_GetSessionInfo = make_late_binding_function('C_GetSessionInfo')
+C_GetSessionInfo = make_late_binding_function("C_GetSessionInfo")
 C_GetSessionInfo.restype = CK_RV
 C_GetSessionInfo.argtypes = [CK_SESSION_HANDLE, CK_SESSION_INFO_PTR]
-C_GetOperationState = make_late_binding_function('C_GetOperationState')
+C_GetOperationState = make_late_binding_function("C_GetOperationState")
 C_GetOperationState.restype = CK_RV
 C_GetOperationState.argtypes = [CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG_PTR]
-C_SetOperationState = make_late_binding_function('C_SetOperationState')
+C_SetOperationState = make_late_binding_function("C_SetOperationState")
 C_SetOperationState.restype = CK_RV
-C_SetOperationState.argtypes = [CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_OBJECT_HANDLE,
-                                CK_OBJECT_HANDLE]
-C_Login = make_late_binding_function('C_Login')
+C_SetOperationState.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_OBJECT_HANDLE,
+    CK_OBJECT_HANDLE,
+]
+C_Login = make_late_binding_function("C_Login")
 C_Login.restype = CK_RV
 C_Login.argtypes = [CK_SESSION_HANDLE, CK_USER_TYPE, CK_UTF8CHAR_PTR, CK_ULONG]
-C_Logout = make_late_binding_function('C_Logout')
+C_Logout = make_late_binding_function("C_Logout")
 C_Logout.restype = CK_RV
 C_Logout.argtypes = [CK_SESSION_HANDLE]
-C_CreateObject = make_late_binding_function('C_CreateObject')
+C_CreateObject = make_late_binding_function("C_CreateObject")
 C_CreateObject.restype = CK_RV
 C_CreateObject.argtypes = [CK_SESSION_HANDLE, CK_ATTRIBUTE_PTR, CK_ULONG, CK_OBJECT_HANDLE_PTR]
-C_CopyObject = make_late_binding_function('C_CopyObject')
+C_CopyObject = make_late_binding_function("C_CopyObject")
 C_CopyObject.restype = CK_RV
-C_CopyObject.argtypes = [CK_SESSION_HANDLE, CK_OBJECT_HANDLE, CK_ATTRIBUTE_PTR, CK_ULONG,
-                         CK_OBJECT_HANDLE_PTR]
-C_DestroyObject = make_late_binding_function('C_DestroyObject')
+C_CopyObject.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_OBJECT_HANDLE,
+    CK_ATTRIBUTE_PTR,
+    CK_ULONG,
+    CK_OBJECT_HANDLE_PTR,
+]
+C_DestroyObject = make_late_binding_function("C_DestroyObject")
 C_DestroyObject.restype = CK_RV
 C_DestroyObject.argtypes = [CK_SESSION_HANDLE, CK_OBJECT_HANDLE]
-C_GetObjectSize = make_late_binding_function('C_GetObjectSize')
+C_GetObjectSize = make_late_binding_function("C_GetObjectSize")
 C_GetObjectSize.restype = CK_RV
 C_GetObjectSize.argtypes = [CK_SESSION_HANDLE, CK_OBJECT_HANDLE, CK_ULONG_PTR]
-C_GetAttributeValue = make_late_binding_function('C_GetAttributeValue')
+C_GetAttributeValue = make_late_binding_function("C_GetAttributeValue")
 C_GetAttributeValue.restype = CK_RV
 C_GetAttributeValue.argtypes = [CK_SESSION_HANDLE, CK_OBJECT_HANDLE, CK_ATTRIBUTE_PTR, CK_ULONG]
-C_SetAttributeValue = make_late_binding_function('C_SetAttributeValue')
+C_SetAttributeValue = make_late_binding_function("C_SetAttributeValue")
 C_SetAttributeValue.restype = CK_RV
 C_SetAttributeValue.argtypes = [CK_SESSION_HANDLE, CK_OBJECT_HANDLE, CK_ATTRIBUTE_PTR, CK_ULONG]
-C_FindObjectsInit = make_late_binding_function('C_FindObjectsInit')
+C_FindObjectsInit = make_late_binding_function("C_FindObjectsInit")
 C_FindObjectsInit.restype = CK_RV
 C_FindObjectsInit.argtypes = [CK_SESSION_HANDLE, CK_ATTRIBUTE_PTR, CK_ULONG]
-C_FindObjects = make_late_binding_function('C_FindObjects')
+C_FindObjects = make_late_binding_function("C_FindObjects")
 C_FindObjects.restype = CK_RV
 C_FindObjects.argtypes = [CK_SESSION_HANDLE, CK_OBJECT_HANDLE_PTR, CK_ULONG, CK_ULONG_PTR]
-C_FindObjectsFinal = make_late_binding_function('C_FindObjectsFinal')
+C_FindObjectsFinal = make_late_binding_function("C_FindObjectsFinal")
 C_FindObjectsFinal.restype = CK_RV
 C_FindObjectsFinal.argtypes = [CK_SESSION_HANDLE]
-C_EncryptInit = make_late_binding_function('C_EncryptInit')
+C_EncryptInit = make_late_binding_function("C_EncryptInit")
 C_EncryptInit.restype = CK_RV
 C_EncryptInit.argtypes = [CK_SESSION_HANDLE, CK_MECHANISM_PTR, CK_OBJECT_HANDLE]
-C_Encrypt = make_late_binding_function('C_Encrypt')
+C_Encrypt = make_late_binding_function("C_Encrypt")
 C_Encrypt.restype = CK_RV
 C_Encrypt.argtypes = [CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR]
-C_EncryptUpdate = make_late_binding_function('C_EncryptUpdate')
+C_EncryptUpdate = make_late_binding_function("C_EncryptUpdate")
 C_EncryptUpdate.restype = CK_RV
 C_EncryptUpdate.argtypes = [CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR]
-C_EncryptFinal = make_late_binding_function('C_EncryptFinal')
+C_EncryptFinal = make_late_binding_function("C_EncryptFinal")
 C_EncryptFinal.restype = CK_RV
 C_EncryptFinal.argtypes = [CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG_PTR]
-C_DecryptInit = make_late_binding_function('C_DecryptInit')
+C_DecryptInit = make_late_binding_function("C_DecryptInit")
 C_DecryptInit.restype = CK_RV
 C_DecryptInit.argtypes = [CK_SESSION_HANDLE, CK_MECHANISM_PTR, CK_OBJECT_HANDLE]
-C_Decrypt = make_late_binding_function('C_Decrypt')
+C_Decrypt = make_late_binding_function("C_Decrypt")
 C_Decrypt.restype = CK_RV
 C_Decrypt.argtypes = [CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR]
-C_DecryptUpdate = make_late_binding_function('C_DecryptUpdate')
+C_DecryptUpdate = make_late_binding_function("C_DecryptUpdate")
 C_DecryptUpdate.restype = CK_RV
 C_DecryptUpdate.argtypes = [CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR]
-C_DecryptFinal = make_late_binding_function('C_DecryptFinal')
+C_DecryptFinal = make_late_binding_function("C_DecryptFinal")
 C_DecryptFinal.restype = CK_RV
 C_DecryptFinal.argtypes = [CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG_PTR]
-C_DigestInit = make_late_binding_function('C_DigestInit')
+C_DigestInit = make_late_binding_function("C_DigestInit")
 C_DigestInit.restype = CK_RV
 C_DigestInit.argtypes = [CK_SESSION_HANDLE, CK_MECHANISM_PTR]
-C_Digest = make_late_binding_function('C_Digest')
+C_Digest = make_late_binding_function("C_Digest")
 C_Digest.restype = CK_RV
 C_Digest.argtypes = [CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR]
-C_DigestUpdate = make_late_binding_function('C_DigestUpdate')
+C_DigestUpdate = make_late_binding_function("C_DigestUpdate")
 C_DigestUpdate.restype = CK_RV
 C_DigestUpdate.argtypes = [CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG]
-C_DigestKey = make_late_binding_function('C_DigestKey')
+C_DigestKey = make_late_binding_function("C_DigestKey")
 C_DigestKey.restype = CK_RV
 C_DigestKey.argtypes = [CK_SESSION_HANDLE, CK_OBJECT_HANDLE]
-C_DigestFinal = make_late_binding_function('C_DigestFinal')
+C_DigestFinal = make_late_binding_function("C_DigestFinal")
 C_DigestFinal.restype = CK_RV
 C_DigestFinal.argtypes = [CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG_PTR]
-C_SignInit = make_late_binding_function('C_SignInit')
+C_SignInit = make_late_binding_function("C_SignInit")
 C_SignInit.restype = CK_RV
 C_SignInit.argtypes = [CK_SESSION_HANDLE, CK_MECHANISM_PTR, CK_OBJECT_HANDLE]
-C_Sign = make_late_binding_function('C_Sign')
+C_Sign = make_late_binding_function("C_Sign")
 C_Sign.restype = CK_RV
 C_Sign.argtypes = [CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR]
-C_SignUpdate = make_late_binding_function('C_SignUpdate')
+C_SignUpdate = make_late_binding_function("C_SignUpdate")
 C_SignUpdate.restype = CK_RV
 C_SignUpdate.argtypes = [CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG]
-C_SignFinal = make_late_binding_function('C_SignFinal')
+C_SignFinal = make_late_binding_function("C_SignFinal")
 C_SignFinal.restype = CK_RV
 C_SignFinal.argtypes = [CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG_PTR]
-C_SignRecoverInit = make_late_binding_function('C_SignRecoverInit')
+C_SignRecoverInit = make_late_binding_function("C_SignRecoverInit")
 C_SignRecoverInit.restype = CK_RV
 C_SignRecoverInit.argtypes = [CK_SESSION_HANDLE, CK_MECHANISM_PTR, CK_OBJECT_HANDLE]
-C_SignRecover = make_late_binding_function('C_SignRecover')
+C_SignRecover = make_late_binding_function("C_SignRecover")
 C_SignRecover.restype = CK_RV
 C_SignRecover.argtypes = [CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR]
-C_VerifyInit = make_late_binding_function('C_VerifyInit')
+C_VerifyInit = make_late_binding_function("C_VerifyInit")
 C_VerifyInit.restype = CK_RV
 C_VerifyInit.argtypes = [CK_SESSION_HANDLE, CK_MECHANISM_PTR, CK_OBJECT_HANDLE]
-C_Verify = make_late_binding_function('C_Verify')
+C_Verify = make_late_binding_function("C_Verify")
 C_Verify.restype = CK_RV
 C_Verify.argtypes = [CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG]
-C_VerifyUpdate = make_late_binding_function('C_VerifyUpdate')
+C_VerifyUpdate = make_late_binding_function("C_VerifyUpdate")
 C_VerifyUpdate.restype = CK_RV
 C_VerifyUpdate.argtypes = [CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG]
-C_VerifyFinal = make_late_binding_function('C_VerifyFinal')
+C_VerifyFinal = make_late_binding_function("C_VerifyFinal")
 C_VerifyFinal.restype = CK_RV
 C_VerifyFinal.argtypes = [CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG]
-C_VerifyRecoverInit = make_late_binding_function('C_VerifyRecoverInit')
+C_VerifyRecoverInit = make_late_binding_function("C_VerifyRecoverInit")
 C_VerifyRecoverInit.restype = CK_RV
 C_VerifyRecoverInit.argtypes = [CK_SESSION_HANDLE, CK_MECHANISM_PTR, CK_OBJECT_HANDLE]
-C_VerifyRecover = make_late_binding_function('C_VerifyRecover')
+C_VerifyRecover = make_late_binding_function("C_VerifyRecover")
 C_VerifyRecover.restype = CK_RV
 C_VerifyRecover.argtypes = [CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR]
-C_DigestEncryptUpdate = make_late_binding_function('C_DigestEncryptUpdate')
+C_DigestEncryptUpdate = make_late_binding_function("C_DigestEncryptUpdate")
 C_DigestEncryptUpdate.restype = CK_RV
-C_DigestEncryptUpdate.argtypes = [CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR,
-                                  CK_ULONG_PTR]
-C_DecryptDigestUpdate = make_late_binding_function('C_DecryptDigestUpdate')
+C_DigestEncryptUpdate.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG_PTR,
+]
+C_DecryptDigestUpdate = make_late_binding_function("C_DecryptDigestUpdate")
 C_DecryptDigestUpdate.restype = CK_RV
-C_DecryptDigestUpdate.argtypes = [CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR,
-                                  CK_ULONG_PTR]
-C_SignEncryptUpdate = make_late_binding_function('C_SignEncryptUpdate')
+C_DecryptDigestUpdate.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG_PTR,
+]
+C_SignEncryptUpdate = make_late_binding_function("C_SignEncryptUpdate")
 C_SignEncryptUpdate.restype = CK_RV
 C_SignEncryptUpdate.argtypes = [CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR]
-C_DecryptVerifyUpdate = make_late_binding_function('C_DecryptVerifyUpdate')
+C_DecryptVerifyUpdate = make_late_binding_function("C_DecryptVerifyUpdate")
 C_DecryptVerifyUpdate.restype = CK_RV
-C_DecryptVerifyUpdate.argtypes = [CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR,
-                                  CK_ULONG_PTR]
-C_GenerateKey = make_late_binding_function('C_GenerateKey')
+C_DecryptVerifyUpdate.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_ULONG_PTR,
+]
+C_GenerateKey = make_late_binding_function("C_GenerateKey")
 C_GenerateKey.restype = CK_RV
-C_GenerateKey.argtypes = [CK_SESSION_HANDLE, CK_MECHANISM_PTR, CK_ATTRIBUTE_PTR, CK_ULONG,
-                          CK_OBJECT_HANDLE_PTR]
-C_GenerateKeyPair = make_late_binding_function('C_GenerateKeyPair')
+C_GenerateKey.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_MECHANISM_PTR,
+    CK_ATTRIBUTE_PTR,
+    CK_ULONG,
+    CK_OBJECT_HANDLE_PTR,
+]
+C_GenerateKeyPair = make_late_binding_function("C_GenerateKeyPair")
 C_GenerateKeyPair.restype = CK_RV
-C_GenerateKeyPair.argtypes = [CK_SESSION_HANDLE, CK_MECHANISM_PTR, CK_ATTRIBUTE_PTR, CK_ULONG,
-                              CK_ATTRIBUTE_PTR, CK_ULONG, CK_OBJECT_HANDLE_PTR,
-                              CK_OBJECT_HANDLE_PTR]
-C_WrapKey = make_late_binding_function('C_WrapKey')
+C_GenerateKeyPair.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_MECHANISM_PTR,
+    CK_ATTRIBUTE_PTR,
+    CK_ULONG,
+    CK_ATTRIBUTE_PTR,
+    CK_ULONG,
+    CK_OBJECT_HANDLE_PTR,
+    CK_OBJECT_HANDLE_PTR,
+]
+C_WrapKey = make_late_binding_function("C_WrapKey")
 C_WrapKey.restype = CK_RV
-C_WrapKey.argtypes = [CK_SESSION_HANDLE, CK_MECHANISM_PTR, CK_OBJECT_HANDLE, CK_OBJECT_HANDLE,
-                      CK_BYTE_PTR, CK_ULONG_PTR]
-C_UnwrapKey = make_late_binding_function('C_UnwrapKey')
+C_WrapKey.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_MECHANISM_PTR,
+    CK_OBJECT_HANDLE,
+    CK_OBJECT_HANDLE,
+    CK_BYTE_PTR,
+    CK_ULONG_PTR,
+]
+C_UnwrapKey = make_late_binding_function("C_UnwrapKey")
 C_UnwrapKey.restype = CK_RV
-C_UnwrapKey.argtypes = [CK_SESSION_HANDLE, CK_MECHANISM_PTR, CK_OBJECT_HANDLE, CK_BYTE_PTR,
-                        CK_ULONG, CK_ATTRIBUTE_PTR, CK_ULONG, CK_OBJECT_HANDLE_PTR]
-C_DeriveKey = make_late_binding_function('C_DeriveKey')
+C_UnwrapKey.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_MECHANISM_PTR,
+    CK_OBJECT_HANDLE,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_ATTRIBUTE_PTR,
+    CK_ULONG,
+    CK_OBJECT_HANDLE_PTR,
+]
+C_DeriveKey = make_late_binding_function("C_DeriveKey")
 C_DeriveKey.restype = CK_RV
-C_DeriveKey.argtypes = [CK_SESSION_HANDLE, CK_MECHANISM_PTR, CK_OBJECT_HANDLE, CK_ATTRIBUTE_PTR,
-                        CK_ULONG, CK_OBJECT_HANDLE_PTR]
-C_SeedRandom = make_late_binding_function('C_SeedRandom')
+C_DeriveKey.argtypes = [
+    CK_SESSION_HANDLE,
+    CK_MECHANISM_PTR,
+    CK_OBJECT_HANDLE,
+    CK_ATTRIBUTE_PTR,
+    CK_ULONG,
+    CK_OBJECT_HANDLE_PTR,
+]
+C_SeedRandom = make_late_binding_function("C_SeedRandom")
 C_SeedRandom.restype = CK_RV
 C_SeedRandom.argtypes = [CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG]
-C_GenerateRandom = make_late_binding_function('C_GenerateRandom')
+C_GenerateRandom = make_late_binding_function("C_GenerateRandom")
 C_GenerateRandom.restype = CK_RV
 C_GenerateRandom.argtypes = [CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG]
-C_GetFunctionStatus = make_late_binding_function('C_GetFunctionStatus')
+C_GetFunctionStatus = make_late_binding_function("C_GetFunctionStatus")
 C_GetFunctionStatus.restype = CK_RV
 C_GetFunctionStatus.argtypes = [CK_SESSION_HANDLE]
-C_CancelFunction = make_late_binding_function('C_CancelFunction')
+C_CancelFunction = make_late_binding_function("C_CancelFunction")
 C_CancelFunction.restype = CK_RV
 C_CancelFunction.argtypes = [CK_SESSION_HANDLE]
-C_WaitForSlotEvent = make_late_binding_function('C_WaitForSlotEvent')
+C_WaitForSlotEvent = make_late_binding_function("C_WaitForSlotEvent")
 C_WaitForSlotEvent.restype = CK_RV
 C_WaitForSlotEvent.argtypes = [CK_FLAGS, CK_SLOT_ID_PTR, CK_VOID_PTR]
 CK_LONG = c_long
 CK_VOID_PTR_PTR = POINTER(CK_VOID_PTR)
 CK_VERSION_PTR = POINTER(CK_VERSION)
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_INFO._pack_ = 1
 CK_INFO._fields_ = [
-    ('cryptokiVersion', CK_VERSION),
-    ('manufacturerID', CK_UTF8CHAR * 32),
-    ('flags', CK_FLAGS),
-    ('libraryDescription', CK_UTF8CHAR * 32),
-    ('libraryVersion', CK_VERSION),
+    ("cryptokiVersion", CK_VERSION),
+    ("manufacturerID", CK_UTF8CHAR * 32),
+    ("flags", CK_FLAGS),
+    ("libraryDescription", CK_UTF8CHAR * 32),
+    ("libraryVersion", CK_VERSION),
 ]
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_SLOT_INFO._pack_ = 1
 CK_SLOT_INFO._fields_ = [
-    ('slotDescription', CK_UTF8CHAR * 64),
-    ('manufacturerID', CK_UTF8CHAR * 32),
-    ('flags', CK_FLAGS),
-    ('hardwareVersion', CK_VERSION),
-    ('firmwareVersion', CK_VERSION),
+    ("slotDescription", CK_UTF8CHAR * 64),
+    ("manufacturerID", CK_UTF8CHAR * 32),
+    ("flags", CK_FLAGS),
+    ("hardwareVersion", CK_VERSION),
+    ("firmwareVersion", CK_VERSION),
 ]
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_TOKEN_INFO._pack_ = 1
 CK_TOKEN_INFO._fields_ = [
-    ('label', CK_UTF8CHAR * 32),
-    ('manufacturerID', CK_UTF8CHAR * 32),
-    ('model', CK_UTF8CHAR * 16),
-    ('serialNumber', CK_CHAR * 16),
-    ('flags', CK_FLAGS),
-    ('usMaxSessionCount', CK_ULONG),
-    ('usSessionCount', CK_ULONG),
-    ('usMaxRwSessionCount', CK_ULONG),
-    ('usRwSessionCount', CK_ULONG),
-    ('usMaxPinLen', CK_ULONG),
-    ('usMinPinLen', CK_ULONG),
-    ('ulTotalPublicMemory', CK_ULONG),
-    ('ulFreePublicMemory', CK_ULONG),
-    ('ulTotalPrivateMemory', CK_ULONG),
-    ('ulFreePrivateMemory', CK_ULONG),
-    ('hardwareVersion', CK_VERSION),
-    ('firmwareVersion', CK_VERSION),
-    ('utcTime', CK_CHAR * 16),
+    ("label", CK_UTF8CHAR * 32),
+    ("manufacturerID", CK_UTF8CHAR * 32),
+    ("model", CK_UTF8CHAR * 16),
+    ("serialNumber", CK_CHAR * 16),
+    ("flags", CK_FLAGS),
+    ("usMaxSessionCount", CK_ULONG),
+    ("usSessionCount", CK_ULONG),
+    ("usMaxRwSessionCount", CK_ULONG),
+    ("usRwSessionCount", CK_ULONG),
+    ("usMaxPinLen", CK_ULONG),
+    ("usMinPinLen", CK_ULONG),
+    ("ulTotalPublicMemory", CK_ULONG),
+    ("ulFreePublicMemory", CK_ULONG),
+    ("ulTotalPrivateMemory", CK_ULONG),
+    ("ulFreePrivateMemory", CK_ULONG),
+    ("hardwareVersion", CK_VERSION),
+    ("firmwareVersion", CK_VERSION),
+    ("utcTime", CK_CHAR * 16),
 ]
 CK_STATE = CK_ULONG
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_SESSION_INFO._pack_ = 1
 CK_SESSION_INFO._fields_ = [
-    ('slotID', CK_SLOT_ID),
-    ('state', CK_STATE),
-    ('flags', CK_FLAGS),
-    ('usDeviceError', CK_ULONG),
+    ("slotID", CK_SLOT_ID),
+    ("state", CK_STATE),
+    ("flags", CK_FLAGS),
+    ("usDeviceError", CK_ULONG),
 ]
 CK_OBJECT_CLASS = CK_ULONG
 CK_OBJECT_CLASS_PTR = POINTER(CK_OBJECT_CLASS)
@@ -2968,12 +3831,12 @@ CK_HW_FEATURE_TYPE = CK_ULONG
 CK_KEY_TYPE = CK_ULONG
 CK_CERTIFICATE_TYPE = CK_ULONG
 CK_ATTRIBUTE_TYPE = CK_ULONG
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_ATTRIBUTE._pack_ = 1
 CK_ATTRIBUTE._fields_ = [
-    ('type', CK_ATTRIBUTE_TYPE),
-    ('pValue', CK_VOID_PTR),
-    ('usValueLen', CK_ULONG),
+    ("type", CK_ATTRIBUTE_TYPE),
+    ("pValue", CK_VOID_PTR),
+    ("usValueLen", CK_ULONG),
 ]
 
 
@@ -2981,26 +3844,22 @@ class CK_DATE(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_DATE._pack_ = 1
-CK_DATE._fields_ = [
-    ('year', CK_CHAR * 4),
-    ('month', CK_CHAR * 2),
-    ('day', CK_CHAR * 2),
-]
-if 'win' in sys.platform:
+CK_DATE._fields_ = [("year", CK_CHAR * 4), ("month", CK_CHAR * 2), ("day", CK_CHAR * 2)]
+if "win" in sys.platform:
     CK_MECHANISM._pack_ = 1
 CK_MECHANISM._fields_ = [
-    ('mechanism', CK_MECHANISM_TYPE),
-    ('pParameter', CK_VOID_PTR),
-    ('usParameterLen', CK_ULONG),
+    ("mechanism", CK_MECHANISM_TYPE),
+    ("pParameter", CK_VOID_PTR),
+    ("usParameterLen", CK_ULONG),
 ]
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_MECHANISM_INFO._pack_ = 1
 CK_MECHANISM_INFO._fields_ = [
-    ('ulMinKeySize', CK_ULONG),
-    ('ulMaxKeySize', CK_ULONG),
-    ('flags', CK_FLAGS),
+    ("ulMinKeySize", CK_ULONG),
+    ("ulMaxKeySize", CK_ULONG),
+    ("flags", CK_FLAGS),
 ]
 CK_CREATEMUTEX = CFUNCTYPE(CK_RV, CK_VOID_PTR_PTR)
 CK_DESTROYMUTEX = CFUNCTYPE(CK_RV, CK_VOID_PTR)
@@ -3012,15 +3871,15 @@ class CK_C_INITIALIZE_ARGS(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_C_INITIALIZE_ARGS._pack_ = 1
 CK_C_INITIALIZE_ARGS._fields_ = [
-    ('CreateMutex', CK_CREATEMUTEX),
-    ('DestroyMutex', CK_DESTROYMUTEX),
-    ('LockMutex', CK_LOCKMUTEX),
-    ('UnlockMutex', CK_UNLOCKMUTEX),
-    ('flags', CK_FLAGS),
-    ('pReserved', CK_VOID_PTR),
+    ("CreateMutex", CK_CREATEMUTEX),
+    ("DestroyMutex", CK_DESTROYMUTEX),
+    ("LockMutex", CK_LOCKMUTEX),
+    ("UnlockMutex", CK_UNLOCKMUTEX),
+    ("flags", CK_FLAGS),
+    ("pReserved", CK_VOID_PTR),
 ]
 CK_C_INITIALIZE_ARGS_PTR = POINTER(CK_C_INITIALIZE_ARGS)
 CK_RSA_PKCS_MGF_TYPE = CK_ULONG
@@ -3033,14 +3892,14 @@ class CK_RSA_PKCS_OAEP_PARAMS(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_RSA_PKCS_OAEP_PARAMS._pack_ = 1
 CK_RSA_PKCS_OAEP_PARAMS._fields_ = [
-    ('hashAlg', CK_MECHANISM_TYPE),
-    ('mgf', CK_RSA_PKCS_MGF_TYPE),
-    ('source', CK_RSA_PKCS_OAEP_SOURCE_TYPE),
-    ('pSourceData', CK_VOID_PTR),
-    ('ulSourceDataLen', CK_ULONG),
+    ("hashAlg", CK_MECHANISM_TYPE),
+    ("mgf", CK_RSA_PKCS_MGF_TYPE),
+    ("source", CK_RSA_PKCS_OAEP_SOURCE_TYPE),
+    ("pSourceData", CK_VOID_PTR),
+    ("ulSourceDataLen", CK_ULONG),
 ]
 CK_RSA_PKCS_OAEP_PARAMS_PTR = POINTER(CK_RSA_PKCS_OAEP_PARAMS)
 
@@ -3049,12 +3908,12 @@ class CK_RSA_PKCS_PSS_PARAMS(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_RSA_PKCS_PSS_PARAMS._pack_ = 1
 CK_RSA_PKCS_PSS_PARAMS._fields_ = [
-    ('hashAlg', CK_MECHANISM_TYPE),
-    ('mgf', CK_RSA_PKCS_MGF_TYPE),
-    ('usSaltLen', CK_ULONG),
+    ("hashAlg", CK_MECHANISM_TYPE),
+    ("mgf", CK_RSA_PKCS_MGF_TYPE),
+    ("usSaltLen", CK_ULONG),
 ]
 CK_RSA_PKCS_PSS_PARAMS_PTR = POINTER(CK_RSA_PKCS_PSS_PARAMS)
 
@@ -3063,14 +3922,14 @@ class CK_ECDH1_DERIVE_PARAMS(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_ECDH1_DERIVE_PARAMS._pack_ = 1
 CK_ECDH1_DERIVE_PARAMS._fields_ = [
-    ('kdf', CK_EC_KDF_TYPE),
-    ('ulSharedDataLen', CK_ULONG),
-    ('pSharedData', CK_BYTE_PTR),
-    ('ulPublicDataLen', CK_ULONG),
-    ('pPublicData', CK_BYTE_PTR),
+    ("kdf", CK_EC_KDF_TYPE),
+    ("ulSharedDataLen", CK_ULONG),
+    ("pSharedData", CK_BYTE_PTR),
+    ("ulPublicDataLen", CK_ULONG),
+    ("pPublicData", CK_BYTE_PTR),
 ]
 CK_ECDH1_DERIVE_PARAMS_PTR = POINTER(CK_ECDH1_DERIVE_PARAMS)
 
@@ -3079,18 +3938,18 @@ class CK_ECDH2_DERIVE_PARAMS(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_ECDH2_DERIVE_PARAMS._pack_ = 1
 CK_ECDH2_DERIVE_PARAMS._fields_ = [
-    ('kdf', CK_EC_KDF_TYPE),
-    ('ulSharedDataLen', CK_ULONG),
-    ('pSharedData', CK_BYTE_PTR),
-    ('ulPublicDataLen', CK_ULONG),
-    ('pPublicData', CK_BYTE_PTR),
-    ('ulPrivateDataLen', CK_ULONG),
-    ('hPrivateData', CK_OBJECT_HANDLE),
-    ('ulPublicDataLen2', CK_ULONG),
-    ('pPublicData2', CK_BYTE_PTR),
+    ("kdf", CK_EC_KDF_TYPE),
+    ("ulSharedDataLen", CK_ULONG),
+    ("pSharedData", CK_BYTE_PTR),
+    ("ulPublicDataLen", CK_ULONG),
+    ("pPublicData", CK_BYTE_PTR),
+    ("ulPrivateDataLen", CK_ULONG),
+    ("hPrivateData", CK_OBJECT_HANDLE),
+    ("ulPublicDataLen2", CK_ULONG),
+    ("pPublicData2", CK_BYTE_PTR),
 ]
 CK_ECDH2_DERIVE_PARAMS_PTR = POINTER(CK_ECDH2_DERIVE_PARAMS)
 
@@ -3099,19 +3958,19 @@ class CK_ECMQV_DERIVE_PARAMS(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_ECMQV_DERIVE_PARAMS._pack_ = 1
 CK_ECMQV_DERIVE_PARAMS._fields_ = [
-    ('kdf', CK_EC_KDF_TYPE),
-    ('ulSharedDataLen', CK_ULONG),
-    ('pSharedData', CK_BYTE_PTR),
-    ('ulPublicDataLen', CK_ULONG),
-    ('pPublicData', CK_BYTE_PTR),
-    ('ulPrivateDataLen', CK_ULONG),
-    ('hPrivateData', CK_OBJECT_HANDLE),
-    ('ulPublicDataLen2', CK_ULONG),
-    ('pPublicData2', CK_BYTE_PTR),
-    ('publicKey', CK_OBJECT_HANDLE),
+    ("kdf", CK_EC_KDF_TYPE),
+    ("ulSharedDataLen", CK_ULONG),
+    ("pSharedData", CK_BYTE_PTR),
+    ("ulPublicDataLen", CK_ULONG),
+    ("pPublicData", CK_BYTE_PTR),
+    ("ulPrivateDataLen", CK_ULONG),
+    ("hPrivateData", CK_OBJECT_HANDLE),
+    ("ulPublicDataLen2", CK_ULONG),
+    ("pPublicData2", CK_BYTE_PTR),
+    ("publicKey", CK_OBJECT_HANDLE),
 ]
 CK_ECMQV_DERIVE_PARAMS_PTR = POINTER(CK_ECMQV_DERIVE_PARAMS)
 CK_X9_42_DH_KDF_TYPE = CK_ULONG
@@ -3122,14 +3981,14 @@ class CK_X9_42_DH1_DERIVE_PARAMS(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_X9_42_DH1_DERIVE_PARAMS._pack_ = 1
 CK_X9_42_DH1_DERIVE_PARAMS._fields_ = [
-    ('kdf', CK_X9_42_DH_KDF_TYPE),
-    ('ulOtherInfoLen', CK_ULONG),
-    ('pOtherInfo', CK_BYTE_PTR),
-    ('ulPublicDataLen', CK_ULONG),
-    ('pPublicData', CK_BYTE_PTR),
+    ("kdf", CK_X9_42_DH_KDF_TYPE),
+    ("ulOtherInfoLen", CK_ULONG),
+    ("pOtherInfo", CK_BYTE_PTR),
+    ("ulPublicDataLen", CK_ULONG),
+    ("pPublicData", CK_BYTE_PTR),
 ]
 CK_X9_42_DH1_DERIVE_PARAMS_PTR = POINTER(CK_X9_42_DH1_DERIVE_PARAMS)
 
@@ -3138,18 +3997,18 @@ class CK_X9_42_DH2_DERIVE_PARAMS(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_X9_42_DH2_DERIVE_PARAMS._pack_ = 1
 CK_X9_42_DH2_DERIVE_PARAMS._fields_ = [
-    ('kdf', CK_X9_42_DH_KDF_TYPE),
-    ('ulOtherInfoLen', CK_ULONG),
-    ('pOtherInfo', CK_BYTE_PTR),
-    ('ulPublicDataLen', CK_ULONG),
-    ('pPublicData', CK_BYTE_PTR),
-    ('ulPrivateDataLen', CK_ULONG),
-    ('hPrivateData', CK_OBJECT_HANDLE),
-    ('ulPublicDataLen2', CK_ULONG),
-    ('pPublicData2', CK_BYTE_PTR),
+    ("kdf", CK_X9_42_DH_KDF_TYPE),
+    ("ulOtherInfoLen", CK_ULONG),
+    ("pOtherInfo", CK_BYTE_PTR),
+    ("ulPublicDataLen", CK_ULONG),
+    ("pPublicData", CK_BYTE_PTR),
+    ("ulPrivateDataLen", CK_ULONG),
+    ("hPrivateData", CK_OBJECT_HANDLE),
+    ("ulPublicDataLen2", CK_ULONG),
+    ("pPublicData2", CK_BYTE_PTR),
 ]
 CK_X9_42_DH2_DERIVE_PARAMS_PTR = POINTER(CK_X9_42_DH2_DERIVE_PARAMS)
 
@@ -3158,19 +4017,19 @@ class CK_X9_42_MQV_DERIVE_PARAMS(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_X9_42_MQV_DERIVE_PARAMS._pack_ = 1
 CK_X9_42_MQV_DERIVE_PARAMS._fields_ = [
-    ('kdf', CK_X9_42_DH_KDF_TYPE),
-    ('ulOtherInfoLen', CK_ULONG),
-    ('pOtherInfo', CK_BYTE_PTR),
-    ('ulPublicDataLen', CK_ULONG),
-    ('pPublicData', CK_BYTE_PTR),
-    ('ulPrivateDataLen', CK_ULONG),
-    ('hPrivateData', CK_OBJECT_HANDLE),
-    ('ulPublicDataLen2', CK_ULONG),
-    ('pPublicData2', CK_BYTE_PTR),
-    ('publicKey', CK_OBJECT_HANDLE),
+    ("kdf", CK_X9_42_DH_KDF_TYPE),
+    ("ulOtherInfoLen", CK_ULONG),
+    ("pOtherInfo", CK_BYTE_PTR),
+    ("ulPublicDataLen", CK_ULONG),
+    ("pPublicData", CK_BYTE_PTR),
+    ("ulPrivateDataLen", CK_ULONG),
+    ("hPrivateData", CK_OBJECT_HANDLE),
+    ("ulPublicDataLen2", CK_ULONG),
+    ("pPublicData2", CK_BYTE_PTR),
+    ("publicKey", CK_OBJECT_HANDLE),
 ]
 CK_X9_42_MQV_DERIVE_PARAMS_PTR = POINTER(CK_X9_42_MQV_DERIVE_PARAMS)
 
@@ -3179,15 +4038,15 @@ class CK_KEA_DERIVE_PARAMS(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_KEA_DERIVE_PARAMS._pack_ = 1
 CK_KEA_DERIVE_PARAMS._fields_ = [
-    ('isSender', CK_BBOOL),
-    ('ulRandomLen', CK_ULONG),
-    ('pRandomA', CK_BYTE_PTR),
-    ('pRandomB', CK_BYTE_PTR),
-    ('ulPublicDataLen', CK_ULONG),
-    ('pPublicData', CK_BYTE_PTR),
+    ("isSender", CK_BBOOL),
+    ("ulRandomLen", CK_ULONG),
+    ("pRandomA", CK_BYTE_PTR),
+    ("pRandomB", CK_BYTE_PTR),
+    ("ulPublicDataLen", CK_ULONG),
+    ("pPublicData", CK_BYTE_PTR),
 ]
 CK_KEA_DERIVE_PARAMS_PTR = POINTER(CK_KEA_DERIVE_PARAMS)
 CK_RC2_PARAMS = CK_ULONG
@@ -3198,12 +4057,9 @@ class CK_RC2_CBC_PARAMS(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_RC2_CBC_PARAMS._pack_ = 1
-CK_RC2_CBC_PARAMS._fields_ = [
-    ('usEffectiveBits', CK_ULONG),
-    ('iv', CK_BYTE * 8),
-]
+CK_RC2_CBC_PARAMS._fields_ = [("usEffectiveBits", CK_ULONG), ("iv", CK_BYTE * 8)]
 CK_RC2_CBC_PARAMS_PTR = POINTER(CK_RC2_CBC_PARAMS)
 
 
@@ -3211,12 +4067,9 @@ class CK_RC2_MAC_GENERAL_PARAMS(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_RC2_MAC_GENERAL_PARAMS._pack_ = 1
-CK_RC2_MAC_GENERAL_PARAMS._fields_ = [
-    ('usEffectiveBits', CK_ULONG),
-    ('ulMacLength', CK_ULONG),
-]
+CK_RC2_MAC_GENERAL_PARAMS._fields_ = [("usEffectiveBits", CK_ULONG), ("ulMacLength", CK_ULONG)]
 CK_RC2_MAC_GENERAL_PARAMS_PTR = POINTER(CK_RC2_MAC_GENERAL_PARAMS)
 
 
@@ -3224,12 +4077,9 @@ class CK_RC5_PARAMS(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_RC5_PARAMS._pack_ = 1
-CK_RC5_PARAMS._fields_ = [
-    ('ulWordsize', CK_ULONG),
-    ('ulRounds', CK_ULONG),
-]
+CK_RC5_PARAMS._fields_ = [("ulWordsize", CK_ULONG), ("ulRounds", CK_ULONG)]
 CK_RC5_PARAMS_PTR = POINTER(CK_RC5_PARAMS)
 
 
@@ -3237,13 +4087,13 @@ class CK_RC5_CBC_PARAMS(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_RC5_CBC_PARAMS._pack_ = 1
 CK_RC5_CBC_PARAMS._fields_ = [
-    ('ulWordsize', CK_ULONG),
-    ('ulRounds', CK_ULONG),
-    ('pIv', CK_BYTE_PTR),
-    ('ulIvLen', CK_ULONG),
+    ("ulWordsize", CK_ULONG),
+    ("ulRounds", CK_ULONG),
+    ("pIv", CK_BYTE_PTR),
+    ("ulIvLen", CK_ULONG),
 ]
 CK_RC5_CBC_PARAMS_PTR = POINTER(CK_RC5_CBC_PARAMS)
 
@@ -3252,12 +4102,12 @@ class CK_RC5_MAC_GENERAL_PARAMS(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_RC5_MAC_GENERAL_PARAMS._pack_ = 1
 CK_RC5_MAC_GENERAL_PARAMS._fields_ = [
-    ('ulWordsize', CK_ULONG),
-    ('ulRounds', CK_ULONG),
-    ('ulMacLength', CK_ULONG),
+    ("ulWordsize", CK_ULONG),
+    ("ulRounds", CK_ULONG),
+    ("ulMacLength", CK_ULONG),
 ]
 CK_RC5_MAC_GENERAL_PARAMS_PTR = POINTER(CK_RC5_MAC_GENERAL_PARAMS)
 CK_MAC_GENERAL_PARAMS = CK_ULONG
@@ -3268,12 +4118,12 @@ class CK_DES_CBC_ENCRYPT_DATA_PARAMS(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_DES_CBC_ENCRYPT_DATA_PARAMS._pack_ = 1
 CK_DES_CBC_ENCRYPT_DATA_PARAMS._fields_ = [
-    ('iv', CK_BYTE * 8),
-    ('pData', CK_BYTE_PTR),
-    ('length', CK_ULONG),
+    ("iv", CK_BYTE * 8),
+    ("pData", CK_BYTE_PTR),
+    ("length", CK_ULONG),
 ]
 CK_DES_CBC_ENCRYPT_DATA_PARAMS_PTR = POINTER(CK_DES_CBC_ENCRYPT_DATA_PARAMS)
 
@@ -3282,12 +4132,12 @@ class CK_AES_CBC_ENCRYPT_DATA_PARAMS(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_AES_CBC_ENCRYPT_DATA_PARAMS._pack_ = 1
 CK_AES_CBC_ENCRYPT_DATA_PARAMS._fields_ = [
-    ('iv', CK_BYTE * 16),
-    ('pData', CK_BYTE_PTR),
-    ('length', CK_ULONG),
+    ("iv", CK_BYTE * 16),
+    ("pData", CK_BYTE_PTR),
+    ("length", CK_ULONG),
 ]
 CK_AES_CBC_ENCRYPT_DATA_PARAMS_PTR = POINTER(CK_AES_CBC_ENCRYPT_DATA_PARAMS)
 
@@ -3296,20 +4146,20 @@ class CK_SKIPJACK_PRIVATE_WRAP_PARAMS(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_SKIPJACK_PRIVATE_WRAP_PARAMS._pack_ = 1
 CK_SKIPJACK_PRIVATE_WRAP_PARAMS._fields_ = [
-    ('usPasswordLen', CK_ULONG),
-    ('pPassword', CK_BYTE_PTR),
-    ('ulPublicDataLen', CK_ULONG),
-    ('pPublicData', CK_BYTE_PTR),
-    ('ulPAndGLen', CK_ULONG),
-    ('ulQLen', CK_ULONG),
-    ('ulRandomLen', CK_ULONG),
-    ('pRandomA', CK_BYTE_PTR),
-    ('pPrimeP', CK_BYTE_PTR),
-    ('pBaseG', CK_BYTE_PTR),
-    ('pSubprimeQ', CK_BYTE_PTR),
+    ("usPasswordLen", CK_ULONG),
+    ("pPassword", CK_BYTE_PTR),
+    ("ulPublicDataLen", CK_ULONG),
+    ("pPublicData", CK_BYTE_PTR),
+    ("ulPAndGLen", CK_ULONG),
+    ("ulQLen", CK_ULONG),
+    ("ulRandomLen", CK_ULONG),
+    ("pRandomA", CK_BYTE_PTR),
+    ("pPrimeP", CK_BYTE_PTR),
+    ("pBaseG", CK_BYTE_PTR),
+    ("pSubprimeQ", CK_BYTE_PTR),
 ]
 CK_SKIPJACK_PRIVATE_WRAP_PTR = POINTER(CK_SKIPJACK_PRIVATE_WRAP_PARAMS)
 
@@ -3318,23 +4168,23 @@ class CK_SKIPJACK_RELAYX_PARAMS(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_SKIPJACK_RELAYX_PARAMS._pack_ = 1
 CK_SKIPJACK_RELAYX_PARAMS._fields_ = [
-    ('ulOldWrappedXLen', CK_ULONG),
-    ('pOldWrappedX', CK_BYTE_PTR),
-    ('ulOldPasswordLen', CK_ULONG),
-    ('pOldPassword', CK_BYTE_PTR),
-    ('ulOldPublicDataLen', CK_ULONG),
-    ('pOldPublicData', CK_BYTE_PTR),
-    ('ulOldRandomLen', CK_ULONG),
-    ('pOldRandomA', CK_BYTE_PTR),
-    ('ulNewPasswordLen', CK_ULONG),
-    ('pNewPassword', CK_BYTE_PTR),
-    ('ulNewPublicDataLen', CK_ULONG),
-    ('pNewPublicData', CK_BYTE_PTR),
-    ('ulNewRandomLen', CK_ULONG),
-    ('pNewRandomA', CK_BYTE_PTR),
+    ("ulOldWrappedXLen", CK_ULONG),
+    ("pOldWrappedX", CK_BYTE_PTR),
+    ("ulOldPasswordLen", CK_ULONG),
+    ("pOldPassword", CK_BYTE_PTR),
+    ("ulOldPublicDataLen", CK_ULONG),
+    ("pOldPublicData", CK_BYTE_PTR),
+    ("ulOldRandomLen", CK_ULONG),
+    ("pOldRandomA", CK_BYTE_PTR),
+    ("ulNewPasswordLen", CK_ULONG),
+    ("pNewPassword", CK_BYTE_PTR),
+    ("ulNewPublicDataLen", CK_ULONG),
+    ("pNewPublicData", CK_BYTE_PTR),
+    ("ulNewRandomLen", CK_ULONG),
+    ("pNewRandomA", CK_BYTE_PTR),
 ]
 CK_SKIPJACK_RELAYX_PARAMS_PTR = POINTER(CK_SKIPJACK_RELAYX_PARAMS)
 
@@ -3343,15 +4193,15 @@ class CK_PBE_PARAMS(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_PBE_PARAMS._pack_ = 1
 CK_PBE_PARAMS._fields_ = [
-    ('pInitVector', CK_BYTE_PTR),
-    ('pPassword', CK_UTF8CHAR_PTR),
-    ('usPasswordLen', CK_ULONG),
-    ('pSalt', CK_BYTE_PTR),
-    ('usSaltLen', CK_ULONG),
-    ('usIteration', CK_ULONG),
+    ("pInitVector", CK_BYTE_PTR),
+    ("pPassword", CK_UTF8CHAR_PTR),
+    ("usPasswordLen", CK_ULONG),
+    ("pSalt", CK_BYTE_PTR),
+    ("usSaltLen", CK_ULONG),
+    ("usIteration", CK_ULONG),
 ]
 CK_PBE_PARAMS_PTR = POINTER(CK_PBE_PARAMS)
 
@@ -3360,13 +4210,9 @@ class CK_KEY_WRAP_SET_OAEP_PARAMS(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_KEY_WRAP_SET_OAEP_PARAMS._pack_ = 1
-CK_KEY_WRAP_SET_OAEP_PARAMS._fields_ = [
-    ('bBC', CK_BYTE),
-    ('pX', CK_BYTE_PTR),
-    ('ulXLen', CK_ULONG),
-]
+CK_KEY_WRAP_SET_OAEP_PARAMS._fields_ = [("bBC", CK_BYTE), ("pX", CK_BYTE_PTR), ("ulXLen", CK_ULONG)]
 CK_KEY_WRAP_SET_OAEP_PARAMS_PTR = POINTER(CK_KEY_WRAP_SET_OAEP_PARAMS)
 
 
@@ -3374,13 +4220,13 @@ class CK_SSL3_RANDOM_DATA(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_SSL3_RANDOM_DATA._pack_ = 1
 CK_SSL3_RANDOM_DATA._fields_ = [
-    ('pClientRandom', CK_BYTE_PTR),
-    ('ulClientRandomLen', CK_ULONG),
-    ('pServerRandom', CK_BYTE_PTR),
-    ('ulServerRandomLen', CK_ULONG),
+    ("pClientRandom", CK_BYTE_PTR),
+    ("ulClientRandomLen", CK_ULONG),
+    ("pServerRandom", CK_BYTE_PTR),
+    ("ulServerRandomLen", CK_ULONG),
 ]
 
 
@@ -3388,11 +4234,11 @@ class CK_SSL3_MASTER_KEY_DERIVE_PARAMS(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_SSL3_MASTER_KEY_DERIVE_PARAMS._pack_ = 1
 CK_SSL3_MASTER_KEY_DERIVE_PARAMS._fields_ = [
-    ('RandomInfo', CK_SSL3_RANDOM_DATA),
-    ('pVersion', CK_VERSION_PTR),
+    ("RandomInfo", CK_SSL3_RANDOM_DATA),
+    ("pVersion", CK_VERSION_PTR),
 ]
 CK_SSL3_MASTER_KEY_DERIVE_PARAMS_PTR = POINTER(CK_SSL3_MASTER_KEY_DERIVE_PARAMS)
 
@@ -3401,15 +4247,15 @@ class CK_SSL3_KEY_MAT_OUT(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_SSL3_KEY_MAT_OUT._pack_ = 1
 CK_SSL3_KEY_MAT_OUT._fields_ = [
-    ('hClientMacSecret', CK_OBJECT_HANDLE),
-    ('hServerMacSecret', CK_OBJECT_HANDLE),
-    ('hClientKey', CK_OBJECT_HANDLE),
-    ('hServerKey', CK_OBJECT_HANDLE),
-    ('pIVClient', CK_BYTE_PTR),
-    ('pIVServer', CK_BYTE_PTR),
+    ("hClientMacSecret", CK_OBJECT_HANDLE),
+    ("hServerMacSecret", CK_OBJECT_HANDLE),
+    ("hClientKey", CK_OBJECT_HANDLE),
+    ("hServerKey", CK_OBJECT_HANDLE),
+    ("pIVClient", CK_BYTE_PTR),
+    ("pIVServer", CK_BYTE_PTR),
 ]
 CK_SSL3_KEY_MAT_OUT_PTR = POINTER(CK_SSL3_KEY_MAT_OUT)
 
@@ -3418,15 +4264,15 @@ class CK_SSL3_KEY_MAT_PARAMS(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_SSL3_KEY_MAT_PARAMS._pack_ = 1
 CK_SSL3_KEY_MAT_PARAMS._fields_ = [
-    ('ulMacSizeInBits', CK_ULONG),
-    ('ulKeySizeInBits', CK_ULONG),
-    ('ulIVSizeInBits', CK_ULONG),
-    ('bIsExport', CK_BBOOL),
-    ('RandomInfo', CK_SSL3_RANDOM_DATA),
-    ('pReturnedKeyMaterial', CK_SSL3_KEY_MAT_OUT_PTR),
+    ("ulMacSizeInBits", CK_ULONG),
+    ("ulKeySizeInBits", CK_ULONG),
+    ("ulIVSizeInBits", CK_ULONG),
+    ("bIsExport", CK_BBOOL),
+    ("RandomInfo", CK_SSL3_RANDOM_DATA),
+    ("pReturnedKeyMaterial", CK_SSL3_KEY_MAT_OUT_PTR),
 ]
 CK_SSL3_KEY_MAT_PARAMS_PTR = POINTER(CK_SSL3_KEY_MAT_PARAMS)
 
@@ -3435,15 +4281,15 @@ class CK_TLS_PRF_PARAMS(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_TLS_PRF_PARAMS._pack_ = 1
 CK_TLS_PRF_PARAMS._fields_ = [
-    ('pSeed', CK_BYTE_PTR),
-    ('ulSeedLen', CK_ULONG),
-    ('pLabel', CK_BYTE_PTR),
-    ('ulLabelLen', CK_ULONG),
-    ('pOutput', CK_BYTE_PTR),
-    ('pulOutputLen', CK_ULONG_PTR),
+    ("pSeed", CK_BYTE_PTR),
+    ("ulSeedLen", CK_ULONG),
+    ("pLabel", CK_BYTE_PTR),
+    ("ulLabelLen", CK_ULONG),
+    ("pOutput", CK_BYTE_PTR),
+    ("pulOutputLen", CK_ULONG_PTR),
 ]
 CK_TLS_PRF_PARAMS_PTR = POINTER(CK_TLS_PRF_PARAMS)
 
@@ -3452,13 +4298,13 @@ class CK_WTLS_RANDOM_DATA(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_WTLS_RANDOM_DATA._pack_ = 1
 CK_WTLS_RANDOM_DATA._fields_ = [
-    ('pClientRandom', CK_BYTE_PTR),
-    ('ulClientRandomLen', CK_ULONG),
-    ('pServerRandom', CK_BYTE_PTR),
-    ('ulServerRandomLen', CK_ULONG),
+    ("pClientRandom", CK_BYTE_PTR),
+    ("ulClientRandomLen", CK_ULONG),
+    ("pServerRandom", CK_BYTE_PTR),
+    ("ulServerRandomLen", CK_ULONG),
 ]
 CK_WTLS_RANDOM_DATA_PTR = POINTER(CK_WTLS_RANDOM_DATA)
 
@@ -3467,12 +4313,12 @@ class CK_WTLS_MASTER_KEY_DERIVE_PARAMS(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_WTLS_MASTER_KEY_DERIVE_PARAMS._pack_ = 1
 CK_WTLS_MASTER_KEY_DERIVE_PARAMS._fields_ = [
-    ('DigestMechanism', CK_MECHANISM_TYPE),
-    ('RandomInfo', CK_WTLS_RANDOM_DATA),
-    ('pVersion', CK_BYTE_PTR),
+    ("DigestMechanism", CK_MECHANISM_TYPE),
+    ("RandomInfo", CK_WTLS_RANDOM_DATA),
+    ("pVersion", CK_BYTE_PTR),
 ]
 CK_WTLS_MASTER_KEY_DERIVE_PARAMS_PTR = POINTER(CK_WTLS_MASTER_KEY_DERIVE_PARAMS)
 
@@ -3481,16 +4327,16 @@ class CK_WTLS_PRF_PARAMS(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_WTLS_PRF_PARAMS._pack_ = 1
 CK_WTLS_PRF_PARAMS._fields_ = [
-    ('DigestMechanism', CK_MECHANISM_TYPE),
-    ('pSeed', CK_BYTE_PTR),
-    ('ulSeedLen', CK_ULONG),
-    ('pLabel', CK_BYTE_PTR),
-    ('ulLabelLen', CK_ULONG),
-    ('pOutput', CK_BYTE_PTR),
-    ('pulOutputLen', CK_ULONG_PTR),
+    ("DigestMechanism", CK_MECHANISM_TYPE),
+    ("pSeed", CK_BYTE_PTR),
+    ("ulSeedLen", CK_ULONG),
+    ("pLabel", CK_BYTE_PTR),
+    ("ulLabelLen", CK_ULONG),
+    ("pOutput", CK_BYTE_PTR),
+    ("pulOutputLen", CK_ULONG_PTR),
 ]
 CK_WTLS_PRF_PARAMS_PTR = POINTER(CK_WTLS_PRF_PARAMS)
 
@@ -3499,12 +4345,12 @@ class CK_WTLS_KEY_MAT_OUT(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_WTLS_KEY_MAT_OUT._pack_ = 1
 CK_WTLS_KEY_MAT_OUT._fields_ = [
-    ('hMacSecret', CK_OBJECT_HANDLE),
-    ('hKey', CK_OBJECT_HANDLE),
-    ('pIV', CK_BYTE_PTR),
+    ("hMacSecret", CK_OBJECT_HANDLE),
+    ("hKey", CK_OBJECT_HANDLE),
+    ("pIV", CK_BYTE_PTR),
 ]
 CK_WTLS_KEY_MAT_OUT_PTR = POINTER(CK_WTLS_KEY_MAT_OUT)
 
@@ -3513,17 +4359,17 @@ class CK_WTLS_KEY_MAT_PARAMS(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_WTLS_KEY_MAT_PARAMS._pack_ = 1
 CK_WTLS_KEY_MAT_PARAMS._fields_ = [
-    ('DigestMechanism', CK_MECHANISM_TYPE),
-    ('ulMacSizeInBits', CK_ULONG),
-    ('ulKeySizeInBits', CK_ULONG),
-    ('ulIVSizeInBits', CK_ULONG),
-    ('ulSequenceNumber', CK_ULONG),
-    ('bIsExport', CK_BBOOL),
-    ('RandomInfo', CK_WTLS_RANDOM_DATA),
-    ('pReturnedKeyMaterial', CK_WTLS_KEY_MAT_OUT_PTR),
+    ("DigestMechanism", CK_MECHANISM_TYPE),
+    ("ulMacSizeInBits", CK_ULONG),
+    ("ulKeySizeInBits", CK_ULONG),
+    ("ulIVSizeInBits", CK_ULONG),
+    ("ulSequenceNumber", CK_ULONG),
+    ("bIsExport", CK_BBOOL),
+    ("RandomInfo", CK_WTLS_RANDOM_DATA),
+    ("pReturnedKeyMaterial", CK_WTLS_KEY_MAT_OUT_PTR),
 ]
 CK_WTLS_KEY_MAT_PARAMS_PTR = POINTER(CK_WTLS_KEY_MAT_PARAMS)
 
@@ -3532,17 +4378,17 @@ class CK_CMS_SIG_PARAMS(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_CMS_SIG_PARAMS._pack_ = 1
 CK_CMS_SIG_PARAMS._fields_ = [
-    ('certificateHandle', CK_OBJECT_HANDLE),
-    ('pSigningMechanism', CK_MECHANISM_PTR),
-    ('pDigestMechanism', CK_MECHANISM_PTR),
-    ('pContentType', CK_UTF8CHAR_PTR),
-    ('pRequestedAttributes', CK_BYTE_PTR),
-    ('ulRequestedAttributesLen', CK_ULONG),
-    ('pRequiredAttributes', CK_BYTE_PTR),
-    ('ulRequiredAttributesLen', CK_ULONG),
+    ("certificateHandle", CK_OBJECT_HANDLE),
+    ("pSigningMechanism", CK_MECHANISM_PTR),
+    ("pDigestMechanism", CK_MECHANISM_PTR),
+    ("pContentType", CK_UTF8CHAR_PTR),
+    ("pRequestedAttributes", CK_BYTE_PTR),
+    ("ulRequestedAttributesLen", CK_ULONG),
+    ("pRequiredAttributes", CK_BYTE_PTR),
+    ("ulRequiredAttributesLen", CK_ULONG),
 ]
 CK_CMS_SIG_PARAMS_PTR = POINTER(CK_CMS_SIG_PARAMS)
 
@@ -3551,12 +4397,9 @@ class CK_KEY_DERIVATION_STRING_DATA(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_KEY_DERIVATION_STRING_DATA._pack_ = 1
-CK_KEY_DERIVATION_STRING_DATA._fields_ = [
-    ('pData', CK_BYTE_PTR),
-    ('ulLen', CK_ULONG),
-]
+CK_KEY_DERIVATION_STRING_DATA._fields_ = [("pData", CK_BYTE_PTR), ("ulLen", CK_ULONG)]
 CK_KEY_DERIVATION_STRING_DATA_PTR = POINTER(CK_KEY_DERIVATION_STRING_DATA)
 CK_EXTRACT_PARAMS = CK_ULONG
 CK_EXTRACT_PARAMS_PTR = POINTER(CK_EXTRACT_PARAMS)
@@ -3570,18 +4413,18 @@ class CK_PKCS5_PBKD2_PARAMS(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_PKCS5_PBKD2_PARAMS._pack_ = 1
 CK_PKCS5_PBKD2_PARAMS._fields_ = [
-    ('saltSource', CK_PKCS5_PBKDF2_SALT_SOURCE_TYPE),
-    ('pSaltSourceData', CK_VOID_PTR),
-    ('ulSaltSourceDataLen', CK_ULONG),
-    ('iterations', CK_ULONG),
-    ('prf', CK_PKCS5_PBKD2_PSEUDO_RANDOM_FUNCTION_TYPE),
-    ('pPrfData', CK_VOID_PTR),
-    ('ulPrfDataLen', CK_ULONG),
-    ('pPassword', CK_UTF8CHAR_PTR),
-    ('usPasswordLen', CK_ULONG),
+    ("saltSource", CK_PKCS5_PBKDF2_SALT_SOURCE_TYPE),
+    ("pSaltSourceData", CK_VOID_PTR),
+    ("ulSaltSourceDataLen", CK_ULONG),
+    ("iterations", CK_ULONG),
+    ("prf", CK_PKCS5_PBKD2_PSEUDO_RANDOM_FUNCTION_TYPE),
+    ("pPrfData", CK_VOID_PTR),
+    ("ulPrfDataLen", CK_ULONG),
+    ("pPassword", CK_UTF8CHAR_PTR),
+    ("usPasswordLen", CK_ULONG),
 ]
 CK_PKCS5_PBKD2_PARAMS_PTR = POINTER(CK_PKCS5_PBKD2_PARAMS)
 CK_OTP_PARAM_TYPE = CK_ULONG
@@ -3592,12 +4435,12 @@ class CK_OTP_PARAM(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_OTP_PARAM._pack_ = 1
 CK_OTP_PARAM._fields_ = [
-    ('type', CK_OTP_PARAM_TYPE),
-    ('pValue', CK_VOID_PTR),
-    ('usValueLen', CK_ULONG),
+    ("type", CK_OTP_PARAM_TYPE),
+    ("pValue", CK_VOID_PTR),
+    ("usValueLen", CK_ULONG),
 ]
 CK_OTP_PARAM_PTR = POINTER(CK_OTP_PARAM)
 
@@ -3606,12 +4449,9 @@ class CK_OTP_PARAMS(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_OTP_PARAMS._pack_ = 1
-CK_OTP_PARAMS._fields_ = [
-    ('pParams', CK_OTP_PARAM_PTR),
-    ('ulCount', CK_ULONG),
-]
+CK_OTP_PARAMS._fields_ = [("pParams", CK_OTP_PARAM_PTR), ("ulCount", CK_ULONG)]
 CK_OTP_PARAMS_PTR = POINTER(CK_OTP_PARAMS)
 
 
@@ -3619,12 +4459,9 @@ class CK_OTP_SIGNATURE_INFO(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_OTP_SIGNATURE_INFO._pack_ = 1
-CK_OTP_SIGNATURE_INFO._fields_ = [
-    ('pParams', CK_OTP_PARAM_PTR),
-    ('ulCount', CK_ULONG),
-]
+CK_OTP_SIGNATURE_INFO._fields_ = [("pParams", CK_OTP_PARAM_PTR), ("ulCount", CK_ULONG)]
 CK_OTP_SIGNATURE_INFO_PTR = POINTER(CK_OTP_SIGNATURE_INFO)
 
 
@@ -3632,21 +4469,18 @@ class CK_KIP_PARAMS(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_KIP_PARAMS._pack_ = 1
 CK_KIP_PARAMS._fields_ = [
-    ('pMechanism', CK_MECHANISM_PTR),
-    ('hKey', CK_OBJECT_HANDLE),
-    ('pSeed', CK_BYTE_PTR),
-    ('ulSeedLen', CK_ULONG),
+    ("pMechanism", CK_MECHANISM_PTR),
+    ("hKey", CK_OBJECT_HANDLE),
+    ("pSeed", CK_BYTE_PTR),
+    ("ulSeedLen", CK_ULONG),
 ]
 CK_KIP_PARAMS_PTR = POINTER(CK_KIP_PARAMS)
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_AES_CTR_PARAMS._pack_ = 1
-CK_AES_CTR_PARAMS._fields_ = [
-    ('ulCounterBits', CK_ULONG),
-    ('cb', CK_BYTE * 16),
-]
+CK_AES_CTR_PARAMS._fields_ = [("ulCounterBits", CK_ULONG), ("cb", CK_BYTE * 16)]
 CK_AES_CTR_PARAMS_PTR = POINTER(CK_AES_CTR_PARAMS)
 
 
@@ -3654,12 +4488,9 @@ class CK_CAMELLIA_CTR_PARAMS(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_CAMELLIA_CTR_PARAMS._pack_ = 1
-CK_CAMELLIA_CTR_PARAMS._fields_ = [
-    ('ulCounterBits', CK_ULONG),
-    ('cb', CK_BYTE * 16),
-]
+CK_CAMELLIA_CTR_PARAMS._fields_ = [("ulCounterBits", CK_ULONG), ("cb", CK_BYTE * 16)]
 CK_CAMELLIA_CTR_PARAMS_PTR = POINTER(CK_CAMELLIA_CTR_PARAMS)
 
 
@@ -3667,12 +4498,12 @@ class CK_CAMELLIA_CBC_ENCRYPT_DATA_PARAMS(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_CAMELLIA_CBC_ENCRYPT_DATA_PARAMS._pack_ = 1
 CK_CAMELLIA_CBC_ENCRYPT_DATA_PARAMS._fields_ = [
-    ('iv', CK_BYTE * 16),
-    ('pData', CK_BYTE_PTR),
-    ('length', CK_ULONG),
+    ("iv", CK_BYTE * 16),
+    ("pData", CK_BYTE_PTR),
+    ("length", CK_ULONG),
 ]
 CK_CAMELLIA_CBC_ENCRYPT_DATA_PARAMS_PTR = POINTER(CK_CAMELLIA_CBC_ENCRYPT_DATA_PARAMS)
 
@@ -3681,894 +4512,1524 @@ class CK_ARIA_CBC_ENCRYPT_DATA_PARAMS(Structure):
     pass
 
 
-if 'win' in sys.platform:
+if "win" in sys.platform:
     CK_ARIA_CBC_ENCRYPT_DATA_PARAMS._pack_ = 1
 CK_ARIA_CBC_ENCRYPT_DATA_PARAMS._fields_ = [
-    ('iv', CK_BYTE * 16),
-    ('pData', CK_BYTE_PTR),
-    ('length', CK_ULONG),
+    ("iv", CK_BYTE * 16),
+    ("pData", CK_BYTE_PTR),
+    ("length", CK_ULONG),
 ]
 CK_ARIA_CBC_ENCRYPT_DATA_PARAMS_PTR = POINTER(CK_ARIA_CBC_ENCRYPT_DATA_PARAMS)
-__all__ = ['CA_InvokeService', 'LUNA_RET_PED_UNSUPPORTED_PROTOCOL',
-           'CK_OTP_SIGNATURE_INFO', 'LUNA_RET_CB_TIMEOUT',
-           'LUNA_RET_BAD_DAC', 'CA_GetSlotIdForContainer',
-           'C_UnwrapKey', 'LUNA_RET_BAD_DAK', 'Int32',
-           'CA_PerformModuleCall',
-           'LUNA_RET_HIFN_ENCRYPT_HEADER_COUNT_INVALID',
-           'LUNA_HIFN_UNKNOWN_ALGORITHM', 'CA_SetApplicationID',
-           'CA_LoadEncryptedModule', 'CA_MTKZeroize',
-           'LUNA_RET_ECC_NOT_SUPPORTED', 'CK_CA_Restart',
-           'C_SetAttributeValue', 'CA_STCSetDigestAlgorithm',
-           'LUNA_RET_SM_ACCESS_DOES_NOT_VALIDATE',
-           'LUNA_RET_FM_ID_INVALID', 'LUNA_RET_MD5_SELF_TEST_FAILURE',
-           'LUNA_RET_LOG_BAD_TIME',
-           'LUNA_RET_SM_CONTEXT_NOT_ALLOCATED',
-           'CK_C_SetOperationState', 'MSG_NVRAM_READ_FAILED',
-           'C_VerifyFinal', 'CK_DATE',
-           'LUNA_RET_TEMPLATE_INCONSISTENT',
-           'RC_NON_CRYPTOKI_ELEMENT_CLONE', 'CK_WTLS_PRF_PARAMS',
-           'MSG_INITIALIZING_MSG_TVK_TIMESTAMP_FAILED', 'C_GetInfo',
-           'CA_TokenZeroize',
-           'CK_CA_GetConfigurationElementDescription', 'CK_C_SetPIN',
-           'RC_STC_KEY_CONFIRMATION_FAILED', 'CA_GetContainerList',
-           'MSG_TVK_WAS_LOST_DUE_TO_TAMPER', 'LUNA_RET_DEVICE_ERROR',
-           'CK_CA_STCGetDigestID', 'CK_ATTRIBUTE_PTR', 'CK_VERSION',
-           'RC_USB_PED_NOT_FOUND', 'CK_CA_GetFPV',
-           'LUNA_RET_CL_QUEUE_OVERLAP_ERROR',
-           'LUNA_RET_POLICY_NOT_FOUND', 'CK_CA_InitRolePIN',
-           'CA_LockClusteredSlot', 'C_WaitForSlotEvent',
-           'LUNA_RET_TOKEN_LOCKED_OUT_CCM', 'CK_VOID_PTR',
-           'CK_CA_GetSlotIdForContainer', 'CA_EncodeECParamsFromFile',
-           'RC_SSL_WANT_READ_ERROR', 'CK_MECHANISM_INFO',
-           'CK_CA_CloneAsTargetInit', 'RC_FILE_LOCK_ERROR',
-           'MSG_TVK_TIMESTAMP_UPDATE_WAS_LIKELY_ABORTED_TRYING_TO_RECOVER',
-           'LUNA_RET_N_TOO_SMALL', 'MSG_RTC_LOST_ALL_POWER',
-           'LUNA_RET_WRAPPING_KEY_TYPE_INCONSISTENT',
-           'CK_CA_STCSetMaxSessions', 'CA_LoadModule',
-           'CA_FirmwareRollback', 'CK_CA_GetSecureElementMeta',
-           'LUNA_RET_MM_INVALID_USAGE', 'CA_Deactivate',
-           'LUNA_RET_BUFFER_TOO_SMALL', 'Float64',
-           'LUNA_RET_MISSING_VALUE_FOR_M',
-           'LUNA_RET_MISSING_VALUE_FOR_N', 'CK_X9_42_DH_KDF_TYPE',
-           'CK_INFO', 'CA_HAActivateMofN', 'CK_CA_MultisignValue',
-           'CA_GetHSMCapabilitySet', 'LUNA_RET_KEY_NOT_ACTIVE',
-           'LUNA_RET_SM_DATA_INVALID', 'CK_KIP_PARAMS',
-           'LUNA_RET_LOG_RESYNC_NEEDED', 'CK_CA_SpRawWrite',
-           'CK_OTP_PARAM_PTR', 'CK_X9_42_MQV_DERIVE_PARAMS',
-           'LUNA_RET_N_TOO_LARGE', 'CK_CA_GetHAState',
-           'C_CloseAllSessions', 'CK_CA_STCSetKeyActivationTimeOut',
-           'C_SignInit', 'LUNA_RET_CB_HIOS_OUTPUT_BUFFER_TOO_SMALL',
-           'CK_CMS_SIG_PARAMS', 'CA_GetRemotePEDVectorStatus',
-           'CK_C_GetFunctionList', 'LUNA_RET_CANCEL',
-           'LUNA_RET_RNG_SELF_TEST_FAILURE', 'CK_CA_LogGetStatus',
-           'LUNA_RET_HIFN6500_RNG_UNDERFLOW', 'CK_C_OpenSession',
-           'LUNA_RET_TOO_MANY_WEIGHTS', 'CA_IndirectLogin',
-           'CA_OpenSecureToken', 'LUNA_RET_INVALID_FUF_TARGET',
-           'CA_GenerateMofN', 'CK_CA_MTKResplit',
-           'LUNA_RET_STM_CMD_NON_TRANSPORT',
-           'LUNA_RET_MD2_SELF_TEST_FAILURE', 'CA_HALogin',
-           'CK_CA_RetrieveLicenseList',
-           'LUNA_RET_SAVED_STATE_INVALID', 'CK_ECMQV_DERIVE_PARAMS',
-           'CK_CA_LKMReceiverComplete', 'CA_InitSlotRolePIN',
-           'CA_MOFN_ACTIVATION_PTR',
-           'LUNA_RET_SM_CONTEXT_ALREADY_ALLOCATED',
-           'CA_GetFunctionList', 'LUNA_RET_HIFN6500_ALU_TIMEOUT',
-           'LUNA_RET_SM_NOT_LOGGED_IN', 'CK_TLS_PRF_PARAMS_PTR',
-           'MSG_RTC_MSG_NVRAM_ZAPPING_FAILED', 'RC_MEMORY_ALLOCATION',
-           'CA_GetHSMStorageInformation',
-           'LUNA_RET_HIFN_DESTINATION_OVERRUN',
-           'LUNA_RET_ISES_LNAU_TEST_FAILED',
-           'LUNA_RET_SM_SESSION_REALLOC_ERROR',
-           'LUNA_RET_KEY_NOT_KEKED', 'CA_MOFN_ACTIVATION',
-           'MSG_GENERATING_NEW_TVK_PASSED', 'RC_BUFFER_TOO_SMALL',
-           'LUNA_RET_UNWRAPPING_ERROR',
-           'LUNA_RET_TIME_NOT_INITIALIZED',
-           'LUNA_RET_HIFN_DMA_INVALID_REVISION',
-           'RC_OPERATION_TIMED_OUT',
-           'LUNA_RET_SIM_VERSION_UNSUPPORTED',
-           'RC_UNKNOWN_COMMAND_VERSION',
-           'LUNA_RET_M_OF_N_PARAMETER_NOT_AVAILABLE', 'CK_CA_GetTime',
-           'LUNA_RET_CCM_NOT_PRESENT', 'Word', 'CA_LogVerifyFile',
-           'CK_DES_CTR_PARAMS', 'CA_GetClusterState',
-           'CA_STMGetState', 'CK_CA_STCGetCipherAlgorithm',
-           'CA_STCGetMaxSessions', 'CK_OBJECT_HANDLE',
-           'LUNA_RET_TOKEN_LOCKED_OUT', 'CK_MAC_GENERAL_PARAMS',
-           'CK_C_VerifyUpdate', 'CK_CA_WriteCommonStore',
-           'CA_GetPedId', 'CA_Insert', 'LUNA_RET_CCM_UNREMOVABLE',
-           'CK_EC_MAC_SCHEME', 'LUNA_RET_TSN_MISMATCH',
-           'RC_FILE_LOCK_FAILED', 'RC_UNKNOWN_COMMAND',
-           'CK_CA_STCGetClientInfo', 'LUNA_RET_ECC_DAC_MISSING',
-           'CA_ConfigureRemotePED', 'CA_STCGetPubKey',
-           'LUNA_RET_WRAPPED_KEY_INVALID', 'CK_C_WrapKey',
-           'MSG_TVK_WAS_LOST_DUE_TO_BAD_BATTERY', 'CA_SpRawWrite',
-           'LUNA_RET_UM_PIN_INVALID', 'CK_KDF_PRF_PARAMS', 'CK_ULONG',
-           'RC_STC_RESPONSE_DECRYPT_ERROR', 'CA_GetPrimarySlot',
-           'CK_SSL3_MASTER_KEY_DERIVE_PARAMS_PTR',
-           'LUNA_RET_MM_FATAL_ERROR', 'LUNA_RET_HIFN_DMA_TIMED_OUT',
-           'LUNA_RET_MISSING_WEIGHT_VALUE', 'Float',
-           'CK_DESTROYMUTEX', 'LUNA_RET_HIFN_NOT_PRESENT',
-           'LUNA_RET_TOO_MANY_VECTORS_PROVIDED',
-           'CK_ECMQV_DERIVE_PARAMS_PTR', 'CA_InitIndirectPIN',
-           'LUNA_RET_SIM_AUTHORIZATION_FAILED',
-           'CK_CA_DeactivateMofN', 'CK_CA_STCGetPubKey',
-           'RC_USB_PED_TOO_MANY_CONNECTED', 'CA_SpRawRead',
-           'CA_DestroyMultipleObjects', 'LUNA_RET_CCM_TOO_LARGE',
-           'CK_C_GetSlotList', 'RC_OBJECT_ID_INVALID',
-           'CA_GetTokenStorageInformation', 'SInt8',
-           'RC_STC_CIPHER_SUITE_REJECTED', 'CK_DES_CTR_PARAMS_PTR',
-           'LUNA_RET_TWC_PARAMETER_MISSING', 'CK_CA_STCGetState',
-           'LUNA_RET_OH_OBJECT_OWNER_DOES_NOT_EXIST',
-           'LUNA_RET_MM_ITERATOR_PAST_END',
-           'CK_RC5_MAC_GENERAL_PARAMS', 'CK_CA_InvokeService',
-           'LUNA_RET_SM_SESSION_HANDLE_INVALID', 'CK_SEED_CTR_PARAMS',
-           'MSG_TVK_TIMESTAMP_IS_TOO_OLD',
-           'RC_FUNCTION_NOT_SUPPORTED', 'LUNA_RET_SPLIT_DATA_INVALID',
-           'CK_LKM_TOKEN_ID', 'CA_CloneObjectToAllSessions',
-           'LUNA_RET_CB_NOT_SUPPORTED', 'CA_ListSecureTokenUpdate',
-           'LUNA_RET_HIFN6500_DATA_LINES_BROKEN', 'MSG_RESYNC',
-           'CA_MTKSetStorage',
-           'MSG_TVK_TIMESTAMP_WAS_LOST_DUE_TO_RTC_RESET',
-           'LUNA_RET_INCOMPATIBLE', 'RC_STC_UNEXPECTED_DH_DATA_SIZE',
-           'LUNA_RET_SECURITY_PARAMETER_MISSING',
-           'LUNA_RET_ENCRYPTED_DATA_INVALID', 'CA_SetMofN',
-           'LUNA_RET_INVALID_CERTIFICATE_TYPE',
-           'CK_CA_SetContainerPolicies', 'LUNA_RET_LOG_FULL',
-           'CK_CLUSTER_STATE', 'CK_C_CreateObject',
-           'CK_CA_STCIsEnabled', 'CA_CloneModifyMofN',
-           'CK_C_DecryptFinal', 'LUNA_RET_FLAGS_INVALID',
-           'CK_CA_SetContainerPolicy', 'RC_STC_SESSION_INVALID',
-           'eInitMsgs', 'CK_FLAGS', 'CK_CA_STCSetDigestAlgorithm',
-           'LUNA_RET_COUNTER_WRAPAROUND',
-           'MSG_TVK_TIMESTAMP_RECOVERY_COMPLETED', 'CA_GetFPV',
-           'CK_HA_MEMBER_PTR', 'LUNA_RET_VECTOR_TYPE_INVALID',
-           'C_Digest', 'CK_CA_SetRDK',
-           'LUNA_RET_RC4_SELF_TEST_FAILURE',
-           'CA_HAAnswerLoginChallenge', 'BYTE',
-           'CK_CA_GetSessionInfo', 'C_SignEncryptUpdate',
-           'CK_CA_GetCVFirmwareVersion',
-           'RC_SHUTTING_DOWN', 'CK_MECHANISM_TYPE_PTR',
-           'MSG_RTC_CANT_GET_TAMPER_TIMER',
-           'LUNA_RET_RM_BAD_HSM_PARAMS',
-           'CK_XOR_BASE_DATA_KDF_PARAMS_PTR', 'CK_SESSION_INFO',
-           'LUNA_RET_SM_MEMORY_ALLOCATION_ERROR',
-           'CK_CA_CloneObjectToAllSessions', 'CK_CA_FirmwareRollback',
-           'CK_WTLS_KEY_MAT_OUT', 'CK_WTLS_KEY_MAT_PARAMS',
-           'CA_ReplaceFastPathKEK', 'CA_ExtractMaskedObject',
-           'CK_CA_GetNumberOfAllowedContainers',
-           'C_DigestEncryptUpdate', 'UInt16',
-           'LUNA_RET_RM_CONFIG_CHANGE_FAILS_DEPENDENCIES',
-           'CK_CA_HAAnswerLoginChallenge',
-           'LUNA_RET_STC_ACTIVATE_RESP_GEN_FAIL',
-           'LUNA_RET_HIFN6500_INVALID_RESULT_ENDIANESS',
-           'RC_TOKEN_NOT_PRESENT',
-           'LUNA_RET_HIFN_END_MARKER_NOT_PRESENT',
-           'CK_RSA_PKCS_MGF_TYPE_PTR', 'CA_STCSetSequenceWindowSize',
-           'CK_SKIPJACK_RELAYX_PARAMS', 'LUNA_RET_UM_TSN_MISSING',
-           'LUNA_RET_STC_OPEN_DHNIST_PUBKEY_ERROR',
-           'CK_CA_InitIndirectPIN',
-           'LUNA_RET_HIFN6500_KNOWN_ANSWER_TEST_FAILED',
-           'MSG_LOG_WAS_TRUNCATED', 'RC_SSL_CTX_ERROR',
-           'CA_GetTokenObjectHandle', 'C_EncryptFinal',
-           'CK_CA_TokenZeroize', 'CK_EC_KDF_TYPE',
-           'CA_InitializeRemotePEDVector', 'CA_LogVerify',
-           'LUNA_RET_CCM_CERT_INVALID',
-           'CA_SetDestructiveHSMPolicies', 'CK_CA_ManualKCV',
-           'LUNA_RET_HIFN6500_NOT_PRESENT', 'CA_LogGetStatus',
-           'LUNA_RET_CB_HIOS_SEND_TIMEOUT',
-           'LUNA_RET_HIFN_DMA_NOT_IDLE',
-           'LUNA_RET_TOTAL_WEIGHT_INVALID',
-           'RC_STC_SEQUENCE_NUM_INVALID',
-           'LUNA_RET_FUNCTION_NOT_SUPPORTED', 'CK_CREATEMUTEX',
-           'LUNA_RET_INVALID_PADDING_TYPE',
-           'CK_CA_LKMInitiatorComplete',
-           'LUNA_RET_RNG_RESEED_REQUIRED',
-           'LUNA_RET_MM_NOT_ENOUGH_MEMORY',
-           'RC_SSL_GET_PEER_CERT_ERROR',
-           'LUNA_RET_ATTRIBUTE_READ_ONLY', 'RC_NO_BUFFER',
-           'CA_SetPedId', 'CK_CA_ModifyMofN',
-           'LUNA_RET_KCV_PARAMETER_ALREADY_EXISTS',
-           'LUNA_RET_TOKEN_LOCKED_OUT_UM', 'CK_C_GetAttributeValue',
-           'CA_CreateContainer', 'CK_KEY_WRAP_SET_OAEP_PARAMS',
-           'CK_C_SignInit', 'CK_SESSION_INFO_PTR',
-           'CK_CA_STCSetCipherAlgorithm', 'CK_CA_SIMInsert',
-           'CK_CA_SIMExtract', 'CA_GenerateCloneableMofN',
-           'CK_CHAR_PTR', 'CA_ResetDevice', 'RC_STC_RESPONSE_BAD_MAC',
-           'CA_STCSetCipherAlgorithm', 'LUNA_RET_CHALLENGE_INVALID',
-           'LUNA_RET_UNWRAPPING_KEY_TYPE_INCONSISTENT',
-           'CA_GetModuleList', 'CK_CA_GetModuleInfo', 'CK_CA_SetTPV',
-           'RC_TOKEN_STATE_INVALID', 'LUNA_RET_ATTRIBUTE_NOT_FOUND',
-           'LUNA_RET_CAST_SELF_TEST_FAILURE',
-           'LUNA_RET_MTK_SPLIT_INVALID',
-           'MSG_RTC_CANT_CLEAN_TAMPER_1',
-           'MSG_RTC_CANT_CLEAN_TAMPER_2',
-           'LUNA_RET_HIFN_SOURCE_COUNT_INVALID', 'CA_GetTime',
-           'CA_GetTokenPolicies', 'RC_STC_RSA_ENCRYPT_ERROR',
-           'CA_InsertMaskedObject', 'CA_CloneAllObjectsToSession',
-           'LUNA_RET_LOG_AUDIT_NOT_INITIALIZED',
-           'LUNA_RET_SM_ACCESS_REALLOC_ERROR', 'CA_WriteCommonStore',
-           'CA_CloseSecureToken',
-           'LUNA_RET_HIFN6500_ADDRESS_LINES_BROKEN',
-           'CK_RC5_MAC_GENERAL_PARAMS_PTR',
-           'LUNA_RET_DES_SELF_TEST_FAILURE', 'CK_CA_ClonePrivateKey',
-           'LUNA_RET_RM_ELEMENT_ID_INVALID',
-           'LUNA_RET_OPERATION_SHOULD_BE_DESTRUCTIVE',
-           'RC_CMD_BLOCKED_REMOTE_PED_TUNNEL', 'CK_C_EncryptFinal',
-           'CK_PKCS5_PBKD2_PSEUDO_RANDOM_FUNCTION_TYPE',
-           'RC_STC_NO_CONTEXT',
-           'LUNA_RET_SM_EXCLUSIVE_SESSION_EXISTS', 'CK_C_VerifyInit',
-           'CK_LKM_TOKEN_ID_PTR', 'RC_USER_NAME_IN_USE',
-           'CA_SetContainerPolicy', 'CK_CA_FactoryReset',
-           'MSG_GENERATING_NEW_TVK_FAILED', 'PointerDifference',
-           'CA_CloseAllSecondarySessions',
-           'MSG_RTC_CONFIGURATION_CORRUPTED',
-           'LUNA_RET_OPERATION_NOT_INITIALIZED',
-           'LUNA_RET_CB_ABORTED',
-           'CK_CA_CloseApplicationIDForContainer',
-           'LUNA_RET_SIM_AUTHFORM_INVALID',
-           'LUNA_RET_HIFN_COMPRESS_SOURCE_NOT_ZERO',
-           'LUNA_RET_KEY_CANNOT_BE_KEKED', 'CA_STCGetKeyLifeTime',
-           'CK_RC2_MAC_GENERAL_PARAMS', 'CK_SESSION_HANDLE',
-           'LUNA_RET_KEY_INDIGESTIBLE', 'CK_SLOT_INFO',
-           'CA_STCGetDigestID', 'LUNA_RET_PED_ID_INVALID',
-           'MSG_TVK_TIMESTAMP_IS_OLDER_THAN_RTC_CLOCK',
-           'LUNA_RET_CAN_NOT_CREATE_SECRET_KEY',
-           'CK_CA_GetHSMPolicySetting',
-           'CK_CA_CreateContainerLoginChallenge', 'CA_QueryLicense',
-           'CA_STCGetCipherAlgorithm', 'RC_DATA_CORRUPTED',
-           'CK_SESSION_HANDLE_PTR', 'CK_RC2_MAC_GENERAL_PARAMS_PTR',
-           'CA_CloseApplicationID', 'LUNA_RET_CB_HIOS_RECV_TIMEOUT',
-           'CK_C_Logout', 'CA_HAGetLoginChallenge',
-           'LUNA_RET_RECALCULATE_K', 'CA_SetRDK',
-           'LUNA_RET_CCM_UPDATE_DENIED',
-           'LUNA_RET_410_CHALLENGE_RESPONSE_INCORRECT',
-           'LUNA_RET_GENERAL_ERROR',
-           'MSG_TVK_TIMESTAMP_RECOVERY_FAILED',
-           'CK_C_WaitForSlotEvent',
-           'LUNA_RET_LICENSE_CAPACITY_EXCEEDED',
-           'LUNA_RET_UM_PIN_LEN_RANGE',
-           'CK_SFNT_CA_FUNCTION_LIST_PTR',
-           'CK_SKIPJACK_PRIVATE_WRAP_PTR', 'LUNA_RET_ECC_DAK_MISSING',
-           'RC_GROUP_NAME_INVALID', 'CK_CA_GetObjectUID',
-           'LUNA_RET_ISES_RNG_TEST_FAILED',
-           'MSG_RTC_RTC_MONITOR_CANT_COMMUNICATE_TO_RTC',
-           'C_SetOperationState', 'CK_CA_ConfigureRemotePED',
-           'CK_C_SignRecoverInit', 'LUNA_RET_RNG_RESEED_TOO_EARLY',
-           'CK_CA_STCGetDigestAlgorithm', 'LUNA_RET_DATA_INVALID',
-           'CK_CERTIFICATE_TYPE', 'RC_REMOTE_PEER_OFFLINE',
-           'LUNA_RET_M_OF_N_PARAMETER_EXIST',
-           'RC_SSL_WANT_WRITE_ERROR', 'CA_Extract', 'CK_OBJECT_CLASS',
-           'CA_STCGetAdminPubKey', 'C_VerifyRecover',
-           'LUNA_RET_HIFN_MAC_HEADER_COUNT_INVALID',
-           'LUNA_RET_OPERATION_RESTRICTED',
-           'LUNA_RET_SM_UNKNOWN_ACCESS_TYPE', 'LUNA_RET_MAC_MISSING',
-           'CA_STCGetCipherNameByID', 'CA_GetObjectHandle',
-           'LUNA_RET_HIFN_DMA_ERROR', 'CK_CA_TokenDelete',
-           'CA_CloneObject', 'CK_C_DigestEncryptUpdate',
-           'LUNA_RET_ERROR', 'RC_CERT_TYPE_INVALID',
-           'C_VerifyRecoverInit', 'RC_OBJECT_NOT_IN_LIST',
-           'LUNA_RET_ECC_SELF_TEST_FAILURE', 'C_DigestKey',
-           'RC_OPERATION_WOULD_BLOCK', 'LUNA_RET_MM_INVALID_HANDLE',
-           'CA_LogExternal',
-           'LUNA_RET_SFNT3120_ALG_NO_SOFTWARE_SUPPORT',
-           'LUNA_RET_WRAPPING_KEY_HANDLE_INVALID',
-           'RC_MANUFACTURING_TOKEN_NOT_PRESENT',
-           'CK_CA_GetFunctionList', 'CA_GetPartitionPolicyTemplate',
-           'CK_CA_CloneAsTarget', 'CK_CA_HALogin', 'CA_CloneAsSource',
-           'LUNA_RET_MAX_OBJECT_COUNT', 'CK_KEY_TYPE',
-           'CK_RSA_PKCS_PSS_PARAMS', 'LUNA_RET_OBJECT_DELETED',
-           'CK_CA_GetSecondarySlot', 'UInt32',
-           'CA_OpenSessionWithAppID', 'LUNA2_RET_HIFN_RESET_ERROR',
-           'RC_UNEXPECTED', 'MSG_PARTITION_STC_POLICY_SET',
-           'CA_InvokeServiceFinal', 'CK_AES_XTS_PARAMS_PTR',
-           'RC_STC_CLIENT_IDENTITY_NOT_CONFIGURED', 'C_OpenSession',
-           'CK_CA_SetUserContainerName',
-           'LUNA_RET_STC_CLIENT_HANDLE_INVALID',
-           'CA_WaitForSlotEvent', 'LUNA_RET_INVALID_BOARD_TYPE',
-           'CK_WTLS_RANDOM_DATA_PTR', 'CK_C_CloseAllSessions',
-           'CK_RSA_PKCS_PSS_PARAMS_PTR', 'CK_RC2_CBC_PARAMS',
-           'CK_CA_GetServerInstanceBySlotID',
-           'LUNA_RET_CL_COMMAND_MALFORMED',
-           'LUNA_RET_LOG_BAD_RECORD_HMAC',
-           'LUNA_RET_MECHANISM_PARAM_INVALID', 'CK_CA_LoadModule',
-           'LUNA_RET_CAN_NOT_CHANGE_KEY_FUNCTION',
-           'CK_CA_HAAnswerMofNChallenge',
-           'CK_CA_GetRemotePEDVectorStatus', 'CK_ARIA_CTR_PARAMS',
-           'LUNA_RET_SM_CONTEXT_BUFFER_OVERFLOW',
-           'CK_CAMELLIA_CTR_PARAMS',
-           'RC_SSL_VALIDATE_SERVER_PRIVATE_KEY_ERROR',
-           'CK_C_INITIALIZE_ARGS_PTR', 'CK_CA_SetLKCV',
-           'LUNA_RET_CB_REMOTE_ABORT',
-           'CK_AES_CBC_PAD_INSERT_PARAMS_PTR',
-           'LUNA_RET_SIGNATURE_LEN_RANGE',
-           'MSG_RTC_UNRELIABLE_DUE_TO_LOW_BATTERY_WHEN_MAIN_POWER_WAS_OFF',
-           'CK_CA_CloseSecondarySession', 'CA_DismantleRemotePED',
-           'CA_ResetPIN', 'CK_CA_MTKRestore',
-           'CK_WTLS_KEY_MAT_OUT_PTR',
-           'MSG_TVK_WAS_LOST_DUE_TO_DECOMMISSIONING',
-           'LUNA_RET_LOG_BAD_FILE_NAME', 'CK_PKCS5_PBKD2_PARAMS',
-           'CK_C_Verify', 'LUNA_RET_CB_HIOS_ID_INVALID',
-           'CA_CloneMofN', 'RC_STC_CLIENT_HANDLE_INVALID',
-           'LUNA_RET_PE1746_ERROR', 'CK_CA_GenerateMofN',
-           'CK_CA_GetPrimarySlot', 'Int64',
-           'CK_X9_42_DH2_DERIVE_PARAMS', 'CA_ClonePrivateKey',
-           'CA_CloseSecondarySession',
-           'LUNA_RET_CONTAINER_IS_DISABLED',
-           'CK_CA_OpenApplicationIDForContainer',
-           'LUNA_RET_MUTEX_BAD', 'LUNA_RET_STC_NOT_ENABLED',
-           'LUNA_RET_ROOT_CERT_MISSING', 'CA_DeleteContainer',
-           'LUNA_RET_CHALLENGE_NOT_REQUIRED',
-           'CA_DeleteRemotePEDVector', 'CK_CA_UnlockClusteredSlot',
-           'CK_CA_GetTokenCapabilities', 'CK_CA_CloneModifyMofN',
-           'LUNA_RET_STC_OPEN_KEY_MATERIAL_GEN_FAIL', 'CK_STATE',
-           'CK_CA_GetHSMCapabilitySetting',
-           'LUNA_RET_HIFN_INVALID_ENCRYPT_ALGORITHM',
-           'RC_VERSION_INVALID', 'LUNA_RET_SIGNATURE_INVALID',
-           'LUNA_RET_CONTAINER_HANDLE_INVALID', 'CK_C_UnwrapKey',
-           'CK_CA_GetContainerList', 'CA_MultisignValue',
-           'LUNA_RET_KEY_NOT_UNWRAPPABLE',
-           'CK_CA_DisableUnauthTokenInsertion', 'CK_CA_SetPedId',
-           'C_Verify', 'CK_CA_Extract', 'LUNA_RET_SFNT3120_CRC',
-           'CK_C_SetAttributeValue', 'CK_CA_GetHSMCapabilitySet',
-           'CA_SIMMultiSign', 'LUNA_RET_LOG_FILE_WRITE_ERROR',
-           'RC_PARTITION_ROLE_DESC_VERSION_INVALID', 'C_DecryptFinal',
-           'Byte', 'CK_CA_CloneAsSource', 'CK_FUNCTION_LIST_PTR',
-           'LUNA_RET_FORMER_INVALID_ENTRY_TYPE', 'CA_ActivateMofN',
-           'CK_CA_HAGetMasterPublic', 'CK_SFNT_CA_FUNCTION_LIST',
-           'RC_STC_NO_CHANNEL', 'CK_CA_OpenApplicationID',
-           'CK_AES_GMAC_PARAMS_PTR', 'CK_CAMELLIA_CTR_PARAMS_PTR',
-           'RC_FAILED_TO_CREATE_PROCESS', 'CA_RetrieveLicenseList',
-           'LUNA_RET_HIFN6500_INVALID_OPERAND_ENDIANESS',
-           'CK_SSL3_RANDOM_DATA', 'CK_CA_SetContainerSize',
-           'LUNA_RET_HSM_INTERNAL_BUFFER_TOO_SMALL',
-           'LUNA_RET_CB_HIOS_STATE_INVALID', 'MSG_TVK_WAS_CORRUPTED',
-           'RC_STC_REKEY_CHANNEL_MISMATCH', 'CK_SSL3_KEY_MAT_PARAMS',
-           'CK_KIP_PARAMS_PTR', 'CK_CA_WaitForSlotEvent',
-           'CK_OTP_SIGNATURE_INFO_PTR',
-           'LUNA_RET_CHALLENGE_TYPE_INVALID',
-           'LUNA_RET_SM_UNKNOWN_SESSION_TYPE', 'CA_GetSessionInfo',
-           'CA_GetCVFirmwareVersion',
-           'CK_WTLS_RANDOM_DATA', 'CK_USHORT', 'LUNA_RET_NO_INVERSE',
-           'LUNA_RET_SEED_SELF_TEST_FAILURE',
-           'LUNA_RET_PED_UNSUPPORTED_CRYPTO_PROTOCOL',
-           'CK_CA_LoadEncryptedModule',
-           'MSG_LOG_NO_SECRET_PM_LOG_INIT_IS_DEFERRED',
-           'RC_INVALID_ENUM_OPTION',
-           'LUNA_RET_INVALID_CERTIFICATE_FUNCTION', 'CA_SetTPV',
-           'CK_SFNT_CA_FUNCTION_LIST_PTR_PTR',
-           'LUNA_RET_INVALID_ENTRY_TYPE', 'CA_GetUserContainerName',
-           'RC_NOT_HSM_BACKUP_TOKEN', 'CK_C_GetFunctionStatus',
-           'CK_CA_STCGetCipherNameByID', 'RC_SSL_FAILED_HANDSHAKE',
-           'CK_PRF_KDF_PARAMS', 'CK_CA_Deactivate',
-           'LUNA_RET_KEY_SENSITIVE', 'RC_SOCKET_ADDRESS_INVALID',
-           'CK_X9_42_DH1_DERIVE_PARAMS_PTR', 'CK_C_VerifyFinal',
-           'RC_SOCKET_ADDRESS_IN_USE',
-           'LUNA_RET_CL_COMMAND_NON_BACKUP', 'CA_ChooseSecondarySlot',
-           'CA_GetUserContainerNumber',
-           'LUNA_RET_DSA_PARAM_GEN_FAILURE', 'UInt',
-           'LUNA_RET_TIMEOUT', 'RC_CACHE_NOT_MAPPED',
-           'CK_RSA_PKCS_OAEP_SOURCE_TYPE_PTR',
-           'CA_GetHSMCapabilitySetting',
-           'RC_UNKNOWN_CALLBACK_COMMAND',
-           'CK_CA_GetTokenObjectHandle',
-           'CK_CA_GetUnauthTokenInsertionStatus', 'fwResultCode',
-           'CA_MTKGetState', 'LUNA_RET_KEY_INVALID_FOR_OPERATION',
-           'CK_CA_CloneObject', 'RC_ASSIGNING_SAME_VALUE',
-           'LUNA_RET_M_OF_N_CLONING_IS_NOT_ALLOWED',
-           'CK_MECHANISM_TYPE', 'CA_SetKCV',
-           'RC_USB_PED_NOT_RESPONDING',
-           'LUNA_RET_MEMORY_ALLOCATION_FAILED',
-           'MSG_ZEROIZING_AFTER_DECOMMISSION',
-           'CK_CA_GetContainerStorageInformation', 'CK_ATTRIBUTE',
-           'CK_CA_SetDestructiveHSMPolicies',
-           'CK_CA_SwitchSecondarySlot', 'CK_MECHANISM',
-           'CA_RoleStateGet',
-           'LUNA_RET_HIFN_DESTINATION_COUNT_INVALID',
-           'LUNA_RET_NO_RNG_SEED', 'C_Encrypt', 'CK_C_SignUpdate',
-           'CK_INFO_PTR', 'CK_ARIA_CTR_PARAMS_PTR',
-           'LUNA_RET_HIFN_INVALID_COMPRESSION_ALGORITHM',
-           'CK_C_SeedRandom', 'LUNA_RET_HAS160_SELF_TEST_FAILURE',
-           'LUNA_RET_MM_USAGE_ALREADY_SET', 'CA_GetHAState',
-           'C_SignRecoverInit', 'CK_CA_STCGetClientsList',
-           'CK_C_FindObjectsFinal',
-           'LUNA_RET_SM_MULTIPLE_ACCESS_DISABLED',
-           'CK_CA_GetContainerPolicySetting',
-           'CK_CA_STCSetKeyLifeTime', 'CK_BYTE',
-           'CK_SSL3_KEY_MAT_OUT', 'LUNA_RET_ISES_ERROR',
-           'LUNA_RET_ECC_MIC_MISSING', 'CK_GetTotalOperations',
-           'CK_SLOT_INFO_PTR', 'CK_CA_GetObjectHandle',
-           'CK_CA_GetSlotListFromServerInstance',
-           'LUNA_RET_CL_MAILBOXES_NOT_AVAILABLE',
-           'CKCA_MODULE_INFO_PTR', 'CK_KEA_DERIVE_PARAMS_PTR',
-           'CK_BYTE_PTR', 'CA_GetServerInstanceBySlotID',
-           'CA_SetContainerSize', 'LUNA_RET_SM_ACCESS_ID_INVALID',
-           'CA_GetContainerPolicySetting',
-           'CK_CA_CloseAllSecondarySessions', 'CA_GenerateTokenKeys',
-           'RC_REMOTE_SIDE_DISCONNECTED', 'CA_TimeSync',
-           'CA_LKMInitiatorChallenge', 'HalfWord',
-           'CK_C_GetMechanismList', 'RC_SSL_LOAD_SERVER_CERT_ERROR',
-           'LUNA_RET_MISSING_NUMBER_OF_VECTORS',
-           'CK_CA_EncodeECPrimeParams', 'CK_VOID_PTR_PTR',
-           'CA_MOFN_STATUS', 'CK_CA_FindAdminSlotForSlot',
-           'CK_C_CopyObject', 'CK_CA_CreateLoginChallenge',
-           'CK_CA_STCGetMaxSessions', 'CT_TokenHndle',
-           'MSG_RTC_MSG_NVRAM_READ_FAILED', 'C_SetPIN',
-           'LUNA_RET_ECC_HOK_MISSING', 'CA_InitIndirectToken',
-           'C_GenerateKey', 'LUNA_RET_TEMPLATE_INCOMPLETE',
-           'CK_CA_STCGetCipherIDs', 'C_InitPIN',
-           'RC_STC_CONTAINER_INVALID', 'LUNA_RET_DAK_MISSING',
-           'CK_C_GetSlotInfo', 'RC_INVALID_INDEX', 'CK_ECIES_PARAMS',
-           'MSG_RTC_RE_CONFIGURINGPASSED_CLOCK_RESTARTED',
-           'LUNA_RET_STC_OPEN_RESP_GEN_FAIL',
-           'MSG_EXISTING_AUTO_ACTIVATION_DATA_WONT_WORK',
-           'MSG_RTC_RECONFIGURING_FAILED', 'RC_CHALLENGE_BUFFER_SIZE',
-           'MSG_RTC_MSG_NVRAM_WRITE_FAILED', 'LUNA_RET_CB_ID_INVALID',
-           'LUNA_RET_CB_SYNC_ERROR', 'CK_AES_CTR_PARAMS',
-           'CK_LKM_TOKEN_ID_S', 'CA_SetExtendedTPV',
-           'CK_CA_STCRegister', 'CA_HAInit',
-           'CK_X9_42_DH2_DERIVE_PARAMS_PTR', 'CK_CA_TimeSync',
-           'LUNA_RET_SECRET_KEY_MUST_BE_SENSITIVE',
-           'CK_CA_DeleteRemotePEDVector', 'CA_LogImportSecret',
-           'CK_KEY_WRAP_SET_OAEP_PARAMS_PTR',
-           'CA_STCGetDigestNameByID', 'LUNA_RET_FUNCTION_CANCELED',
-           'LUNA_RET_INVALID_ACCESS_LEVEL',
-           'CK_CA_GetTokenInsertionCount',
-           'LUNA_RET_ISES_INIT_FAILED',
-           'LUNA_RET_HIFN_ENCRYPT_SOURCE_NOT_ZERO', 'CK_PARAM_TYPE',
-           'CA_GetContainerName', 'CK_CA_ChooseSecondarySlot',
-           'CA_MOFN_STATUS_PTR', 'CA_FindAdminSlotForSlot',
-           'LUNA_RET_VECTOR_OF_DIFFERENT_SET', 'ResultCodeValue',
-           'LUNA_RET_WRAPPING_KEY_SIZE_RANGE',
-           'CK_ECDH1_DERIVE_PARAMS', 'RC_SSL_CREATE_SSL_ERROR',
-           'CK_RC2_PARAMS_PTR', 'CK_WTLS_PRF_PARAMS_PTR',
-           'C_FindObjectsFinal', 'CK_C_CancelFunction',
-           'CK_CA_GetContainerStatus', 'CK_C_VerifyRecover',
-           'CK_RC2_CBC_PARAMS_PTR',
-           'LUNA_RET_SECRET_KEY_MUST_HAVE_SENSITIVE_ATTRIBUTE',
-           'CA_STCSetMaxSessions', 'CA_GetContainerStatus',
-           'CA_PerformSelfTest', 'CA_STCGetCipherID',
-           'CA_EncodeECPrimeParams', 'RC_USB_PED_OUT_OF_SYNC',
-           'CK_CA_GetContainerCapabilitySet',
-           'LUNA_RET_WEIGHT_TOO_SMALL',
-           'CA_GetConfigurationElementDescription',
-           'LUNA_RET_PED_UNPLUGGED', 'LUNA_RET_HSM_STORAGE_FULL',
-           'C_Login', 'CK_CA_CloneAllObjectsToSession',
-           'CA_STCGetClientInfo', 'LUNA_RET_KCDSA_SELF_TEST_FAILURE',
-           'LUNA_RET_M_OF_N_ACTIVATION_REQUIRED',
-           'LUNA_RET_MECHANISM_INVALID', 'C_CreateObject',
-           'CK_KEA_DERIVE_PARAMS', 'CK_CA_FirmwareUpdate',
-           'CK_CA_OpenSession',
-           'LUNA_RET_STC_ACTIVATE_MACTAG_V_GEN_FAIL',
-           'LUNA_RET_MECHANISM_INVALID_FOR_FP', 'CA_Restart',
-           'UInt64', 'CK_C_Sign', 'CK_CA_ReadCommonStore',
-           'LUNA_RET_ATTRIBUTE_VALUE_INVALID', 'CKCA_MODULE_ID_PTR',
-           'LUNA_RET_SM_ACCESS_ALREADY_EXISTS', 'CK_LONG',
-           'CA_MOFN_GENERATION', 'LUNA_RET_HIFN_MAC_SOURCE_NOT_ZERO',
-           'LUNA_RET_RM_POLICY_ELEMENT_NOT_DESTRUCTIVE',
-           'LUNA_RET_CAST5_SELF_TEST_FAILURE',
-           'CK_CA_ListSecureTokenUpdate', 'RC_CACHE_DIRTY',
-           'LUNA_RET_HIFN6500_INVALID_OPERAND_LENGTH',
-           'RC_STC_SECOND_PHASE_KDF_ERROR',
-           'LUNA_RET_SESSION_HANDLE_INVALID_FOR_FP',
-           'LUNA_RET_RM_NO_MEMORY', 'CK_CA_SetKCV',
-           'CK_OBJECT_HANDLE_PTR', 'CA_LogExportSecret',
-           'CK_CA_InvokeServiceFinal',
-           'LUNA_RET_CL_TRANSMISSION_ERROR',
-           'RC_FAILED_TO_CREATE_THREAD',
-           'RC_STC_UNEXPECTED_NONCE_PAYLOAD_SIZE', 'CK_CA_HAInit',
-           'Int', 'CA_LKMReceiverResponse',
-           'CK_CA_STCClearDigestAlgorithm',
-           'LUNA_RET_TUK_PARAMETER_MISSING', 'CK_C_InitPIN',
-           'CK_AES_CBC_PAD_EXTRACT_PARAMS', 'LUNA_RET_RNG_ERROR',
-           'RC_SSL_GET_CERTIFICATE_ERROR',
-           'CK_SKIPJACK_RELAYX_PARAMS_PTR', 'CA_GetModuleInfo',
-           'CK_TLS_PRF_PARAMS', 'LUNA_RET_STC_OPEN_CIPHER_MISMATCH',
-           'CA_GetSecureElementMeta',
-           'LUNA_RET_UNWRAPPING_KEY_SIZE_RANGE',
-           'LUNA_RET_TOKEN_LOCKED_OUT_PM', 'CK_SLOT_ID',
-           'LUNA_RET_PED_CLIENT_NOT_RUNNING',
-           'LUNA_RET_SM_TOSM_DOES_NOT_VALIDATE', 'CT_Token',
-           'LUNA_RET_HIFN6500_TOO_SMALL_USER_BUFFER_FOR_RESULT',
-           'MSG_TVK_TIMESTAMP_CORRUPTED', 'CK_CA_LogExternal',
-           'LUNA_RET_SP_RX_ERROR',
-           'LUNA_RET_INVALID_PRIVATE_KEY_TYPE',
-           'CK_CA_CloseSecureToken', 'LUNA_RET_SM_UNKNOWN_COMMAND',
-           'RC_SLOT_ID_INVALID', 'CK_CA_ListSecureTokenInit',
-           'LUNA_INVALID_PACKET_LAYOUT', 'LastFirmwareCode',
-           'CK_C_Digest', 'LUNA_RET_NOT_FOUND', 'CK_C_Finalize',
-           'RC_STC_PARTITION_IDENTITY_NOT_CONFIGURED',
-           'LUNA_RET_CB_HIOS_HANDLE_INVALID', 'RC_PIN_INVALID',
-           'RC_SOCKET_CLOSED', 'LUNA_RET_DAC_POLICY_PID_MISMATCH',
-           'CA_GetTPV', 'CK_CA_EncodeECParamsFromFile',
-           'CK_CA_RestartForContainer',
-           'LUNA_RET_MISSING_COMMAND_PARAMETER',
-           'LUNA_RET_SHA1_RSA_SELF_TEST_FAILURE',
-           'LUNA_RET_SM_PIN_EXPIRED',
-           'CA_GetNumberOfAllowedContainers', 'CA_ChoosePrimarySlot',
-           'RC_CLIENT_DISCONNECTED', 'LUNA_RET_CB_PROT_DATA_INVALID',
-           'C_VerifyInit', 'LUNA_RET_CL_ALIGNMENT_ERROR',
-           'CK_SKIPJACK_PRIVATE_WRAP_PARAMS', 'CA_SetTokenPolicies',
-           'LUNA_RET_HIFN6500_INVALID_PARAMETERS', 'CKCA_MODULE_ID',
-           'CK_CA_DeleteContainerWithHandle', 'CK_LOCKMUTEX',
-           'LUNA_RET_WRAPPING_ERROR', 'CK_CA_GenerateCloningKEV',
-           'MSG_RTC_CANT_ACCESS', 'CK_C_DecryptUpdate',
-           'LUNA_RET_RETRY', 'CA_M_OF_N_STATUS', 'CK_C_CloseSession',
-           'CK_EC_ENC_SCHEME', 'CK_MECHANISM_INFO_PTR',
-           'CK_OTP_PARAM_TYPE', 'LUNA_RET_OK', 'CA_UnloadModule',
-           'CK_CA_PerformModuleCall', 'CA_GetTokenInsertionCount',
-           'CK_CA_ResetDevice', 'LUNA_RET_CB_HANDLE_INVALID',
-           'CK_CA_GetHSMPolicySet', 'CA_TokenDelete',
-           'LUNA_RET_CONTAINER_LOCKED', 'CK_AES_GMAC_PARAMS',
-           'LUNA_RET_NOT_READY', 'CK_PBE_PARAMS_PTR',
-           'CK_ARIA_CBC_ENCRYPT_DATA_PARAMS', 'C_SeedRandom',
-           'RC_GENERAL_ERROR', 'CA_RestartForContainer',
-           'CA_STCClearDigestAlgorithm', 'CK_CA_STCDeregister',
-           'CK_CA_STCGetDigestIDs',
-           'LUNA_RET_CB_INVALID_CALL_FOR_THE_STATE',
-           'CK_CA_GetTokenCertificates', 'LUNA_RET_VECTOR_DUPLICATE',
-           'HANDLE', 'CK_CA_TokenInsert', 'RC_SESSION_SCRIPT_EXISTS',
-           'LUNA_RET_UNKNOWN_COMMAND', 'CA_ManualKCV',
-           'C_CancelFunction', 'CK_HA_STATUS',
-           'LUNA_RET_ECC_RESULT_AT_INF', 'RC_LISTEN_SOCKET_INVALID',
-           'CK_C_DigestKey', 'C_Initialize', 'RC_INVALID_COMMAND',
-           'CK_RSA_PKCS_OAEP_PARAMS_PTR',
-           'LUNA_RET_SHA_SELF_TEST_FAILURE', 'C_InitToken',
-           'CK_CA_ActivateMofN', 'RC_SOCKET_WRITE_ERROR',
-           'MSG_TVK_TIMESTAMP_UPDATE_FAILED', 'RC_ARGUMENTS_BAD',
-           'LUNA_RET_UM_PIN_INCORRECT', 'C_GetSlotList',
-           'C_GetMechanismInfo', 'LUNA_RET_BAD_PPID',
-           'LUNA_RET_USER_TYPE_INVALID',
-           'LUNA_RET_ATTRIBUTE_SENSITIVE', 'CA_STCGetChannelID',
-           'CK_C_EncryptUpdate', 'LUNA_RET_M_OF_N_IS_NOT_REQUIRED',
-           'Boolean', 'CK_CA_Zeroize',
-           'LUNA_RET_UNWRAPPING_KEY_HANDLE_INVALID',
-           'CK_WTLS_KEY_MAT_PARAMS_PTR',
-           'LUNA_RET_RM_POLICY_ELEMENT_DESTRUCTIVE',
-           'CK_CA_InitIndirectToken', 'CA_GetTSV', 'CK_RC5_PARAMS',
-           'MSG_BAD_HMAC', 'C_SignFinal',
-           'LUNA_RET_INVALID_CERTIFICATE_DATA', 'CK_C_GenerateKey',
-           'LUNA_RET_M_TOO_SMALL', 'CA_UnlockClusteredSlot',
-           'RC_FILE_ERROR', 'CK_AES_CTR_PARAMS_PTR',
-           'CA_FirmwareUpdate', 'CK_USHORT_PTR',
-           'CK_PKCS5_PBKD2_PARAMS_PTR',
-           'LUNA_RET_OH_OBJECT_TYPE_INVALID',
-           'LUNA_RET_AES_SELF_TEST_FAILURE', 'CK_C_DeriveKey',
-           'RC_OK', 'CK_CA_GetContainerPolicySet', 'CA_SIMInsert',
-           'RC_SERVER_DISCONNECTED', 'CK_CA_SetHSMPolicies',
-           'CK_AES_CBC_PAD_EXTRACT_PARAMS_PTR',
-           'LUNA_RET_CB_HIOS_CANCELED',
-           'LUNA_RET_TOKEN_LOCKED_OUT_SM',
-           'LUNA_RET_CAST3_SELF_TEST_FAILURE', 'CK_CA_RoleStateGet',
-           'CK_C_VerifyRecoverInit', 'CK_CA_TokenInsertNoAuth',
-           'CA_TokenInsertNoAuth', 'CK_ECDH2_DERIVE_PARAMS_PTR',
-           'CK_CA_ChoosePrimarySlot', 'LUNA_RET_ECC_HOC_MISSING',
-           'CK_CA_IndirectLogin', 'CK_CA_InvokeServiceAsynch',
-           'LUNA_RET_CANNOT_PERFORM_OPERATION_TWICE',
-           'CK_CA_GetTokenPolicies',
-           'LUNA_RET_CERT_VERSION_NOT_SUPPORTED', 'CK_CA_InitAudit',
-           'LUNA_RET_SM_SESSION_READ_ONLY_EXISTS',
-           'LUNA_RET_DEVICE_TIMEOUT', 'MSG_LAST',
-           'CK_CA_SIMMultiSign', 'CK_DES_CBC_ENCRYPT_DATA_PARAMS',
-           'CK_CAMELLIA_CBC_ENCRYPT_DATA_PARAMS',
-           'MSG_RTC_EXTERNAL_TAMPER_DETECTED', 'CK_CA_GetHSMStats',
-           'LUNA_RET_INVALID_IP_PACKET', 'C_GenerateKeyPair',
-           'CK_CA_MTKSetStorage', 'CKA_SIM_AUTH_FORM',
-           'CK_C_SignRecover',
-           'LUNA_RET_FUNCTION_NOT_SUPPORTED_BY_HARDWARE',
-           'CK_HW_FEATURE_TYPE', 'RC_POINTER_INVALID',
-           'CK_CA_ExtractMaskedObject', 'CA_ROLE_STATE',
-           'MSG_RTC_CANT_ARM_TAMPER_2_CIRCUITS',
-           'CA_GetTokenCertificates', 'CK_CLUSTER_STATE_PTR',
-           'CA_CheckOperationState', 'LUNA_RET_SP_TX_ERROR',
-           'C_GetTokenInfo', 'CK_CA_SetTokenPolicies',
-           'CA_CloneAsTarget', 'RC_NOT_PARTITION_BACKUP_TOKEN',
-           'CA_SetCloningDomain', 'LUNA_RET_M_OF_N_IS_NOT_INITIALZED',
-           'RC_SEMAPHORE_ERROR', 'CA_GetObjectUID', 'CK_VERSION_PTR',
-           'CK_CA_OpenSessionWithAppID', 'C_DecryptInit',
-           'LUNA_RET_CPK_PARAMETER_MISSING', 'CA_STCDeregister',
-           'SInt32', 'CK_CA_STCGetCipherID',
-           'CA_STCSetKeyActivationTimeOut', 'CK_CA_CreateContainer',
-           'LUNA_RET_ENCRYPTED_DATA_LEN_RANGE',
-           'LUNA_RET_DAC_MISSING', 'CK_ULONG_PTR',
-           'CK_KDF_PRF_PARAMS_PTR', 'CA_STCGetDigestAlgorithm',
-           'LUNA_RET_CB_MUST_WRITE',
-           'LUNA_RET_SM_OTHER_USER_LOGGED_IN',
-           'RC_PARTITION_ROLE_POLICY_SET_VERSION_INVALID',
-           'CK_CA_GetTokenStatus', 'CA_CreateContainerWithPolicy',
-           'CA_GetContainerCapabilitySetting', 'CA_DeriveKeyAndWrap',
-           'RC_SSL_WANT_X509_LOOKUP_ERROR', 'RC_SOCKET_WOULDBLOCK',
-           'CA_InvokeServiceAsynch', 'CK_C_GetInfo',
-           'RC_STC_RESPONSE_REPLAYED', 'CK_CA_SetApplicationID',
-           'CK_AES_CBC_ENCRYPT_DATA_PARAMS',
-           'CK_C_DecryptVerifyUpdate', 'CK_CA_STMToggle',
-           'CK_CA_DestroyMultipleObjects',
-           'CK_KEY_DERIVATION_STRING_DATA_PTR',
-           'RC_PARTITION_ROLE_POLICY_VERSION_INVALID',
-           'CK_CA_ReplaceFastPathKEK', 'LUNA_RET_INVALID_VECTOR_SIZE',
-           'MSG_RTC_BATTERY_LOW', 'LUNA_RET_TOKEN_LOCKED_OUT_RN',
-           'CK_CA_InvokeServiceSinglePart', 'ULong',
-           'CK_CA_QueryLicense', 'CK_DES_CBC_ENCRYPT_DATA_PARAMS_PTR',
-           'CK_SLOT_ID_PTR', 'CA_TokenInsert',
-           'MSG_RTC_IS_NOT_OPERATIONAL_AUTO_ACTIVATION_WILL_NO_WORK',
-           'CA_IsMofNRequired', 'CA_HAGetMasterPublic',
-           'MSG_RTC_ROLLED_BACK', 'RC_USB_PED_OPERATION_CANCELLED',
-           'LUNA_RET_STC_NO_CHANNEL', 'CK_CA_LogVerifyFile',
-           'CA_SetContainerPolicies', 'CK_CA_HAGetLoginChallenge',
-           'CA_GenerateCloningKEV', 'CA_SetHSMPolicy', 'CK_CA_GetTPV',
-           'MSG_RTC_CANT_CLEAN_POWER_LOSS',
-           'MSG_RTC_HSM_WAS_REMOVED_FROM_THE_PCI_SLOT',
-           'CK_CA_SetTokenCertificateSignature',
-           'LUNA_RET_STC_SEQUENCE_NUM_INVALID', 'CK_RV', 'CK_NOTIFY',
-           'CK_C_FindObjects', 'LUNA_RET_HIFN_INVALID_MAC_MODE',
-           'CA_ModifyUsageCount', 'LUNA_RET_SM_KEY_SIZE_ERROR',
-           'LUNA_RET_OH_OBJECT_ALREADY_EXISTS', 'RC_DATA_INVALID',
-           'C_VerifyUpdate', 'CK_CA_LogImportSecret',
-           'CK_X9_42_MQV_DERIVE_PARAMS_PTR', 'CK_CA_ResetPIN',
-           'RC_STC_RESPONSE_UNEXPECTED_KEY', 'RC_PIN_LOCKED',
-           'LUNA_RET_PED_ERROR', 'CK_X9_42_DH_KDF_TYPE_PTR',
-           'CK_ARIA_CBC_ENCRYPT_DATA_PARAMS_PTR',
-           'LUNA_RET_USER_PIN_NOT_INITIALIZED', 'CK_C_Decrypt',
-           'CK_CA_CloneMofN', 'CK_CA_IsMofNRequired',
-           'LUNA_RET_CHALLENGE_REQUIRES_PED',
-           'LUNA_RET_HIFN6500_RESET_TIMEOUT', 'C_Sign',
-           'CA_STCClearCipherAlgorithm', 'LUNA_RET_WEIGHT_TOO_LARGE',
-           'LUNA_RET_PRIVATE_KEY_MUST_BE_SENSITIVE',
-           'CK_C_DigestUpdate', 'LUNA_RET_KEY_SIZE_RANGE',
-           'CK_X9_42_DH1_DERIVE_PARAMS', 'C_GetFunctionList',
-           'CK_CA_SetCloningDomain', 'CK_C_Initialize',
-           'CA_GetTokenObjectUID', 'C_GetOperationState',
-           'CK_C_GetSessionInfo', 'CK_BBOOL',
-           'CK_CA_EncodeECChar2Params', 'CK_CA_STCGetChannelID',
-           'RC_KEY_NEEDED',
-           'LUNA_RET_HIFN_ENCRYPT_SOURCE_COUNT_INVALID',
-           'LUNA_RET_BAD_FW_VERSION', 'LUNA_RET_DATA_LEN_RANGE',
-           'LUNA_RET_CB_NO_MEMORY', 'CK_CA_LogSetConfig',
-           'LUNA_RET_CAN_NOT_CREATE_PRIVATE_KEY',
-           'CA_GetRollbackFirmwareVersion',
-           'LUNA_RET_MULTI_FUNCTION_KEYS_NOT_ALLOWED',
-           'LUNA_RET_OPERATION_INVALID_FOR_FP',
-           'CK_C_GenerateKeyPair', 'CK_CA_STCGetCurrentKeyLife',
-           'LUNA_RET_MTK_STATE_INVALID', 'CK_CA_GetTokenObjectUID',
-           'CK_CA_PerformSelfTest', 'CK_ECDH2_DERIVE_PARAMS',
-           'LUNA_RET_NO_OFFBOARD_STORAGE',
-           'CK_CA_CheckOperationState',
-           'RC_SSL_LOAD_CLIENT_CERT_ERROR',
-           'LUNA_RET_MM_ACCESS_OUTSIDE_ALLOCATION_RANGE',
-           'LUNA_RET_SO_LOGIN_FAILURE_THRESHOLD',
-           'LUNA_RET_SELF_TEST_FAILURE',
-           'LUNA_RET_CB_HIOS_INPUT_BUFFER_TOO_SMALL', 'CK_CA_SetMofN',
-           'RC_SSL_CIPHER_LIST_ERROR', 'CK_CA_DismantleRemotePED',
-           'LUNA_RET_INVALID_FUF_VERSION',
-           'LUNA_RET_RIPEMD160_SELF_TEST_FAILURE',
-           'CA_GetTokenCapabilities', 'CK_OBJECT_CLASS_PTR',
-           'CK_RC2_PARAMS', 'RC_MANUFACTURING_NO_CONFIG_AVAILABLE',
-           'LUNA_RET_HIFN_COMPRESSION_HEADER_COUNT_INVALID',
-           'CA_GetSecondarySlot', 'LUNA_RET_TOKEN_LOCKED_OUT_CA',
-           'RC_RESET_FAILED', 'HSM_STATS_PARAMS',
-           'LUNA_RET_TOKEN_LOCKED_OUT_CL',
-           'CK_CA_SetDestructiveHSMPolicy', 'CK_CA_InvokeServiceInit',
-           'CA_GetMofNStatus', 'LUNA_RET_PED_DEK_INVALID',
-           'LUNA_RET_HA_NOT_SUPPORTED', 'CK_OTP_PARAM',
-           'CA_STCRegister', 'RC_UNABLE_TO_CONNECT',
-           'CK_CA_SpRawRead',
-           'RC_SSL_CERT_VERIFICATION_LOCATION_ERROR',
-           'LUNA_RET_CL_QUEUE_LOCATION_ERROR',
-           'RC_SSL_INVALID_CERT_STRUCTURE', 'CK_C_GetOperationState',
-           'LUNA_RET_HA_USER_NOT_INITIALIZED', 'RC_FILE_READ_ONLY',
-           'LUNA_RET_HOK_MISSING',
-           'LUNA_RET_HIFN_INVALID_MAC_ALGORITHM', 'CK_TOKEN_INFO',
-           'CK_RSA_PKCS_OAEP_PARAMS', 'CK_SSL3_KEY_MAT_PARAMS_PTR',
-           'CA_ReadCommonStore', 'LUNA_RET_HIFN6500_RNG_TIMEOUT',
-           'LUNA_RET_VECTOR_TOO_LARGE', 'CK_CA_CapabilityUpdate',
-           'CK_C_EncryptInit', 'LUNA_RET_TOKEN_LOCKED_OUT_STC',
-           'C_Logout',
-           'LUNA_RET_PRIVATE_KEY_MUST_HAVE_SENSITIVE_ATTRIBUTE',
-           'LUNA_RET_KEY_TYPE_INCONSISTENT',
-           'LUNA_RET_SPLIT_ID_INVALID', 'LUNA_RET_KEY_UNEXTRACTABLE',
-           'LUNA_RET_BAD_SN', 'CA_MTKRestore',
-           'CA_LKMInitiatorComplete', 'CA_CloneAsTargetInit',
-           'MSG_NVRAM_WRITE_FAILED', 'LUNA_RET_TOKEN_LOCKED_OUT_MM',
-           'CA_OpenApplicationIDForContainer',
-           'CK_CA_GetTunnelSlotNumber',
-           'RC_STC_DH_KEY_NOT_FROM_SAME_GROUP',
-           'LUNA_RET_MTK_ZEROIZED', 'LUNA_RET_ECC_UNKNOWN_CURVE',
-           'CA_LogSetConfig', 'SizeType', 'CK_CA_LogExportSecret',
-           'CA_STCGetCipherIDs', 'CK_C_INITIALIZE_ARGS',
-           'CA_GetTokenCertificateInfo', 'C_Decrypt',
-           'CK_C_SignEncryptUpdate', 'CA_GetExtendedTPV',
-           'RC_SSL_SYSCALL_ERROR', 'CA_GetContainerPolicySet',
-           'CK_EXTRACT_PARAMS_PTR', 'LUNA_RET_RM_CONFIG_ILLEGAL',
-           'LUNA_RET_STC_ACTIVATE_MACTAG_U_VERIFY_FAIL',
-           'CK_CAMELLIA_CBC_ENCRYPT_DATA_PARAMS_PTR',
-           'LUNA_RET_BAD_MAC', 'CK_PKCS5_PBKDF2_SALT_SOURCE_TYPE_PTR',
-           'LUNA_RET_CB_RETRY', 'MSG_RESTART', 'RC_FILE_NAME_INVALID',
-           'C_DecryptDigestUpdate', 'CK_AES_XTS_PARAMS', 'CA_Get',
-           'CK_AES_GCM_PARAMS', 'CK_HA_STATE_PTR', 'CA_LogGetConfig',
-           'CA_STCGetCurrentKeyLife', 'CA_SetHSMPolicies',
-           'CA_STMToggle', 'LUNA_RET_KCV_PARAMETER_MISSING',
-           'CK_XOR_BASE_DATA_KDF_PARAMS', 'C_Finalize',
-           'RC_SOCKET_ERROR', 'CA_InitAudit', 'LUNA_RET_KEY_PARITY',
-           'MSG_RTC_CANT_INITIALIZE_I2C',
-           'LUNA_RET_STORAGE_TYPE_INCONSISTENT',
-           'LUNA_RET_SENTRY_PKA_ERROR', 'CK_CA_SetHSMPolicy',
-           'CK_CA_OpenSecureToken', 'CA_CapabilityUpdate',
-           'C_GetSlotInfo', 'CK_HA_MEMBER',
-           'LUNA_RET_TOKEN_LOCKED_OUT_SHA_DIGEST',
-           'CA_STCGetDigestIDs', 'C_FindObjectsInit', 'CA_SIMExtract',
-           'CK_CA_GetExtendedTPV', 'CA_DisableUnauthTokenInsertion',
-           'CK_C_FindObjectsInit', 'CK_CA_STCGetSequenceWindowSize',
-           'LUNA_RET_RC2_SELF_TEST_FAILURE',
-           'CK_RSA_PKCS_OAEP_SOURCE_TYPE', 'CK_UNLOCKMUTEX',
-           'LUNA_RET_ARGUMENTS_BAD', 'CKCA_MODULE_INFO',
-           'RC_PARTITION_LOCKED', 'CK_RC5_CBC_PARAMS',
-           'CA_InvokeServiceSinglePart', 'CK_KDF_PRF_ENCODING_SCHEME',
-           'MSG_RTC_CANT_ARM_TAMPER_1_CIRCUITS',
-           'LUNA_RET_M_TOO_LARGE', 'RC_STC_NO_SESSION_KEY',
-           'RC_ENDOFLIST', 'LUNA_RET_LOG_NO_KCV', 'CK_C_DecryptInit',
-           'CK_CA_UnloadModule', 'CA_OpenSession',
-           'LUNA_RET_KEY_EXTRACTABLE', 'CA_DeleteContainerWithHandle',
-           'CA_FactoryReset', 'CA_SetUserContainerName',
-           'CK_PBE_PARAMS', 'CK_CA_InsertMaskedObject',
-           'CA_STCGetState', 'RC_OBJECT_ALREADY_EXISTS',
-           'LUNA_RET_SSK_MISSING', 'CK_CA_STCSetSequenceWindowSize',
-           'LUNA_RET_LICENSE_ID_UNKNOWN',
-           'LUNA_RET_KCDSA_PARAM_GEN_FAILURE',
-           'LUNA_RET_TOKEN_NOT_PRESENT', 'CK_USER_TYPE',
-           'C_GetMechanismList',
-           'RC_SSL_LOAD_CLIENT_PRIVATE_KEY_ERROR',
-           'LUNA_RET_SFNT3120_ERROR',
-           'CK_WTLS_MASTER_KEY_DERIVE_PARAMS_PTR',
-           'RC_CLIENT_MESSAGE_ERROR', 'C_GetAttributeValue',
-           'CA_ListSecureTokenInit',
-           'MSG_ZEROIZING_AFTER_NO_SECURE_DATA',
-           'CA_OpenApplicationID', 'LUNA_RET_CB_MUST_READ',
-           'LUNA_RET_AUDIT_LOGIN_TIMEOUT_IN_PROGRESS',
-           'CA_STCGetKeyActivationTimeOut', 'CA_DuplicateMofN',
-           'CK_CA_GetModuleList',
-           'LUNA_RET_STC_CHANNEL_REALLOC_ERROR',
-           'LUNA_RET_OBJECT_HANDLE_INVALID', 'C_GetFunctionStatus',
-           'CK_OTP_PARAMS_PTR', 'RC_DER_CLASS_INVALID',
-           'CK_CA_SetExtendedTPV', 'CK_C_SignFinal',
-           'CA_SetDestructiveHSMPolicy',
-           'CK_SSL3_MASTER_KEY_DERIVE_PARAMS', 'CK_UTF8CHAR_PTR',
-           'LUNA_RET_ISES_TEST_VS_BSAFE_FAILED', 'swapper',
-           'LUNA_RET_SM_TSV_MISSING', 'C_WrapKey',
-           'LUNA_RET_KEY_HANDLE_INVALID',
-           'CA_GetSlotListFromServerInstance',
-           'RC_PARTITION_NOT_ACTIVATED', 'CK_ATTRIBUTE_TYPE',
-           'CK_AES_CBC_ENCRYPT_DATA_PARAMS_PTR',
-           'CK_CA_GetMofNStatus', 'CK_CA_GetRollbackFirmwareVersion',
-           'LUNA_RET_RM_POLICY_WRITE_RESTRICTED',
-           'CK_CA_GetContainerCapabilitySetting', 'SInt16',
-           'CK_C_GetMechanismInfo', 'LUNA_RET_CITS_DAK_MISSING',
-           'CK_C_DigestFinal', 'CK_CA_GetTokenCertificateInfo',
-           'CK_CA_DeleteContainer', 'MSG_RTC_ZEROIZED_ON_POWER_LOSS',
-           'CA_STCGetPartPubKey', 'C_DestroyObject',
-           'LUNA_RET_TOO_MANY_CONTAINERS',
-           'LUNA_RET_UM_PIN_INCORRECT_CONTAINER_ZEROIZED',
-           'CA_EncodeECChar2Params',
-           'LUNA_RET_RM_ELEMENT_VALUE_INVALID',
-           'CK_PKCS5_PBKD2_PSEUDO_RANDOM_FUNCTION_TYPE_PTR',
-           'LUNA_RET_CCM_SIGN_INVALID', 'C_GetSessionInfo', 'Int16',
-           'LUNA_RET_ISES_CMD_PARAMETER_INVALID',
-           'CK_CA_GetUserContainerNumber',
-           'LUNA_RET_INVALID_CERTIFICATE_VERSION',
-           'CK_SSL3_KEY_MAT_OUT_PTR', 'CK_C_GenerateRandom',
-           'CK_CA_ModifyUsageCount', 'CA_MTKResplit', 'CK_CHAR',
-           'CA_GetHSMStats', 'UInt8',
-           'CA_GetUnauthTokenInsertionStatus',
-           'LUNA_RET_VECTOR_VERSION_INVALID',
-           'LUNA_RET_SIM_CORRUPT_DATA', 'CK_CMS_SIG_PARAMS_PTR',
-           'LUNA_RET_LOG_FILE_NOT_OPEN', 'C_DeriveKey',
-           'C_DigestUpdate', 'CK_CA_GetHSMStorageInformation',
-           'RC_SOCKET_READ_ERROR', 'C_FindObjects', 'SInt64',
-           'RC_INVALID_CERT_HOST',
-           'LUNA_RET_AUDIT_LOGIN_FAILURE_THRESHOLD', 'SInt',
-           'LUNA_RET_KEY_NOT_WRAPPABLE',
-           'CK_PKCS5_PBKDF2_SALT_SOURCE_TYPE',
-           'LUNA_RET_HIFN_INVALID_PAD_ALGORITHM', 'RC_RC_ERROR',
-           'CK_RSA_PKCS_MGF_TYPE', 'CK_EXTRACT_PARAMS',
-           'LUNA_RET_OH_OBJECT_VERSION_INVALID', 'RC_SOCKET_BAD_FD',
-           'LUNA_RET_CB_REMOTE_CLOSED', 'CK_RC5_CBC_PARAMS_PTR',
-           'MSG_RTC_BATTERY_WAS_LOW_WHEN_MAIN_POWER_WAS_OFF',
-           'CA_STCSetKeyLifeTime', 'LUNA_RET_STC_SESSION_INVALID',
-           'LUNA_RET_HOC_MISSING', 'CA_GetHSMPolicySetting',
-           'CA_CreateContainerLoginChallenge',
-           'CK_ResetTotalOperations', 'CA_MOFN_GENERATION_PTR',
-           'CK_CA_InitSlotRolePIN', 'CK_AES_GCM_PARAMS_PTR',
-           'CK_CA_STMGetState', 'CK_CA_EnableUnauthTokenInsertion',
-           'CK_C_DecryptDigestUpdate',
-           'LUNA_RET_CHALLENGE_RESPONSE_INCORRECT',
-           'RC_MANUFACTURING_SERIAL_NUMBER_INVALID',
-           'LUNA_RET_TEST_VS_BSAFE_FAILED', 'CA_Zeroize',
-           'CA_HAAnswerMofNChallenge', 'RC_STC_DH_KEYGEN_ERROR',
-           'CK_MAC_GENERAL_PARAMS_PTR', 'LUNA_RET_MISSING_SPLITS',
-           'CK_TOKEN_INFO_PTR', 'CK_CA_STCGetDigestNameByID',
-           'CK_AES_CBC_PAD_INSERT_PARAMS',
-           'LUNA_RET_RC5_SELF_TEST_FAILURE',
-           'LUNA_RET_USER_ALREADY_ACTIVATED',
-           'LUNA_RET_CCM_NOT_SUPPORTED',
-           'CK_CA_GetSlotIdForPhysicalSlot',
-           'LUNA_RET_CONTAINER_CAN_NOT_HAVE_MEMBERS',
-           'CK_CA_LKMInitiatorChallenge', 'CK_CA_HAActivateMofN',
-           'CK_KEY_DERIVATION_STRING_DATA', 'CK_MECHANISM_PTR',
-           'CA_SetTokenCertificateSignature',
-           'LUNA_RET_SM_BAD_ACCESS_HANDLE',
-           'LUNA_RET_ECC_POINT_INVALID', 'CK_C_GetTokenInfo',
-           'LUNA_RET_CB_HIOS_IO_ERROR',
-           'LUNA_RET_M_OF_N_SECRET_INVALID',
-           'LUNA_RET_SM_UNKNOWN_TOSM_STATE',
-           'RC_SSL_LOAD_SERVER_PRIVATE_KEY_ERROR',
-           'LUNA_RET_STC_CONTAINER_INVALID',
-           'LUNA_RET_CB_REMOTE_ABANDONED',
-           'LUNA_RET_HIFN_MAC_SOURCE_COUNT_INVALID',
-           'LUNA_RET_CB_PARAM_INVALID', 'CA_SwitchSecondarySlot',
-           'LUNA_RET_HIFN6500_RNG_FAILED', 'CK_CA_STCGetAdminPubKey',
-           'LUNA_RET_SFNT3120_SELFTEST_FAILED',
-           'LUNA_RET_TOKEN_LOCKED_OUT_OH', 'CK_FUNCTION_LIST',
-           'CK_CA_DuplicateMofN', 'LUNA_RET_INVALID_MODULUS_SIZE',
-           'CK_RC5_PARAMS_PTR', 'CK_C_DigestInit',
-           'LUNA_RET_HIFN_COMPRESSION_SOURCE_COUNT_INVALID',
-           'CA_ModifyMofN', 'LUNA_RET_USER_NOT_LOGGED_IN',
-           'CK_WTLS_MASTER_KEY_DERIVE_PARAMS', 'CA_InvokeServiceInit',
-           'CK_CA_STCGetKeyActivationTimeOut', 'CA_GetTokenStatus',
-           'C_SignUpdate', 'LUNA_RET_OPERATION_ACTIVE',
-           'C_EncryptInit', 'CK_OTP_PARAMS', 'CK_SEED_CTR_PARAMS_PTR',
-           'LUNA_RET_INVALID_FUF_HEADER',
-           'CA_GetContainerCapabilitySet', 'C_DigestFinal',
-           'RC_STC_FIRST_PHASE_KDF_ERROR', 'CK_CA_LockClusteredSlot',
-           'LUNA_RET_SM_BAD_CONTEXT_NUMBER',
-           'LUNA_RET_CB_HIOS_CLOSED', 'RC_CANCEL',
-           'LUNA_RET_SIGNING_KEY_MUST_BE_LOCAL',
-           'LUNA_RET_RM_CONFIG_CHANGE_ILLEGAL',
-           'CA_EnableUnauthTokenInsertion', 'CK_CA_LogVerify',
-           'CK_CA_GetTSV', 'CA_LKMReceiverComplete',
-           'LUNA_RET_UM_PIN_INCORRECT_CONTAINER_LOCKED',
-           'LUNA_RET_CCM_FWUPDATE_DENIED', 'MSG_FACTORY_RESET',
-           'RC_HOST_RESOLUTION_ERROR', 'CA_STCIsEnabled',
-           'RC_STC_RSA_DECRYPT_ERROR', 'C_CloseSession',
-           'LUNA_RET_MISSING_VECTOR',
-           'LUNA_RET_ATTRIBUTE_TYPE_INVALID', 'LUNA_RET_CB_SYS_ERROR',
-           'CK_EC_DH_PRIMITIVE', 'CK_C_Login', 'CA_IsMofNEnabled',
-           'CK_CA_LogGetConfig', 'LUNA_RET_ISES_CMD_FAILED',
-           'LUNA_RET_KCV_PARAMETER_COULD_NOT_BE_ADDED',
-           'LUNA_RET_410_BUFFER_TOO_SMALL',
-           'LUNA_RET_USER_ALREADY_LOGGED_IN',
-           'CK_FUNCTION_LIST_PTR_PTR', 'RC_STC_NOT_ENABLED',
-           'CK_CA_GenerateTokenKeys', 'C_DecryptVerifyUpdate',
-           'CK_UTF8CHAR', 'RC_CALLBACK_ERROR', 'RC_PORT_INVALID',
-           'CK_CA_InitializeRemotePEDVector', 'C_DigestInit',
-           'CA_GetContainerStorageInformation', 'RC_SSL_ERROR',
-           'LUNA_RET_DSA_SELF_TEST_FAILURE', 'CA_GetHSMPolicySet',
-           'C_CopyObject', 'CK_CA_CloseApplicationID',
-           'LUNA_RET_ECC_BUFFER_OVERFLOW', 'CK_CA_Insert',
-           'CK_NOTIFICATION', 'C_SignRecover',
-           'CA_CreateLoginChallenge', 'C_EncryptUpdate',
-           'LUNA_RET_STATE_UNSAVEABLE', 'CK_CA_GetContainerName',
-           'MSG_ZEROIZING', 'CK_KDF_PRF_TYPE',
-           'LUNA_RET_CL_NO_TRANSMISSION', 'RC_SIM_NOT_SUPPORTED',
-           'LUNA_RET_MASKING_NOT_SUPPORTED', 'CK_C_GetObjectSize',
-           'CK_CA_STCGetPartPubKey', 'LUNA_RET_RSA_SELF_TEST_FAILURE',
-           'LUNA_RET_HSM_TAMPERED', 'LUNA_RET_TPV_INVALID',
-           'CA_DeactivateMofN', 'CK_ECDH1_DERIVE_PARAMS_PTR',
-           'LUNA_RET_VECTOR_TOO_SMALL', 'CK_C_Encrypt',
-           'MSG_RTC_TAMPER_2_SIGNAL',
-           'CA_CloseApplicationIDForContainer', 'C_DecryptUpdate',
-           'Int8', 'CA_TamperClear',
-           'LUNA_RET_HIFN_INVALID_ENCRYPT_MODE', 'CK_C_DestroyObject',
-           'CK_CA_STCGetKeyLifeTime',
-           'CK_CA_GetTokenStorageInformation',
-           'CA_GetSlotIdForPhysicalSlot', 'RC_STC_RSA_SIGN_ERROR',
-           'MSG_RTC_TAMPER_CIRCUITS_RE_ARMED', 'CK_C_InitToken',
-           'LUNA_RET_HIFN_PAD_SOURCE_COUNT_INVALID',
-           'CK_CA_LKMReceiverResponse', 'CK_CA_GetUserContainerName',
-           'CK_CA_MTKZeroize', 'CK_CA_GetClusterState',
-           'LUNA_RET_AGAIN', 'CK_CA_STCClearCipherAlgorithm',
-           'LUNA_RET_CONTAINER_OBJECT_STORAGE_FULL', 'Float32',
-           'CK_ECIES_PARAMS_PTR', 'CK_CA_GetPedId',
-           'MSG_RTC_EXTERNAL_TAMPER_LATCHED', 'CK_CA_MTKGetState',
-           'LUNA_RET_WRAPPED_KEY_LEN_RANGE', 'C_GetObjectSize',
-           'CK_CA_GenerateCloneableMofN', 'CA_STCGetClientsList',
-           'CA_STCGetSequenceWindowSize', 'RC_NO_PRIMARY_PEER',
-           'CA_InitRolePIN', 'C_GenerateRandom',
-           'CA_GetTunnelSlotNumber', 'CK_CA_IsMofNEnabled',
-           'RC_STC_COMPUTE_DH_KEY_ERROR', 'CA_SetLKCV']
+
+
+class CK_APPLICATION_ID(Structure):
+    _fields_ = [("id", CK_BYTE * 16)]
+    
+    def __init__(self, aid=None):
+        if aid is None:
+            aid = []
+        self.id = (CK_BYTE * 16)(*aid)
+
+
+if "win" in sys.platform:
+    CK_APPLICATION_ID._pack_ = 1
+
+CA_GetApplicationID = make_late_binding_function("CA_GetApplicationID")
+CA_GetApplicationID.restype = CK_RV
+CA_GetApplicationID.argtypes = [POINTER(CK_APPLICATION_ID)]
+
+
+CA_OpenApplicationIDV2 = make_late_binding_function("CA_OpenApplicationIDV2")
+CA_OpenApplicationIDV2.restype = CK_RV
+CA_OpenApplicationIDV2.argtypes = [CK_SLOT_ID, POINTER(CK_APPLICATION_ID)]
+
+
+CA_CloseApplicationIDV2 = make_late_binding_function("CA_CloseApplicationIDV2")
+CA_CloseApplicationIDV2.restype = CK_RV
+CA_CloseApplicationIDV2.argtypes = [CK_SLOT_ID, POINTER(CK_APPLICATION_ID)]
+
+__all__ = [
+    "BYTE",
+    "Boolean",
+    "Byte",
+    "CA_ActivateMofN",
+    "CA_CapabilityUpdate",
+    "CA_CheckOperationState",
+    "CA_ChoosePrimarySlot",
+    "CA_ChooseSecondarySlot",
+    "CA_CloneAllObjectsToSession",
+    "CA_CloneAsSource",
+    "CA_CloneAsTarget",
+    "CA_CloneAsTargetInit",
+    "CA_CloneModifyMofN",
+    "CA_CloneMofN",
+    "CA_CloneObject",
+    "CA_CloneObjectToAllSessions",
+    "CA_ClonePrivateKey",
+    "CA_CloseAllSecondarySessions",
+    "CA_CloseApplicationID",
+    "CA_CloseApplicationIDForContainer",
+    "CA_CloseApplicationIDV2",
+    "CA_CloseSecondarySession",
+    "CA_CloseSecureToken",
+    "CA_ConfigureRemotePED",
+    "CA_CreateContainer",
+    "CA_CreateContainerLoginChallenge",
+    "CA_CreateContainerWithPolicy",
+    "CA_CreateLoginChallenge",
+    "CA_Deactivate",
+    "CA_DeactivateMofN",
+    "CA_DeleteContainer",
+    "CA_DeleteContainerWithHandle",
+    "CA_DeleteRemotePEDVector",
+    "CA_DeriveKeyAndWrap",
+    "CA_DestroyMultipleObjects",
+    "CA_DisableUnauthTokenInsertion",
+    "CA_DismantleRemotePED",
+    "CA_DuplicateMofN",
+    "CA_EnableUnauthTokenInsertion",
+    "CA_EncodeECChar2Params",
+    "CA_EncodeECParamsFromFile",
+    "CA_EncodeECPrimeParams",
+    "CA_Extract",
+    "CA_ExtractMaskedObject",
+    "CA_FactoryReset",
+    "CA_FindAdminSlotForSlot",
+    "CA_FirmwareRollback",
+    "CA_FirmwareUpdate",
+    "CA_GenerateCloneableMofN",
+    "CA_GenerateCloningKEV",
+    "CA_GenerateMofN",
+    "CA_GenerateTokenKeys",
+    "CA_Get",
+    "CA_GetApplicationID",
+    "CA_GetCVFirmwareVersion",
+    "CA_GetClusterState",
+    "CA_GetConfigurationElementDescription",
+    "CA_GetContainerCapabilitySet",
+    "CA_GetContainerCapabilitySetting",
+    "CA_GetContainerList",
+    "CA_GetContainerName",
+    "CA_GetContainerPolicySet",
+    "CA_GetContainerPolicySetting",
+    "CA_GetContainerStatus",
+    "CA_GetContainerStorageInformation",
+    "CA_GetExtendedTPV",
+    "CA_GetFPV",
+    "CA_GetFunctionList",
+    "CA_GetHAState",
+    "CA_GetHSMCapabilitySet",
+    "CA_GetHSMCapabilitySetting",
+    "CA_GetHSMPolicySet",
+    "CA_GetHSMPolicySetting",
+    "CA_GetHSMStats",
+    "CA_GetHSMStorageInformation",
+    "CA_GetModuleInfo",
+    "CA_GetModuleList",
+    "CA_GetMofNStatus",
+    "CA_GetNumberOfAllowedContainers",
+    "CA_GetObjectHandle",
+    "CA_GetObjectUID",
+    "CA_GetPartitionPolicyTemplate",
+    "CA_GetPedId",
+    "CA_GetPrimarySlot",
+    "CA_GetRemotePEDVectorStatus",
+    "CA_GetRollbackFirmwareVersion",
+    "CA_GetSecondarySlot",
+    "CA_GetSecureElementMeta",
+    "CA_GetServerInstanceBySlotID",
+    "CA_GetSessionInfo",
+    "CA_GetSlotIdForContainer",
+    "CA_GetSlotIdForPhysicalSlot",
+    "CA_GetSlotListFromServerInstance",
+    "CA_GetTPV",
+    "CA_GetTSV",
+    "CA_GetTime",
+    "CA_GetTokenCapabilities",
+    "CA_GetTokenCertificateInfo",
+    "CA_GetTokenCertificates",
+    "CA_GetTokenInsertionCount",
+    "CA_GetTokenObjectHandle",
+    "CA_GetTokenObjectUID",
+    "CA_GetTokenPolicies",
+    "CA_GetTokenStatus",
+    "CA_GetTokenStorageInformation",
+    "CA_GetTunnelSlotNumber",
+    "CA_GetUnauthTokenInsertionStatus",
+    "CA_GetUserContainerName",
+    "CA_GetUserContainerNumber",
+    "CA_HAActivateMofN",
+    "CA_HAAnswerLoginChallenge",
+    "CA_HAAnswerMofNChallenge",
+    "CA_HAGetLoginChallenge",
+    "CA_HAGetMasterPublic",
+    "CA_HAInit",
+    "CA_HALogin",
+    "CA_IndirectLogin",
+    "CA_InitAudit",
+    "CA_InitIndirectPIN",
+    "CA_InitIndirectToken",
+    "CA_InitRolePIN",
+    "CA_InitSlotRolePIN",
+    "CA_InitializeRemotePEDVector",
+    "CA_Insert",
+    "CA_InsertMaskedObject",
+    "CA_InvokeService",
+    "CA_InvokeServiceAsynch",
+    "CA_InvokeServiceFinal",
+    "CA_InvokeServiceInit",
+    "CA_InvokeServiceSinglePart",
+    "CA_IsMofNEnabled",
+    "CA_IsMofNRequired",
+    "CA_LKMInitiatorChallenge",
+    "CA_LKMInitiatorComplete",
+    "CA_LKMReceiverComplete",
+    "CA_LKMReceiverResponse",
+    "CA_ListSecureTokenInit",
+    "CA_ListSecureTokenUpdate",
+    "CA_LoadEncryptedModule",
+    "CA_LoadModule",
+    "CA_LockClusteredSlot",
+    "CA_LogExportSecret",
+    "CA_LogExternal",
+    "CA_LogGetConfig",
+    "CA_LogGetStatus",
+    "CA_LogImportSecret",
+    "CA_LogSetConfig",
+    "CA_LogVerify",
+    "CA_LogVerifyFile",
+    "CA_MOFN_ACTIVATION",
+    "CA_MOFN_ACTIVATION_PTR",
+    "CA_MOFN_GENERATION",
+    "CA_MOFN_GENERATION_PTR",
+    "CA_MOFN_STATUS",
+    "CA_MOFN_STATUS_PTR",
+    "CA_MTKGetState",
+    "CA_MTKResplit",
+    "CA_MTKRestore",
+    "CA_MTKSetStorage",
+    "CA_MTKZeroize",
+    "CA_M_OF_N_STATUS",
+    "CA_ManualKCV",
+    "CA_ModifyMofN",
+    "CA_ModifyUsageCount",
+    "CA_MultisignValue",
+    "CA_OpenApplicationID",
+    "CA_OpenApplicationIDForContainer",
+    "CA_OpenApplicationIDV2",
+    "CA_OpenSecureToken",
+    "CA_OpenSession",
+    "CA_OpenSessionWithAppID",
+    "CA_PerformModuleCall",
+    "CA_PerformSelfTest",
+    "CA_QueryLicense",
+    "CA_ROLE_STATE",
+    "CA_ReadCommonStore",
+    "CA_ReplaceFastPathKEK",
+    "CA_ResetDevice",
+    "CA_ResetPIN",
+    "CA_Restart",
+    "CA_RestartForContainer",
+    "CA_RetrieveLicenseList",
+    "CA_RoleStateGet",
+    "CA_SIMExtract",
+    "CA_SIMInsert",
+    "CA_SIMMultiSign",
+    "CA_STCClearCipherAlgorithm",
+    "CA_STCClearDigestAlgorithm",
+    "CA_STCDeregister",
+    "CA_STCGetAdminPubKey",
+    "CA_STCGetChannelID",
+    "CA_STCGetCipherAlgorithm",
+    "CA_STCGetCipherID",
+    "CA_STCGetCipherIDs",
+    "CA_STCGetCipherNameByID",
+    "CA_STCGetClientInfo",
+    "CA_STCGetClientsList",
+    "CA_STCGetCurrentKeyLife",
+    "CA_STCGetDigestAlgorithm",
+    "CA_STCGetDigestID",
+    "CA_STCGetDigestIDs",
+    "CA_STCGetDigestNameByID",
+    "CA_STCGetKeyActivationTimeOut",
+    "CA_STCGetKeyLifeTime",
+    "CA_STCGetMaxSessions",
+    "CA_STCGetPartPubKey",
+    "CA_STCGetPubKey",
+    "CA_STCGetSequenceWindowSize",
+    "CA_STCGetState",
+    "CA_STCIsEnabled",
+    "CA_STCRegister",
+    "CA_STCSetCipherAlgorithm",
+    "CA_STCSetDigestAlgorithm",
+    "CA_STCSetKeyActivationTimeOut",
+    "CA_STCSetKeyLifeTime",
+    "CA_STCSetMaxSessions",
+    "CA_STCSetSequenceWindowSize",
+    "CA_STMGetState",
+    "CA_STMToggle",
+    "CA_SetApplicationID",
+    "CA_SetCloningDomain",
+    "CA_SetContainerPolicies",
+    "CA_SetContainerPolicy",
+    "CA_SetContainerSize",
+    "CA_SetDestructiveHSMPolicies",
+    "CA_SetDestructiveHSMPolicy",
+    "CA_SetExtendedTPV",
+    "CA_SetHSMPolicies",
+    "CA_SetHSMPolicy",
+    "CA_SetKCV",
+    "CA_SetLKCV",
+    "CA_SetMofN",
+    "CA_SetPedId",
+    "CA_SetRDK",
+    "CA_SetTPV",
+    "CA_SetTokenCertificateSignature",
+    "CA_SetTokenPolicies",
+    "CA_SetUserContainerName",
+    "CA_SpRawRead",
+    "CA_SpRawWrite",
+    "CA_SwitchSecondarySlot",
+    "CA_TamperClear",
+    "CA_TimeSync",
+    "CA_TokenDelete",
+    "CA_TokenInsert",
+    "CA_TokenInsertNoAuth",
+    "CA_TokenZeroize",
+    "CA_UnloadModule",
+    "CA_UnlockClusteredSlot",
+    "CA_WaitForSlotEvent",
+    "CA_WriteCommonStore",
+    "CA_Zeroize",
+    "CKA_SIM_AUTH_FORM",
+    "CKCA_MODULE_ID",
+    "CKCA_MODULE_ID_PTR",
+    "CKCA_MODULE_INFO",
+    "CKCA_MODULE_INFO_PTR",
+    "CK_AES_CBC_ENCRYPT_DATA_PARAMS",
+    "CK_AES_CBC_ENCRYPT_DATA_PARAMS_PTR",
+    "CK_AES_CBC_PAD_EXTRACT_PARAMS",
+    "CK_AES_CBC_PAD_EXTRACT_PARAMS_PTR",
+    "CK_AES_CBC_PAD_INSERT_PARAMS",
+    "CK_AES_CBC_PAD_INSERT_PARAMS_PTR",
+    "CK_AES_CTR_PARAMS",
+    "CK_AES_CTR_PARAMS_PTR",
+    "CK_AES_GCM_PARAMS",
+    "CK_AES_GCM_PARAMS_PTR",
+    "CK_AES_GMAC_PARAMS",
+    "CK_AES_GMAC_PARAMS_PTR",
+    "CK_AES_XTS_PARAMS",
+    "CK_AES_XTS_PARAMS_PTR",
+    "CK_ARIA_CBC_ENCRYPT_DATA_PARAMS",
+    "CK_ARIA_CBC_ENCRYPT_DATA_PARAMS_PTR",
+    "CK_ARIA_CTR_PARAMS",
+    "CK_ARIA_CTR_PARAMS_PTR",
+    "CK_ATTRIBUTE",
+    "CK_ATTRIBUTE_PTR",
+    "CK_ATTRIBUTE_TYPE",
+    "CK_BBOOL",
+    "CK_BYTE",
+    "CK_BYTE_PTR",
+    "CK_CAMELLIA_CBC_ENCRYPT_DATA_PARAMS",
+    "CK_CAMELLIA_CBC_ENCRYPT_DATA_PARAMS_PTR",
+    "CK_CAMELLIA_CTR_PARAMS",
+    "CK_CAMELLIA_CTR_PARAMS_PTR",
+    "CK_CA_ActivateMofN",
+    "CK_CA_CapabilityUpdate",
+    "CK_CA_CheckOperationState",
+    "CK_CA_ChoosePrimarySlot",
+    "CK_CA_ChooseSecondarySlot",
+    "CK_CA_CloneAllObjectsToSession",
+    "CK_CA_CloneAsSource",
+    "CK_CA_CloneAsTarget",
+    "CK_CA_CloneAsTargetInit",
+    "CK_CA_CloneModifyMofN",
+    "CK_CA_CloneMofN",
+    "CK_CA_CloneObject",
+    "CK_CA_CloneObjectToAllSessions",
+    "CK_CA_ClonePrivateKey",
+    "CK_CA_CloseAllSecondarySessions",
+    "CK_CA_CloseApplicationID",
+    "CK_CA_CloseApplicationIDForContainer",
+    "CK_CA_CloseSecondarySession",
+    "CK_CA_CloseSecureToken",
+    "CK_CA_ConfigureRemotePED",
+    "CK_CA_CreateContainer",
+    "CK_CA_CreateContainerLoginChallenge",
+    "CK_CA_CreateLoginChallenge",
+    "CK_CA_Deactivate",
+    "CK_CA_DeactivateMofN",
+    "CK_CA_DeleteContainer",
+    "CK_CA_DeleteContainerWithHandle",
+    "CK_CA_DeleteRemotePEDVector",
+    "CK_CA_DestroyMultipleObjects",
+    "CK_CA_DisableUnauthTokenInsertion",
+    "CK_CA_DismantleRemotePED",
+    "CK_CA_DuplicateMofN",
+    "CK_CA_EnableUnauthTokenInsertion",
+    "CK_CA_EncodeECChar2Params",
+    "CK_CA_EncodeECParamsFromFile",
+    "CK_CA_EncodeECPrimeParams",
+    "CK_CA_Extract",
+    "CK_CA_ExtractMaskedObject",
+    "CK_CA_FactoryReset",
+    "CK_CA_FindAdminSlotForSlot",
+    "CK_CA_FirmwareRollback",
+    "CK_CA_FirmwareUpdate",
+    "CK_CA_GenerateCloneableMofN",
+    "CK_CA_GenerateCloningKEV",
+    "CK_CA_GenerateMofN",
+    "CK_CA_GenerateTokenKeys",
+    "CK_CA_GetCVFirmwareVersion",
+    "CK_CA_GetClusterState",
+    "CK_CA_GetConfigurationElementDescription",
+    "CK_CA_GetContainerCapabilitySet",
+    "CK_CA_GetContainerCapabilitySetting",
+    "CK_CA_GetContainerList",
+    "CK_CA_GetContainerName",
+    "CK_CA_GetContainerPolicySet",
+    "CK_CA_GetContainerPolicySetting",
+    "CK_CA_GetContainerStatus",
+    "CK_CA_GetContainerStorageInformation",
+    "CK_CA_GetExtendedTPV",
+    "CK_CA_GetFPV",
+    "CK_CA_GetFunctionList",
+    "CK_CA_GetHAState",
+    "CK_CA_GetHSMCapabilitySet",
+    "CK_CA_GetHSMCapabilitySetting",
+    "CK_CA_GetHSMPolicySet",
+    "CK_CA_GetHSMPolicySetting",
+    "CK_CA_GetHSMStats",
+    "CK_CA_GetHSMStorageInformation",
+    "CK_CA_GetModuleInfo",
+    "CK_CA_GetModuleList",
+    "CK_CA_GetMofNStatus",
+    "CK_CA_GetNumberOfAllowedContainers",
+    "CK_CA_GetObjectHandle",
+    "CK_CA_GetObjectUID",
+    "CK_CA_GetPedId",
+    "CK_CA_GetPrimarySlot",
+    "CK_CA_GetRemotePEDVectorStatus",
+    "CK_CA_GetRollbackFirmwareVersion",
+    "CK_CA_GetSecondarySlot",
+    "CK_CA_GetSecureElementMeta",
+    "CK_CA_GetServerInstanceBySlotID",
+    "CK_CA_GetSessionInfo",
+    "CK_CA_GetSlotIdForContainer",
+    "CK_CA_GetSlotIdForPhysicalSlot",
+    "CK_CA_GetSlotListFromServerInstance",
+    "CK_CA_GetTPV",
+    "CK_CA_GetTSV",
+    "CK_CA_GetTime",
+    "CK_CA_GetTokenCapabilities",
+    "CK_CA_GetTokenCertificateInfo",
+    "CK_CA_GetTokenCertificates",
+    "CK_CA_GetTokenInsertionCount",
+    "CK_CA_GetTokenObjectHandle",
+    "CK_CA_GetTokenObjectUID",
+    "CK_CA_GetTokenPolicies",
+    "CK_CA_GetTokenStatus",
+    "CK_CA_GetTokenStorageInformation",
+    "CK_CA_GetTunnelSlotNumber",
+    "CK_CA_GetUnauthTokenInsertionStatus",
+    "CK_CA_GetUserContainerName",
+    "CK_CA_GetUserContainerNumber",
+    "CK_CA_HAActivateMofN",
+    "CK_CA_HAAnswerLoginChallenge",
+    "CK_CA_HAAnswerMofNChallenge",
+    "CK_CA_HAGetLoginChallenge",
+    "CK_CA_HAGetMasterPublic",
+    "CK_CA_HAInit",
+    "CK_CA_HALogin",
+    "CK_CA_IndirectLogin",
+    "CK_CA_InitAudit",
+    "CK_CA_InitIndirectPIN",
+    "CK_CA_InitIndirectToken",
+    "CK_CA_InitRolePIN",
+    "CK_CA_InitSlotRolePIN",
+    "CK_CA_InitializeRemotePEDVector",
+    "CK_CA_Insert",
+    "CK_CA_InsertMaskedObject",
+    "CK_CA_InvokeService",
+    "CK_CA_InvokeServiceAsynch",
+    "CK_CA_InvokeServiceFinal",
+    "CK_CA_InvokeServiceInit",
+    "CK_CA_InvokeServiceSinglePart",
+    "CK_CA_IsMofNEnabled",
+    "CK_CA_IsMofNRequired",
+    "CK_CA_LKMInitiatorChallenge",
+    "CK_CA_LKMInitiatorComplete",
+    "CK_CA_LKMReceiverComplete",
+    "CK_CA_LKMReceiverResponse",
+    "CK_CA_ListSecureTokenInit",
+    "CK_CA_ListSecureTokenUpdate",
+    "CK_CA_LoadEncryptedModule",
+    "CK_CA_LoadModule",
+    "CK_CA_LockClusteredSlot",
+    "CK_CA_LogExportSecret",
+    "CK_CA_LogExternal",
+    "CK_CA_LogGetConfig",
+    "CK_CA_LogGetStatus",
+    "CK_CA_LogImportSecret",
+    "CK_CA_LogSetConfig",
+    "CK_CA_LogVerify",
+    "CK_CA_LogVerifyFile",
+    "CK_CA_MTKGetState",
+    "CK_CA_MTKResplit",
+    "CK_CA_MTKRestore",
+    "CK_CA_MTKSetStorage",
+    "CK_CA_MTKZeroize",
+    "CK_CA_ManualKCV",
+    "CK_CA_ModifyMofN",
+    "CK_CA_ModifyUsageCount",
+    "CK_CA_MultisignValue",
+    "CK_CA_OpenApplicationID",
+    "CK_CA_OpenApplicationIDForContainer",
+    "CK_CA_OpenSecureToken",
+    "CK_CA_OpenSession",
+    "CK_CA_OpenSessionWithAppID",
+    "CK_CA_PerformModuleCall",
+    "CK_CA_PerformSelfTest",
+    "CK_CA_QueryLicense",
+    "CK_CA_ReadCommonStore",
+    "CK_CA_ReplaceFastPathKEK",
+    "CK_CA_ResetDevice",
+    "CK_CA_ResetPIN",
+    "CK_CA_Restart",
+    "CK_CA_RestartForContainer",
+    "CK_CA_RetrieveLicenseList",
+    "CK_CA_RoleStateGet",
+    "CK_CA_SIMExtract",
+    "CK_CA_SIMInsert",
+    "CK_CA_SIMMultiSign",
+    "CK_CA_STCClearCipherAlgorithm",
+    "CK_CA_STCClearDigestAlgorithm",
+    "CK_CA_STCDeregister",
+    "CK_CA_STCGetAdminPubKey",
+    "CK_CA_STCGetChannelID",
+    "CK_CA_STCGetCipherAlgorithm",
+    "CK_CA_STCGetCipherID",
+    "CK_CA_STCGetCipherIDs",
+    "CK_CA_STCGetCipherNameByID",
+    "CK_CA_STCGetClientInfo",
+    "CK_CA_STCGetClientsList",
+    "CK_CA_STCGetCurrentKeyLife",
+    "CK_CA_STCGetDigestAlgorithm",
+    "CK_CA_STCGetDigestID",
+    "CK_CA_STCGetDigestIDs",
+    "CK_CA_STCGetDigestNameByID",
+    "CK_CA_STCGetKeyActivationTimeOut",
+    "CK_CA_STCGetKeyLifeTime",
+    "CK_CA_STCGetMaxSessions",
+    "CK_CA_STCGetPartPubKey",
+    "CK_CA_STCGetPubKey",
+    "CK_CA_STCGetSequenceWindowSize",
+    "CK_CA_STCGetState",
+    "CK_CA_STCIsEnabled",
+    "CK_CA_STCRegister",
+    "CK_CA_STCSetCipherAlgorithm",
+    "CK_CA_STCSetDigestAlgorithm",
+    "CK_CA_STCSetKeyActivationTimeOut",
+    "CK_CA_STCSetKeyLifeTime",
+    "CK_CA_STCSetMaxSessions",
+    "CK_CA_STCSetSequenceWindowSize",
+    "CK_CA_STMGetState",
+    "CK_CA_STMToggle",
+    "CK_CA_SetApplicationID",
+    "CK_CA_SetCloningDomain",
+    "CK_CA_SetContainerPolicies",
+    "CK_CA_SetContainerPolicy",
+    "CK_CA_SetContainerSize",
+    "CK_CA_SetDestructiveHSMPolicies",
+    "CK_CA_SetDestructiveHSMPolicy",
+    "CK_CA_SetExtendedTPV",
+    "CK_CA_SetHSMPolicies",
+    "CK_CA_SetHSMPolicy",
+    "CK_CA_SetKCV",
+    "CK_CA_SetLKCV",
+    "CK_CA_SetMofN",
+    "CK_CA_SetPedId",
+    "CK_CA_SetRDK",
+    "CK_CA_SetTPV",
+    "CK_CA_SetTokenCertificateSignature",
+    "CK_CA_SetTokenPolicies",
+    "CK_CA_SetUserContainerName",
+    "CK_CA_SpRawRead",
+    "CK_CA_SpRawWrite",
+    "CK_CA_SwitchSecondarySlot",
+    "CK_CA_TimeSync",
+    "CK_CA_TokenDelete",
+    "CK_CA_TokenInsert",
+    "CK_CA_TokenInsertNoAuth",
+    "CK_CA_TokenZeroize",
+    "CK_CA_UnloadModule",
+    "CK_CA_UnlockClusteredSlot",
+    "CK_CA_WaitForSlotEvent",
+    "CK_CA_WriteCommonStore",
+    "CK_CA_Zeroize",
+    "CK_CERTIFICATE_TYPE",
+    "CK_CHAR",
+    "CK_CHAR_PTR",
+    "CK_CLUSTER_STATE",
+    "CK_CLUSTER_STATE_PTR",
+    "CK_CMS_SIG_PARAMS",
+    "CK_CMS_SIG_PARAMS_PTR",
+    "CK_CREATEMUTEX",
+    "CK_C_CancelFunction",
+    "CK_C_CloseAllSessions",
+    "CK_C_CloseSession",
+    "CK_C_CopyObject",
+    "CK_C_CreateObject",
+    "CK_C_Decrypt",
+    "CK_C_DecryptDigestUpdate",
+    "CK_C_DecryptFinal",
+    "CK_C_DecryptInit",
+    "CK_C_DecryptUpdate",
+    "CK_C_DecryptVerifyUpdate",
+    "CK_C_DeriveKey",
+    "CK_C_DestroyObject",
+    "CK_C_Digest",
+    "CK_C_DigestEncryptUpdate",
+    "CK_C_DigestFinal",
+    "CK_C_DigestInit",
+    "CK_C_DigestKey",
+    "CK_C_DigestUpdate",
+    "CK_C_Encrypt",
+    "CK_C_EncryptFinal",
+    "CK_C_EncryptInit",
+    "CK_C_EncryptUpdate",
+    "CK_C_Finalize",
+    "CK_C_FindObjects",
+    "CK_C_FindObjectsFinal",
+    "CK_C_FindObjectsInit",
+    "CK_C_GenerateKey",
+    "CK_C_GenerateKeyPair",
+    "CK_C_GenerateRandom",
+    "CK_C_GetAttributeValue",
+    "CK_C_GetFunctionList",
+    "CK_C_GetFunctionStatus",
+    "CK_C_GetInfo",
+    "CK_C_GetMechanismInfo",
+    "CK_C_GetMechanismList",
+    "CK_C_GetObjectSize",
+    "CK_C_GetOperationState",
+    "CK_C_GetSessionInfo",
+    "CK_C_GetSlotInfo",
+    "CK_C_GetSlotList",
+    "CK_C_GetTokenInfo",
+    "CK_C_INITIALIZE_ARGS",
+    "CK_C_INITIALIZE_ARGS_PTR",
+    "CK_C_InitPIN",
+    "CK_C_InitToken",
+    "CK_C_Initialize",
+    "CK_C_Login",
+    "CK_C_Logout",
+    "CK_C_OpenSession",
+    "CK_C_SeedRandom",
+    "CK_C_SetAttributeValue",
+    "CK_C_SetOperationState",
+    "CK_C_SetPIN",
+    "CK_C_Sign",
+    "CK_C_SignEncryptUpdate",
+    "CK_C_SignFinal",
+    "CK_C_SignInit",
+    "CK_C_SignRecover",
+    "CK_C_SignRecoverInit",
+    "CK_C_SignUpdate",
+    "CK_C_UnwrapKey",
+    "CK_C_Verify",
+    "CK_C_VerifyFinal",
+    "CK_C_VerifyInit",
+    "CK_C_VerifyRecover",
+    "CK_C_VerifyRecoverInit",
+    "CK_C_VerifyUpdate",
+    "CK_C_WaitForSlotEvent",
+    "CK_C_WrapKey",
+    "CK_DATE",
+    "CK_DESTROYMUTEX",
+    "CK_DES_CBC_ENCRYPT_DATA_PARAMS",
+    "CK_DES_CBC_ENCRYPT_DATA_PARAMS_PTR",
+    "CK_DES_CTR_PARAMS",
+    "CK_DES_CTR_PARAMS_PTR",
+    "CK_ECDH1_DERIVE_PARAMS",
+    "CK_ECDH1_DERIVE_PARAMS_PTR",
+    "CK_ECDH2_DERIVE_PARAMS",
+    "CK_ECDH2_DERIVE_PARAMS_PTR",
+    "CK_ECIES_PARAMS",
+    "CK_ECIES_PARAMS_PTR",
+    "CK_ECMQV_DERIVE_PARAMS",
+    "CK_ECMQV_DERIVE_PARAMS_PTR",
+    "CK_EC_DH_PRIMITIVE",
+    "CK_EC_ENC_SCHEME",
+    "CK_EC_KDF_TYPE",
+    "CK_EC_MAC_SCHEME",
+    "CK_EXTRACT_PARAMS",
+    "CK_EXTRACT_PARAMS_PTR",
+    "CK_FLAGS",
+    "CK_FUNCTION_LIST",
+    "CK_FUNCTION_LIST_PTR",
+    "CK_FUNCTION_LIST_PTR_PTR",
+    "CK_GetTotalOperations",
+    "CK_HA_MEMBER",
+    "CK_HA_MEMBER_PTR",
+    "CK_HA_STATE_PTR",
+    "CK_HA_STATUS",
+    "CK_HW_FEATURE_TYPE",
+    "CK_INFO",
+    "CK_INFO_PTR",
+    "CK_KDF_PRF_ENCODING_SCHEME",
+    "CK_KDF_PRF_PARAMS",
+    "CK_KDF_PRF_PARAMS_PTR",
+    "CK_KDF_PRF_TYPE",
+    "CK_KEA_DERIVE_PARAMS",
+    "CK_KEA_DERIVE_PARAMS_PTR",
+    "CK_KEY_DERIVATION_STRING_DATA",
+    "CK_KEY_DERIVATION_STRING_DATA_PTR",
+    "CK_KEY_TYPE",
+    "CK_KEY_WRAP_SET_OAEP_PARAMS",
+    "CK_KEY_WRAP_SET_OAEP_PARAMS_PTR",
+    "CK_KIP_PARAMS",
+    "CK_KIP_PARAMS_PTR",
+    "CK_LKM_TOKEN_ID",
+    "CK_LKM_TOKEN_ID_PTR",
+    "CK_LKM_TOKEN_ID_S",
+    "CK_LOCKMUTEX",
+    "CK_LONG",
+    "CK_MAC_GENERAL_PARAMS",
+    "CK_MAC_GENERAL_PARAMS_PTR",
+    "CK_MECHANISM",
+    "CK_MECHANISM_INFO",
+    "CK_MECHANISM_INFO_PTR",
+    "CK_MECHANISM_PTR",
+    "CK_MECHANISM_TYPE",
+    "CK_MECHANISM_TYPE_PTR",
+    "CK_NOTIFICATION",
+    "CK_NOTIFY",
+    "CK_OBJECT_CLASS",
+    "CK_OBJECT_CLASS_PTR",
+    "CK_OBJECT_HANDLE",
+    "CK_OBJECT_HANDLE_PTR",
+    "CK_OTP_PARAM",
+    "CK_OTP_PARAMS",
+    "CK_OTP_PARAMS_PTR",
+    "CK_OTP_PARAM_PTR",
+    "CK_OTP_PARAM_TYPE",
+    "CK_OTP_SIGNATURE_INFO",
+    "CK_OTP_SIGNATURE_INFO_PTR",
+    "CK_PARAM_TYPE",
+    "CK_PBE_PARAMS",
+    "CK_PBE_PARAMS_PTR",
+    "CK_PKCS5_PBKD2_PARAMS",
+    "CK_PKCS5_PBKD2_PARAMS_PTR",
+    "CK_PKCS5_PBKD2_PSEUDO_RANDOM_FUNCTION_TYPE",
+    "CK_PKCS5_PBKD2_PSEUDO_RANDOM_FUNCTION_TYPE_PTR",
+    "CK_PKCS5_PBKDF2_SALT_SOURCE_TYPE",
+    "CK_PKCS5_PBKDF2_SALT_SOURCE_TYPE_PTR",
+    "CK_PRF_KDF_PARAMS",
+    "CK_RC2_CBC_PARAMS",
+    "CK_RC2_CBC_PARAMS_PTR",
+    "CK_RC2_MAC_GENERAL_PARAMS",
+    "CK_RC2_MAC_GENERAL_PARAMS_PTR",
+    "CK_RC2_PARAMS",
+    "CK_RC2_PARAMS_PTR",
+    "CK_RC5_CBC_PARAMS",
+    "CK_RC5_CBC_PARAMS_PTR",
+    "CK_RC5_MAC_GENERAL_PARAMS",
+    "CK_RC5_MAC_GENERAL_PARAMS_PTR",
+    "CK_RC5_PARAMS",
+    "CK_RC5_PARAMS_PTR",
+    "CK_RSA_PKCS_MGF_TYPE",
+    "CK_RSA_PKCS_MGF_TYPE_PTR",
+    "CK_RSA_PKCS_OAEP_PARAMS",
+    "CK_RSA_PKCS_OAEP_PARAMS_PTR",
+    "CK_RSA_PKCS_OAEP_SOURCE_TYPE",
+    "CK_RSA_PKCS_OAEP_SOURCE_TYPE_PTR",
+    "CK_RSA_PKCS_PSS_PARAMS",
+    "CK_RSA_PKCS_PSS_PARAMS_PTR",
+    "CK_RV",
+    "CK_ResetTotalOperations",
+    "CK_SEED_CTR_PARAMS",
+    "CK_SEED_CTR_PARAMS_PTR",
+    "CK_SESSION_HANDLE",
+    "CK_SESSION_HANDLE_PTR",
+    "CK_SESSION_INFO",
+    "CK_SESSION_INFO_PTR",
+    "CK_SFNT_CA_FUNCTION_LIST",
+    "CK_SFNT_CA_FUNCTION_LIST_PTR",
+    "CK_SFNT_CA_FUNCTION_LIST_PTR_PTR",
+    "CK_SKIPJACK_PRIVATE_WRAP_PARAMS",
+    "CK_SKIPJACK_PRIVATE_WRAP_PTR",
+    "CK_SKIPJACK_RELAYX_PARAMS",
+    "CK_SKIPJACK_RELAYX_PARAMS_PTR",
+    "CK_SLOT_ID",
+    "CK_SLOT_ID_PTR",
+    "CK_SLOT_INFO",
+    "CK_SLOT_INFO_PTR",
+    "CK_SSL3_KEY_MAT_OUT",
+    "CK_SSL3_KEY_MAT_OUT_PTR",
+    "CK_SSL3_KEY_MAT_PARAMS",
+    "CK_SSL3_KEY_MAT_PARAMS_PTR",
+    "CK_SSL3_MASTER_KEY_DERIVE_PARAMS",
+    "CK_SSL3_MASTER_KEY_DERIVE_PARAMS_PTR",
+    "CK_SSL3_RANDOM_DATA",
+    "CK_STATE",
+    "CK_TLS_PRF_PARAMS",
+    "CK_TLS_PRF_PARAMS_PTR",
+    "CK_TOKEN_INFO",
+    "CK_TOKEN_INFO_PTR",
+    "CK_ULONG",
+    "CK_ULONG_PTR",
+    "CK_UNLOCKMUTEX",
+    "CK_USER_TYPE",
+    "CK_USHORT",
+    "CK_USHORT_PTR",
+    "CK_UTF8CHAR",
+    "CK_UTF8CHAR_PTR",
+    "CK_VERSION",
+    "CK_VERSION_PTR",
+    "CK_VOID_PTR",
+    "CK_VOID_PTR_PTR",
+    "CK_WTLS_KEY_MAT_OUT",
+    "CK_WTLS_KEY_MAT_OUT_PTR",
+    "CK_WTLS_KEY_MAT_PARAMS",
+    "CK_WTLS_KEY_MAT_PARAMS_PTR",
+    "CK_WTLS_MASTER_KEY_DERIVE_PARAMS",
+    "CK_WTLS_MASTER_KEY_DERIVE_PARAMS_PTR",
+    "CK_WTLS_PRF_PARAMS",
+    "CK_WTLS_PRF_PARAMS_PTR",
+    "CK_WTLS_RANDOM_DATA",
+    "CK_WTLS_RANDOM_DATA_PTR",
+    "CK_X9_42_DH1_DERIVE_PARAMS",
+    "CK_X9_42_DH1_DERIVE_PARAMS_PTR",
+    "CK_X9_42_DH2_DERIVE_PARAMS",
+    "CK_X9_42_DH2_DERIVE_PARAMS_PTR",
+    "CK_X9_42_DH_KDF_TYPE",
+    "CK_X9_42_DH_KDF_TYPE_PTR",
+    "CK_X9_42_MQV_DERIVE_PARAMS",
+    "CK_X9_42_MQV_DERIVE_PARAMS_PTR",
+    "CK_XOR_BASE_DATA_KDF_PARAMS",
+    "CK_XOR_BASE_DATA_KDF_PARAMS_PTR",
+    "CT_Token",
+    "CT_TokenHndle",
+    "C_CancelFunction",
+    "C_CloseAllSessions",
+    "C_CloseSession",
+    "C_CopyObject",
+    "C_CreateObject",
+    "C_Decrypt",
+    "C_DecryptDigestUpdate",
+    "C_DecryptFinal",
+    "C_DecryptInit",
+    "C_DecryptUpdate",
+    "C_DecryptVerifyUpdate",
+    "C_DeriveKey",
+    "C_DestroyObject",
+    "C_Digest",
+    "C_DigestEncryptUpdate",
+    "C_DigestFinal",
+    "C_DigestInit",
+    "C_DigestKey",
+    "C_DigestUpdate",
+    "C_Encrypt",
+    "C_EncryptFinal",
+    "C_EncryptInit",
+    "C_EncryptUpdate",
+    "C_Finalize",
+    "C_FindObjects",
+    "C_FindObjectsFinal",
+    "C_FindObjectsInit",
+    "C_GenerateKey",
+    "C_GenerateKeyPair",
+    "C_GenerateRandom",
+    "C_GetAttributeValue",
+    "C_GetFunctionList",
+    "C_GetFunctionStatus",
+    "C_GetInfo",
+    "C_GetMechanismInfo",
+    "C_GetMechanismList",
+    "C_GetObjectSize",
+    "C_GetOperationState",
+    "C_GetSessionInfo",
+    "C_GetSlotInfo",
+    "C_GetSlotList",
+    "C_GetTokenInfo",
+    "C_InitPIN",
+    "C_InitToken",
+    "C_Initialize",
+    "C_Login",
+    "C_Logout",
+    "C_OpenSession",
+    "C_SeedRandom",
+    "C_SetAttributeValue",
+    "C_SetOperationState",
+    "C_SetPIN",
+    "C_Sign",
+    "C_SignEncryptUpdate",
+    "C_SignFinal",
+    "C_SignInit",
+    "C_SignRecover",
+    "C_SignRecoverInit",
+    "C_SignUpdate",
+    "C_UnwrapKey",
+    "C_Verify",
+    "C_VerifyFinal",
+    "C_VerifyInit",
+    "C_VerifyRecover",
+    "C_VerifyRecoverInit",
+    "C_VerifyUpdate",
+    "C_WaitForSlotEvent",
+    "C_WrapKey",
+    "Float",
+    "Float32",
+    "Float64",
+    "HANDLE",
+    "HSM_STATS_PARAMS",
+    "HalfWord",
+    "Int",
+    "Int16",
+    "Int32",
+    "Int64",
+    "Int8",
+    "LUNA2_RET_HIFN_RESET_ERROR",
+    "LUNA_HIFN_UNKNOWN_ALGORITHM",
+    "LUNA_INVALID_PACKET_LAYOUT",
+    "LUNA_RET_410_BUFFER_TOO_SMALL",
+    "LUNA_RET_410_CHALLENGE_RESPONSE_INCORRECT",
+    "LUNA_RET_AES_SELF_TEST_FAILURE",
+    "LUNA_RET_AGAIN",
+    "LUNA_RET_ARGUMENTS_BAD",
+    "LUNA_RET_ATTRIBUTE_NOT_FOUND",
+    "LUNA_RET_ATTRIBUTE_READ_ONLY",
+    "LUNA_RET_ATTRIBUTE_SENSITIVE",
+    "LUNA_RET_ATTRIBUTE_TYPE_INVALID",
+    "LUNA_RET_ATTRIBUTE_VALUE_INVALID",
+    "LUNA_RET_AUDIT_LOGIN_FAILURE_THRESHOLD",
+    "LUNA_RET_AUDIT_LOGIN_TIMEOUT_IN_PROGRESS",
+    "LUNA_RET_BAD_DAC",
+    "LUNA_RET_BAD_DAK",
+    "LUNA_RET_BAD_FW_VERSION",
+    "LUNA_RET_BAD_MAC",
+    "LUNA_RET_BAD_PPID",
+    "LUNA_RET_BAD_SN",
+    "LUNA_RET_BUFFER_TOO_SMALL",
+    "LUNA_RET_CANCEL",
+    "LUNA_RET_CANNOT_PERFORM_OPERATION_TWICE",
+    "LUNA_RET_CAN_NOT_CHANGE_KEY_FUNCTION",
+    "LUNA_RET_CAN_NOT_CREATE_PRIVATE_KEY",
+    "LUNA_RET_CAN_NOT_CREATE_SECRET_KEY",
+    "LUNA_RET_CAST3_SELF_TEST_FAILURE",
+    "LUNA_RET_CAST5_SELF_TEST_FAILURE",
+    "LUNA_RET_CAST_SELF_TEST_FAILURE",
+    "LUNA_RET_CB_ABORTED",
+    "LUNA_RET_CB_HANDLE_INVALID",
+    "LUNA_RET_CB_HIOS_CANCELED",
+    "LUNA_RET_CB_HIOS_CLOSED",
+    "LUNA_RET_CB_HIOS_HANDLE_INVALID",
+    "LUNA_RET_CB_HIOS_ID_INVALID",
+    "LUNA_RET_CB_HIOS_INPUT_BUFFER_TOO_SMALL",
+    "LUNA_RET_CB_HIOS_IO_ERROR",
+    "LUNA_RET_CB_HIOS_OUTPUT_BUFFER_TOO_SMALL",
+    "LUNA_RET_CB_HIOS_RECV_TIMEOUT",
+    "LUNA_RET_CB_HIOS_SEND_TIMEOUT",
+    "LUNA_RET_CB_HIOS_STATE_INVALID",
+    "LUNA_RET_CB_ID_INVALID",
+    "LUNA_RET_CB_INVALID_CALL_FOR_THE_STATE",
+    "LUNA_RET_CB_MUST_READ",
+    "LUNA_RET_CB_MUST_WRITE",
+    "LUNA_RET_CB_NOT_SUPPORTED",
+    "LUNA_RET_CB_NO_MEMORY",
+    "LUNA_RET_CB_PARAM_INVALID",
+    "LUNA_RET_CB_PROT_DATA_INVALID",
+    "LUNA_RET_CB_REMOTE_ABANDONED",
+    "LUNA_RET_CB_REMOTE_ABORT",
+    "LUNA_RET_CB_REMOTE_CLOSED",
+    "LUNA_RET_CB_RETRY",
+    "LUNA_RET_CB_SYNC_ERROR",
+    "LUNA_RET_CB_SYS_ERROR",
+    "LUNA_RET_CB_TIMEOUT",
+    "LUNA_RET_CCM_CERT_INVALID",
+    "LUNA_RET_CCM_FWUPDATE_DENIED",
+    "LUNA_RET_CCM_NOT_PRESENT",
+    "LUNA_RET_CCM_NOT_SUPPORTED",
+    "LUNA_RET_CCM_SIGN_INVALID",
+    "LUNA_RET_CCM_TOO_LARGE",
+    "LUNA_RET_CCM_UNREMOVABLE",
+    "LUNA_RET_CCM_UPDATE_DENIED",
+    "LUNA_RET_CERT_VERSION_NOT_SUPPORTED",
+    "LUNA_RET_CHALLENGE_INVALID",
+    "LUNA_RET_CHALLENGE_NOT_REQUIRED",
+    "LUNA_RET_CHALLENGE_REQUIRES_PED",
+    "LUNA_RET_CHALLENGE_RESPONSE_INCORRECT",
+    "LUNA_RET_CHALLENGE_TYPE_INVALID",
+    "LUNA_RET_CITS_DAK_MISSING",
+    "LUNA_RET_CL_ALIGNMENT_ERROR",
+    "LUNA_RET_CL_COMMAND_MALFORMED",
+    "LUNA_RET_CL_COMMAND_NON_BACKUP",
+    "LUNA_RET_CL_MAILBOXES_NOT_AVAILABLE",
+    "LUNA_RET_CL_NO_TRANSMISSION",
+    "LUNA_RET_CL_QUEUE_LOCATION_ERROR",
+    "LUNA_RET_CL_QUEUE_OVERLAP_ERROR",
+    "LUNA_RET_CL_TRANSMISSION_ERROR",
+    "LUNA_RET_CONTAINER_CAN_NOT_HAVE_MEMBERS",
+    "LUNA_RET_CONTAINER_HANDLE_INVALID",
+    "LUNA_RET_CONTAINER_IS_DISABLED",
+    "LUNA_RET_CONTAINER_LOCKED",
+    "LUNA_RET_CONTAINER_OBJECT_STORAGE_FULL",
+    "LUNA_RET_COUNTER_WRAPAROUND",
+    "LUNA_RET_CPK_PARAMETER_MISSING",
+    "LUNA_RET_DAC_MISSING",
+    "LUNA_RET_DAC_POLICY_PID_MISMATCH",
+    "LUNA_RET_DAK_MISSING",
+    "LUNA_RET_DATA_INVALID",
+    "LUNA_RET_DATA_LEN_RANGE",
+    "LUNA_RET_DES_SELF_TEST_FAILURE",
+    "LUNA_RET_DEVICE_ERROR",
+    "LUNA_RET_DEVICE_TIMEOUT",
+    "LUNA_RET_DSA_PARAM_GEN_FAILURE",
+    "LUNA_RET_DSA_SELF_TEST_FAILURE",
+    "LUNA_RET_ECC_BUFFER_OVERFLOW",
+    "LUNA_RET_ECC_DAC_MISSING",
+    "LUNA_RET_ECC_DAK_MISSING",
+    "LUNA_RET_ECC_HOC_MISSING",
+    "LUNA_RET_ECC_HOK_MISSING",
+    "LUNA_RET_ECC_MIC_MISSING",
+    "LUNA_RET_ECC_NOT_SUPPORTED",
+    "LUNA_RET_ECC_POINT_INVALID",
+    "LUNA_RET_ECC_RESULT_AT_INF",
+    "LUNA_RET_ECC_SELF_TEST_FAILURE",
+    "LUNA_RET_ECC_UNKNOWN_CURVE",
+    "LUNA_RET_ENCRYPTED_DATA_INVALID",
+    "LUNA_RET_ENCRYPTED_DATA_LEN_RANGE",
+    "LUNA_RET_ERROR",
+    "LUNA_RET_FLAGS_INVALID",
+    "LUNA_RET_FM_ID_INVALID",
+    "LUNA_RET_FORMER_INVALID_ENTRY_TYPE",
+    "LUNA_RET_FUNCTION_CANCELED",
+    "LUNA_RET_FUNCTION_NOT_SUPPORTED",
+    "LUNA_RET_FUNCTION_NOT_SUPPORTED_BY_HARDWARE",
+    "LUNA_RET_GENERAL_ERROR",
+    "LUNA_RET_HAS160_SELF_TEST_FAILURE",
+    "LUNA_RET_HA_NOT_SUPPORTED",
+    "LUNA_RET_HA_USER_NOT_INITIALIZED",
+    "LUNA_RET_HIFN6500_ADDRESS_LINES_BROKEN",
+    "LUNA_RET_HIFN6500_ALU_TIMEOUT",
+    "LUNA_RET_HIFN6500_DATA_LINES_BROKEN",
+    "LUNA_RET_HIFN6500_INVALID_OPERAND_ENDIANESS",
+    "LUNA_RET_HIFN6500_INVALID_OPERAND_LENGTH",
+    "LUNA_RET_HIFN6500_INVALID_PARAMETERS",
+    "LUNA_RET_HIFN6500_INVALID_RESULT_ENDIANESS",
+    "LUNA_RET_HIFN6500_KNOWN_ANSWER_TEST_FAILED",
+    "LUNA_RET_HIFN6500_NOT_PRESENT",
+    "LUNA_RET_HIFN6500_RESET_TIMEOUT",
+    "LUNA_RET_HIFN6500_RNG_FAILED",
+    "LUNA_RET_HIFN6500_RNG_TIMEOUT",
+    "LUNA_RET_HIFN6500_RNG_UNDERFLOW",
+    "LUNA_RET_HIFN6500_TOO_SMALL_USER_BUFFER_FOR_RESULT",
+    "LUNA_RET_HIFN_COMPRESSION_HEADER_COUNT_INVALID",
+    "LUNA_RET_HIFN_COMPRESSION_SOURCE_COUNT_INVALID",
+    "LUNA_RET_HIFN_COMPRESS_SOURCE_NOT_ZERO",
+    "LUNA_RET_HIFN_DESTINATION_COUNT_INVALID",
+    "LUNA_RET_HIFN_DESTINATION_OVERRUN",
+    "LUNA_RET_HIFN_DMA_ERROR",
+    "LUNA_RET_HIFN_DMA_INVALID_REVISION",
+    "LUNA_RET_HIFN_DMA_NOT_IDLE",
+    "LUNA_RET_HIFN_DMA_TIMED_OUT",
+    "LUNA_RET_HIFN_ENCRYPT_HEADER_COUNT_INVALID",
+    "LUNA_RET_HIFN_ENCRYPT_SOURCE_COUNT_INVALID",
+    "LUNA_RET_HIFN_ENCRYPT_SOURCE_NOT_ZERO",
+    "LUNA_RET_HIFN_END_MARKER_NOT_PRESENT",
+    "LUNA_RET_HIFN_INVALID_COMPRESSION_ALGORITHM",
+    "LUNA_RET_HIFN_INVALID_ENCRYPT_ALGORITHM",
+    "LUNA_RET_HIFN_INVALID_ENCRYPT_MODE",
+    "LUNA_RET_HIFN_INVALID_MAC_ALGORITHM",
+    "LUNA_RET_HIFN_INVALID_MAC_MODE",
+    "LUNA_RET_HIFN_INVALID_PAD_ALGORITHM",
+    "LUNA_RET_HIFN_MAC_HEADER_COUNT_INVALID",
+    "LUNA_RET_HIFN_MAC_SOURCE_COUNT_INVALID",
+    "LUNA_RET_HIFN_MAC_SOURCE_NOT_ZERO",
+    "LUNA_RET_HIFN_NOT_PRESENT",
+    "LUNA_RET_HIFN_PAD_SOURCE_COUNT_INVALID",
+    "LUNA_RET_HIFN_SOURCE_COUNT_INVALID",
+    "LUNA_RET_HOC_MISSING",
+    "LUNA_RET_HOK_MISSING",
+    "LUNA_RET_HSM_INTERNAL_BUFFER_TOO_SMALL",
+    "LUNA_RET_HSM_STORAGE_FULL",
+    "LUNA_RET_HSM_TAMPERED",
+    "LUNA_RET_INCOMPATIBLE",
+    "LUNA_RET_INVALID_ACCESS_LEVEL",
+    "LUNA_RET_INVALID_BOARD_TYPE",
+    "LUNA_RET_INVALID_CERTIFICATE_DATA",
+    "LUNA_RET_INVALID_CERTIFICATE_FUNCTION",
+    "LUNA_RET_INVALID_CERTIFICATE_TYPE",
+    "LUNA_RET_INVALID_CERTIFICATE_VERSION",
+    "LUNA_RET_INVALID_ENTRY_TYPE",
+    "LUNA_RET_INVALID_FUF_HEADER",
+    "LUNA_RET_INVALID_FUF_TARGET",
+    "LUNA_RET_INVALID_FUF_VERSION",
+    "LUNA_RET_INVALID_IP_PACKET",
+    "LUNA_RET_INVALID_MODULUS_SIZE",
+    "LUNA_RET_INVALID_PADDING_TYPE",
+    "LUNA_RET_INVALID_PRIVATE_KEY_TYPE",
+    "LUNA_RET_INVALID_VECTOR_SIZE",
+    "LUNA_RET_ISES_CMD_FAILED",
+    "LUNA_RET_ISES_CMD_PARAMETER_INVALID",
+    "LUNA_RET_ISES_ERROR",
+    "LUNA_RET_ISES_INIT_FAILED",
+    "LUNA_RET_ISES_LNAU_TEST_FAILED",
+    "LUNA_RET_ISES_RNG_TEST_FAILED",
+    "LUNA_RET_ISES_TEST_VS_BSAFE_FAILED",
+    "LUNA_RET_KCDSA_PARAM_GEN_FAILURE",
+    "LUNA_RET_KCDSA_SELF_TEST_FAILURE",
+    "LUNA_RET_KCV_PARAMETER_ALREADY_EXISTS",
+    "LUNA_RET_KCV_PARAMETER_COULD_NOT_BE_ADDED",
+    "LUNA_RET_KCV_PARAMETER_MISSING",
+    "LUNA_RET_KEY_CANNOT_BE_KEKED",
+    "LUNA_RET_KEY_EXTRACTABLE",
+    "LUNA_RET_KEY_HANDLE_INVALID",
+    "LUNA_RET_KEY_INDIGESTIBLE",
+    "LUNA_RET_KEY_INVALID_FOR_OPERATION",
+    "LUNA_RET_KEY_NOT_ACTIVE",
+    "LUNA_RET_KEY_NOT_KEKED",
+    "LUNA_RET_KEY_NOT_UNWRAPPABLE",
+    "LUNA_RET_KEY_NOT_WRAPPABLE",
+    "LUNA_RET_KEY_PARITY",
+    "LUNA_RET_KEY_SENSITIVE",
+    "LUNA_RET_KEY_SIZE_RANGE",
+    "LUNA_RET_KEY_TYPE_INCONSISTENT",
+    "LUNA_RET_KEY_UNEXTRACTABLE",
+    "LUNA_RET_LICENSE_CAPACITY_EXCEEDED",
+    "LUNA_RET_LICENSE_ID_UNKNOWN",
+    "LUNA_RET_LOG_AUDIT_NOT_INITIALIZED",
+    "LUNA_RET_LOG_BAD_FILE_NAME",
+    "LUNA_RET_LOG_BAD_RECORD_HMAC",
+    "LUNA_RET_LOG_BAD_TIME",
+    "LUNA_RET_LOG_FILE_NOT_OPEN",
+    "LUNA_RET_LOG_FILE_WRITE_ERROR",
+    "LUNA_RET_LOG_FULL",
+    "LUNA_RET_LOG_NO_KCV",
+    "LUNA_RET_LOG_RESYNC_NEEDED",
+    "LUNA_RET_MAC_MISSING",
+    "LUNA_RET_MASKING_NOT_SUPPORTED",
+    "LUNA_RET_MAX_OBJECT_COUNT",
+    "LUNA_RET_MD2_SELF_TEST_FAILURE",
+    "LUNA_RET_MD5_SELF_TEST_FAILURE",
+    "LUNA_RET_MECHANISM_INVALID",
+    "LUNA_RET_MECHANISM_INVALID_FOR_FP",
+    "LUNA_RET_MECHANISM_PARAM_INVALID",
+    "LUNA_RET_MEMORY_ALLOCATION_FAILED",
+    "LUNA_RET_MISSING_COMMAND_PARAMETER",
+    "LUNA_RET_MISSING_NUMBER_OF_VECTORS",
+    "LUNA_RET_MISSING_SPLITS",
+    "LUNA_RET_MISSING_VALUE_FOR_M",
+    "LUNA_RET_MISSING_VALUE_FOR_N",
+    "LUNA_RET_MISSING_VECTOR",
+    "LUNA_RET_MISSING_WEIGHT_VALUE",
+    "LUNA_RET_MM_ACCESS_OUTSIDE_ALLOCATION_RANGE",
+    "LUNA_RET_MM_FATAL_ERROR",
+    "LUNA_RET_MM_INVALID_HANDLE",
+    "LUNA_RET_MM_INVALID_USAGE",
+    "LUNA_RET_MM_ITERATOR_PAST_END",
+    "LUNA_RET_MM_NOT_ENOUGH_MEMORY",
+    "LUNA_RET_MM_USAGE_ALREADY_SET",
+    "LUNA_RET_MTK_SPLIT_INVALID",
+    "LUNA_RET_MTK_STATE_INVALID",
+    "LUNA_RET_MTK_ZEROIZED",
+    "LUNA_RET_MULTI_FUNCTION_KEYS_NOT_ALLOWED",
+    "LUNA_RET_MUTEX_BAD",
+    "LUNA_RET_M_OF_N_ACTIVATION_REQUIRED",
+    "LUNA_RET_M_OF_N_CLONING_IS_NOT_ALLOWED",
+    "LUNA_RET_M_OF_N_IS_NOT_INITIALZED",
+    "LUNA_RET_M_OF_N_IS_NOT_REQUIRED",
+    "LUNA_RET_M_OF_N_PARAMETER_EXIST",
+    "LUNA_RET_M_OF_N_PARAMETER_NOT_AVAILABLE",
+    "LUNA_RET_M_OF_N_SECRET_INVALID",
+    "LUNA_RET_M_TOO_LARGE",
+    "LUNA_RET_M_TOO_SMALL",
+    "LUNA_RET_NOT_FOUND",
+    "LUNA_RET_NOT_READY",
+    "LUNA_RET_NO_INVERSE",
+    "LUNA_RET_NO_OFFBOARD_STORAGE",
+    "LUNA_RET_NO_RNG_SEED",
+    "LUNA_RET_N_TOO_LARGE",
+    "LUNA_RET_N_TOO_SMALL",
+    "LUNA_RET_OBJECT_DELETED",
+    "LUNA_RET_OBJECT_HANDLE_INVALID",
+    "LUNA_RET_OH_OBJECT_ALREADY_EXISTS",
+    "LUNA_RET_OH_OBJECT_OWNER_DOES_NOT_EXIST",
+    "LUNA_RET_OH_OBJECT_TYPE_INVALID",
+    "LUNA_RET_OH_OBJECT_VERSION_INVALID",
+    "LUNA_RET_OK",
+    "LUNA_RET_OPERATION_ACTIVE",
+    "LUNA_RET_OPERATION_INVALID_FOR_FP",
+    "LUNA_RET_OPERATION_NOT_INITIALIZED",
+    "LUNA_RET_OPERATION_RESTRICTED",
+    "LUNA_RET_OPERATION_SHOULD_BE_DESTRUCTIVE",
+    "LUNA_RET_PE1746_ERROR",
+    "LUNA_RET_PED_CLIENT_NOT_RUNNING",
+    "LUNA_RET_PED_DEK_INVALID",
+    "LUNA_RET_PED_ERROR",
+    "LUNA_RET_PED_ID_INVALID",
+    "LUNA_RET_PED_UNPLUGGED",
+    "LUNA_RET_PED_UNSUPPORTED_CRYPTO_PROTOCOL",
+    "LUNA_RET_PED_UNSUPPORTED_PROTOCOL",
+    "LUNA_RET_POLICY_NOT_FOUND",
+    "LUNA_RET_PRIVATE_KEY_MUST_BE_SENSITIVE",
+    "LUNA_RET_PRIVATE_KEY_MUST_HAVE_SENSITIVE_ATTRIBUTE",
+    "LUNA_RET_RC2_SELF_TEST_FAILURE",
+    "LUNA_RET_RC4_SELF_TEST_FAILURE",
+    "LUNA_RET_RC5_SELF_TEST_FAILURE",
+    "LUNA_RET_RECALCULATE_K",
+    "LUNA_RET_RETRY",
+    "LUNA_RET_RIPEMD160_SELF_TEST_FAILURE",
+    "LUNA_RET_RM_BAD_HSM_PARAMS",
+    "LUNA_RET_RM_CONFIG_CHANGE_FAILS_DEPENDENCIES",
+    "LUNA_RET_RM_CONFIG_CHANGE_ILLEGAL",
+    "LUNA_RET_RM_CONFIG_ILLEGAL",
+    "LUNA_RET_RM_ELEMENT_ID_INVALID",
+    "LUNA_RET_RM_ELEMENT_VALUE_INVALID",
+    "LUNA_RET_RM_NO_MEMORY",
+    "LUNA_RET_RM_POLICY_ELEMENT_DESTRUCTIVE",
+    "LUNA_RET_RM_POLICY_ELEMENT_NOT_DESTRUCTIVE",
+    "LUNA_RET_RM_POLICY_WRITE_RESTRICTED",
+    "LUNA_RET_RNG_ERROR",
+    "LUNA_RET_RNG_RESEED_REQUIRED",
+    "LUNA_RET_RNG_RESEED_TOO_EARLY",
+    "LUNA_RET_RNG_SELF_TEST_FAILURE",
+    "LUNA_RET_ROOT_CERT_MISSING",
+    "LUNA_RET_RSA_SELF_TEST_FAILURE",
+    "LUNA_RET_SAVED_STATE_INVALID",
+    "LUNA_RET_SECRET_KEY_MUST_BE_SENSITIVE",
+    "LUNA_RET_SECRET_KEY_MUST_HAVE_SENSITIVE_ATTRIBUTE",
+    "LUNA_RET_SECURITY_PARAMETER_MISSING",
+    "LUNA_RET_SEED_SELF_TEST_FAILURE",
+    "LUNA_RET_SELF_TEST_FAILURE",
+    "LUNA_RET_SENTRY_PKA_ERROR",
+    "LUNA_RET_SESSION_HANDLE_INVALID_FOR_FP",
+    "LUNA_RET_SFNT3120_ALG_NO_SOFTWARE_SUPPORT",
+    "LUNA_RET_SFNT3120_CRC",
+    "LUNA_RET_SFNT3120_ERROR",
+    "LUNA_RET_SFNT3120_SELFTEST_FAILED",
+    "LUNA_RET_SHA1_RSA_SELF_TEST_FAILURE",
+    "LUNA_RET_SHA_SELF_TEST_FAILURE",
+    "LUNA_RET_SIGNATURE_INVALID",
+    "LUNA_RET_SIGNATURE_LEN_RANGE",
+    "LUNA_RET_SIGNING_KEY_MUST_BE_LOCAL",
+    "LUNA_RET_SIM_AUTHFORM_INVALID",
+    "LUNA_RET_SIM_AUTHORIZATION_FAILED",
+    "LUNA_RET_SIM_CORRUPT_DATA",
+    "LUNA_RET_SIM_VERSION_UNSUPPORTED",
+    "LUNA_RET_SM_ACCESS_ALREADY_EXISTS",
+    "LUNA_RET_SM_ACCESS_DOES_NOT_VALIDATE",
+    "LUNA_RET_SM_ACCESS_ID_INVALID",
+    "LUNA_RET_SM_ACCESS_REALLOC_ERROR",
+    "LUNA_RET_SM_BAD_ACCESS_HANDLE",
+    "LUNA_RET_SM_BAD_CONTEXT_NUMBER",
+    "LUNA_RET_SM_CONTEXT_ALREADY_ALLOCATED",
+    "LUNA_RET_SM_CONTEXT_BUFFER_OVERFLOW",
+    "LUNA_RET_SM_CONTEXT_NOT_ALLOCATED",
+    "LUNA_RET_SM_DATA_INVALID",
+    "LUNA_RET_SM_EXCLUSIVE_SESSION_EXISTS",
+    "LUNA_RET_SM_KEY_SIZE_ERROR",
+    "LUNA_RET_SM_MEMORY_ALLOCATION_ERROR",
+    "LUNA_RET_SM_MULTIPLE_ACCESS_DISABLED",
+    "LUNA_RET_SM_NOT_LOGGED_IN",
+    "LUNA_RET_SM_OTHER_USER_LOGGED_IN",
+    "LUNA_RET_SM_PIN_EXPIRED",
+    "LUNA_RET_SM_SESSION_HANDLE_INVALID",
+    "LUNA_RET_SM_SESSION_READ_ONLY_EXISTS",
+    "LUNA_RET_SM_SESSION_REALLOC_ERROR",
+    "LUNA_RET_SM_TOSM_DOES_NOT_VALIDATE",
+    "LUNA_RET_SM_TSV_MISSING",
+    "LUNA_RET_SM_UNKNOWN_ACCESS_TYPE",
+    "LUNA_RET_SM_UNKNOWN_COMMAND",
+    "LUNA_RET_SM_UNKNOWN_SESSION_TYPE",
+    "LUNA_RET_SM_UNKNOWN_TOSM_STATE",
+    "LUNA_RET_SO_LOGIN_FAILURE_THRESHOLD",
+    "LUNA_RET_SPLIT_DATA_INVALID",
+    "LUNA_RET_SPLIT_ID_INVALID",
+    "LUNA_RET_SP_RX_ERROR",
+    "LUNA_RET_SP_TX_ERROR",
+    "LUNA_RET_SSK_MISSING",
+    "LUNA_RET_STATE_UNSAVEABLE",
+    "LUNA_RET_STC_ACTIVATE_MACTAG_U_VERIFY_FAIL",
+    "LUNA_RET_STC_ACTIVATE_MACTAG_V_GEN_FAIL",
+    "LUNA_RET_STC_ACTIVATE_RESP_GEN_FAIL",
+    "LUNA_RET_STC_CHANNEL_REALLOC_ERROR",
+    "LUNA_RET_STC_CLIENT_HANDLE_INVALID",
+    "LUNA_RET_STC_CONTAINER_INVALID",
+    "LUNA_RET_STC_NOT_ENABLED",
+    "LUNA_RET_STC_NO_CHANNEL",
+    "LUNA_RET_STC_OPEN_CIPHER_MISMATCH",
+    "LUNA_RET_STC_OPEN_DHNIST_PUBKEY_ERROR",
+    "LUNA_RET_STC_OPEN_KEY_MATERIAL_GEN_FAIL",
+    "LUNA_RET_STC_OPEN_RESP_GEN_FAIL",
+    "LUNA_RET_STC_SEQUENCE_NUM_INVALID",
+    "LUNA_RET_STC_SESSION_INVALID",
+    "LUNA_RET_STM_CMD_NON_TRANSPORT",
+    "LUNA_RET_STORAGE_TYPE_INCONSISTENT",
+    "LUNA_RET_TEMPLATE_INCOMPLETE",
+    "LUNA_RET_TEMPLATE_INCONSISTENT",
+    "LUNA_RET_TEST_VS_BSAFE_FAILED",
+    "LUNA_RET_TIMEOUT",
+    "LUNA_RET_TIME_NOT_INITIALIZED",
+    "LUNA_RET_TOKEN_LOCKED_OUT",
+    "LUNA_RET_TOKEN_LOCKED_OUT_CA",
+    "LUNA_RET_TOKEN_LOCKED_OUT_CCM",
+    "LUNA_RET_TOKEN_LOCKED_OUT_CL",
+    "LUNA_RET_TOKEN_LOCKED_OUT_MM",
+    "LUNA_RET_TOKEN_LOCKED_OUT_OH",
+    "LUNA_RET_TOKEN_LOCKED_OUT_PM",
+    "LUNA_RET_TOKEN_LOCKED_OUT_RN",
+    "LUNA_RET_TOKEN_LOCKED_OUT_SHA_DIGEST",
+    "LUNA_RET_TOKEN_LOCKED_OUT_SM",
+    "LUNA_RET_TOKEN_LOCKED_OUT_STC",
+    "LUNA_RET_TOKEN_LOCKED_OUT_UM",
+    "LUNA_RET_TOKEN_NOT_PRESENT",
+    "LUNA_RET_TOO_MANY_CONTAINERS",
+    "LUNA_RET_TOO_MANY_VECTORS_PROVIDED",
+    "LUNA_RET_TOO_MANY_WEIGHTS",
+    "LUNA_RET_TOTAL_WEIGHT_INVALID",
+    "LUNA_RET_TPV_INVALID",
+    "LUNA_RET_TSN_MISMATCH",
+    "LUNA_RET_TUK_PARAMETER_MISSING",
+    "LUNA_RET_TWC_PARAMETER_MISSING",
+    "LUNA_RET_UM_PIN_INCORRECT",
+    "LUNA_RET_UM_PIN_INCORRECT_CONTAINER_LOCKED",
+    "LUNA_RET_UM_PIN_INCORRECT_CONTAINER_ZEROIZED",
+    "LUNA_RET_UM_PIN_INVALID",
+    "LUNA_RET_UM_PIN_LEN_RANGE",
+    "LUNA_RET_UM_TSN_MISSING",
+    "LUNA_RET_UNKNOWN_COMMAND",
+    "LUNA_RET_UNWRAPPING_ERROR",
+    "LUNA_RET_UNWRAPPING_KEY_HANDLE_INVALID",
+    "LUNA_RET_UNWRAPPING_KEY_SIZE_RANGE",
+    "LUNA_RET_UNWRAPPING_KEY_TYPE_INCONSISTENT",
+    "LUNA_RET_USER_ALREADY_ACTIVATED",
+    "LUNA_RET_USER_ALREADY_LOGGED_IN",
+    "LUNA_RET_USER_NOT_LOGGED_IN",
+    "LUNA_RET_USER_PIN_NOT_INITIALIZED",
+    "LUNA_RET_USER_TYPE_INVALID",
+    "LUNA_RET_VECTOR_DUPLICATE",
+    "LUNA_RET_VECTOR_OF_DIFFERENT_SET",
+    "LUNA_RET_VECTOR_TOO_LARGE",
+    "LUNA_RET_VECTOR_TOO_SMALL",
+    "LUNA_RET_VECTOR_TYPE_INVALID",
+    "LUNA_RET_VECTOR_VERSION_INVALID",
+    "LUNA_RET_WEIGHT_TOO_LARGE",
+    "LUNA_RET_WEIGHT_TOO_SMALL",
+    "LUNA_RET_WRAPPED_KEY_INVALID",
+    "LUNA_RET_WRAPPED_KEY_LEN_RANGE",
+    "LUNA_RET_WRAPPING_ERROR",
+    "LUNA_RET_WRAPPING_KEY_HANDLE_INVALID",
+    "LUNA_RET_WRAPPING_KEY_SIZE_RANGE",
+    "LUNA_RET_WRAPPING_KEY_TYPE_INCONSISTENT",
+    "LastFirmwareCode",
+    "MSG_BAD_HMAC",
+    "MSG_EXISTING_AUTO_ACTIVATION_DATA_WONT_WORK",
+    "MSG_FACTORY_RESET",
+    "MSG_GENERATING_NEW_TVK_FAILED",
+    "MSG_GENERATING_NEW_TVK_PASSED",
+    "MSG_INITIALIZING_MSG_TVK_TIMESTAMP_FAILED",
+    "MSG_LAST",
+    "MSG_LOG_NO_SECRET_PM_LOG_INIT_IS_DEFERRED",
+    "MSG_LOG_WAS_TRUNCATED",
+    "MSG_NVRAM_READ_FAILED",
+    "MSG_NVRAM_WRITE_FAILED",
+    "MSG_PARTITION_STC_POLICY_SET",
+    "MSG_RESTART",
+    "MSG_RESYNC",
+    "MSG_RTC_BATTERY_LOW",
+    "MSG_RTC_BATTERY_WAS_LOW_WHEN_MAIN_POWER_WAS_OFF",
+    "MSG_RTC_CANT_ACCESS",
+    "MSG_RTC_CANT_ARM_TAMPER_1_CIRCUITS",
+    "MSG_RTC_CANT_ARM_TAMPER_2_CIRCUITS",
+    "MSG_RTC_CANT_CLEAN_POWER_LOSS",
+    "MSG_RTC_CANT_CLEAN_TAMPER_1",
+    "MSG_RTC_CANT_CLEAN_TAMPER_2",
+    "MSG_RTC_CANT_GET_TAMPER_TIMER",
+    "MSG_RTC_CANT_INITIALIZE_I2C",
+    "MSG_RTC_CONFIGURATION_CORRUPTED",
+    "MSG_RTC_EXTERNAL_TAMPER_DETECTED",
+    "MSG_RTC_EXTERNAL_TAMPER_LATCHED",
+    "MSG_RTC_HSM_WAS_REMOVED_FROM_THE_PCI_SLOT",
+    "MSG_RTC_IS_NOT_OPERATIONAL_AUTO_ACTIVATION_WILL_NO_WORK",
+    "MSG_RTC_LOST_ALL_POWER",
+    "MSG_RTC_MSG_NVRAM_READ_FAILED",
+    "MSG_RTC_MSG_NVRAM_WRITE_FAILED",
+    "MSG_RTC_MSG_NVRAM_ZAPPING_FAILED",
+    "MSG_RTC_RECONFIGURING_FAILED",
+    "MSG_RTC_RE_CONFIGURINGPASSED_CLOCK_RESTARTED",
+    "MSG_RTC_ROLLED_BACK",
+    "MSG_RTC_RTC_MONITOR_CANT_COMMUNICATE_TO_RTC",
+    "MSG_RTC_TAMPER_2_SIGNAL",
+    "MSG_RTC_TAMPER_CIRCUITS_RE_ARMED",
+    "MSG_RTC_UNRELIABLE_DUE_TO_LOW_BATTERY_WHEN_MAIN_POWER_WAS_OFF",
+    "MSG_RTC_ZEROIZED_ON_POWER_LOSS",
+    "MSG_TVK_TIMESTAMP_CORRUPTED",
+    "MSG_TVK_TIMESTAMP_IS_OLDER_THAN_RTC_CLOCK",
+    "MSG_TVK_TIMESTAMP_IS_TOO_OLD",
+    "MSG_TVK_TIMESTAMP_RECOVERY_COMPLETED",
+    "MSG_TVK_TIMESTAMP_RECOVERY_FAILED",
+    "MSG_TVK_TIMESTAMP_UPDATE_FAILED",
+    "MSG_TVK_TIMESTAMP_UPDATE_WAS_LIKELY_ABORTED_TRYING_TO_RECOVER",
+    "MSG_TVK_TIMESTAMP_WAS_LOST_DUE_TO_RTC_RESET",
+    "MSG_TVK_WAS_CORRUPTED",
+    "MSG_TVK_WAS_LOST_DUE_TO_BAD_BATTERY",
+    "MSG_TVK_WAS_LOST_DUE_TO_DECOMMISSIONING",
+    "MSG_TVK_WAS_LOST_DUE_TO_TAMPER",
+    "MSG_ZEROIZING",
+    "MSG_ZEROIZING_AFTER_DECOMMISSION",
+    "MSG_ZEROIZING_AFTER_NO_SECURE_DATA",
+    "PointerDifference",
+    "RC_ARGUMENTS_BAD",
+    "RC_ASSIGNING_SAME_VALUE",
+    "RC_BUFFER_TOO_SMALL",
+    "RC_CACHE_DIRTY",
+    "RC_CACHE_NOT_MAPPED",
+    "RC_CALLBACK_ERROR",
+    "RC_CANCEL",
+    "RC_CERT_TYPE_INVALID",
+    "RC_CHALLENGE_BUFFER_SIZE",
+    "RC_CLIENT_DISCONNECTED",
+    "RC_CLIENT_MESSAGE_ERROR",
+    "RC_CMD_BLOCKED_REMOTE_PED_TUNNEL",
+    "RC_DATA_CORRUPTED",
+    "RC_DATA_INVALID",
+    "RC_DER_CLASS_INVALID",
+    "RC_ENDOFLIST",
+    "RC_FAILED_TO_CREATE_PROCESS",
+    "RC_FAILED_TO_CREATE_THREAD",
+    "RC_FILE_ERROR",
+    "RC_FILE_LOCK_ERROR",
+    "RC_FILE_LOCK_FAILED",
+    "RC_FILE_NAME_INVALID",
+    "RC_FILE_READ_ONLY",
+    "RC_FUNCTION_NOT_SUPPORTED",
+    "RC_GENERAL_ERROR",
+    "RC_GROUP_NAME_INVALID",
+    "RC_HOST_RESOLUTION_ERROR",
+    "RC_INVALID_CERT_HOST",
+    "RC_INVALID_COMMAND",
+    "RC_INVALID_ENUM_OPTION",
+    "RC_INVALID_INDEX",
+    "RC_KEY_NEEDED",
+    "RC_LISTEN_SOCKET_INVALID",
+    "RC_MANUFACTURING_NO_CONFIG_AVAILABLE",
+    "RC_MANUFACTURING_SERIAL_NUMBER_INVALID",
+    "RC_MANUFACTURING_TOKEN_NOT_PRESENT",
+    "RC_MEMORY_ALLOCATION",
+    "RC_NON_CRYPTOKI_ELEMENT_CLONE",
+    "RC_NOT_HSM_BACKUP_TOKEN",
+    "RC_NOT_PARTITION_BACKUP_TOKEN",
+    "RC_NO_BUFFER",
+    "RC_NO_PRIMARY_PEER",
+    "RC_OBJECT_ALREADY_EXISTS",
+    "RC_OBJECT_ID_INVALID",
+    "RC_OBJECT_NOT_IN_LIST",
+    "RC_OK",
+    "RC_OPERATION_TIMED_OUT",
+    "RC_OPERATION_WOULD_BLOCK",
+    "RC_PARTITION_LOCKED",
+    "RC_PARTITION_NOT_ACTIVATED",
+    "RC_PARTITION_ROLE_DESC_VERSION_INVALID",
+    "RC_PARTITION_ROLE_POLICY_SET_VERSION_INVALID",
+    "RC_PARTITION_ROLE_POLICY_VERSION_INVALID",
+    "RC_PIN_INVALID",
+    "RC_PIN_LOCKED",
+    "RC_POINTER_INVALID",
+    "RC_PORT_INVALID",
+    "RC_RC_ERROR",
+    "RC_REMOTE_PEER_OFFLINE",
+    "RC_REMOTE_SIDE_DISCONNECTED",
+    "RC_RESET_FAILED",
+    "RC_SEMAPHORE_ERROR",
+    "RC_SERVER_DISCONNECTED",
+    "RC_SESSION_SCRIPT_EXISTS",
+    "RC_SHUTTING_DOWN",
+    "RC_SIM_NOT_SUPPORTED",
+    "RC_SLOT_ID_INVALID",
+    "RC_SOCKET_ADDRESS_INVALID",
+    "RC_SOCKET_ADDRESS_IN_USE",
+    "RC_SOCKET_BAD_FD",
+    "RC_SOCKET_CLOSED",
+    "RC_SOCKET_ERROR",
+    "RC_SOCKET_READ_ERROR",
+    "RC_SOCKET_WOULDBLOCK",
+    "RC_SOCKET_WRITE_ERROR",
+    "RC_SSL_CERT_VERIFICATION_LOCATION_ERROR",
+    "RC_SSL_CIPHER_LIST_ERROR",
+    "RC_SSL_CREATE_SSL_ERROR",
+    "RC_SSL_CTX_ERROR",
+    "RC_SSL_ERROR",
+    "RC_SSL_FAILED_HANDSHAKE",
+    "RC_SSL_GET_CERTIFICATE_ERROR",
+    "RC_SSL_GET_PEER_CERT_ERROR",
+    "RC_SSL_INVALID_CERT_STRUCTURE",
+    "RC_SSL_LOAD_CLIENT_CERT_ERROR",
+    "RC_SSL_LOAD_CLIENT_PRIVATE_KEY_ERROR",
+    "RC_SSL_LOAD_SERVER_CERT_ERROR",
+    "RC_SSL_LOAD_SERVER_PRIVATE_KEY_ERROR",
+    "RC_SSL_SYSCALL_ERROR",
+    "RC_SSL_VALIDATE_SERVER_PRIVATE_KEY_ERROR",
+    "RC_SSL_WANT_READ_ERROR",
+    "RC_SSL_WANT_WRITE_ERROR",
+    "RC_SSL_WANT_X509_LOOKUP_ERROR",
+    "RC_STC_CIPHER_SUITE_REJECTED",
+    "RC_STC_CLIENT_HANDLE_INVALID",
+    "RC_STC_CLIENT_IDENTITY_NOT_CONFIGURED",
+    "RC_STC_COMPUTE_DH_KEY_ERROR",
+    "RC_STC_CONTAINER_INVALID",
+    "RC_STC_DH_KEYGEN_ERROR",
+    "RC_STC_DH_KEY_NOT_FROM_SAME_GROUP",
+    "RC_STC_FIRST_PHASE_KDF_ERROR",
+    "RC_STC_KEY_CONFIRMATION_FAILED",
+    "RC_STC_NOT_ENABLED",
+    "RC_STC_NO_CHANNEL",
+    "RC_STC_NO_CONTEXT",
+    "RC_STC_NO_SESSION_KEY",
+    "RC_STC_PARTITION_IDENTITY_NOT_CONFIGURED",
+    "RC_STC_REKEY_CHANNEL_MISMATCH",
+    "RC_STC_RESPONSE_BAD_MAC",
+    "RC_STC_RESPONSE_DECRYPT_ERROR",
+    "RC_STC_RESPONSE_REPLAYED",
+    "RC_STC_RESPONSE_UNEXPECTED_KEY",
+    "RC_STC_RSA_DECRYPT_ERROR",
+    "RC_STC_RSA_ENCRYPT_ERROR",
+    "RC_STC_RSA_SIGN_ERROR",
+    "RC_STC_SECOND_PHASE_KDF_ERROR",
+    "RC_STC_SEQUENCE_NUM_INVALID",
+    "RC_STC_SESSION_INVALID",
+    "RC_STC_UNEXPECTED_DH_DATA_SIZE",
+    "RC_STC_UNEXPECTED_NONCE_PAYLOAD_SIZE",
+    "RC_TOKEN_NOT_PRESENT",
+    "RC_TOKEN_STATE_INVALID",
+    "RC_UNABLE_TO_CONNECT",
+    "RC_UNEXPECTED",
+    "RC_UNKNOWN_CALLBACK_COMMAND",
+    "RC_UNKNOWN_COMMAND",
+    "RC_UNKNOWN_COMMAND_VERSION",
+    "RC_USB_PED_NOT_FOUND",
+    "RC_USB_PED_NOT_RESPONDING",
+    "RC_USB_PED_OPERATION_CANCELLED",
+    "RC_USB_PED_OUT_OF_SYNC",
+    "RC_USB_PED_TOO_MANY_CONNECTED",
+    "RC_USER_NAME_IN_USE",
+    "RC_VERSION_INVALID",
+    "ResultCodeValue",
+    "SInt",
+    "SInt16",
+    "SInt32",
+    "SInt64",
+    "SInt8",
+    "SizeType",
+    "UInt",
+    "UInt16",
+    "UInt32",
+    "UInt64",
+    "UInt8",
+    "ULong",
+    "Word",
+    "eInitMsgs",
+    "fwResultCode",
+    "swapper",
+]

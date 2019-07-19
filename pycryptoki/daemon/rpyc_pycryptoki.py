@@ -75,7 +75,16 @@ from pycryptoki.ca_extensions.per_key_auth import (
     ca_reset_authorization_data,
     ca_reset_authorization_data_ex,
 )
-from pycryptoki.ca_extensions.session import ca_get_session_info, ca_get_session_info_ex
+from pycryptoki.ca_extensions.session import (
+    ca_get_session_info,
+    ca_get_session_info_ex,
+    ca_close_application_id_v2,
+    ca_close_application_id_v2_ex,
+    ca_get_application_id,
+    ca_get_application_id_ex,
+    ca_open_application_id_v2,
+    ca_open_application_id_v2_ex,
+)
 from pycryptoki.ca_extensions.utilization_metrics import (
     ca_read_all_utilization_counters,
     ca_read_all_utilization_counters_ex,
@@ -364,6 +373,12 @@ class PycryptokiService(rpyc.SlaveService):
     ca_closeapplicationID = staticmethod(ca_closeapplicationID)
     ca_setapplicationID_ex = staticmethod(ca_setapplicationID_ex)
     ca_setapplicationID = staticmethod(ca_setapplicationID)
+    ca_open_application_id_v2 = staticmethod(ca_open_application_id_v2)
+    ca_open_application_id_v2_ex = staticmethod(ca_open_application_id_v2_ex)
+    ca_close_application_id_v2 = staticmethod(ca_close_application_id_v2)
+    ca_close_application_id_v2_ex = staticmethod(ca_close_application_id_v2_ex)
+    ca_get_application_id = staticmethod(ca_get_application_id)
+    ca_get_application_id_ex = staticmethod(ca_get_application_id_ex)
     ca_restart_ex = staticmethod(ca_restart_ex)
     ca_restart = staticmethod(ca_restart)
     c_get_slot_list = staticmethod(c_get_slot_list)
