@@ -2,6 +2,8 @@ Miscellaneous
 =============
 
 
+.. contents::
+
 
 RNG, Digest, Creating Objects
 -----------------------------
@@ -10,6 +12,7 @@ RNG, Digest, Creating Objects
     :members:
     :undoc-members:
     :show-inheritance:
+    :member-order: bysource
 
 
 Find Objects, Attribute Setting/Getting
@@ -19,6 +22,7 @@ Find Objects, Attribute Setting/Getting
     :members:
     :undoc-members:
     :show-inheritance:
+    :member-order: bysource
 
 HSM Management
 --------------
@@ -27,6 +31,7 @@ HSM Management
     :members:
     :undoc-members:
     :show-inheritance:
+    :member-order: bysource
 
 
 Audit Functions
@@ -36,6 +41,7 @@ Audit Functions
     :members:
     :undoc-members:
     :show-inheritance:
+    :member-order: bysource
 
 Backup Functions
 ----------------
@@ -44,3 +50,4 @@ Backup Functions
     :members:
     :undoc-members:
     :show-inheritance:
+    :member-order: bysource

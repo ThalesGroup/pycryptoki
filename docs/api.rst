@@ -22,4 +22,6 @@ There are some general guidelines to using pycryptoki:
    Mechanisms <api.mechanisms>
    Miscellaneous <api.misc>
    Helpers <api.helpers>
+   Extensions <api.extensions>
+   Bindings <api.bindings>
    RPYC Daemon <api.daemon>

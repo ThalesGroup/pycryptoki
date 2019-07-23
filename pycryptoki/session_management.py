@@ -156,7 +156,7 @@ def c_get_info():
         * libraryDescription
         * libraryVersion
 
-    ``cryptokiVersion`` and ``libraryVersion`` are :ref:`~pycryptoki.cryptoki.CK_VERSION` structs,
+    ``cryptokiVersion`` and ``libraryVersion`` are :py:class:`~pycryptoki.cryptoki.CK_VERSION` structs,
     and the major/minor values can be accessed directly (``info['cryptokiVersion'].major == 2``)
 
     :return: (retcode, info dictionary)
