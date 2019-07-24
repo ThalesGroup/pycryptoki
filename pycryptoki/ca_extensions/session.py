@@ -14,7 +14,7 @@ from pycryptoki.cryptoki import (
     CK_SLOT_ID,
     CA_OpenApplicationIDV2,
     CA_CloseApplicationIDV2,
-)
+    CA_SetApplicationIDV2)
 from pycryptoki.defines import CKR_OK
 from pycryptoki.exceptions import make_error_handle_function
 
@@ -69,14 +69,14 @@ ca_get_application_id_ex = make_error_handle_function(ca_get_application_id)
 
 def ca_open_application_id_v2(slot, appid):
     """
-    Set the current process's AccessID.
+    Open the given AccessID for the target slot.
 
     :param slot: Slot #.
     :param appid: bytestring of length 16.
     :return: Retcode.
     """
     access_id = CK_APPLICATION_ID(appid)
-    return CA_OpenApplicationIDV2(CK_SLOT_ID(slot), access_id)
+    return CA_OpenApplicationIDV2(CK_SLOT_ID(slot), byref(access_id))
 
 
 ca_open_application_id_v2_ex = make_error_handle_function(ca_open_application_id_v2)
@@ -84,14 +84,28 @@ ca_open_application_id_v2_ex = make_error_handle_function(ca_open_application_id
 
 def ca_close_application_id_v2(slot, appid):
     """
-    Set the current process's AccessID.
+    Close the AccessID associated with the given slot.
 
     :param slot: Slot #.
     :param appid: bytestring of length 16.
     :return: Retcode.
     """
     access_id = CK_APPLICATION_ID(appid)
-    return CA_CloseApplicationIDV2(CK_SLOT_ID(slot), access_id)
+    return CA_CloseApplicationIDV2(CK_SLOT_ID(slot), byref(access_id))
 
 
 ca_close_application_id_v2_ex = make_error_handle_function(ca_close_application_id_v2)
+
+
+def ca_set_application_id_v2(appid):
+    """
+    Set the Current process's AccessID.
+
+    :param appid: bytestring of length 16
+    :return: Retcode
+    """
+    access_id = CK_APPLICATION_ID(appid)
+    return CA_SetApplicationIDV2(byref(access_id))
+
+ca_set_application_id_v2_ex = make_error_handle_function(ca_set_application_id_v2)
+

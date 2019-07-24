@@ -1569,3 +1569,7 @@ CA_OpenApplicationIDV2.argtypes = [CK_SLOT_ID, POINTER(CK_APPLICATION_ID)]
 CA_CloseApplicationIDV2 = make_late_binding_function("CA_CloseApplicationIDV2")
 CA_CloseApplicationIDV2.restype = CK_RV
 CA_CloseApplicationIDV2.argtypes = [CK_SLOT_ID, POINTER(CK_APPLICATION_ID)]
+
+CA_SetApplicationIDV2 = make_late_binding_function("CA_SetApplicationIDV2")
+CA_SetApplicationIDV2.restype = CK_RV
+CA_SetApplicationIDV2.argypes = [POINTER(CK_APPLICATION_ID)]
