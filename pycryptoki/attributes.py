@@ -23,12 +23,11 @@ from ctypes import (
 )
 from functools import wraps
 
-from six import b, string_types, integer_types, binary_type
-
+from six import (b, string_types, integer_types, binary_type)
 from pycryptoki.conversions import (from_bytestring, from_hex, to_bytestring)
 from .cryptoki import (CK_ATTRIBUTE, CK_BBOOL, CK_ATTRIBUTE_TYPE, CK_ULONG, CK_BYTE, CK_CHAR,
                        CK_KEY_STATUS)
-from .defines import CKA_EKM_UID, CKA_GENERIC_1, CKA_GENERIC_2, CKA_GENERIC_3
+from .defines import (CKA_EKM_UID, CKA_GENERIC_1, CKA_GENERIC_2, CKA_GENERIC_3)
 from .defines import (
     CKA_USAGE_LIMIT,
     CKA_USAGE_COUNT,

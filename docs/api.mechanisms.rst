@@ -1,10 +1,14 @@
 Mechanisms
 ----------
 
+
+.. contents::
+
 .. automodule:: pycryptoki.mechanism
     :members:
     :undoc-members:
     :show-inheritance:
+    :member-order: bysource
 
 
 Helpers

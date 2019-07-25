@@ -7,8 +7,9 @@ from ctypes import c_ulong, cast, create_string_buffer
 
 from six import b, string_types
 
-from .cryptoki import CK_CHAR
-from .defines import CKR_OK
+from pycryptoki.cryptoki import CK_CHAR
+from pycryptoki.defines import CKR_OK
+
 
 LOG = logging.getLogger(__name__)
 
@@ -197,5 +198,3 @@ def refresh_c_arrays(retries=1):
         return wrapped_func
 
     return wrap
-
-

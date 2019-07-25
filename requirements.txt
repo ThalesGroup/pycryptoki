@@ -1,4 +1,5 @@
-rpyc==3.4.4
+# note: rpyc == 3.4.4 for pythons < 3; rpyc == 4.0.2 for python >=3
+rpyc
 hypothesis==4.6
 pytest==3.10
 future
