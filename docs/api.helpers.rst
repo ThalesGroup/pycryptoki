@@ -4,13 +4,8 @@ Pycryptoki Helpers
 These are various helper modules and functions. They contain constant definitions,
 C parameter structs, configuration parsing, and default templates.
 
-cryptoki_helpers
-----------------
 
-.. automodule:: pycryptoki.cryptoki_helpers
-    :members:
-    :undoc-members:
-    :show-inheritance:
+.. contents::
 
 
 lookup_dicts
@@ -35,12 +30,3 @@ defaults
     :members:
     :undoc-members:
     :show-inheritance:
-
-
-cryptoki
---------
-
-.. automodule:: pycryptoki.cryptoki
-    :members:
-    :undoc-members:
-

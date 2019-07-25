@@ -3,6 +3,9 @@ Session/Token Management
 
 Modules for Token and session creation and management.
 
+.. contents::
+
+
 Session Management
 ------------------
 
@@ -10,6 +13,7 @@ Session Management
     :members:
     :undoc-members:
     :show-inheritance:
+    :member-order: bysource
 
 
 Token Management
@@ -19,3 +23,4 @@ Token Management
     :members:
     :undoc-members:
     :show-inheritance:
+    :member-order: bysource

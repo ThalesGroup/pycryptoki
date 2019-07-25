@@ -3,8 +3,8 @@ Methods responsible for retrieving hsm info from the K7 card
 """
 import logging
 from ctypes import c_ulong, byref, cast, POINTER
-from pycryptoki.cryptoki import (CA_GetNumberOfAllowedContainers, CA_RetrieveLicenseList,
-                                 CA_GetHSMStorageInformation, CA_GetTSV)
+from pycryptoki.cryptoki import (CK_ULONG, CA_GetNumberOfAllowedContainers, CA_RetrieveLicenseList,
+                                 CA_GetHSMStorageInformation, CA_GetTSV, CA_GetCVFirmwareVersion)
 from pycryptoki.exceptions import make_error_handle_function
 from pycryptoki.defines import CKR_OK
 
@@ -96,3 +96,28 @@ def ca_get_tsv(slot):
 
 
 ca_get_tsv_ex = make_error_handle_function(ca_get_tsv)
+
+
+def ca_get_cv_firmware_version(slot_id):
+    """
+    Cryptovisor specific ca extension function to get cv fw version
+
+    :param slot_id: slot id
+    :return: tuple of return code and cv fw version
+    """
+    major = CK_ULONG()
+    minor = CK_ULONG()
+    sub_minor = CK_ULONG()
+    ret = CA_GetCVFirmwareVersion(CK_ULONG(slot_id), byref(major), byref(minor), byref(sub_minor))
+    if ret != CKR_OK:
+        return ret, None
+    cv_fwv = {}
+    cv_fwv['major'] = major.value
+    cv_fwv['minor'] = minor.value
+    cv_fwv['sub_minor'] = sub_minor.value
+
+    return ret, cv_fwv
+
+
+ca_get_cv_firmware_version_ex = make_error_handle_function(ca_get_cv_firmware_version)
+
