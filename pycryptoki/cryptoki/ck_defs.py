@@ -1108,3 +1108,14 @@ class CK_APPLICATION_ID(Structure):
 
 
 struct_def(CK_APPLICATION_ID, [("id", CK_BYTE * 16)])
+
+
+class CK_EDDSA_PARAMS(Structure):
+    pass
+
+
+struct_def(
+    CK_EDDSA_PARAMS,
+    [("phFlag", CK_BBOOL), ("ulContextDataLen", CK_ULONG), ("pContextData", CK_BYTE_PTR)],
+)
+CK_EDDSA_PARAMS_PTR = POINTER(CK_EDDSA_PARAMS)
