@@ -1119,3 +1119,43 @@ struct_def(
     [("phFlag", CK_BBOOL), ("ulContextDataLen", CK_ULONG), ("pContextData", CK_BYTE_PTR)],
 )
 CK_EDDSA_PARAMS_PTR = POINTER(CK_EDDSA_PARAMS)
+
+
+class CK_BIP32_MASTER_DERIVE_PARAMS(Structure):
+    pass
+
+
+struct_def(
+    CK_BIP32_MASTER_DERIVE_PARAMS,
+    [
+        ("pPublicKeyTemplate", CK_ATTRIBUTE_PTR),
+        ("ulPublicKeyAttributeCount", CK_ULONG),
+        ("pPrivateKeyTemplate", CK_ATTRIBUTE_PTR),
+        ("ulPrivateKeyAttributeCount", CK_ULONG),
+        ("hPublicKey", CK_OBJECT_HANDLE),
+        ("hPrivateKey", CK_OBJECT_HANDLE),
+    ],
+)
+
+CK_BIP32_MASTER_DERIVE_PARAMS_PTR = POINTER(CK_BIP32_MASTER_DERIVE_PARAMS)
+
+
+class CK_BIP32_CHILD_DERIVE_PARAMS(Structure):
+    pass
+
+
+struct_def(
+    CK_BIP32_CHILD_DERIVE_PARAMS,
+    [
+        ("pPublicKeyTemplate", CK_ATTRIBUTE_PTR),
+        ("ulPublicKeyAttributeCount", CK_ULONG),
+        ("pPrivateKeyTemplate", CK_ATTRIBUTE_PTR),
+        ("ulPrivateKeyAttributeCount", CK_ULONG),
+        ("pulPath", CK_ULONG_PTR),
+        ("ulPathLen", CK_ULONG),
+        ("hPublicKey", CK_OBJECT_HANDLE),
+        ("hPrivateKey", CK_OBJECT_HANDLE),
+        ("ulPathErrorIndex", CK_ULONG),
+    ],
+)
+CK_BIP32_CHILD_DERIVE_PARAMS_PTR = POINTER(CK_BIP32_CHILD_DERIVE_PARAMS)
