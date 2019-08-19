@@ -56,6 +56,12 @@ from pycryptoki.backup import (
     ca_sim_multisign,
     ca_sim_multisign_ex,
 )
+from pycryptoki.ca_extensions.bip32 import (
+    ca_bip32_export_public_key,
+    ca_bip32_export_public_key_ex,
+    ca_bip32_import_public_key,
+    ca_bip32_import_public_key_ex,
+)
 from pycryptoki.ca_extensions.derive_wrap import ca_derive_key_and_wrap, ca_derive_key_and_wrap_ex
 from pycryptoki.ca_extensions.object_handler import (
     ca_destroy_multiple_objects,
@@ -549,6 +555,11 @@ class PycryptokiService(rpyc.SlaveService):
     ca_increment_failed_auth_count_ex = staticmethod(ca_increment_failed_auth_count_ex)
     ca_reset_authorization_data = staticmethod(ca_reset_authorization_data)
     ca_reset_authorization_data_ex = staticmethod(ca_reset_authorization_data_ex)
+
+    ca_bip32_import_public_key = staticmethod(ca_bip32_import_public_key)
+    ca_bip32_import_public_key_ex = staticmethod(ca_bip32_import_public_key_ex)
+    ca_bip32_export_public_key = staticmethod(ca_bip32_export_public_key)
+    ca_bip32_export_public_key_ex = staticmethod(ca_bip32_export_public_key_ex)
 
 
 def server_launch(service, ip, port, config):

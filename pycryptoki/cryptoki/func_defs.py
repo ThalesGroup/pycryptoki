@@ -1228,3 +1228,25 @@ CA_CloseApplicationIDV2 = make_late_binding_function(
 CA_SetApplicationIDV2 = make_late_binding_function(
     "CA_SetApplicationIDV2", [POINTER(CK_APPLICATION_ID)]
 )
+
+CA_Bip32ImportPublicKey = make_late_binding_function(
+    "CA_Bip32ImportPublicKey",
+    [
+        CK_SESSION_HANDLE,
+        CK_BYTE_PTR,  # Base58 encoded data src.
+        CK_ULONG,  # encoded data size
+        CK_ATTRIBUTE_PTR,  # user-specified attributes
+        CK_ULONG,  # Attribute length
+        CK_OBJECT_HANDLE_PTR,  # returned handle of created key
+    ],
+)
+
+CA_Bip32ExportPublicKey = make_late_binding_function(
+    "CA_Bip32ExportPublicKey",
+    [
+        CK_SESSION_HANDLE,
+        CK_ULONG,  # BIP32 public key to export
+        CK_BYTE_PTR,  # Base58 encoded data dest.
+        CK_ULONG_PTR,  # Output length
+    ],
+)
