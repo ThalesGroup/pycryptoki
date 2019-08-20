@@ -24,7 +24,7 @@ def ca_bip32_import_public_key(session, key_data, attributes):
     c_key_data = AutoCArray(ctype=CK_BYTE, data=key_data)
     key_handle = CK_ULONG()
     ret = CA_Bip32ImportPublicKey(
-        session, c_key_data.array, c_key_data.size, attrs, len(attributes), byref(key_handle)
+        session, c_key_data.array, len(c_key_data), attrs, len(attributes), byref(key_handle)
     )
     if ret != CKR_OK:
         return ret, None
@@ -47,7 +47,7 @@ def ca_bip32_export_public_key(session, key):
     if ret != CKR_OK:
         return ret, None
 
-    return ret, string_at(c_key_data.array, c_key_data.size)
+    return ret, string_at(c_key_data.array, c_key_data.size.contents.value)
 
 
 ca_bip32_export_public_key_ex = make_error_handle_function(ca_bip32_export_public_key)
