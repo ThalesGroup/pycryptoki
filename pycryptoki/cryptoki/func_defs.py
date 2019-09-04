@@ -470,6 +470,18 @@ CA_GetSecureElementMeta = make_late_binding_function(
     ],
 )
 CA_HAInit = make_late_binding_function("CA_HAInit", [CK_SESSION_HANDLE, CK_OBJECT_HANDLE])
+CA_HAInitExtended = make_late_binding_function(
+    "CA_HAInitExtended",
+    [
+        CK_SESSION_HANDLE,
+        CK_OBJECT_HANDLE,
+        CK_BYTE_PTR,
+        CK_ULONG,
+        CK_ULONG_PTR,
+        CK_ULONG_PTR,
+        CK_ULONG,
+    ],
+)
 CA_HAGetMasterPublic = make_late_binding_function(
     "CA_HAGetMasterPublic", [CK_SLOT_ID, CK_BYTE_PTR, CK_ULONG_PTR]
 )

@@ -128,6 +128,7 @@ __all__ = [
     "CA_HAGetLoginChallenge",
     "CA_HAGetMasterPublic",
     "CA_HAInit",
+    "CA_HAInitExtended",
     "CA_HALogin",
     "CA_IndirectLogin",
     "CA_InitAudit",

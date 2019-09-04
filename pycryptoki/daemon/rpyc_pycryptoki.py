@@ -121,6 +121,8 @@ from pycryptoki.hsm_management import (
     ca_settokencertificatesignature_ex,
     ca_hainit,
     ca_hainit_ex,
+    ca_hainitextended,
+    ca_hainitextended_ex,
     ca_createloginchallenge,
     ca_createloginchallenge_ex,
     ca_initializeremotepedvector,
@@ -453,6 +455,8 @@ class PycryptokiService(rpyc.SlaveService):
     ca_settokencertificatesignature_ex = staticmethod(ca_settokencertificatesignature_ex)
     ca_hainit = staticmethod(ca_hainit)
     ca_hainit_ex = staticmethod(ca_hainit_ex)
+    ca_hainitextended = staticmethod(ca_hainitextended)
+    ca_hainitextended_ex = staticmethod(ca_hainitextended_ex)
     ca_createloginchallenge = staticmethod(ca_createloginchallenge)
     ca_createloginchallenge_ex = staticmethod(ca_createloginchallenge_ex)
     ca_initializeremotepedvector = staticmethod(ca_initializeremotepedvector)
