@@ -52,99 +52,93 @@ To implement a new Mechanism:
                     return self.mech
 
 """
-from .helpers import (get_c_struct_from_mechanism,
-                      get_python_dict_from_c_mechanism,
-                      parse_mechanism,
-                      Mechanism,
-                      MechanismException)
-from .aes import (AESECBEncryptDataMechanism,
-                  AESCBCEncryptDataMechanism,
-                  AESGCMMechanism,
-                  AESXTSMechanism,
-                  Iv16Mechanism,
-                  IvMechanism, AESCTRMechanism)
-from .des import (DES3CTRMechanism,
-                  DES3CBCEncryptDataMechanism,
-                  DES3ECBEncryptDataMechanism)
+from .helpers import (
+    get_c_struct_from_mechanism,
+    get_python_dict_from_c_mechanism,
+    parse_mechanism,
+    Mechanism,
+    MechanismException,
+)
+from .aes import (
+    AESECBEncryptDataMechanism,
+    AESCBCEncryptDataMechanism,
+    AESGCMMechanism,
+    AESXTSMechanism,
+    Iv16Mechanism,
+    IvMechanism,
+    AESCTRMechanism,
+)
+from .des import DES3CTRMechanism, DES3CBCEncryptDataMechanism, DES3ECBEncryptDataMechanism
 from .dh import ECDH1DeriveMechanism
-from .generic import (ConcatenationDeriveMechanism,
-                      StringDataDerivationMechanism,
-                      NullMech,
-                      AutoMech)
-from .rc import (RC2CBCMechanism,
-                 RC2Mechanism,
-                 RC5CBCMechanism,
-                 RC5Mechanism)
-from .rsa import (RSAPKCSOAEPMechanism,
-                  RSAPKCSPSSMechanism)
+from .eddsa import EDDSAMechanism
+from .generic import ConcatenationDeriveMechanism, StringDataDerivationMechanism, NullMech, AutoMech
+from .rc import RC2CBCMechanism, RC2Mechanism, RC5CBCMechanism, RC5Mechanism
+from .rsa import RSAPKCSOAEPMechanism, RSAPKCSPSSMechanism
 from .kdf import PRFKDFDeriveMechanism
-from ..defines import (CKM_DES_CBC,
-                       CKM_DES3_CBC,
-                       CKM_CAST3_CBC,
-                       CKM_CAST5_CBC,
-                       CKM_DES_CBC_PAD,
-                       CKM_DES3_CBC_PAD,
-                       CKM_DES3_CBC_PAD_IPSEC,
-                       CKM_CAST3_CBC_PAD,
-                       CKM_CAST5_CBC_PAD,
-                       CKM_DES_CFB8,
-                       CKM_DES_CFB64,
-                       CKM_DES_OFB64,
-                       CKM_AES_KW,
-                       CKM_AES_KWP,
-                       CKM_AES_CFB8,
-                       CKM_AES_CFB128,
-                       CKM_AES_OFB,
-                       CKM_ARIA_CFB8,
-                       CKM_ARIA_CFB128,
-                       CKM_ARIA_OFB,
-                       CKM_SEED_CBC,
-                       CKM_SEED_CBC_PAD,
-                       CKM_AES_CBC,
-                       CKM_AES_CBC_PAD,
-                       CKM_AES_CBC_PAD_IPSEC,
-                       CKM_ARIA_ECB,
-                       CKM_ARIA_CBC,
-                       CKM_ARIA_CBC_PAD,
-                       CKM_RC2_ECB,
-                       CKM_RC2_MAC,
-                       CKM_RC2_CBC,
-                       CKM_RC2_CBC_PAD,
-                       CKM_RC5_CBC,
-                       CKM_RC5_ECB,
+from ..defines import (
+    CKM_DES_CBC,
+    CKM_DES3_CBC,
+    CKM_CAST3_CBC,
+    CKM_CAST5_CBC,
+    CKM_DES_CBC_PAD,
+    CKM_DES3_CBC_PAD,
+    CKM_DES3_CBC_PAD_IPSEC,
+    CKM_CAST3_CBC_PAD,
+    CKM_CAST5_CBC_PAD,
+    CKM_DES_CFB8,
+    CKM_DES_CFB64,
+    CKM_DES_OFB64,
+    CKM_AES_KW,
+    CKM_AES_KWP,
+    CKM_AES_CFB8,
+    CKM_AES_CFB128,
+    CKM_AES_OFB,
+    CKM_ARIA_CFB8,
+    CKM_ARIA_CFB128,
+    CKM_ARIA_OFB,
+    CKM_SEED_CBC,
+    CKM_SEED_CBC_PAD,
+    CKM_AES_CBC,
+    CKM_AES_CBC_PAD,
+    CKM_AES_CBC_PAD_IPSEC,
+    CKM_ARIA_ECB,
+    CKM_ARIA_CBC,
+    CKM_ARIA_CBC_PAD,
+    CKM_RC2_ECB,
+    CKM_RC2_MAC,
+    CKM_RC2_CBC,
+    CKM_RC2_CBC_PAD,
+    CKM_RC5_CBC,
+    CKM_RC5_ECB,
+    CKM_AES_XTS,
+    CKM_VENDOR_DEFINED,
+    CKM_AES_GCM,
+    CKM_RSA_PKCS_OAEP,
+    CKM_RSA_PKCS_PSS,
+    CKM_SHA1_RSA_PKCS_PSS,
+    CKM_SHA224_RSA_PKCS_PSS,
+    CKM_SHA256_RSA_PKCS_PSS,
+    CKM_SHA384_RSA_PKCS_PSS,
+    CKM_SHA512_RSA_PKCS_PSS,
+    CKM_DES_ECB,
+    CKM_AES_CBC_ENCRYPT_DATA,
+    CKM_AES_ECB_ENCRYPT_DATA,
+    CKM_DES3_CBC_ENCRYPT_DATA,
+    CKM_DES3_ECB_ENCRYPT_DATA,
+    CKM_CONCATENATE_BASE_AND_KEY,
+    CKM_CONCATENATE_BASE_AND_DATA,
+    CKM_XOR_BASE_AND_DATA,
+    CKM_CONCATENATE_DATA_AND_BASE,
+    CKM_ECDH1_DERIVE,
+    CKM_AES_CTR,
+    CKM_DES3_CTR,
+    CKM_AES_GMAC,
+    CKM_PRF_KDF,
+    CKM_DES2_DUKPT_IPEK,
+    CKM_EDDSA,
+    CKM_EDDSA_NACL,
+)
 
-                       CKM_AES_XTS,
-                       CKM_VENDOR_DEFINED,
-                       CKM_AES_GCM,
-
-                       CKM_RSA_PKCS_OAEP,
-
-                       CKM_RSA_PKCS_PSS,
-                       CKM_SHA1_RSA_PKCS_PSS,
-                       CKM_SHA224_RSA_PKCS_PSS,
-                       CKM_SHA256_RSA_PKCS_PSS,
-                       CKM_SHA384_RSA_PKCS_PSS,
-                       CKM_SHA512_RSA_PKCS_PSS,
-
-                       CKM_DES_ECB,
-
-                       CKM_AES_CBC_ENCRYPT_DATA,
-                       CKM_AES_ECB_ENCRYPT_DATA,
-                       CKM_DES3_CBC_ENCRYPT_DATA,
-                       CKM_DES3_ECB_ENCRYPT_DATA,
-
-                       CKM_CONCATENATE_BASE_AND_KEY,
-                       CKM_CONCATENATE_BASE_AND_DATA,
-                       CKM_XOR_BASE_AND_DATA,
-                       CKM_CONCATENATE_DATA_AND_BASE,
-
-                       CKM_ECDH1_DERIVE,
-                       CKM_AES_CTR,
-                       CKM_DES3_CTR,
-                       CKM_AES_GMAC,
-
-                       CKM_PRF_KDF,
-                       CKM_DES2_DUKPT_IPEK)
 
 MECH_LOOKUP = {
     # Iv
@@ -186,34 +180,29 @@ MECH_LOOKUP = {
     CKM_RC2_CBC_PAD: RC2CBCMechanism,
     CKM_RC5_CBC: RC5CBCMechanism,
     CKM_RC5_ECB: RC5Mechanism,
-
     CKM_AES_XTS: AESXTSMechanism,
-    (CKM_VENDOR_DEFINED + 0x11c): AESGCMMechanism,  # Backwards compatibility w/ older Lunas.
+    (CKM_VENDOR_DEFINED + 0x11C): AESGCMMechanism,  # Backwards compatibility w/ older Lunas.
     CKM_AES_GCM: AESGCMMechanism,
     CKM_AES_GMAC: AESGCMMechanism,
-
     CKM_RSA_PKCS_OAEP: RSAPKCSOAEPMechanism,
-
     CKM_RSA_PKCS_PSS: RSAPKCSPSSMechanism,
     CKM_SHA1_RSA_PKCS_PSS: RSAPKCSPSSMechanism,
     CKM_SHA224_RSA_PKCS_PSS: RSAPKCSPSSMechanism,
     CKM_SHA256_RSA_PKCS_PSS: RSAPKCSPSSMechanism,
     CKM_SHA384_RSA_PKCS_PSS: RSAPKCSPSSMechanism,
     CKM_SHA512_RSA_PKCS_PSS: RSAPKCSPSSMechanism,
-
     CKM_DES_ECB: NullMech,
-
     CKM_AES_CBC_ENCRYPT_DATA: AESCBCEncryptDataMechanism,
     CKM_AES_ECB_ENCRYPT_DATA: AESECBEncryptDataMechanism,
     CKM_DES3_CBC_ENCRYPT_DATA: DES3CBCEncryptDataMechanism,
     CKM_DES3_ECB_ENCRYPT_DATA: DES3ECBEncryptDataMechanism,
-
     CKM_CONCATENATE_BASE_AND_KEY: ConcatenationDeriveMechanism,
     CKM_CONCATENATE_BASE_AND_DATA: StringDataDerivationMechanism,
     CKM_XOR_BASE_AND_DATA: StringDataDerivationMechanism,
     CKM_CONCATENATE_DATA_AND_BASE: StringDataDerivationMechanism,
     CKM_DES2_DUKPT_IPEK: StringDataDerivationMechanism,
     CKM_ECDH1_DERIVE: ECDH1DeriveMechanism,
-
     CKM_PRF_KDF: PRFKDFDeriveMechanism,
+    CKM_EDDSA: EDDSAMechanism,
+    CKM_EDDSA_NACL: EDDSAMechanism,
 }

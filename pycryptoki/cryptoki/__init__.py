@@ -14,8 +14,9 @@ from pycryptoki.cryptoki.func_defs import *
 from pycryptoki.cryptoki.retcodes import *
 
 __all__ = [
-    ""
     "CA_ActivateMofN",
+    "CA_Bip32ExportPublicKey",
+    "CA_Bip32ImportPublicKey",
     "CA_CapabilityUpdate",
     "CA_CheckOperationState",
     "CA_ChoosePrimarySlot",
@@ -127,6 +128,7 @@ __all__ = [
     "CA_HAGetLoginChallenge",
     "CA_HAGetMasterPublic",
     "CA_HAInit",
+    "CA_HAInitExtended",
     "CA_HALogin",
     "CA_IndirectLogin",
     "CA_InitAudit",

@@ -5,45 +5,59 @@ to pycryptoki functions.
 
 import logging
 from ctypes import c_void_p, cast, pointer, POINTER, sizeof, create_string_buffer, c_char
+import warnings
 
 from six import integer_types, binary_type
 
 from pycryptoki.string_helpers import _decode
 from pycryptoki.lookup_dicts import MECH_NAME_LOOKUP
-from ..cryptoki import CK_AES_CBC_PAD_EXTRACT_PARAMS, CK_MECHANISM, \
-    CK_ULONG, CK_ULONG_PTR, CK_AES_CBC_PAD_INSERT_PARAMS, CK_BYTE, CK_BYTE_PTR, CK_MECHANISM_TYPE
+from pycryptoki.pycryptoki_warnings import CryptoWarning
+from ..cryptoki import (
+    CK_AES_CBC_PAD_EXTRACT_PARAMS,
+    CK_MECHANISM,
+    CK_ULONG,
+    CK_ULONG_PTR,
+    CK_AES_CBC_PAD_INSERT_PARAMS,
+    CK_BYTE,
+    CK_BYTE_PTR,
+    CK_MECHANISM_TYPE,
+)
 from ..defines import *
 
 LOG = logging.getLogger(__name__)
 
-CK_AES_CBC_PAD_EXTRACT_PARAMS_TEMP = {'mechanism': CKM_AES_CBC_PAD_EXTRACT_DOMAIN_CTRL,
-                                      'ulType': CK_CRYPTOKI_ELEMENT,
-                                      'ulHandle': 5,
-                                      'ulDeleteAfterExtract': 0,
-                                      'pBuffer': 0,
-                                      'pulBufferLen': 0,
-                                      'ulStorage': CK_STORAGE_HOST,
-                                      'pedId': 0,
-                                      'pbFileName': 0,
-                                      'ctxID': 3
-                                      }
+CK_AES_CBC_PAD_EXTRACT_PARAMS_TEMP = {
+    "mechanism": CKM_AES_CBC_PAD_EXTRACT_DOMAIN_CTRL,
+    "ulType": CK_CRYPTOKI_ELEMENT,
+    "ulHandle": 5,
+    "ulDeleteAfterExtract": 0,
+    "pBuffer": 0,
+    "pulBufferLen": 0,
+    "ulStorage": CK_STORAGE_HOST,
+    "pedId": 0,
+    "pbFileName": 0,
+    "ctxID": 3,
+}
 
-CK_AES_CBC_PAD_INSERT_PARAMS_TEMP = {'mechanism': CKM_AES_CBC_PAD_INSERT_DOMAIN_CTRL,
-                                     'ulType': CK_CRYPTOKI_ELEMENT,
-                                     'ulContainerState': 0,
-                                     'pBuffer': 0,
-                                     'pulBufferLen': 0,
-                                     'ulStorageType': CK_STORAGE_HOST,
-                                     'pulType': 0,
-                                     'pulHandle': 0,
-                                     'ctxID': 3,
-                                     'pedID': 3,
-                                     'pbFileName': 0,
-                                     'ulStorage': CK_STORAGE_HOST,
-                                     }
+CK_AES_CBC_PAD_INSERT_PARAMS_TEMP = {
+    "mechanism": CKM_AES_CBC_PAD_INSERT_DOMAIN_CTRL,
+    "ulType": CK_CRYPTOKI_ELEMENT,
+    "ulContainerState": 0,
+    "pBuffer": 0,
+    "pulBufferLen": 0,
+    "ulStorageType": CK_STORAGE_HOST,
+    "pulType": 0,
+    "pulHandle": 0,
+    "ctxID": 3,
+    "pedID": 3,
+    "pbFileName": 0,
+    "ulStorage": CK_STORAGE_HOST,
+}
 
-supported_parameters = {'CK_AES_CBC_PAD_EXTRACT_PARAMS': CK_AES_CBC_PAD_EXTRACT_PARAMS,
-                        'CK_AES_CBC_PAD_INSERT_PARAMS': CK_AES_CBC_PAD_INSERT_PARAMS}
+supported_parameters = {
+    "CK_AES_CBC_PAD_EXTRACT_PARAMS": CK_AES_CBC_PAD_EXTRACT_PARAMS,
+    "CK_AES_CBC_PAD_INSERT_PARAMS": CK_AES_CBC_PAD_INSERT_PARAMS,
+}
 
 
 class MechanismException(Exception):
@@ -60,7 +74,9 @@ class Mechanism(object):
     Performs checks for missing parameters w/ created mechs, and
     creates the base Mechanism Struct for conversion to ctypes.
     """
+
     REQUIRED_PARAMS = []
+    OPTIONAL_PARAMS = []
 
     def __new__(cls, mech_type="UNKNOWN", params=None):
         """
@@ -68,6 +84,7 @@ class Mechanism(object):
         """
 
         from . import MECH_LOOKUP, NullMech
+
         if cls == Mechanism:
             mech_cls = MECH_LOOKUP.get(mech_type, NullMech)
             return super(Mechanism, cls).__new__(mech_cls)
@@ -85,28 +102,41 @@ class Mechanism(object):
             if req not in params:
                 missing_params.append(req)
         if missing_params:
-            raise MechanismException("Cannot create {}, "
-                                     "Missing required parameters:\n\t"
-                                     "{}".format(self.__class__,
-                                                 "\n\t".join(missing_params)))
+            raise MechanismException(
+                "Cannot create {}, "
+                "Missing required parameters:\n\t"
+                "{}".format(self.__class__, "\n\t".join(missing_params))
+            )
+
+        warnings.filterwarnings("always", r"^Found extra parameter.*", CryptoWarning)
+        for param in params:
+            if param not in self.REQUIRED_PARAMS and param not in self.OPTIONAL_PARAMS:
+                warnings.warn(
+                    "Found extra parameter while creating {}: {}. It will not be used.".format(
+                        self.__class__, param
+                    ),
+                    CryptoWarning,
+                )
 
     def __repr__(self):
         """
         Return a human-readable string of the mechanism data.
         """
         # todo: lookup dict for the mechanism name.
-        return "{}(mech_type: {}," \
-               " {})".format(self.__class__.__name__,
-                             MECH_NAME_LOOKUP.get(self.mech_type, "UNKNOWN"),
-                             ", ".join("{}: {}".format(k, v) for k, v in self.params.items()))
+        return "{}(mech_type: {}," " {})".format(
+            self.__class__.__name__,
+            MECH_NAME_LOOKUP.get(self.mech_type, "UNKNOWN"),
+            ", ".join("{}: {}".format(k, v) for k, v in self.params.items()),
+        )
 
     def __str__(self):
         """
         Formatted string representation of a mechanism.
         """
         nice_params = []
-        msg = "{}(mech_type: {}".format(self.__class__.__name__,
-                                        MECH_NAME_LOOKUP.get(self.mech_type, "UNKNOWN"))
+        msg = "{}(mech_type: {}".format(
+            self.__class__.__name__, MECH_NAME_LOOKUP.get(self.mech_type, "UNKNOWN")
+        )
         # +1 for the opening (
         msg_buff = len(self.__class__.__name__) + 1
         for key, value in self.params.items():
@@ -143,7 +173,7 @@ def get_c_struct_from_mechanism(python_dictionary, params_type_string):
     params_type = supported_parameters[params_type_string]
     params = params_type()
     mech = CK_MECHANISM()
-    mech.mechanism = python_dictionary['mechanism']
+    mech.mechanism = python_dictionary["mechanism"]
     mech.pParameter = cast(pointer(params), c_void_p)
     mech.usParameterLen = CK_ULONG(sizeof(params_type))
 
@@ -161,16 +191,16 @@ def get_c_struct_from_mechanism(python_dictionary, params_type_string):
 
     # Explicitly handle the more complex fields
     if params_type == CK_AES_CBC_PAD_EXTRACT_PARAMS:
-        if len(python_dictionary['pBuffer']) == 0:
+        if len(python_dictionary["pBuffer"]) == 0:
             params.pBuffer = None
         else:
-            params.pBuffer = (CK_BYTE * len(python_dictionary['pBuffer']))()
+            params.pBuffer = (CK_BYTE * len(python_dictionary["pBuffer"]))()
         # params.pbFileName = 0 #TODO convert byte pointer to serializable type
         pass
     elif params_type == CK_AES_CBC_PAD_INSERT_PARAMS:
         # params.pbFileName =  TODO
-        params.pBuffer = cast(create_string_buffer(python_dictionary['pBuffer']), CK_BYTE_PTR)
-        params.ulBufferLen = len(python_dictionary['pBuffer'])
+        params.pBuffer = cast(create_string_buffer(python_dictionary["pBuffer"]), CK_BYTE_PTR)
+        params.ulBufferLen = len(python_dictionary["pBuffer"])
         pass
     else:
         raise Exception("Unsupported parameter type, pycryptoki can be extended to make it work")
@@ -189,7 +219,7 @@ def get_python_dict_from_c_mechanism(c_mechanism, params_type_string):
     :returns: A python dictionary representing the c struct
     """
     python_dictionary = {}
-    python_dictionary['mechanism'] = c_mechanism.mechanism
+    python_dictionary["mechanism"] = c_mechanism.mechanism
 
     params_type = supported_parameters[params_type_string]
     params_struct = cast(c_mechanism.pParameter, POINTER(params_type)).contents
@@ -217,11 +247,11 @@ def get_python_dict_from_c_mechanism(c_mechanism, params_type_string):
                 bufferString = char_p_string[0:bufferLength]
             else:
                 bufferString = None
-        python_dictionary['pBuffer'] = bufferString
-        python_dictionary['pbFileName'] = 0  # TODO
+        python_dictionary["pBuffer"] = bufferString
+        python_dictionary["pbFileName"] = 0  # TODO
     elif params_type == CK_AES_CBC_PAD_INSERT_PARAMS:
-        python_dictionary['pbFileName'] = 0  # TODO
-        python_dictionary['pBuffer'] = 0  # TODO
+        python_dictionary["pbFileName"] = 0  # TODO
+        python_dictionary["pBuffer"] = 0  # TODO
     else:
         raise Exception("Unsupported parameter type, pycryptoki can be extended to make it work")
 
@@ -284,8 +314,10 @@ def parse_mechanism(mechanism_param):
     elif isinstance(mechanism_param, Mechanism):
         mech = mechanism_param.to_c_mech()
     else:
-        raise TypeError("Invalid mechanism type {}, should be CK_MECHANISM, dictionary with "
-                        "kwargs to be passed to `Mechanism`, integer constant, or a "
-                        "Mechanism() class.".format(type(mechanism_param)))
+        raise TypeError(
+            "Invalid mechanism type {}, should be CK_MECHANISM, dictionary with "
+            "kwargs to be passed to `Mechanism`, integer constant, or a "
+            "Mechanism() class.".format(type(mechanism_param))
+        )
 
     return mech

@@ -4,33 +4,39 @@ Methods responsible for pycryptoki 'hsm management' set of commands.
 from _ctypes import pointer
 from ctypes import byref, create_string_buffer, cast
 
-from .attributes import Attributes
+from .attributes import Attributes, to_byte_array
 from .common_utils import AutoCArray, refresh_c_arrays
-from .cryptoki import (CK_SLOT_ID,
-                       CK_USER_TYPE,
-                       CA_SetTokenCertificateSignature,
-                       CA_HAInit,
-                       CA_CreateLoginChallenge,
-                       CA_InitializeRemotePEDVector,
-                       CA_DeleteRemotePEDVector,
-                       CA_MTKRestore,
-                       CA_MTKResplit,
-                       CA_MTKZeroize,
-                       CK_ULONG,
-                       CK_BYTE_PTR,
-                       CK_BYTE,
-                       CK_CHAR_PTR,
-                       CK_CHAR, CA_SetHSMPolicy, CK_SESSION_HANDLE, CA_SetHSMPolicies,
-                       CA_SetDestructiveHSMPolicy, CA_SetDestructiveHSMPolicies,
-                       CA_GetHSMCapabilitySet, CA_GetHSMCapabilitySetting,
-                       CA_GetHSMPolicySet, CA_GetHSMPolicySetting)
+from .cryptoki import (
+    CK_SLOT_ID,
+    CK_USER_TYPE,
+    CA_SetTokenCertificateSignature,
+    CA_HAInit,
+    CA_HAInitExtended,
+    CA_CreateLoginChallenge,
+    CA_InitializeRemotePEDVector,
+    CA_DeleteRemotePEDVector,
+    CA_MTKRestore,
+    CA_MTKResplit,
+    CA_MTKZeroize,
+    CK_ULONG,
+    CK_BYTE_PTR,
+    CK_BYTE,
+    CK_CHAR_PTR,
+    CK_CHAR,
+    CA_SetHSMPolicy,
+    CK_SESSION_HANDLE,
+    CA_SetHSMPolicies,
+    CA_SetDestructiveHSMPolicy,
+    CA_SetDestructiveHSMPolicies,
+    CA_GetHSMCapabilitySet,
+    CA_GetHSMCapabilitySetting,
+    CA_GetHSMPolicySet,
+    CA_GetHSMPolicySetting,
+)
 from .exceptions import make_error_handle_function
 
 
-def c_performselftest(slot,
-                      test_type,
-                      input_data,
-                      input_data_len):
+def c_performselftest(slot, test_type, input_data, input_data_len):
     """Test: Performs a self test for specified test type on a given slot.
 
     :param slot: slot number
@@ -46,31 +52,23 @@ def c_performselftest(slot,
     test_type = CK_ULONG(test_type)
     input_length = CK_ULONG(input_data_len)
     input_data = (CK_BYTE * input_data_len)(*input_data)
-    output_data = cast(create_string_buffer(b'', input_data_len), CK_BYTE_PTR)
+    output_data = cast(create_string_buffer(b"", input_data_len), CK_BYTE_PTR)
     output_data_len = CK_ULONG()
     try:
         from .cryptoki import CA_PerformSelfTest as selftest
     except ImportError:
         from .cryptoki import C_PerformSelftest as selftest
 
-    ret = selftest(slot,
-                   test_type,
-                   input_data,
-                   input_length,
-                   output_data,
-                   byref(output_data_len))
+    ret = selftest(slot, test_type, input_data, input_length, output_data, byref(output_data_len))
     return ret, output_data
 
 
 c_performselftest_ex = make_error_handle_function(c_performselftest)
 
 
-def ca_settokencertificatesignature(h_session,
-                                    access_level,
-                                    customer_id,
-                                    pub_template,
-                                    signature,
-                                    signature_len):
+def ca_settokencertificatesignature(
+    h_session, access_level, customer_id, pub_template, signature, signature_len
+):
     """Completes the installation of a certificate on a token.
     The caller must supply a public key and a signature for token certificate.
     The public key is provided through the template; it must contain a key
@@ -93,18 +91,19 @@ def ca_settokencertificatesignature(h_session,
     pub_template_len = CK_ULONG(len(pub_template))
     signature = (CK_BYTE * signature_len)(*signature)
     signature_length = CK_ULONG(signature_len)
-    ret = CA_SetTokenCertificateSignature(h_session,
-                                          access_level,
-                                          customer_id,
-                                          key_attributes.get_c_struct(),
-                                          pub_template_len,
-                                          signature,
-                                          signature_length)
+    ret = CA_SetTokenCertificateSignature(
+        h_session,
+        access_level,
+        customer_id,
+        key_attributes.get_c_struct(),
+        pub_template_len,
+        signature,
+        signature_length,
+    )
     return ret
 
 
-ca_settokencertificatesignature_ex = \
-    make_error_handle_function(ca_settokencertificatesignature)
+ca_settokencertificatesignature_ex = make_error_handle_function(ca_settokencertificatesignature)
 
 
 def ca_hainit(h_session, h_key):
@@ -123,9 +122,41 @@ def ca_hainit(h_session, h_key):
 ca_hainit_ex = make_error_handle_function(ca_hainit)
 
 
-def ca_createloginchallenge(h_session,
-                            user_type,
-                            challenge):
+def ca_hainitextended(h_session, h_key, pkc, user_types):
+    """Creates a login key pair on the primary token.
+
+    :param int h_session: Session handle
+    :param h_key: the login private key or 0
+    :param pkc: private key PKC or None
+    :param user_types: list of pairs (user, tokenType) i.e.
+        [(CKU_SO, CKF_ADMIN_TOKEN)]
+        [(CKU_USER, 0)]
+        or None if revoke is issued
+    :returns: the result code
+
+    """
+    if pkc is not None:
+        pkc_ptr, pkc_len = to_byte_array(pkc)
+    else:
+        pkc_ptr = None
+        pkc_len = 0
+
+    if user_types is not None:
+        users_ptr = (CK_ULONG * len(user_types))(*[x[0] for x in user_types])
+        tokens_ptr = (CK_ULONG * len(user_types))(*[x[1] for x in user_types])
+        number_roles = CK_ULONG(len(user_types))
+    else:
+        users_ptr = None
+        tokens_ptr = None
+        number_roles = CK_ULONG(0)
+    ret = CA_HAInitExtended(h_session, h_key, pkc_ptr, pkc_len, users_ptr, tokens_ptr, number_roles)
+    return ret
+
+
+ca_hainitextended_ex = make_error_handle_function(ca_hainitextended)
+
+
+def ca_createloginchallenge(h_session, user_type, challenge):
     """Creates a login challenge for the given user.
 
     :param int h_session: Session handle
@@ -139,17 +170,18 @@ def ca_createloginchallenge(h_session,
     challenge = cast(create_string_buffer(challenge), CK_CHAR_PTR)
     output_data_length = CK_ULONG()
     output_data = CK_CHAR()
-    ret = CA_CreateLoginChallenge(h_session,
-                                  CK_USER_TYPE(user_type),
-                                  challenge_length,
-                                  challenge,
-                                  output_data_length,
-                                  output_data)
+    ret = CA_CreateLoginChallenge(
+        h_session,
+        CK_USER_TYPE(user_type),
+        challenge_length,
+        challenge,
+        output_data_length,
+        output_data,
+    )
     return ret, output_data
 
 
-ca_createloginchallenge_ex = \
-    make_error_handle_function(ca_createloginchallenge)
+ca_createloginchallenge_ex = make_error_handle_function(ca_createloginchallenge)
 
 
 def ca_initializeremotepedvector(h_session):
@@ -163,8 +195,7 @@ def ca_initializeremotepedvector(h_session):
     return ret
 
 
-ca_initializeremotepedvector_ex = \
-    make_error_handle_function(ca_initializeremotepedvector)
+ca_initializeremotepedvector_ex = make_error_handle_function(ca_initializeremotepedvector)
 
 
 def ca_deleteremotepedvector(h_session):
@@ -178,8 +209,7 @@ def ca_deleteremotepedvector(h_session):
     return ret
 
 
-ca_deleteremotepedvector_ex = \
-    make_error_handle_function(ca_deleteremotepedvector)
+ca_deleteremotepedvector_ex = make_error_handle_function(ca_deleteremotepedvector)
 
 
 def ca_mtkrestore(slot):
@@ -254,8 +284,7 @@ def ca_set_hsm_policies(h_session, policies):
     pol_ids = AutoCArray(data=pol_id_list, ctype=CK_ULONG)
     pol_vals = AutoCArray(data=pol_val_list, ctype=CK_ULONG)
 
-    ret = CA_SetHSMPolicies(h_sess, pol_ids.size.contents,
-                            pol_ids.array, pol_vals.array)
+    ret = CA_SetHSMPolicies(h_sess, pol_ids.size.contents, pol_ids.array, pol_vals.array)
 
     return ret
 
@@ -293,8 +322,7 @@ def ca_set_destructive_hsm_policies(h_session, policies):
     pol_ids = AutoCArray(data=pol_id_list, ctype=CK_ULONG)
     pol_vals = AutoCArray(data=pol_val_list, ctype=CK_ULONG)
 
-    ret = CA_SetDestructiveHSMPolicies(h_sess, pol_ids.size.contents,
-                                       pol_ids.array, pol_vals.array)
+    ret = CA_SetDestructiveHSMPolicies(h_sess, pol_ids.size.contents, pol_ids.array, pol_vals.array)
 
     return ret
 
@@ -317,8 +345,9 @@ def ca_get_hsm_capability_set(slot):
     def _get_hsm_caps():
         """Closer for retries to work w/ properties
         """
-        return CA_GetHSMCapabilitySet(slot_id, cap_ids.array, cap_ids.size,
-                                      cap_vals.array, cap_vals.size)
+        return CA_GetHSMCapabilitySet(
+            slot_id, cap_ids.array, cap_ids.size, cap_vals.array, cap_vals.size
+        )
 
     ret = _get_hsm_caps()
 
@@ -361,8 +390,9 @@ def ca_get_hsm_policy_set(slot):
     def _ca_get_hsm_policy_set():
         """Closure for retries.
         """
-        return CA_GetHSMPolicySet(slot_id, pol_ids.array, pol_ids.size,
-                                  pol_vals.array, pol_vals.size)
+        return CA_GetHSMPolicySet(
+            slot_id, pol_ids.array, pol_ids.size, pol_vals.array, pol_vals.size
+        )
 
     ret = _ca_get_hsm_policy_set()
 

@@ -1,5 +1,6 @@
 from __future__ import print_function
 
+from rpyc.utils.classic import SlaveService
 from six import string_types, binary_type
 
 from pycryptoki.string_helpers import _decode, _coerce_mech_to_str
@@ -22,6 +23,7 @@ from .lookup_dicts import ATTR_NAME_LOOKUP, ret_vals_dictionary
 
 LOG = logging.getLogger(__name__)
 
+DEFAULT_TIMEOUT = 300
 
 # from https://github.com/saltycrane/retry-decorator/blob/master/decorators.py
 def retry(ExceptionToCheck, tries=4, delay=3, backoff=2, logger=None):
@@ -45,7 +47,6 @@ def retry(ExceptionToCheck, tries=4, delay=3, backoff=2, logger=None):
     """
 
     def deco_retry(f):
-
         @wraps(f)
         def f_retry(*args, **kwargs):
             mtries, mdelay = tries, delay
@@ -112,8 +113,10 @@ def log_args(funcname, arg_dict):
             # this.
             log_list.append("\t%s: " % key)
             for template_key, template_value in arg_dict[key].items():
-                log_list.append("\t\t%s: %s" % (ATTR_NAME_LOOKUP.get(template_key, template_key),
-                                                template_value))
+                log_list.append(
+                    "\t\t%s: %s"
+                    % (ATTR_NAME_LOOKUP.get(template_key, template_key), template_value)
+                )
         elif "password" in key:
             log_list.append("\t%s: *" % key)
         elif "mechanism" in key:
@@ -168,9 +171,38 @@ class RemotePycryptokiClient(object):
         """
         if not self.started:
             LOG.info("Starting remote pycryptoki connection")
-            self.connection = rpyc.classic.connect(self.ip, port=self.port)
+            self.connection = rpyc.utils.factory.connect(
+                host=self.ip,
+                port=self.port,
+                service=SlaveService,
+                config={"sync_result_timeout": DEFAULT_TIMEOUT},
+            )
             self.connection.ping()
             self.server = self.connection.root
+
+    @property
+    def timeout(self):
+        """
+        Get the underlying connection timeout value.
+        """
+        if self.connection:
+            # Possible issue here, on RPYC 3.4.x, this timeout is a class-var (SYNC_RESULT_TIMEOUT)
+            # I don't know if I want to update it, because we haven't really seen any issues of
+            # timeouts on 3.4.x. It's possible that there's some backend changes to how commands
+            # are dispatched on 4.x that makes the timeout come into play more...
+            return self.connection._config.get("sync_result_timeout") or getattr(
+                self.connection, "SYNC_RESULT_TIMEOUT", None
+            )
+        else:
+            return None
+
+    @timeout.setter
+    def timeout(self, value):
+        """
+        Set the underlying connection's timeout value. Useful if you're doing something like
+        DH param generation which can take a long time... or doing an 8k RSA keygen on a G5.
+        """
+        self.connection._config["sync_result_timeout"] = value
 
     def cleanup(self):
         """ """
@@ -184,9 +216,11 @@ class RemotePycryptokiClient(object):
         :return: boolean
         """
         try:
-            return (self.connection is not None and
-                    self.server is not None and
-                    self.connection.ping() is None)
+            return (
+                self.connection is not None
+                and self.server is not None
+                and self.connection.ping() is None
+            )
         except (PingError, EOFError):
             self.connection = None
             self.server = None
@@ -200,6 +234,7 @@ class RemotePycryptokiClient(object):
         automagically to the server
         """
         if hasattr(self.server, name):
+
             def wrapper(*args, **kwargs):
                 """
                 Closer to allow us to log the full args & keyword argument list
@@ -215,7 +250,8 @@ class RemotePycryptokiClient(object):
 
                 log_args(name, nice_args)
 
-                ret = getattr(self.server, name)(*args, **kwargs)
+                remote_func = getattr(self.server, name)
+                ret = remote_func(*args, **kwargs)
                 # Two major calling types for pycryptoki:
                 # 1. with _ex appended, which will raise an exception if retcode != 0
                 # 2. without _ex, which will return either just the retcode, or a tuple where the
@@ -225,8 +261,12 @@ class RemotePycryptokiClient(object):
                     retcode = ret
                     if isinstance(ret, tuple):
                         retcode = ret[0]
-                    LOG.debug("Remote call '%s' returned %s (%s)", name,
-                              ret_vals_dictionary.get(retcode, "Unknown"), retcode)
+                    LOG.debug(
+                        "Remote call '%s' returned %s (%s)",
+                        name,
+                        ret_vals_dictionary.get(retcode, "Unknown"),
+                        retcode,
+                    )
                 return ret
 
             return wrapper
