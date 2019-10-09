@@ -335,6 +335,16 @@ CK_CA_GetSecureElementMeta = CFUNCTYPE(
     CK_ULONG,
 )
 CK_CA_HAInit = CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_OBJECT_HANDLE)
+CK_CA_HAInitExtended = CFUNCTYPE(
+    CK_RV,
+    CK_SESSION_HANDLE,
+    CK_OBJECT_HANDLE,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    CK_ULONG_PTR,
+    CK_ULONG_PTR,
+    CK_ULONG,
+)
 CK_CA_HAGetMasterPublic = CFUNCTYPE(CK_RV, CK_SLOT_ID, CK_BYTE_PTR, CK_ULONG_PTR)
 CK_CA_HAGetLoginChallenge = CFUNCTYPE(
     CK_RV, CK_SESSION_HANDLE, CK_USER_TYPE, CK_BYTE_PTR, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR
@@ -977,6 +987,7 @@ struct_def(
         ("CA_ListSecureTokenUpdate", CK_CA_ListSecureTokenUpdate),
         ("CA_GetSecureElementMeta", CK_CA_GetSecureElementMeta),
         ("CA_HAInit", CK_CA_HAInit),
+        ("CA_HAInitExtended", CK_CA_HAInitExtended),
         ("CA_HAGetMasterPublic", CK_CA_HAGetMasterPublic),
         ("CA_HAGetLoginChallenge", CK_CA_HAGetLoginChallenge),
         ("CA_HAAnswerLoginChallenge", CK_CA_HAAnswerLoginChallenge),

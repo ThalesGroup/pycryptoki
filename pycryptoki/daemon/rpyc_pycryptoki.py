@@ -56,6 +56,12 @@ from pycryptoki.backup import (
     ca_sim_multisign,
     ca_sim_multisign_ex,
 )
+from pycryptoki.ca_extensions.bip32 import (
+    ca_bip32_export_public_key,
+    ca_bip32_export_public_key_ex,
+    ca_bip32_import_public_key,
+    ca_bip32_import_public_key_ex,
+)
 from pycryptoki.ca_extensions.derive_wrap import ca_derive_key_and_wrap, ca_derive_key_and_wrap_ex
 from pycryptoki.ca_extensions.object_handler import (
     ca_destroy_multiple_objects,
@@ -115,6 +121,8 @@ from pycryptoki.hsm_management import (
     ca_settokencertificatesignature_ex,
     ca_hainit,
     ca_hainit_ex,
+    ca_hainitextended,
+    ca_hainitextended_ex,
     ca_createloginchallenge,
     ca_createloginchallenge_ex,
     ca_initializeremotepedvector,
@@ -447,6 +455,8 @@ class PycryptokiService(rpyc.SlaveService):
     ca_settokencertificatesignature_ex = staticmethod(ca_settokencertificatesignature_ex)
     ca_hainit = staticmethod(ca_hainit)
     ca_hainit_ex = staticmethod(ca_hainit_ex)
+    ca_hainitextended = staticmethod(ca_hainitextended)
+    ca_hainitextended_ex = staticmethod(ca_hainitextended_ex)
     ca_createloginchallenge = staticmethod(ca_createloginchallenge)
     ca_createloginchallenge_ex = staticmethod(ca_createloginchallenge_ex)
     ca_initializeremotepedvector = staticmethod(ca_initializeremotepedvector)
@@ -550,11 +560,11 @@ class PycryptokiService(rpyc.SlaveService):
     ca_reset_authorization_data = staticmethod(ca_reset_authorization_data)
     ca_reset_authorization_data_ex = staticmethod(ca_reset_authorization_data_ex)
 
+    ca_bip32_import_public_key = staticmethod(ca_bip32_import_public_key)
+    ca_bip32_import_public_key_ex = staticmethod(ca_bip32_import_public_key_ex)
+    ca_bip32_export_public_key = staticmethod(ca_bip32_export_public_key)
+    ca_bip32_export_public_key_ex = staticmethod(ca_bip32_export_public_key_ex)
 
-    exposed_ca_set_authorization_data = staticmethod(ca_set_authorization_data)
-    exposed_ca_set_authorization_data_ex = staticmethod(ca_set_authorization_data_ex)
-    exposed_ca_authorize_key = staticmethod(ca_authorize_key)
-    exposed_ca_authorize_key_ex = staticmethod(ca_authorize_key_ex)
 
 def server_launch(service, ip, port, config):
     """

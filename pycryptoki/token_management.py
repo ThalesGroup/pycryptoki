@@ -9,19 +9,18 @@ from ctypes import byref
 # Cryptoki Constants
 from six import b
 
-from .cryptoki import (CK_ULONG,
-                       CK_BBOOL,
-                       CK_MECHANISM_TYPE,
-                       CK_MECHANISM_INFO)
+from .cryptoki import CK_ULONG, CK_BBOOL, CK_MECHANISM_TYPE, CK_MECHANISM_INFO
 from .defaults import ADMIN_PARTITION_LABEL, ADMIN_SLOT
 from .defines import CKR_OK
 
 # Cryptoki functions.
-from .cryptoki import (C_InitToken,
-                       C_GetSlotList,
-                       C_GetMechanismList,
-                       C_GetMechanismInfo,
-                       CA_GetTokenPolicies)
+from .cryptoki import (
+    C_InitToken,
+    C_GetSlotList,
+    C_GetMechanismList,
+    C_GetMechanismInfo,
+    CA_GetTokenPolicies,
+)
 from .session_management import c_get_token_info
 from .exceptions import make_error_handle_function
 from .common_utils import AutoCArray
@@ -30,7 +29,7 @@ from .common_utils import refresh_c_arrays
 LOG = logging.getLogger(__name__)
 
 
-def c_init_token(slot_num, password, token_label='Main Token'):
+def c_init_token(slot_num, password, token_label="Main Token"):
     """Initializes at token at a given slot with the proper password and label
 
     :param slot_num: The index of the slot to c_initialize a token in
@@ -39,18 +38,20 @@ def c_init_token(slot_num, password, token_label='Main Token'):
     :returns: The result code
 
     """
-    LOG.info("C_InitToken: Initializing token (slot=%s, label='%s', password='%s')",
-             slot_num, token_label, password)
+    LOG.info(
+        "C_InitToken: Initializing token (slot=%s, label='%s', password='%s')",
+        slot_num,
+        token_label,
+        password,
+    )
 
-    if password == b'':
+    if password == b"":
         password = None
     password = AutoCArray(data=password)
     slot_id = CK_ULONG(slot_num)
     label = AutoCArray(data=token_label)
 
-    return C_InitToken(slot_id,
-                       password.array, password.size.contents,
-                       label.array)
+    return C_InitToken(slot_id, password.array, password.size.contents, label.array)
 
 
 c_init_token_ex = make_error_handle_function(c_init_token)
@@ -86,7 +87,10 @@ def get_token_by_label(label):
 
     for slot in slot_list:
         ret, token_info = c_get_token_info(slot)
-        if token_info['label'] == label:
+        # Converting label parameter to bytes --- label is returned in bytes anyway.
+        # on python2, you could do str(label) == info['label'], but this would fail on python3 w/
+        # the default str() -> unicode change.
+        if token_info["label"] == b(label):
             return ret, slot
 
     raise Exception("Slot with label " + str(label) + " not found.")
@@ -149,8 +153,9 @@ def ca_get_token_policies(slot):
     def _get_token_policies():
         """Closure for retries to work w/ properties.
         """
-        return CA_GetTokenPolicies(slot_id, pol_ids.array, pol_ids.size,
-                                   pol_vals.array, pol_vals.size)
+        return CA_GetTokenPolicies(
+            slot_id, pol_ids.array, pol_ids.size, pol_vals.array, pol_vals.size
+        )
 
     ret = _get_token_policies()
 
