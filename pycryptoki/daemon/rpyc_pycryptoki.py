@@ -91,6 +91,74 @@ from pycryptoki.ca_extensions.session import (
     ca_open_application_id_v2,
     ca_open_application_id_v2_ex,
 )
+from pycryptoki.ca_extensions.stc import (
+    ca_stc_register,
+    ca_stc_register_ex,
+    ca_stc_deregister,
+    ca_stc_deregister_ex,
+    ca_stc_get_pub_key,
+    ca_stc_get_pub_key_ex,
+    ca_stc_get_clients_list,
+    ca_stc_get_clients_list_ex,
+    ca_stc_get_client_info,
+    ca_stc_get_client_info_ex,
+    ca_stc_get_part_pub_key,
+    ca_stc_get_part_pub_key_ex,
+    ca_stc_get_admin_pub_key,
+    ca_stc_get_admin_pub_key_ex,
+    ca_stc_get_pid,
+    ca_stc_get_pid_ex,
+    ca_stc_get_admin_pid,
+    ca_stc_get_admin_pid_ex,
+    ca_stc_set_cipher_algorithm,
+    ca_stc_set_cipher_algorithm_ex,
+    ca_stc_get_cipher_algorithm,
+    ca_stc_get_cipher_algorithm_ex,
+    ca_stc_clear_cipher_algorithm,
+    ca_stc_clear_cipher_algorithm_ex,
+    ca_stc_set_digest_algorithm,
+    ca_stc_set_digest_algorithm_ex,
+    ca_stc_get_digest_algorithm,
+    ca_stc_get_digest_algorithm_ex,
+    ca_stc_clear_digest_algorithm,
+    ca_stc_clear_digest_algorithm_ex,
+    ca_stc_set_key_life_time,
+    ca_stc_set_key_life_time_ex,
+    ca_stc_get_key_life_time,
+    ca_stc_get_key_life_time_ex,
+    ca_stc_set_key_activation_time_out,
+    ca_stc_set_key_activation_time_out_ex,
+    ca_stc_get_key_activation_time_out,
+    ca_stc_get_key_activation_time_out_ex,
+    ca_stc_set_max_sessions,
+    ca_stc_set_max_sessions_ex,
+    ca_stc_get_max_sessions,
+    ca_stc_get_max_sessions_ex,
+    ca_stc_set_sequence_window_size,
+    ca_stc_set_sequence_window_size_ex,
+    ca_stc_get_sequence_window_size,
+    ca_stc_get_sequence_window_size_ex,
+    ca_stc_is_enabled,
+    ca_stc_is_enabled_ex,
+    ca_stc_get_state,
+    ca_stc_get_state_ex,
+    ca_stc_get_channel_id,
+    ca_stc_get_channel_id_ex,
+    ca_stc_get_cipher_id,
+    ca_stc_get_cipher_id_ex,
+    ca_stc_get_digest_id,
+    ca_stc_get_digest_id_ex,
+    ca_stc_get_current_key_life,
+    ca_stc_get_current_key_life_ex,
+    ca_stc_get_cipher_ids,
+    ca_stc_get_cipher_ids_ex,
+    ca_stc_get_cipher_name_by_id,
+    ca_stc_get_cipher_name_by_id_ex,
+    ca_stc_get_digest_ids,
+    ca_stc_get_digest_ids_ex,
+    ca_stc_get_digest_name_by_id,
+    ca_stc_get_digest_name_by_id_ex,
+)
 from pycryptoki.ca_extensions.utilization_metrics import (
     ca_read_all_utilization_counters,
     ca_read_all_utilization_counters_ex,
@@ -568,6 +636,73 @@ class PycryptokiService(rpyc.SlaveService):
     ca_bip32_import_public_key_ex = staticmethod(ca_bip32_import_public_key_ex)
     ca_bip32_export_public_key = staticmethod(ca_bip32_export_public_key)
     ca_bip32_export_public_key_ex = staticmethod(ca_bip32_export_public_key_ex)
+
+    ca_stc_register = staticmethod(ca_stc_register)
+    ca_stc_register_ex = staticmethod(ca_stc_register_ex)
+    ca_stc_deregister = staticmethod(ca_stc_deregister)
+    ca_stc_deregister_ex = staticmethod(ca_stc_deregister_ex)
+    ca_stc_get_pub_key = staticmethod(ca_stc_get_pub_key)
+    ca_stc_get_pub_key_ex = staticmethod(ca_stc_get_pub_key_ex)
+    ca_stc_get_clients_list = staticmethod(ca_stc_get_clients_list)
+    ca_stc_get_clients_list_ex = staticmethod(ca_stc_get_clients_list_ex)
+    ca_stc_get_client_info = staticmethod(ca_stc_get_client_info)
+    ca_stc_get_client_info_ex = staticmethod(ca_stc_get_client_info_ex)
+    ca_stc_get_part_pub_key = staticmethod(ca_stc_get_part_pub_key)
+    ca_stc_get_part_pub_key_ex = staticmethod(ca_stc_get_part_pub_key_ex)
+    ca_stc_get_admin_pub_key = staticmethod(ca_stc_get_admin_pub_key)
+    ca_stc_get_admin_pub_key_ex = staticmethod(ca_stc_get_admin_pub_key_ex)
+    ca_stc_get_pid = staticmethod(ca_stc_get_pid)
+    ca_stc_get_pid_ex = staticmethod(ca_stc_get_pid_ex)
+    ca_stc_get_admin_pid = staticmethod(ca_stc_get_admin_pid)
+    ca_stc_get_admin_pid_ex = staticmethod(ca_stc_get_admin_pid_ex)
+    ca_stc_set_cipher_algorithm = staticmethod(ca_stc_set_cipher_algorithm)
+    ca_stc_set_cipher_algorithm_ex = staticmethod(ca_stc_set_cipher_algorithm_ex)
+    ca_stc_get_cipher_algorithm = staticmethod(ca_stc_get_cipher_algorithm)
+    ca_stc_get_cipher_algorithm_ex = staticmethod(ca_stc_get_cipher_algorithm_ex)
+    ca_stc_clear_cipher_algorithm = staticmethod(ca_stc_clear_cipher_algorithm)
+    ca_stc_clear_cipher_algorithm_ex = staticmethod(ca_stc_clear_cipher_algorithm_ex)
+    ca_stc_set_digest_algorithm = staticmethod(ca_stc_set_digest_algorithm)
+    ca_stc_set_digest_algorithm_ex = staticmethod(ca_stc_set_digest_algorithm_ex)
+    ca_stc_get_digest_algorithm = staticmethod(ca_stc_get_digest_algorithm)
+    ca_stc_get_digest_algorithm_ex = staticmethod(ca_stc_get_digest_algorithm_ex)
+    ca_stc_clear_digest_algorithm = staticmethod(ca_stc_clear_digest_algorithm)
+    ca_stc_clear_digest_algorithm_ex = staticmethod(ca_stc_clear_digest_algorithm_ex)
+    ca_stc_set_key_life_time = staticmethod(ca_stc_set_key_life_time)
+    ca_stc_set_key_life_time_ex = staticmethod(ca_stc_set_key_life_time_ex)
+    ca_stc_get_key_life_time = staticmethod(ca_stc_get_key_life_time)
+    ca_stc_get_key_life_time_ex = staticmethod(ca_stc_get_key_life_time_ex)
+    ca_stc_set_key_activation_time_out = staticmethod(ca_stc_set_key_activation_time_out)
+    ca_stc_set_key_activation_time_out_ex = staticmethod(ca_stc_set_key_activation_time_out_ex)
+    ca_stc_get_key_activation_time_out = staticmethod(ca_stc_get_key_activation_time_out)
+    ca_stc_get_key_activation_time_out_ex = staticmethod(ca_stc_get_key_activation_time_out_ex)
+    ca_stc_set_max_sessions = staticmethod(ca_stc_set_max_sessions)
+    ca_stc_set_max_sessions_ex = staticmethod(ca_stc_set_max_sessions_ex)
+    ca_stc_get_max_sessions = staticmethod(ca_stc_get_max_sessions)
+    ca_stc_get_max_sessions_ex = staticmethod(ca_stc_get_max_sessions_ex)
+    ca_stc_set_sequence_window_size = staticmethod(ca_stc_set_sequence_window_size)
+    ca_stc_set_sequence_window_size_ex = staticmethod(ca_stc_set_sequence_window_size_ex)
+    ca_stc_get_sequence_window_size = staticmethod(ca_stc_get_sequence_window_size)
+    ca_stc_get_sequence_window_size_ex = staticmethod(ca_stc_get_sequence_window_size_ex)
+    ca_stc_is_enabled = staticmethod(ca_stc_is_enabled)
+    ca_stc_is_enabled_ex = staticmethod(ca_stc_is_enabled_ex)
+    ca_stc_get_state = staticmethod(ca_stc_get_state)
+    ca_stc_get_state_ex = staticmethod(ca_stc_get_state_ex)
+    ca_stc_get_channel_id = staticmethod(ca_stc_get_channel_id)
+    ca_stc_get_channel_id_ex = staticmethod(ca_stc_get_channel_id_ex)
+    ca_stc_get_cipher_id = staticmethod(ca_stc_get_cipher_id)
+    ca_stc_get_cipher_id_ex = staticmethod(ca_stc_get_cipher_id_ex)
+    ca_stc_get_digest_id = staticmethod(ca_stc_get_digest_id)
+    ca_stc_get_digest_id_ex = staticmethod(ca_stc_get_digest_id_ex)
+    ca_stc_get_current_key_life = staticmethod(ca_stc_get_current_key_life)
+    ca_stc_get_current_key_life_ex = staticmethod(ca_stc_get_current_key_life_ex)
+    ca_stc_get_cipher_ids = staticmethod(ca_stc_get_cipher_ids)
+    ca_stc_get_cipher_ids_ex = staticmethod(ca_stc_get_cipher_ids_ex)
+    ca_stc_get_cipher_name_by_id = staticmethod(ca_stc_get_cipher_name_by_id)
+    ca_stc_get_cipher_name_by_id_ex = staticmethod(ca_stc_get_cipher_name_by_id_ex)
+    ca_stc_get_digest_ids = staticmethod(ca_stc_get_digest_ids)
+    ca_stc_get_digest_ids_ex = staticmethod(ca_stc_get_digest_ids_ex)
+    ca_stc_get_digest_name_by_id = staticmethod(ca_stc_get_digest_name_by_id)
+    ca_stc_get_digest_name_by_id_ex = staticmethod(ca_stc_get_digest_name_by_id_ex)
 
 
 def server_launch(service, ip, port, config):
