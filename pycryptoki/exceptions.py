@@ -111,6 +111,7 @@ def check_luna_exception(ret, luna_function, args, kwargs):
     :param luna_function: pycryptoki function that was called
     :param args: Arguments passed to the pycryptoki function.
     """
+    from pycryptoki.string_helpers import _coerce_mech_to_str
     log_list = []
     all_args = inspect.getcallargs(luna_function, *args, **kwargs)
     for key, value in all_args.items():
@@ -123,6 +124,10 @@ def check_luna_exception(ret, luna_function, args, kwargs):
                                                   template_value))
         elif "password" in key:
             log_list.append("\t\t%s: *" % key)
+        elif "mechanism" in key:
+            log_list.append("\t%s: " % key)
+            nice_mech = _coerce_mech_to_str(all_args[key]).splitlines()
+            log_list.extend(["\t\t%s" % x for x in nice_mech])
         else:
             if len(str(value)) > 20:
                 msg = "\t\t%s: %s[...]%s" % (key, str(value)[:10], str(value)[-10:])

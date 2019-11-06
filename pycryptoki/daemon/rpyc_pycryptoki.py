@@ -211,6 +211,8 @@ from pycryptoki.partition_management import (
     ca_get_container_capability_set_ex,
     ca_get_container_capability_setting,
     ca_get_container_capability_setting_ex,
+    ca_get_container_handle,
+    ca_get_container_handle_ex,
     ca_get_container_list,
     ca_get_container_list_ex,
     ca_get_container_name,
@@ -497,6 +499,8 @@ class PycryptokiService(rpyc.SlaveService):
     ca_get_container_capability_set_ex = staticmethod(ca_get_container_capability_set_ex)
     ca_get_container_capability_setting = staticmethod(ca_get_container_capability_setting)
     ca_get_container_capability_setting_ex = staticmethod(ca_get_container_capability_setting_ex)
+    ca_get_container_handle = static_method(ca_get_container_handle)
+    ca_get_container_handle_ex = static_method(ca_get_container_handle_ex)
     ca_get_container_list = staticmethod(ca_get_container_list)
     ca_get_container_list_ex = staticmethod(ca_get_container_list_ex)
     ca_get_container_name = staticmethod(ca_get_container_name)
