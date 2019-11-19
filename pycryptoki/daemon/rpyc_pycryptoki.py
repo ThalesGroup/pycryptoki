@@ -297,6 +297,10 @@ from pycryptoki.partition_management import (
     ca_set_container_policies_ex,
     ca_set_container_size,
     ca_set_container_size_ex,
+    ca_init_token,
+    ca_init_token_ex,
+    ca_init_role_pin,
+    ca_init_role_pin_ex,
 )
 from pycryptoki.session_management import (
     c_initialize,
@@ -585,6 +589,10 @@ class PycryptokiService(rpyc.SlaveService):
     ca_set_container_policies_ex = staticmethod(ca_set_container_policies_ex)
     ca_set_container_size = staticmethod(ca_set_container_size)
     ca_set_container_size_ex = staticmethod(ca_set_container_size_ex)
+    ca_init_token = staticmethod(ca_init_token)
+    ca_init_token_ex = staticmethod(ca_init_token_ex)
+    ca_init_role_pin = staticmethod(ca_init_role_pin)
+    ca_init_role_pin_ex = staticmethod(ca_init_role_pin_ex)
 
     # key_management.py
     ca_generatemofn = staticmethod(ca_generatemofn)

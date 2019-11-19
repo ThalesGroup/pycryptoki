@@ -171,6 +171,22 @@ struct_def(
 )
 
 
+class CK_POLICY_INFO(Structure):
+    pass
+
+
+struct_def(
+    CK_POLICY_INFO,
+    [
+        ("ulId", CK_ULONG),
+        ("ulValue", CK_ULONG),
+        ("ulOffToOnDestructive", CK_ULONG),
+        ("ulOnToOffDestructive", CK_ULONG),
+    ],
+)
+CK_POLICY_INFO_PTR = POINTER(CK_POLICY_INFO)
+
+
 class CA_MOFN_GENERATION(Structure):
     pass
 

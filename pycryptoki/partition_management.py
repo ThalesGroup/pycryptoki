@@ -10,7 +10,9 @@ from .common_utils import AutoCArray, refresh_c_arrays
 from .cryptoki import (
     CK_SLOT_ID,
     CK_ULONG,
+    CK_BYTE,
     CK_SESSION_HANDLE,
+    CK_USER_TYPE,
     CA_CreateContainer,
     CA_DeleteContainerWithHandle,
     CA_GetContainerList,
@@ -25,7 +27,10 @@ from .cryptoki import (
     CA_SetContainerPolicies,
     CA_SetContainerSize,
     CA_GetUserContainerNumber,
+    CA_InitToken,
+    CA_InitRolePIN,
 )
+from .cryptoki.ck_defs import CK_POLICY_INFO
 from .defines import (
     LUNA_PARTITION_TYPE_STANDALONE,
     LUNA_CF_CONTAINER_ENABLED,
@@ -106,8 +111,7 @@ def ca_delete_container_with_handle(h_session, h_container):
     h_sess = CK_SESSION_HANDLE(h_session)
     container_id = CK_ULONG(h_container)
     LOG.info(
-        "CA_DeleteContainerWithHandle: Attempting to delete container with handle: %s",
-        h_container,
+        "CA_DeleteContainerWithHandle: Attempting to delete container with handle: %s", h_container
     )
 
     ret = CA_DeleteContainerWithHandle(h_sess, container_id)
@@ -467,3 +471,72 @@ def ca_set_container_size(h_session, h_container, size):
 
 
 ca_set_container_size_ex = make_error_handle_function(ca_set_container_size)
+
+
+def ca_init_token(slot, so_password, part_label, domain, policies=None, hsm_policies=None):
+    """
+    initialize a partition
+
+    :param slot: Slot handle
+    :param so_password: The password for the PSO
+    :param part_label: The label of the partition to be set
+    :param domain: The domain string to which a partition is initialized
+    :param policies: list of tuples such as [(id, val, off-to-on, on-to-off), ...]
+    :param hsm_policies: list of tuples such as [(id, val, off-to-on, on-to-off), ...]
+    :return: the return code of CA_InitToken
+    """
+    if so_password == b"":
+        so_password = None
+    password = AutoCArray(data=so_password)
+    slot_id = CK_ULONG(slot)
+    label = AutoCArray(data=part_label)
+    domain = AutoCArray(data=domain)
+
+    if policies:
+        policies = policies if isinstance(policies, list) else [policies]
+        policies = (CK_POLICY_INFO * len(policies))(*[CK_POLICY_INFO(*p) for p in policies])
+    policy_count = CK_ULONG(0) if not policies else CK_ULONG(len(policies))
+
+    if hsm_policies:
+        hsm_policies = hsm_policies if isinstance(hsm_policies, list) else [hsm_policies]
+        hsm_policies = (CK_POLICY_INFO * len(hsm_policies))(
+            *[CK_POLICY_INFO(*p) for p in hsm_policies]
+        )
+    hsm_policy_count = CK_ULONG(0) if not hsm_policies else CK_ULONG(len(hsm_policies))
+
+    ret = CA_InitToken(
+        slot_id,
+        password.array,
+        len(password),
+        label.array,
+        domain.array,
+        len(domain),
+        policy_count,
+        policies,
+        hsm_policy_count,
+        hsm_policies,
+    )
+    return ret
+
+
+ca_init_token_ex = make_error_handle_function(ca_init_token)
+
+
+def ca_init_role_pin(h_session, user_type, password=None):
+    """
+    Runs CA_InitRolePIN to initialize a specific role
+
+    :param h_session: Session handle
+    :param user_type: the user type like CO, CU that needs to be initialized
+    :param password: The password for the initialized role. It is None for ped based roles
+    :return: return code
+    """
+    session = CK_SESSION_HANDLE(h_session)
+    password = AutoCArray(data=password, ctype=CK_BYTE)
+    user_type = CK_USER_TYPE(user_type)
+    ret = CA_InitRolePIN(session, user_type, password.array, len(password))
+
+    return ret
+
+
+ca_init_role_pin_ex = make_error_handle_function(ca_init_role_pin)

@@ -1027,6 +1027,21 @@ C_GetMechanismInfo = make_late_binding_function(
 C_InitToken = make_late_binding_function(
     "C_InitToken", [CK_SLOT_ID, CK_UTF8CHAR_PTR, CK_ULONG, CK_UTF8CHAR_PTR]
 )
+CA_InitToken = make_late_binding_function(
+    "CA_InitToken",
+    [
+        CK_SLOT_ID,
+        CK_UTF8CHAR_PTR,
+        CK_ULONG,
+        CK_UTF8CHAR_PTR,
+        CK_BYTE_PTR,
+        CK_ULONG,
+        CK_ULONG,
+        CK_POLICY_INFO_PTR,
+        CK_ULONG,
+        CK_POLICY_INFO_PTR,
+    ],
+)
 C_InitPIN = make_late_binding_function("C_InitPIN", [CK_SESSION_HANDLE, CK_UTF8CHAR_PTR, CK_ULONG])
 C_SetPIN = make_late_binding_function(
     "C_SetPIN", [CK_SESSION_HANDLE, CK_UTF8CHAR_PTR, CK_ULONG, CK_UTF8CHAR_PTR, CK_ULONG]
