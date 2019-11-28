@@ -1240,6 +1240,8 @@ C_WaitForSlotEvent = make_late_binding_function(
     "C_WaitForSlotEvent", [CK_FLAGS, CK_SLOT_ID_PTR, CK_VOID_PTR]
 )
 
+CA_RandomizeApplicationID = make_late_binding_function("CA_RandomizeApplicationID", [])
+
 CA_GetApplicationID = make_late_binding_function(
     "CA_GetApplicationID", [POINTER(CK_APPLICATION_ID)]
 )
@@ -1254,6 +1256,26 @@ CA_CloseApplicationIDV2 = make_late_binding_function(
 
 CA_SetApplicationIDV2 = make_late_binding_function(
     "CA_SetApplicationIDV2", [POINTER(CK_APPLICATION_ID)]
+)
+
+CA_OpenSessionWithAppIDV2 = make_late_binding_function(
+    "CA_OpenSessionWithAppIDV2",
+    [
+        CK_SLOT_ID,
+        CK_FLAGS,
+        POINTER(CK_APPLICATION_ID),
+        CK_VOID_PTR,
+        CK_NOTIFY,
+        CK_SESSION_HANDLE_PTR,
+    ],
+)
+
+CA_OpenApplicationIDForContainerV2 = make_late_binding_function(
+    "CA_OpenApplicationIDForContainerV2", [CK_SLOT_ID, POINTER(CK_APPLICATION_ID), CK_ULONG]
+)
+
+CA_CloseApplicationIDForContainerV2 = make_late_binding_function(
+    "CA_CloseApplicationIDForContainerV2", [CK_SLOT_ID, POINTER(CK_APPLICATION_ID), CK_ULONG]
 )
 
 CA_Bip32ImportPublicKey = make_late_binding_function(

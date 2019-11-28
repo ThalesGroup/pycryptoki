@@ -84,12 +84,22 @@ from pycryptoki.ca_extensions.per_key_auth import (
 from pycryptoki.ca_extensions.session import (
     ca_get_session_info,
     ca_get_session_info_ex,
-    ca_close_application_id_v2,
-    ca_close_application_id_v2_ex,
+    ca_randomize_application_id,
+    ca_randomize_application_id_ex,
     ca_get_application_id,
     ca_get_application_id_ex,
     ca_open_application_id_v2,
     ca_open_application_id_v2_ex,
+    ca_close_application_id_v2,
+    ca_close_application_id_v2_ex,
+    ca_set_application_id_v2,
+    ca_set_application_id_v2_ex,
+    ca_open_session_with_app_id_v2,
+    ca_open_session_with_app_id_v2_ex,
+    ca_open_application_id_for_container_v2,
+    ca_open_application_id_for_container_v2_ex,
+    ca_close_application_id_for_container_v2,
+    ca_close_application_id_for_container_v2_ex,
 )
 from pycryptoki.ca_extensions.stc import (
     ca_stc_register,
@@ -285,6 +295,8 @@ from pycryptoki.partition_management import (
     ca_get_container_capability_setting_ex,
     ca_get_container_handle,
     ca_get_container_handle_ex,
+    ca_get_user_container_number,
+    ca_get_user_container_number_ex,
     ca_get_container_list,
     ca_get_container_list_ex,
     ca_get_container_name,
@@ -463,6 +475,22 @@ class PycryptokiService(rpyc.SlaveService):
     ca_close_application_id_v2_ex = staticmethod(ca_close_application_id_v2_ex)
     ca_get_application_id = staticmethod(ca_get_application_id)
     ca_get_application_id_ex = staticmethod(ca_get_application_id_ex)
+    ca_randomize_application_id = staticmethod(ca_randomize_application_id)
+    ca_randomize_application_id_ex = staticmethod(ca_randomize_application_id_ex)
+    ca_set_application_id_v2 = staticmethod(ca_set_application_id_v2)
+    ca_set_application_id_v2_ex = staticmethod(ca_set_application_id_v2_ex)
+    ca_open_session_with_app_id_v2 = staticmethod(ca_open_session_with_app_id_v2)
+    ca_open_session_with_app_id_v2_ex = staticmethod(ca_open_session_with_app_id_v2_ex)
+    ca_open_application_id_for_container_v2 = staticmethod(ca_open_application_id_for_container_v2)
+    ca_open_application_id_for_container_v2_ex = staticmethod(
+        ca_open_application_id_for_container_v2_ex
+    )
+    ca_close_application_id_for_container_v2 = staticmethod(
+        ca_close_application_id_for_container_v2
+    )
+    ca_close_application_id_for_container_v2_ex = staticmethod(
+        ca_close_application_id_for_container_v2_ex
+    )
     ca_restart_ex = staticmethod(ca_restart_ex)
     ca_restart = staticmethod(ca_restart)
     c_get_slot_list = staticmethod(c_get_slot_list)
@@ -577,6 +605,8 @@ class PycryptokiService(rpyc.SlaveService):
     ca_get_container_capability_setting_ex = staticmethod(ca_get_container_capability_setting_ex)
     ca_get_container_handle = staticmethod(ca_get_container_handle)
     ca_get_container_handle_ex = staticmethod(ca_get_container_handle_ex)
+    ca_get_user_container_number = staticmethod(ca_get_user_container_number)
+    ca_get_user_container_number_ex = staticmethod(ca_get_user_container_number_ex)
     ca_get_container_list = staticmethod(ca_get_container_list)
     ca_get_container_list_ex = staticmethod(ca_get_container_list_ex)
     ca_get_container_name = staticmethod(ca_get_container_name)

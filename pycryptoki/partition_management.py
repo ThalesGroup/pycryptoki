@@ -166,6 +166,8 @@ def ca_get_container_handle(slot):
 
 
 ca_get_container_handle_ex = make_error_handle_function(ca_get_container_handle)
+ca_get_user_container_number = ca_get_container_handle
+ca_get_user_container_number_ex = ca_get_container_handle_ex
 
 
 def ca_get_container_capability_set(slot, h_container):
