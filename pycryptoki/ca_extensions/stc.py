@@ -1,17 +1,19 @@
 """
 STC2 Functions
 """
-from ctypes import byref, cast, POINTER, string_at
+from ctypes import byref, cast, POINTER, string_at, c_ulong
 
 from pycryptoki.common_utils import AutoCArray, refresh_c_arrays
 from pycryptoki.cryptoki.c_defs import CK_BYTE, CK_CHAR, CK_ULONG
 from pycryptoki.cryptoki.ck_defs import CK_SESSION_HANDLE, CK_SLOT_ID
 from pycryptoki.cryptoki.func_defs import (
     CA_STCRegister,
+    CA_STCRegisterV2,
     CA_STCDeregister,
     CA_STCGetPubKey,
     CA_STCGetClientsList,
     CA_STCGetClientInfo,
+    CA_STCGetClientInfoV2,
     CA_STCGetPartPubKey,
     CA_STCGetAdminPubKey,
     CA_STCGetPID,
@@ -48,15 +50,44 @@ from pycryptoki.exceptions import make_error_handle_function
 SHA512_DIGEST_LENGTH = 64
 STC_USERNAME_BUFFER_SIZE = 128
 STC_PID_BUFFER_SIZE = 4096
+STC_MODULUS_BUFFER_SIZE = 2048
+STC_EXPONENT_BUFFER_SIZE = 512
 STC_MIN_KEY_LIFE = 0
 STC_DEFAULT_KEY_LIFE = 432  # approx. 24 hours
 STC_MAX_KEY_LIFE = 4000  # approx. 9 days
 CRYPTO_NAME_BUFFER_SIZE = 255
 
 
-def ca_stc_register(session, slot, name, id_type, credential):
+def ca_stc_register(session, slot, name, access, modulus, exponent):
     """
     Register client
+
+    :param session: session handle
+    :param slot: slot id
+    :param name: name of client
+    :param access:
+    :param modulus: client public modulus
+    :param exponent: client public exponent
+    """
+    h_session = CK_SESSION_HANDLE(session)
+    h_slot = CK_SLOT_ID(slot)
+    c_name = AutoCArray(ctype=CK_CHAR, data=name)
+    c_access = CK_ULONG(access)
+    c_mod = AutoCArray(ctype=CK_CHAR, data=modulus)
+    c_exp = AutoCArray(ctype=CK_CHAR, data=exponent)
+
+    ret = CA_STCRegister(
+        h_session, h_slot, c_name.array, c_access, c_mod.array, len(c_mod), c_exp.array, len(c_exp)
+    )
+    return ret
+
+
+ca_stc_register_ex = make_error_handle_function(ca_stc_register)
+
+
+def ca_stc_register_v2(session, slot, name, id_type, credential):
+    """
+    Register client, STC2
 
     :param session: session handle
     :param slot: slot id
@@ -69,7 +100,7 @@ def ca_stc_register(session, slot, name, id_type, credential):
     c_name = AutoCArray(ctype=CK_CHAR, data=name)
     c_id_type = CK_ULONG(id_type)
     c_id_data = AutoCArray(ctype=CK_BYTE, data=credential)
-    ret = CA_STCRegister(
+    ret = CA_STCRegisterV2(
         h_session,
         h_slot,
         c_name.array,
@@ -81,7 +112,7 @@ def ca_stc_register(session, slot, name, id_type, credential):
     return ret
 
 
-ca_stc_register_ex = make_error_handle_function(ca_stc_register)
+ca_stc_register_v2_ex = make_error_handle_function(ca_stc_register_v2)
 
 
 def ca_stc_deregister(session, slot, name):
@@ -155,9 +186,53 @@ def ca_stc_get_clients_list(session, slot):
 ca_stc_get_clients_list_ex = make_error_handle_function(ca_stc_get_clients_list)
 
 
-def ca_stc_get_client_info(session, slot, handle, id_type):
+def ca_stc_get_client_info(session, slot, handle, access):
     """
     Get registered client name and digest
+
+    :param session: session handle
+    :param slot: slot id
+    :param handle: client handle
+    :param access:
+    :return: client name and digest
+    """
+    h_session = CK_SESSION_HANDLE(session)
+    h_slot = CK_SLOT_ID(slot)
+    h_client = CK_ULONG(handle)
+
+    c_name = AutoCArray(ctype=CK_CHAR, size=c_ulong(STC_USERNAME_BUFFER_SIZE))
+    c_access = CK_ULONG(access)
+    c_mod = AutoCArray(ctype=CK_BYTE, size=c_ulong(STC_MODULUS_BUFFER_SIZE))
+    c_exp = AutoCArray(ctype=CK_BYTE, size=c_ulong(STC_EXPONENT_BUFFER_SIZE))
+
+    ret = CA_STCGetClientInfo(
+        h_session,
+        h_slot,
+        h_client,
+        c_name.array,
+        c_name.size,
+        byref(c_access),
+        c_mod.array,
+        c_mod.size,
+        c_exp.array,
+        c_exp.size,
+    )
+
+    if ret != CKR_OK:
+        return ret, None, None
+
+    name = string_at(c_name.array, len(c_name))
+    mod = string_at(c_mod.array, len(c_mod))
+    exp = string_at(c_exp.array, len(c_exp))
+    return ret, name, mod, exp
+
+
+ca_stc_get_client_info_ex = make_error_handle_function(ca_stc_get_client_info)
+
+
+def ca_stc_get_client_info_v2(session, slot, handle, id_type):
+    """
+    Get registered client name and digest, STC2
 
     :param session: session handle
     :param slot: slot id
@@ -179,7 +254,7 @@ def ca_stc_get_client_info(session, slot, handle, id_type):
     c_user_id_ptr = cast(c_user_id, POINTER(CK_BYTE))
     c_user_id_len = CK_ULONG(SHA512_DIGEST_LENGTH)
 
-    ret = CA_STCGetClientInfo(
+    ret = CA_STCGetClientInfoV2(
         h_session,
         h_slot,
         h_client,
@@ -198,7 +273,7 @@ def ca_stc_get_client_info(session, slot, handle, id_type):
     return ret, name, digest
 
 
-ca_stc_get_client_info_ex = make_error_handle_function(ca_stc_get_client_info)
+ca_stc_get_client_info_v2_ex = make_error_handle_function(ca_stc_get_client_info_v2)
 
 
 def ca_stc_get_part_pub_key(session, slot):

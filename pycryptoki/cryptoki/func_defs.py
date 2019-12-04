@@ -1279,8 +1279,8 @@ CA_Bip32ExportPublicKey = make_late_binding_function(
 )
 
 
-CA_STCRegister = make_late_binding_function(
-    "CA_STCRegister",
+CA_STCRegisterV2 = make_late_binding_function(
+    "CA_STCRegisterV2",
     [
         CK_SESSION_HANDLE,
         CK_SLOT_ID,
@@ -1290,11 +1290,6 @@ CA_STCRegister = make_late_binding_function(
         POINTER(CK_BYTE),
         CK_ULONG,
     ],
-)
-
-
-CA_STCDeregister = make_late_binding_function(
-    "CA_STCDeregister", [CK_SESSION_HANDLE, CK_SLOT_ID, POINTER(CK_CHAR)]
 )
 
 
@@ -1317,8 +1312,8 @@ CA_STCGetClientsList = make_late_binding_function(
 )
 
 
-CA_STCGetClientInfo = make_late_binding_function(
-    "CA_STCGetClientInfo",
+CA_STCGetClientInfoV2 = make_late_binding_function(
+    "CA_STCGetClientInfoV2",
     [
         CK_SESSION_HANDLE,
         CK_SLOT_ID,

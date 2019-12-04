@@ -94,6 +94,8 @@ from pycryptoki.ca_extensions.session import (
 from pycryptoki.ca_extensions.stc import (
     ca_stc_register,
     ca_stc_register_ex,
+    ca_stc_register_v2,
+    ca_stc_register_v2_ex,
     ca_stc_deregister,
     ca_stc_deregister_ex,
     ca_stc_get_pub_key,
@@ -102,6 +104,8 @@ from pycryptoki.ca_extensions.stc import (
     ca_stc_get_clients_list_ex,
     ca_stc_get_client_info,
     ca_stc_get_client_info_ex,
+    ca_stc_get_client_info_v2,
+    ca_stc_get_client_info_v2_ex,
     ca_stc_get_part_pub_key,
     ca_stc_get_part_pub_key_ex,
     ca_stc_get_admin_pub_key,
