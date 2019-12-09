@@ -1,7 +1,8 @@
 """
 STC2 Functions
 """
-from ctypes import byref, cast, POINTER, string_at, c_ulong
+from ctypes import byref, cast, POINTER, string_at, c_ulong, create_string_buffer
+from six import b
 
 from pycryptoki.common_utils import AutoCArray, refresh_c_arrays
 from pycryptoki.cryptoki.c_defs import CK_BYTE, CK_CHAR, CK_ULONG
@@ -125,8 +126,9 @@ def ca_stc_deregister(session, slot, name):
     """
     h_session = CK_SESSION_HANDLE(session)
     h_slot = CK_SLOT_ID(slot)
-    c_name = AutoCArray(ctype=CK_CHAR, data=name)
-    ret = CA_STCDeregister(h_session, h_slot, c_name.array)
+    c_name = create_string_buffer(b(name))
+    c_name_ptr = cast(c_name, POINTER(CK_CHAR))
+    ret = CA_STCDeregister(h_session, h_slot, c_name_ptr)
     return ret
 
 
