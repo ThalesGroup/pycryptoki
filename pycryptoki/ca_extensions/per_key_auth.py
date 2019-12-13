@@ -62,9 +62,7 @@ def ca_reset_authorization_data(h_session, h_object, auth_data):
     h_object = CK_OBJECT_HANDLE(h_object)
     h_session = CK_SESSION_HANDLE(h_session)
 
-    return CA_ResetAuthorizationData(
-        h_session, h_object, auth_data_ptr, auth_data_length
-    )
+    return CA_ResetAuthorizationData(h_session, h_object, auth_data_ptr, auth_data_length)
 
 
 ca_reset_authorization_data_ex = make_error_handle_function(ca_reset_authorization_data)
@@ -84,9 +82,7 @@ def ca_increment_failed_auth_count(h_session, h_object):
     return CA_IncrementFailedAuthCount(h_session, h_object)
 
 
-ca_increment_failed_auth_count_ex = make_error_handle_function(
-    ca_increment_failed_auth_count
-)
+ca_increment_failed_auth_count_ex = make_error_handle_function(ca_increment_failed_auth_count)
 
 
 def ca_authorize_key(h_session, h_object, auth_data):

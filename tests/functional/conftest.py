@@ -10,13 +10,27 @@ import pytest
 from . import config as hsm_config
 from pycryptoki.attributes import Attributes
 from pycryptoki.defaults import ADMINISTRATOR_PASSWORD, ADMIN_PARTITION_LABEL, CO_PASSWORD
-from pycryptoki.defines import CKF_RW_SESSION, CKF_SERIAL_SESSION, CKR_OK, CKF_SO_SESSION, \
-    CKF_PROTECTED_AUTHENTICATION_PATH
+from pycryptoki.defines import (
+    CKF_RW_SESSION,
+    CKF_SERIAL_SESSION,
+    CKR_OK,
+    CKF_SO_SESSION,
+    CKF_PROTECTED_AUTHENTICATION_PATH,
+)
 from pycryptoki.key_generator import c_destroy_object
 from pycryptoki.object_attr_lookup import c_find_objects_ex
-from pycryptoki.session_management import c_initialize_ex, c_close_all_sessions_ex, \
-    ca_factory_reset_ex, c_open_session_ex, login_ex, c_finalize_ex, \
-    c_close_session, c_logout, c_get_token_info_ex, get_firmware_version
+from pycryptoki.session_management import (
+    c_initialize_ex,
+    c_close_all_sessions_ex,
+    ca_factory_reset_ex,
+    c_open_session_ex,
+    login_ex,
+    c_finalize_ex,
+    c_close_session,
+    c_logout,
+    c_get_token_info_ex,
+    get_firmware_version,
+)
 from pycryptoki.test_functions import LunaException
 from pycryptoki.token_management import c_init_token_ex, c_get_mechanism_list_ex
 
@@ -29,38 +43,45 @@ def pytest_addoption(parser):
     """
     optiongroup = parser.getgroup("pycryptoki", "Pycryptoki test options")
 
-    optiongroup.addoption("--slot",
-                          help="Specify the slot you are testing on (Can be Admin or "
-                               "User slot)",
-                          type=int,
-                          default=os.environ.get("SLOT", 1),
-                          dest="test_slot")
-    optiongroup.addoption("--reset",
-                          help="Reset the HSM back to its default settings with a factory"
-                               " reset.",
-                          action="store_true",
-                          default=False)
-    optiongroup.addoption("--password",
-                          help="Password for the Admin Slot. Can be None for PED-authentication "
-                               "devices.",
-                          action="store",
-                          type=str,
-                          default=ADMINISTRATOR_PASSWORD)
-    optiongroup.addoption("--copassword",
-                          help="Password for the Crypto Officer user/slot. Can be None for "
-                               "PED-authentication.",
-                          action="store",
-                          type=str)
-    optiongroup.addoption("--user",
-                          help="User type to test with. Defaults to SO. Can also test w/ "
-                               "Crypto Officer",
-                          choices=["SO", "CO"],
-                          default="SO",
-                          action="store")
-    optiongroup.addoption("--loglevel",
-                          help="Specify what level of logging to run the tests ",
-                          choices=["debug", "info", "warning", "error"],
-                          default="warning")
+    optiongroup.addoption(
+        "--slot",
+        help="Specify the slot you are testing on (Can be Admin or " "User slot)",
+        type=int,
+        default=os.environ.get("SLOT", 1),
+        dest="test_slot",
+    )
+    optiongroup.addoption(
+        "--reset",
+        help="Reset the HSM back to its default settings with a factory" " reset.",
+        action="store_true",
+        default=False,
+    )
+    optiongroup.addoption(
+        "--password",
+        help="Password for the Admin Slot. Can be None for PED-authentication " "devices.",
+        action="store",
+        type=str,
+        default=ADMINISTRATOR_PASSWORD,
+    )
+    optiongroup.addoption(
+        "--copassword",
+        help="Password for the Crypto Officer user/slot. Can be None for " "PED-authentication.",
+        action="store",
+        type=str,
+    )
+    optiongroup.addoption(
+        "--user",
+        help="User type to test with. Defaults to SO. Can also test w/ " "Crypto Officer",
+        choices=["SO", "CO"],
+        default="SO",
+        action="store",
+    )
+    optiongroup.addoption(
+        "--loglevel",
+        help="Specify what level of logging to run the tests ",
+        choices=["debug", "info", "warning", "error"],
+        default="warning",
+    )
 
 
 def pytest_configure(config):
@@ -69,7 +90,7 @@ def pytest_configure(config):
     """
     if config.getoption("loglevel", None):
         logger = logging.getLogger()
-        log_formatter = logging.Formatter('%(asctime)s:%(name)s:%(levelname)s: %(message)s')
+        log_formatter = logging.Formatter("%(asctime)s:%(name)s:%(levelname)s: %(message)s")
         console_handler = logging.StreamHandler(sys.stdout)
         console_handler.setFormatter(log_formatter)
         logger.addHandler(console_handler)
@@ -78,16 +99,24 @@ def pytest_configure(config):
     hsm_config["test_slot"] = config.getoption("test_slot")
     hsm_config["user"] = config.getoption("user")
     hsm_config["reset"] = config.getoption("reset")
+
+    if config.getoption("--collect-only"):
+        # Break early
+        hsm_config["is_ped"] = False
+        # Used so you can verify collection on multiple FW versions
+        hsm_config["firmware"] = os.environ.get("FIRMWARE", "7.0.0")
+        return
+
     c_initialize_ex()
     try:
         # Factory Reset
         slot = hsm_config["test_slot"]
 
         token_info = c_get_token_info_ex(slot)
-        flags = token_info['flags']
+        flags = token_info["flags"]
         is_ped = (flags & CKF_PROTECTED_AUTHENTICATION_PATH) != 0
         hsm_config["is_ped"] = is_ped
-        hsm_config['firmware'] = get_firmware_version(slot)
+        hsm_config["firmware"] = get_firmware_version(slot)
         if is_ped:
             admin_pwd = None
             co_pwd = config.getoption("copassword", default=None)
@@ -100,13 +129,13 @@ def pytest_configure(config):
         if co_pwd:
             co_pwd = co_pwd
 
-        hsm_config['admin_pwd'] = admin_pwd
-        hsm_config['co_pwd'] = co_pwd
+        hsm_config["admin_pwd"] = admin_pwd
+        hsm_config["co_pwd"] = co_pwd
 
         if config.getoption("user") == "CO":
-            hsm_config['password'] = co_pwd
+            hsm_config["password"] = co_pwd
         else:
-            hsm_config['password'] = admin_pwd
+            hsm_config["password"] = admin_pwd
     finally:
         c_finalize_ex()
 
@@ -115,13 +144,13 @@ def pytest_collection_modifyitems(session, config, items):
     """
     Deselect tests marked with @pytest.mark.reset if --reset isn't given on cmdline.
     """
-    reset = config.getoption('reset')
+    reset = config.getoption("reset")
     for test_item in items[:]:
-        if test_item.get_marker('reset') and not reset:
+        if test_item.get_closest_marker("reset") and not reset:
             items.remove(test_item)
 
 
-@pytest.yield_fixture(scope='session', autouse=True)
+@pytest.yield_fixture(scope="session", autouse=True)
 def hsm_configured(pytestconfig):
     """
     Factory reset & init the hsm.
@@ -134,10 +163,10 @@ def hsm_configured(pytestconfig):
             ca_factory_reset_ex(slot)
 
             # Initialize the Admin Token
-            session_flags = (CKF_SERIAL_SESSION | CKF_RW_SESSION | CKF_SO_SESSION)
+            session_flags = CKF_SERIAL_SESSION | CKF_RW_SESSION | CKF_SO_SESSION
 
             _ = c_open_session_ex(slot, session_flags)
-            c_init_token_ex(slot, hsm_config['admin_pwd'], ADMIN_PARTITION_LABEL)
+            c_init_token_ex(slot, hsm_config["admin_pwd"], ADMIN_PARTITION_LABEL)
 
             # TODO: This will need to change for testing on CO slots.
             # In the meantime, we test on the admin slot just fine.
@@ -159,7 +188,7 @@ def session(pytestconfig, hsm_configured):
     Creates & returns a session on the Admin slot.
     """
     _ = hsm_configured
-    session_flags = (CKF_SERIAL_SESSION | CKF_RW_SESSION)
+    session_flags = CKF_SERIAL_SESSION | CKF_RW_SESSION
     if pytestconfig.getoption("user") == "SO":
         session_flags = session_flags | CKF_SO_SESSION
 
@@ -190,5 +219,5 @@ def valid_mechanisms():
 
     :return: list of integers, each corresponding to a mechanism.
     """
-    raw_mechs = c_get_mechanism_list_ex(slot=hsm_config['test_slot'])
+    raw_mechs = c_get_mechanism_list_ex(slot=hsm_config["test_slot"])
     yield raw_mechs

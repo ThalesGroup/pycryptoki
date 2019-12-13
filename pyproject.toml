@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "pycryptoki"
+version = "2.5.10"
+description = "A python wrapper around the Cryptoki C shared library"
+authors = ["Ashley Straw <ashley.straw@thalesgroup.com>"]
+license = "Apache-2.0"
+
+[tool.poetry.dependencies]
+python = "~2.7 || >=3.5"
+future = "^0.18.2"
+six = "^1.13.0"
+rpyc = [
+    { version = "3.4.4", python = '^2.7' },
+    { version = "4.0.2", python = '^3' }
+]
+
+[tool.poetry.dev-dependencies]
+pytz = "^2019.3"
+mock = "^3.0.5"
+pytest = ">= 3.10.1 "
+hypothesis = ">= 4.6"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"

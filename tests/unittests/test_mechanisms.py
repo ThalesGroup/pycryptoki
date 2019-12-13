@@ -45,7 +45,7 @@ MECH_PARAMS = {
 
 
 def idfn(test):
-    return MECH_PARAMS[test].get("test_id", "unknown")
+    return MECH_PARAMS[test].pop("test_id", "unknown")
 
 
 # noinspection PyArgumentList

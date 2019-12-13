@@ -71,7 +71,8 @@ from .aes import (
 from .des import DES3CTRMechanism, DES3CBCEncryptDataMechanism, DES3ECBEncryptDataMechanism
 from .dh import ECDH1DeriveMechanism
 from .eddsa import EDDSAMechanism
-from .generic import ConcatenationDeriveMechanism, StringDataDerivationMechanism, NullMech, AutoMech
+from .generic import ConcatenationDeriveMechanism, StringDataDerivationMechanism, NullMech
+from pycryptoki.mechanism.helpers import AutoMech
 from .rc import RC2CBCMechanism, RC2Mechanism, RC5CBCMechanism, RC5Mechanism
 from .rsa import RSAPKCSOAEPMechanism, RSAPKCSPSSMechanism
 from .kdf import PRFKDFDeriveMechanism

@@ -1181,7 +1181,5 @@ class CK_SHAKE_PARAMS(Structure):
     pass
 
 
-struct_def(
-    CK_SHAKE_PARAMS, [("ulOutputLen", CK_ULONG),],
-)
+struct_def(CK_SHAKE_PARAMS, [("ulOutputLen", CK_ULONG)])
 CK_SHAKE_PARAMS_PTR = POINTER(CK_SHAKE_PARAMS)

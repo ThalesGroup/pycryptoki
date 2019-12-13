@@ -18,11 +18,15 @@ def ca_init_audit(slot, audit_pin, audit_label):
     :param audit_label:
 
     """
-    if audit_pin == '':
+    if audit_pin == "":
         ret = CA_InitAudit(CK_SLOT_ID(slot), None, CK_ULONG(0), cast(audit_label, CK_CHAR_PTR))
     else:
-        ret = CA_InitAudit(CK_SLOT_ID(slot), cast(audit_pin, CK_CHAR_PTR), CK_ULONG(len(audit_pin)),
-                           cast(audit_label, CK_CHAR_PTR))
+        ret = CA_InitAudit(
+            CK_SLOT_ID(slot),
+            cast(audit_pin, CK_CHAR_PTR),
+            CK_ULONG(len(audit_pin)),
+            cast(audit_label, CK_CHAR_PTR),
+        )
     return ret
 
 
