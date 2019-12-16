@@ -22,7 +22,7 @@ setup(
         "pycryptoki.ca_extensions",
     ],
     scripts=["pycryptoki/daemon/rpyc_pycryptoki.py"],
-    tests_require=["pytest==3.10.1", "hypothesis==4.6.1", "mock", "pytz"],
+    tests_require=["pytest", "hypothesis", "mock", "pytz"],
     install_requires=[
         "future",
         "rpyc==3.4.4;python_version<='2.7'",
