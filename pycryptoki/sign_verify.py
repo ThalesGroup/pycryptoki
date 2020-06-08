@@ -10,10 +10,15 @@ from pycryptoki.conversions import from_bytestring
 from .attributes import to_char_array, to_byte_array
 from .common_utils import refresh_c_arrays, AutoCArray
 from .conversions import from_bytestring
-from .cryptoki import CK_ULONG, \
-    CK_BYTE_PTR, C_SignInit, C_Sign
-from .cryptoki import C_VerifyInit, C_Verify, C_SignUpdate, \
-    C_SignFinal, C_VerifyUpdate, C_VerifyFinal
+from .cryptoki import CK_ULONG, CK_BYTE_PTR, C_SignInit, C_Sign
+from .cryptoki import (
+    C_VerifyInit,
+    C_Verify,
+    C_SignUpdate,
+    C_SignFinal,
+    C_VerifyUpdate,
+    C_VerifyFinal,
+)
 from .defines import CKR_OK
 from .encryption import MAX_BUFFER
 from .exceptions import make_error_handle_function
@@ -60,11 +65,9 @@ def c_sign(h_session, h_key, data_to_sign, mechanism, output_buffer=None):
     is_multi_part_operation = isinstance(data_to_sign, (list, tuple))
 
     if is_multi_part_operation:
-        ret, signature_string = do_multipart_sign_or_digest(h_session,
-                                                            C_SignUpdate,
-                                                            C_SignFinal,
-                                                            data_to_sign,
-                                                            output_buffer=output_buffer)
+        ret, signature_string = do_multipart_sign_or_digest(
+            h_session, C_SignUpdate, C_SignFinal, data_to_sign, output_buffer=output_buffer
+        )
     else:
         # Prepare the data to sign
         c_data_to_sign, plain_date_len = to_byte_array(from_bytestring(data_to_sign))
@@ -72,20 +75,19 @@ def c_sign(h_session, h_key, data_to_sign, mechanism, output_buffer=None):
 
         if output_buffer is not None:
             size = CK_ULONG(output_buffer)
-            signed_data = AutoCArray(ctype=c_ubyte,
-                                     size=size)
-            ret = C_Sign(h_session,
-                         c_data_to_sign, plain_date_len,
-                         signed_data.array, signed_data.size)
+            signed_data = AutoCArray(ctype=c_ubyte, size=size)
+            ret = C_Sign(
+                h_session, c_data_to_sign, plain_date_len, signed_data.array, signed_data.size
+            )
         else:
             signed_data = AutoCArray(ctype=c_ubyte)
 
             @refresh_c_arrays(1)
             def _sign():
                 """Perform the signing operation"""
-                return C_Sign(h_session,
-                              c_data_to_sign, plain_date_len,
-                              signed_data.array, signed_data.size)
+                return C_Sign(
+                    h_session, c_data_to_sign, plain_date_len, signed_data.array, signed_data.size
+                )
 
             ret = _sign()
         if ret != CKR_OK:
@@ -99,8 +101,9 @@ def c_sign(h_session, h_key, data_to_sign, mechanism, output_buffer=None):
 c_sign_ex = make_error_handle_function(c_sign)
 
 
-def do_multipart_sign_or_digest(h_session, c_update_function, c_final_function,
-                                input_data_list, output_buffer=None):
+def do_multipart_sign_or_digest(
+    h_session, c_update_function, c_final_function, input_data_list, output_buffer=None
+):
     """
     Do a multipart sign or digest operation
 
@@ -121,29 +124,38 @@ def do_multipart_sign_or_digest(h_session, c_update_function, c_final_function,
 
         ret = c_update_function(h_session, data_chunk, data_chunk_len)
         if ret != CKR_OK:
-            LOG.debug("%s call on chunk %.20s (%s/%s) Failed w/ ret %s (%s)",
-                      c_update_function.__name__,
-                      chunk, index + 1, len(input_data_list),
-                      ret_vals_dictionary.get(ret, "Unknown retcode"), str(hex(ret)))
+            LOG.debug(
+                "%s call on chunk %.20s (%s/%s) Failed w/ ret %s (%s)",
+                c_update_function.__name__,
+                chunk,
+                index + 1,
+                len(input_data_list),
+                ret_vals_dictionary.get(ret, "Unknown retcode"),
+                str(hex(ret)),
+            )
             error = ret
             break
 
     # An Update function failed. We should still try to call C_**Final() though to ensure that the
-    # operation is still finalized, but we'll return the original error code. 
+    # operation is still finalized, but we'll return the original error code.
     if error:
-        ret = c_final_function(h_session,
-                               cast(create_string_buffer(b'', MAX_BUFFER), CK_BYTE_PTR),
-                               CK_ULONG(MAX_BUFFER))
-        LOG.debug("%s call after a %s failure returned: %s (%s)",
-                  c_final_function.__name__,
-                  c_update_function.__name__,
-                  ret_vals_dictionary.get(ret, "Unknown retcode"), str(hex(ret)))
+        ret = c_final_function(
+            h_session,
+            cast(create_string_buffer(b"", MAX_BUFFER), CK_BYTE_PTR),
+            CK_ULONG(MAX_BUFFER),
+        )
+        LOG.debug(
+            "%s call after a %s failure returned: %s (%s)",
+            c_final_function.__name__,
+            c_update_function.__name__,
+            ret_vals_dictionary.get(ret, "Unknown retcode"),
+            str(hex(ret)),
+        )
         return error, None
 
     if output_buffer is not None:
         size = CK_ULONG(output_buffer)
-        out_data = AutoCArray(ctype=c_ubyte,
-                              size=size)
+        out_data = AutoCArray(ctype=c_ubyte, size=size)
 
         ret = c_final_function(h_session, out_data.array, out_data.size)
 
@@ -188,13 +200,18 @@ def do_multipart_verify(h_session, input_data_list, signature):
 
     # An C_VerifyUpdate failed. We should still try to call C_**Final() though to ensure
     #  that the
-    # operation is still finalized, but we'll return the original error code. 
+    # operation is still finalized, but we'll return the original error code.
     if error:
-        ret = C_VerifyFinal(h_session,
-                            cast(create_string_buffer(b"", MAX_BUFFER), CK_BYTE_PTR),
-                            CK_ULONG(MAX_BUFFER))
-        LOG.debug("C_VerifyFinal call after a C_VerifyUpdate failure returned:"
-                  " %s (%s)", ret_vals_dictionary.get(ret, "Unknown retcode"), str(hex(ret)))
+        ret = C_VerifyFinal(
+            h_session,
+            cast(create_string_buffer(b"", MAX_BUFFER), CK_BYTE_PTR),
+            CK_ULONG(MAX_BUFFER),
+        )
+        LOG.debug(
+            "C_VerifyFinal call after a C_VerifyUpdate failure returned:" " %s (%s)",
+            ret_vals_dictionary.get(ret, "Unknown retcode"),
+            str(hex(ret)),
+        )
         return error, None
 
     # Finalizing multipart decrypt operation
@@ -247,9 +264,7 @@ def c_verify(h_session, h_key, data_to_verify, signature, mechanism):
         c_signature = cast(c_signature, POINTER(c_ubyte))
 
         # Actually verify the data
-        ret = C_Verify(h_session,
-                       c_data_to_verify, plain_data_len,
-                       c_signature, c_sig_length)
+        ret = C_Verify(h_session, c_data_to_verify, plain_data_len, c_signature, c_sig_length)
 
     return ret
 

@@ -12,20 +12,32 @@ from string import ascii_letters as letters
 import mock
 import pytest
 from hypothesis import given
-from hypothesis.strategies import integers, dates, floats, text, booleans, lists, dictionaries, one_of
+from hypothesis.strategies import (
+    integers,
+    dates,
+    floats,
+    text,
+    booleans,
+    lists,
+    dictionaries,
+    one_of,
+)
 from six import b, integer_types
 
-from pycryptoki.attributes import (CK_ATTRIBUTE,
-                                   CKA_CLASS,
-                                   CK_BYTE,
-                                   to_long,
-                                   to_bool,
-                                   to_char_array,
-                                   to_ck_date,
-                                   to_byte_array,
-                                   to_sub_attributes,
-                                   Attributes,
-                                   convert_c_ubyte_array_to_string, KEY_TRANSFORMS)
+from pycryptoki.attributes import (
+    CK_ATTRIBUTE,
+    CKA_CLASS,
+    CK_BYTE,
+    to_long,
+    to_bool,
+    to_char_array,
+    to_ck_date,
+    to_byte_array,
+    to_sub_attributes,
+    Attributes,
+    convert_c_ubyte_array_to_string,
+    KEY_TRANSFORMS,
+)
 
 LOG = logging.getLogger(__name__)
 MAX_INT = 2 ** (sizeof(c_ulong) * 8) - 1
@@ -189,7 +201,7 @@ class TestAttrConversions(object):
         to_ck_date() with param:
         :param date_val: random date to be converted to a dictionary.
         """
-        date_dict = {'year': date_val.year, 'month': date_val.month, 'day': date_val.day}
+        date_dict = {"year": date_val.year, "month": date_val.month, "day": date_val.day}
         pointer, leng = to_ck_date(date_dict)
         self.verify_c_type(pointer, leng)
 
@@ -228,13 +240,11 @@ class TestAttrConversions(object):
         py_bytes = self.reverse_case(pointer, leng, to_byte_array)
         assert py_bytes == hexlify(b_array)
 
-    @pytest.mark.parametrize("test_val",
-                             [b"deadbeef",
-                              b"\xde\xad\xbe\xef",
-                              b"0xdeadbeef"],
-                             ids=["plain",
-                                  "escaped",
-                                  "prefixed"])
+    @pytest.mark.parametrize(
+        "test_val",
+        [b"deadbeef", b"\xde\xad\xbe\xef", b"0xdeadbeef"],
+        ids=["plain", "escaped", "prefixed"],
+    )
     def test_to_byte_array_from_hex(self, test_val):
         """
         to_byte_array() with param:
@@ -285,7 +295,7 @@ class TestAttrConversions(object):
         # Create list from returned byte-string
         py_list = []
         for i in range(0, len(py_bytes), 2):
-            py_list.append(int(py_bytes[i:i + 2], 16))
+            py_list.append(int(py_bytes[i : i + 2], 16))
 
         assert py_list == list_val
 
@@ -334,8 +344,11 @@ class TestAttrConversions(object):
         py_bytes = self.reverse_case(pointer, leng, to_byte_array)
         assert int(py_bytes, 16) == int(hex_string, 16)
 
-    @given(dictionaries(keys=integers(min_value=1, max_value=MAX_INT), dict_class=Attributes,
-                        values=booleans()))
+    @given(
+        dictionaries(
+            keys=integers(min_value=1, max_value=MAX_INT), dict_class=Attributes, values=booleans()
+        )
+    )
     def test_to_sub_attributes(self, test_dic):
         """
         to_sub_attributes() with param
@@ -343,7 +356,7 @@ class TestAttrConversions(object):
         """
         mock_xform_dict = defaultdict(lambda: to_bool)
         mock_xform_dict.update({key: to_bool for key in KEY_TRANSFORMS})
-        with mock.patch('pycryptoki.attributes.KEY_TRANSFORMS', new=mock_xform_dict):
+        with mock.patch("pycryptoki.attributes.KEY_TRANSFORMS", new=mock_xform_dict):
             pointer, leng = to_sub_attributes(test_dic)
             self.verify_c_type(pointer, leng)
 

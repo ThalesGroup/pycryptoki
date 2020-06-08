@@ -14,8 +14,15 @@ from pycryptoki.exceptions import make_error_handle_function
 LOG = logging.getLogger(__name__)
 
 
-def ca_derive_key_and_wrap(h_session, derive_mechanism, h_base_key, derive_template,
-                           wrapping_key, wrap_mechanism, output_buffer=2048):
+def ca_derive_key_and_wrap(
+    h_session,
+    derive_mechanism,
+    h_base_key,
+    derive_template,
+    wrapping_key,
+    wrap_mechanism,
+    output_buffer=2048,
+):
     """
     Derive a key from the base key and wrap it off the HSM using the wrapping key
 
@@ -39,13 +46,19 @@ def ca_derive_key_and_wrap(h_session, derive_mechanism, h_base_key, derive_templ
     # derive key and wrap function requires the size and in that way is
     # inconsistent with wrap function
     size = CK_ULONG(output_buffer)
-    wrapped_key = AutoCArray(ctype=c_ubyte,
-                             size=size)
+    wrapped_key = AutoCArray(ctype=c_ubyte, size=size)
 
-    ret = CA_DeriveKeyAndWrap(h_session, derive_mech, CK_OBJECT_HANDLE(h_base_key),
-                              c_template, CK_ULONG(len(derive_template)),
-                              wrap_mech, CK_OBJECT_HANDLE(wrapping_key),
-                              wrapped_key.array, wrapped_key.size)
+    ret = CA_DeriveKeyAndWrap(
+        h_session,
+        derive_mech,
+        CK_OBJECT_HANDLE(h_base_key),
+        c_template,
+        CK_ULONG(len(derive_template)),
+        wrap_mech,
+        CK_OBJECT_HANDLE(wrapping_key),
+        wrapped_key.array,
+        wrapped_key.size,
+    )
 
     if ret != CKR_OK:
         return ret, None

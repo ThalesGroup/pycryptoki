@@ -40,7 +40,7 @@ class TestObjectCreation(object):
             # CKA_VALUE in the template is a list of ints, but is returned as a single hex string.
             # Let's try to convert it back to the list of ints.
             value = attr[CKA_VALUE]
-            attr[CKA_VALUE] = [int(value[x:x+2], 16) for x in range(0, len(value), 2)]
+            attr[CKA_VALUE] = [int(value[x : x + 2], 16) for x in range(0, len(value), 2)]
             assert attr == template
         finally:
             c_destroy_object(self.h_session, h_object)
@@ -59,7 +59,7 @@ class TestObjectCreation(object):
             # CKA_VALUE in the template is a list of ints, but is returned as a single hex string.
             # Let's try to convert it back to the list of ints.
             value = attr[CKA_VALUE]
-            attr[CKA_VALUE] = [int(value[x:x + 2], 16) for x in range(0, len(value), 2)]
+            attr[CKA_VALUE] = [int(value[x : x + 2], 16) for x in range(0, len(value), 2)]
             assert attr == template
         finally:
             c_destroy_object(self.h_session, h_object)
@@ -71,7 +71,9 @@ class TestObjectCreation(object):
         """
         h_object = c_create_object_ex(self.h_session, DATA_TEMPLATE)
         try:
-            object_uid = c_get_attribute_value_ex(self.h_session, h_object, {CKA_OUID: None})[CKA_OUID]
+            object_uid = c_get_attribute_value_ex(self.h_session, h_object, {CKA_OUID: None})[
+                CKA_OUID
+            ]
             object_handle = ca_get_object_handle_ex(self.admin_slot, self.h_session, object_uid)
             assert h_object == object_handle
         finally:

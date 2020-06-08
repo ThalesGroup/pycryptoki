@@ -1027,6 +1027,21 @@ C_GetMechanismInfo = make_late_binding_function(
 C_InitToken = make_late_binding_function(
     "C_InitToken", [CK_SLOT_ID, CK_UTF8CHAR_PTR, CK_ULONG, CK_UTF8CHAR_PTR]
 )
+CA_InitToken = make_late_binding_function(
+    "CA_InitToken",
+    [
+        CK_SLOT_ID,
+        CK_UTF8CHAR_PTR,
+        CK_ULONG,
+        CK_UTF8CHAR_PTR,
+        CK_BYTE_PTR,
+        CK_ULONG,
+        CK_ULONG,
+        CK_POLICY_INFO_PTR,
+        CK_ULONG,
+        CK_POLICY_INFO_PTR,
+    ],
+)
 C_InitPIN = make_late_binding_function("C_InitPIN", [CK_SESSION_HANDLE, CK_UTF8CHAR_PTR, CK_ULONG])
 C_SetPIN = make_late_binding_function(
     "C_SetPIN", [CK_SESSION_HANDLE, CK_UTF8CHAR_PTR, CK_ULONG, CK_UTF8CHAR_PTR, CK_ULONG]
@@ -1225,6 +1240,8 @@ C_WaitForSlotEvent = make_late_binding_function(
     "C_WaitForSlotEvent", [CK_FLAGS, CK_SLOT_ID_PTR, CK_VOID_PTR]
 )
 
+CA_RandomizeApplicationID = make_late_binding_function("CA_RandomizeApplicationID", [])
+
 CA_GetApplicationID = make_late_binding_function(
     "CA_GetApplicationID", [POINTER(CK_APPLICATION_ID)]
 )
@@ -1239,6 +1256,26 @@ CA_CloseApplicationIDV2 = make_late_binding_function(
 
 CA_SetApplicationIDV2 = make_late_binding_function(
     "CA_SetApplicationIDV2", [POINTER(CK_APPLICATION_ID)]
+)
+
+CA_OpenSessionWithAppIDV2 = make_late_binding_function(
+    "CA_OpenSessionWithAppIDV2",
+    [
+        CK_SLOT_ID,
+        CK_FLAGS,
+        POINTER(CK_APPLICATION_ID),
+        CK_VOID_PTR,
+        CK_NOTIFY,
+        CK_SESSION_HANDLE_PTR,
+    ],
+)
+
+CA_OpenApplicationIDForContainerV2 = make_late_binding_function(
+    "CA_OpenApplicationIDForContainerV2", [CK_SLOT_ID, POINTER(CK_APPLICATION_ID), CK_ULONG]
+)
+
+CA_CloseApplicationIDForContainerV2 = make_late_binding_function(
+    "CA_CloseApplicationIDForContainerV2", [CK_SLOT_ID, POINTER(CK_APPLICATION_ID), CK_ULONG]
 )
 
 CA_Bip32ImportPublicKey = make_late_binding_function(
@@ -1261,4 +1298,184 @@ CA_Bip32ExportPublicKey = make_late_binding_function(
         CK_BYTE_PTR,  # Base58 encoded data dest.
         CK_ULONG_PTR,  # Output length
     ],
+)
+
+
+CA_STCRegisterV2 = make_late_binding_function(
+    "CA_STCRegisterV2",
+    [
+        CK_SESSION_HANDLE,
+        CK_SLOT_ID,
+        POINTER(CK_CHAR),
+        CK_ULONG,
+        CK_ULONG,
+        POINTER(CK_BYTE),
+        CK_ULONG,
+    ],
+)
+
+
+CA_STCGetPubKey = make_late_binding_function(
+    "CA_STCGetPubKey",
+    [
+        CK_SESSION_HANDLE,
+        CK_SLOT_ID,
+        POINTER(CK_CHAR),
+        POINTER(CK_CHAR),
+        CK_ULONG_PTR,
+        POINTER(CK_CHAR),
+        CK_ULONG_PTR,
+    ],
+)
+
+
+CA_STCGetClientsList = make_late_binding_function(
+    "CA_STCGetClientsList", [CK_SESSION_HANDLE, CK_SLOT_ID, CK_ULONG_PTR, CK_ULONG_PTR]
+)
+
+
+CA_STCGetClientInfoV2 = make_late_binding_function(
+    "CA_STCGetClientInfoV2",
+    [
+        CK_SESSION_HANDLE,
+        CK_SLOT_ID,
+        CK_ULONG,
+        POINTER(CK_CHAR),
+        CK_ULONG_PTR,
+        CK_ULONG_PTR,
+        POINTER(CK_BYTE),
+        CK_ULONG_PTR,
+    ],
+)
+
+
+CA_STCGetPartPubKey = make_late_binding_function(
+    "CA_STCGetPartPubKey",
+    [CK_SESSION_HANDLE, CK_SLOT_ID, POINTER(CK_CHAR), CK_ULONG_PTR, POINTER(CK_CHAR), CK_ULONG_PTR],
+)
+
+
+CA_STCGetAdminPubKey = make_late_binding_function(
+    "CA_STCGetAdminPubKey",
+    [CK_SLOT_ID, POINTER(CK_CHAR), CK_ULONG_PTR, POINTER(CK_CHAR), CK_ULONG_PTR],
+)
+
+
+CA_STCGetPID = make_late_binding_function(
+    "CA_STCGetPID", [CK_SESSION_HANDLE, CK_SLOT_ID, CK_ULONG_PTR, CK_BYTE_PTR, CK_ULONG_PTR]
+)
+
+
+CA_STCGetAdminPID = make_late_binding_function(
+    "CA_STCGetAdminPID", [CK_SLOT_ID, CK_ULONG_PTR, CK_BYTE_PTR, CK_ULONG_PTR]
+)
+
+
+CA_STCSetCipherAlgorithm = make_late_binding_function(
+    "CA_STCSetCipherAlgorithm", [CK_SESSION_HANDLE, CK_ULONG, CK_ULONG]
+)
+
+
+CA_STCGetCipherAlgorithm = make_late_binding_function(
+    "CA_STCGetCipherAlgorithm", [CK_SESSION_HANDLE, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR]
+)
+
+
+CA_STCClearCipherAlgorithm = make_late_binding_function(
+    "CA_STCClearCipherAlgorithm", [CK_SESSION_HANDLE, CK_ULONG, CK_ULONG]
+)
+
+
+CA_STCSetDigestAlgorithm = make_late_binding_function(
+    "CA_STCSetDigestAlgorithm", [CK_SESSION_HANDLE, CK_ULONG, CK_ULONG]
+)
+
+
+CA_STCGetDigestAlgorithm = make_late_binding_function(
+    "CA_STCGetDigestAlgorithm", [CK_SESSION_HANDLE, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR]
+)
+
+
+CA_STCClearDigestAlgorithm = make_late_binding_function(
+    "CA_STCClearDigestAlgorithm", [CK_SESSION_HANDLE, CK_ULONG, CK_ULONG]
+)
+
+
+CA_STCSetKeyLifeTime = make_late_binding_function(
+    "CA_STCSetKeyLifeTime", [CK_SESSION_HANDLE, CK_ULONG, CK_ULONG]
+)
+
+
+CA_STCGetKeyLifeTime = make_late_binding_function(
+    "CA_STCGetKeyLifeTime", [CK_SESSION_HANDLE, CK_ULONG, CK_ULONG_PTR]
+)
+
+
+CA_STCSetKeyActivationTimeOut = make_late_binding_function(
+    "CA_STCSetKeyActivationTimeOut", [CK_SESSION_HANDLE, CK_ULONG, CK_ULONG]
+)
+
+
+CA_STCGetKeyActivationTimeOut = make_late_binding_function(
+    "CA_STCGetKeyActivationTimeOut", [CK_SESSION_HANDLE, CK_ULONG, CK_ULONG_PTR]
+)
+
+
+CA_STCSetMaxSessions = make_late_binding_function(
+    "CA_STCSetMaxSessions", [CK_SESSION_HANDLE, CK_ULONG, CK_ULONG]
+)
+
+
+CA_STCGetMaxSessions = make_late_binding_function(
+    "CA_STCGetMaxSessions", [CK_SESSION_HANDLE, CK_ULONG, CK_ULONG_PTR]
+)
+
+
+CA_STCSetSequenceWindowSize = make_late_binding_function(
+    "CA_STCSetSequenceWindowSize", [CK_SESSION_HANDLE, CK_ULONG, CK_ULONG]
+)
+
+
+CA_STCGetSequenceWindowSize = make_late_binding_function(
+    "CA_STCGetSequenceWindowSize", [CK_SESSION_HANDLE, CK_ULONG, CK_ULONG_PTR]
+)
+
+
+CA_STCIsEnabled = make_late_binding_function("CA_STCIsEnabled", [CK_ULONG, CK_BYTE_PTR])
+
+
+CA_STCGetState = make_late_binding_function("CA_STCGetState", [CK_ULONG, POINTER(CK_CHAR), CK_BYTE])
+
+
+CA_STCGetChannelID = make_late_binding_function("CA_STCGetChannelID", [CK_SLOT_ID, CK_ULONG_PTR])
+
+
+CA_STCGetCipherID = make_late_binding_function("CA_STCGetCipherID", [CK_SLOT_ID, CK_ULONG_PTR])
+
+
+CA_STCGetDigestID = make_late_binding_function("CA_STCGetDigestID", [CK_SLOT_ID, CK_ULONG_PTR])
+
+
+CA_STCGetCurrentKeyLife = make_late_binding_function(
+    "CA_STCGetCurrentKeyLife", [CK_SESSION_HANDLE, CK_ULONG, CK_ULONG_PTR]
+)
+
+
+CA_STCGetCipherIDs = make_late_binding_function(
+    "CA_STCGetCipherIDs", [CK_SLOT_ID, CK_ULONG_PTR, CK_BYTE_PTR]
+)
+
+
+CA_STCGetCipherNameByID = make_late_binding_function(
+    "CA_STCGetCipherNameByID", [CK_SLOT_ID, CK_ULONG, CK_CHAR_PTR, CK_BYTE]
+)
+
+
+CA_STCGetDigestIDs = make_late_binding_function(
+    "CA_STCGetDigestIDs", [CK_SLOT_ID, CK_ULONG_PTR, CK_BYTE_PTR]
+)
+
+
+CA_STCGetDigestNameByID = make_late_binding_function(
+    "CA_STCGetDigestNameByID", [CK_SLOT_ID, CK_ULONG, CK_CHAR_PTR, CK_BYTE]
 )

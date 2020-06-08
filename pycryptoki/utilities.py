@@ -6,10 +6,7 @@ Utility functions for user convenience. Differs from:
 
 """
 
-from pycryptoki.defines import (
-    CKF_RW_SESSION,
-    CKF_SERIAL_SESSION,
-)
+from pycryptoki.defines import CKF_RW_SESSION, CKF_SERIAL_SESSION
 from pycryptoki.exceptions import LunaException
 from pycryptoki.session_management import (
     c_initialize_ex,
@@ -18,7 +15,7 @@ from pycryptoki.session_management import (
     c_logout_ex,
     c_close_session_ex,
     c_finalize_ex,
-    c_get_session_info_ex
+    c_get_session_info_ex,
 )
 
 
@@ -101,7 +98,7 @@ class AuthenticatedSession(object):
         self.user = user
         self.session = session  # Session handle
         self.slot = slot
-        self._session = None    # Session object
+        self._session = None  # Session object
 
     def __enter__(self):
         """
@@ -113,7 +110,7 @@ class AuthenticatedSession(object):
             self._session = Session(self.slot)
             self.session = self._session.open()
         else:
-            self.slot = c_get_session_info_ex(self.session)['slotID']
+            self.slot = c_get_session_info_ex(self.session)["slotID"]
         try:
             login_ex(self.session, self.slot, self.password, self.user)
             return self.session

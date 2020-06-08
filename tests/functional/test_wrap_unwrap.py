@@ -9,15 +9,38 @@ import pytest
 from pycryptoki.ca_extensions.derive_wrap import ca_derive_key_and_wrap_ex
 from pycryptoki.default_templates import MECHANISM_LOOKUP_EXT as LOOKUP
 from pycryptoki.default_templates import get_default_key_template, CKM_SHA256_KEY_DERIVATION
-from pycryptoki.defines import (CKM_DES_ECB, CKM_DES_CBC, CKM_DES_CBC_PAD, CKM_DES_KEY_GEN,
-                                CKM_DES3_ECB, CKM_DES3_CBC, CKM_DES3_CBC_PAD, CKM_DES3_KEY_GEN,
-                                CKM_AES_ECB, CKM_AES_CBC, CKM_AES_CBC_PAD, CKM_AES_KEY_GEN,
-                                CKM_CAST3_ECB, CKM_CAST3_CBC, CKM_CAST3_CBC_PAD, CKM_CAST3_KEY_GEN,
-                                CKM_CAST5_ECB, CKM_CAST5_CBC, CKM_CAST5_CBC_PAD, CKM_CAST5_KEY_GEN,
-                                CKM_SEED_ECB, CKM_SEED_CBC, CKM_SEED_KEY_GEN,
-
-                                CKR_OK, CKA_DECRYPT, CKA_VERIFY, CKA_UNWRAP, CKM_AES_KWP,
-                                CKA_VALUE_LEN, CKA_EXTRACTABLE)
+from pycryptoki.defines import (
+    CKM_DES_ECB,
+    CKM_DES_CBC,
+    CKM_DES_CBC_PAD,
+    CKM_DES_KEY_GEN,
+    CKM_DES3_ECB,
+    CKM_DES3_CBC,
+    CKM_DES3_CBC_PAD,
+    CKM_DES3_KEY_GEN,
+    CKM_AES_ECB,
+    CKM_AES_CBC,
+    CKM_AES_CBC_PAD,
+    CKM_AES_KEY_GEN,
+    CKM_CAST3_ECB,
+    CKM_CAST3_CBC,
+    CKM_CAST3_CBC_PAD,
+    CKM_CAST3_KEY_GEN,
+    CKM_CAST5_ECB,
+    CKM_CAST5_CBC,
+    CKM_CAST5_CBC_PAD,
+    CKM_CAST5_KEY_GEN,
+    CKM_SEED_ECB,
+    CKM_SEED_CBC,
+    CKM_SEED_KEY_GEN,
+    CKR_OK,
+    CKA_DECRYPT,
+    CKA_VERIFY,
+    CKA_UNWRAP,
+    CKM_AES_KWP,
+    CKA_VALUE_LEN,
+    CKA_EXTRACTABLE,
+)
 from pycryptoki.encryption import c_wrap_key, c_unwrap_key, c_encrypt, c_decrypt
 from pycryptoki.key_generator import c_destroy_object, c_generate_key, c_generate_key_ex
 from pycryptoki.lookup_dicts import ret_vals_dictionary
@@ -26,57 +49,51 @@ from . import config as hsm_config
 
 logger = logging.getLogger(__name__)
 
-PARAM_LIST = [(CKM_DES_ECB, CKM_DES_KEY_GEN),
-              (CKM_DES_CBC, CKM_DES_KEY_GEN),
-              (CKM_DES_CBC_PAD, CKM_DES_KEY_GEN),
+PARAM_LIST = [
+    (CKM_DES_ECB, CKM_DES_KEY_GEN),
+    (CKM_DES_CBC, CKM_DES_KEY_GEN),
+    (CKM_DES_CBC_PAD, CKM_DES_KEY_GEN),
+    (CKM_DES3_ECB, CKM_DES3_KEY_GEN),
+    (CKM_DES3_CBC, CKM_DES3_KEY_GEN),
+    (CKM_DES3_CBC_PAD, CKM_DES3_KEY_GEN),
+    (CKM_AES_ECB, CKM_AES_KEY_GEN),
+    (CKM_AES_CBC, CKM_AES_KEY_GEN),
+    (CKM_AES_CBC_PAD, CKM_AES_KEY_GEN),
+    (CKM_CAST3_ECB, CKM_CAST3_KEY_GEN),
+    (CKM_CAST3_CBC, CKM_CAST3_KEY_GEN),
+    (CKM_CAST3_CBC_PAD, CKM_CAST3_KEY_GEN),
+    (CKM_CAST5_ECB, CKM_CAST5_KEY_GEN),
+    (CKM_CAST5_CBC, CKM_CAST5_KEY_GEN),
+    (CKM_CAST5_CBC_PAD, CKM_CAST5_KEY_GEN),
+    (CKM_SEED_ECB, CKM_SEED_KEY_GEN),
+    (CKM_SEED_CBC, CKM_SEED_KEY_GEN),
+]
 
-              (CKM_DES3_ECB, CKM_DES3_KEY_GEN),
-              (CKM_DES3_CBC, CKM_DES3_KEY_GEN),
-              (CKM_DES3_CBC_PAD, CKM_DES3_KEY_GEN),
-
-              (CKM_AES_ECB, CKM_AES_KEY_GEN),
-              (CKM_AES_CBC, CKM_AES_KEY_GEN),
-              (CKM_AES_CBC_PAD, CKM_AES_KEY_GEN),
-
-              (CKM_CAST3_ECB, CKM_CAST3_KEY_GEN),
-              (CKM_CAST3_CBC, CKM_CAST3_KEY_GEN),
-              (CKM_CAST3_CBC_PAD, CKM_CAST3_KEY_GEN),
-
-              (CKM_CAST5_ECB, CKM_CAST5_KEY_GEN),
-              (CKM_CAST5_CBC, CKM_CAST5_KEY_GEN),
-              (CKM_CAST5_CBC_PAD, CKM_CAST5_KEY_GEN),
-
-              (CKM_SEED_ECB, CKM_SEED_KEY_GEN),
-              (CKM_SEED_CBC, CKM_SEED_KEY_GEN)]
-
-EXTRA_PARAM = {CKM_DES_ECB: {},
-               CKM_DES_CBC: {'iv': list(range(8))},
-               CKM_DES_CBC_PAD: {},
-
-               CKM_DES3_ECB: {},
-               CKM_DES3_CBC: {'iv': list(range(8))},
-               CKM_DES3_CBC_PAD: {'iv': list(range(8))},
-
-               CKM_AES_ECB: {},
-               CKM_AES_CBC: {'iv': list(range(16))},
-               CKM_AES_CBC_PAD: {},
-
-               CKM_CAST3_ECB: {},
-               CKM_CAST3_CBC: {'iv': list(range(8))},
-               CKM_CAST3_CBC_PAD: {},
-
-               CKM_CAST5_ECB: {},
-               CKM_CAST5_CBC: {},
-               CKM_CAST5_CBC_PAD: {},
-
-               CKM_SEED_ECB: {},
-               CKM_SEED_CBC: {}}
+EXTRA_PARAM = {
+    CKM_DES_ECB: {},
+    CKM_DES_CBC: {"iv": list(range(8))},
+    CKM_DES_CBC_PAD: {},
+    CKM_DES3_ECB: {},
+    CKM_DES3_CBC: {"iv": list(range(8))},
+    CKM_DES3_CBC_PAD: {"iv": list(range(8))},
+    CKM_AES_ECB: {},
+    CKM_AES_CBC: {"iv": list(range(16))},
+    CKM_AES_CBC_PAD: {},
+    CKM_CAST3_ECB: {},
+    CKM_CAST3_CBC: {"iv": list(range(8))},
+    CKM_CAST3_CBC_PAD: {},
+    CKM_CAST5_ECB: {},
+    CKM_CAST5_CBC: {},
+    CKM_CAST5_CBC_PAD: {},
+    CKM_SEED_ECB: {},
+    CKM_SEED_CBC: {},
+}
 
 # Don't pop 'CKA_VALUE_LEN' for these mechs
 VALUE_LEN = [CKM_AES_KEY_GEN, CKM_CAST3_KEY_GEN, CKM_CAST5_KEY_GEN]
 
 
-@pytest.yield_fixture(scope='class')
+@pytest.yield_fixture(scope="class")
 def keys(auth_session):
     """ Fixture containing keys"""
     keys = {}
@@ -110,14 +127,19 @@ class TestWrappingKeys(object):
     """
     Testcases for wrapping/unwrapping keys.
     """
+
     def verify_ret(self, ret, expected_ret):
         """
         Assert that ret is as expected
         :param ret: the actual return value
         :param expected_ret: the expected return value
         """
-        assert ret == expected_ret, "Function should return: " + ret_vals_dictionary[expected_ret] \
-                                    + ".\nInstead returned: " + ret_vals_dictionary[ret]
+        assert ret == expected_ret, (
+            "Function should return: "
+            + ret_vals_dictionary[expected_ret]
+            + ".\nInstead returned: "
+            + ret_vals_dictionary[ret]
+        )
 
     @pytest.fixture(autouse=True)
     def setup_teardown(self, auth_session):
@@ -139,8 +161,9 @@ class TestWrappingKeys(object):
 
         return unwrap_temp
 
-    @pytest.mark.parametrize(('mech', 'k_type'), PARAM_LIST,
-                             ids=[LOOKUP[m][0] for m, _ in PARAM_LIST])
+    @pytest.mark.parametrize(
+        ("mech", "k_type"), PARAM_LIST, ids=[LOOKUP[m][0] for m, _ in PARAM_LIST]
+    )
     def test_wrap_unwrap_key(self, mech, k_type, keys):
         """
         Test key wrapping
@@ -156,19 +179,16 @@ class TestWrappingKeys(object):
             pytest.skip("No valid key found for {}".format(LOOKUP[mech][0]))
 
         # Wrap the key
-        wrap_mech = {"mech_type": mech,
-                     "params": extra_p}
+        wrap_mech = {"mech_type": mech, "params": extra_p}
         ret, wrapped_key = c_wrap_key(self.h_session, h_wrap_key, h_key, mechanism=wrap_mech)
         self.verify_ret(ret, CKR_OK)
 
         h_unwrapped_key = None
         try:
             # Unwrap the Key
-            ret, h_unwrapped_key = c_unwrap_key(self.h_session,
-                                                h_wrap_key,
-                                                wrapped_key,
-                                                unwrap_temp,
-                                                mechanism=wrap_mech)
+            ret, h_unwrapped_key = c_unwrap_key(
+                self.h_session, h_wrap_key, wrapped_key, unwrap_temp, mechanism=wrap_mech
+            )
             self.verify_ret(ret, CKR_OK)
 
             # Verify all of the attributes against the originally generated attributes
@@ -177,9 +197,11 @@ class TestWrappingKeys(object):
             if h_unwrapped_key:
                 c_destroy_object(self.h_session, h_unwrapped_key)
 
-    @pytest.mark.xfail(LooseVersion(hsm_config.get('firmware', "6.2.1")) < LooseVersion("7"),
-                       reason="Mechanism not supported on SA6")
-    @pytest.mark.parametrize('params', [{'iv': []}, {'iv': list(range(4))}])
+    @pytest.mark.xfail(
+        LooseVersion(hsm_config.get("firmware", "6.2.1")) < LooseVersion("7"),
+        reason="Mechanism not supported on SA6",
+    )
+    @pytest.mark.parametrize("params", [{"iv": []}, {"iv": list(range(4))}])
     def test_derive_key_and_wrap(self, params):
         """
         Tests CA_DeriveKeyAndWrap function
@@ -191,12 +213,19 @@ class TestWrappingKeys(object):
         derived_key_template = key_template.copy()
         h_wrapping_key = c_generate_key_ex(self.h_session, CKM_AES_KEY_GEN, key_template)
         wrap_mech = {"mech_type": CKM_AES_KWP, "params": params}
-        wrapped_key = ca_derive_key_and_wrap_ex(self.h_session, CKM_SHA256_KEY_DERIVATION, h_base_key,
-                                                derived_key_template, h_wrapping_key, wrap_mech)
+        wrapped_key = ca_derive_key_and_wrap_ex(
+            self.h_session,
+            CKM_SHA256_KEY_DERIVATION,
+            h_base_key,
+            derived_key_template,
+            h_wrapping_key,
+            wrap_mech,
+        )
         assert wrapped_key, "CA_DeriveKeyAndWrap returned an empty buffer"
 
-    @pytest.mark.parametrize(('mech', 'k_type'), PARAM_LIST,
-                             ids=[LOOKUP[m][0] for m, _ in PARAM_LIST])
+    @pytest.mark.parametrize(
+        ("mech", "k_type"), PARAM_LIST, ids=[LOOKUP[m][0] for m, _ in PARAM_LIST]
+    )
     def test_encrypt_wrap_unwrap_decrypt_key(self, mech, k_type, keys):
         """
         Test that encrypt/decrypt works with wrapped keys
@@ -218,30 +247,28 @@ class TestWrappingKeys(object):
         self.verify_ret(ret, CKR_OK)
 
         # Wrap the key
-        wrap_mech = {"mech_type": mech,
-                     "params": extra_p}
+        wrap_mech = {"mech_type": mech, "params": extra_p}
         ret, wrapped_key = c_wrap_key(self.h_session, h_wrap_key, h_key, mechanism=wrap_mech)
         self.verify_ret(ret, CKR_OK)
 
         h_unwrapped_key = None
         try:
             # Unwrap the Key
-            ret, h_unwrapped_key = c_unwrap_key(self.h_session, h_wrap_key,
-                                                wrapped_key,
-                                                unwrap_temp,
-                                                mechanism=wrap_mech)
+            ret, h_unwrapped_key = c_unwrap_key(
+                self.h_session, h_wrap_key, wrapped_key, unwrap_temp, mechanism=wrap_mech
+            )
             self.verify_ret(ret, CKR_OK)
 
             # Decrypt the data
-            ret, decrypted_string = c_decrypt(self.h_session,
-                                              h_unwrapped_key,
-                                              encrypted_data,
-                                              mechanism=enc_mech)
+            ret, decrypted_string = c_decrypt(
+                self.h_session, h_unwrapped_key, encrypted_data, mechanism=enc_mech
+            )
             self.verify_ret(ret, CKR_OK)
 
-            assert decrypted_string == data_to_encrypt, \
-                "The decrypted data should be the same as the data that was encrypted. " \
+            assert decrypted_string == data_to_encrypt, (
+                "The decrypted data should be the same as the data that was encrypted. "
                 "Instead found " + str(decrypted_string)
+            )
         finally:
             if h_unwrapped_key:
                 c_destroy_object(self.h_session, h_unwrapped_key)

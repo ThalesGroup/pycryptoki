@@ -5,10 +5,15 @@ from ctypes import byref
 
 from .attributes import Attributes
 from .cryptoki import C_DeriveKey
-from .cryptoki import C_DestroyObject, CK_OBJECT_HANDLE, CK_ULONG, C_GenerateKey, \
-    C_GenerateKeyPair, C_CopyObject
-from .default_templates import CKM_DES_KEY_GEN_TEMP, \
-    get_default_key_pair_template
+from .cryptoki import (
+    C_DestroyObject,
+    CK_OBJECT_HANDLE,
+    CK_ULONG,
+    C_GenerateKey,
+    C_GenerateKeyPair,
+    C_CopyObject,
+)
+from .default_templates import CKM_DES_KEY_GEN_TEMP, get_default_key_pair_template
 from .defines import CKM_DES_KEY_GEN, CKM_RSA_PKCS_KEY_PAIR_GEN
 from .mechanism import parse_mechanism
 from .exceptions import make_error_handle_function
@@ -76,9 +81,9 @@ def c_generate_key(h_session, mechanism=None, template=None):
 
     # ACTUALLY GENERATE KEY
     h_key = CK_OBJECT_HANDLE()
-    ret = C_GenerateKey(h_session,
-                        byref(mech), key_attributes.get_c_struct(),
-                        us_public_template_size, byref(h_key))
+    ret = C_GenerateKey(
+        h_session, byref(mech), key_attributes.get_c_struct(), us_public_template_size, byref(h_key)
+    )
 
     return ret, h_key.value
 
@@ -86,10 +91,7 @@ def c_generate_key(h_session, mechanism=None, template=None):
 c_generate_key_ex = make_error_handle_function(c_generate_key)
 
 
-def c_generate_key_pair(h_session,
-                        mechanism=None,
-                        pbkey_template=None,
-                        prkey_template=None):
+def c_generate_key_pair(h_session, mechanism=None, pbkey_template=None, prkey_template=None):
     """Generates a private and public key pair for a given flavor, and given public and private
     key templates. The return value will be the handle for the key.
 
@@ -117,10 +119,16 @@ def c_generate_key_pair(h_session,
 
     h_pbkey = CK_OBJECT_HANDLE()
     h_prkey = CK_OBJECT_HANDLE()
-    ret = C_GenerateKeyPair(h_session, byref(mech),
-                            pbkey_attributes.get_c_struct(), pbkey_template_size,
-                            prkey_attributes.get_c_struct(), prkey_template_size,
-                            byref(h_pbkey), byref(h_prkey))
+    ret = C_GenerateKeyPair(
+        h_session,
+        byref(mech),
+        pbkey_attributes.get_c_struct(),
+        pbkey_template_size,
+        prkey_attributes.get_c_struct(),
+        prkey_template_size,
+        byref(h_pbkey),
+        byref(h_prkey),
+    )
 
     return ret, h_pbkey.value, h_prkey.value
 
@@ -142,10 +150,14 @@ def c_derive_key(h_session, h_base_key, template, mechanism=None):
     mech = parse_mechanism(mechanism)
     h_key = CK_OBJECT_HANDLE()
     c_template = Attributes(template).get_c_struct()
-    ret = C_DeriveKey(h_session, mech,
-                      CK_OBJECT_HANDLE(h_base_key),
-                      c_template, CK_ULONG(len(template)),
-                      byref(h_key))
+    ret = C_DeriveKey(
+        h_session,
+        mech,
+        CK_OBJECT_HANDLE(h_base_key),
+        c_template,
+        CK_ULONG(len(template)),
+        byref(h_key),
+    )
     return ret, h_key.value
 
 

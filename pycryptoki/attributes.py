@@ -23,11 +23,18 @@ from ctypes import (
 )
 from functools import wraps
 
-from six import (b, string_types, integer_types, binary_type)
-from pycryptoki.conversions import (from_bytestring, from_hex, to_bytestring)
-from .cryptoki import (CK_ATTRIBUTE, CK_BBOOL, CK_ATTRIBUTE_TYPE, CK_ULONG, CK_BYTE, CK_CHAR,
-                       CK_KEY_STATUS)
-from .defines import (CKA_EKM_UID, CKA_GENERIC_1, CKA_GENERIC_2, CKA_GENERIC_3)
+from six import b, string_types, integer_types, binary_type
+from pycryptoki.conversions import from_bytestring, from_hex, to_bytestring
+from .cryptoki import (
+    CK_ATTRIBUTE,
+    CK_BBOOL,
+    CK_ATTRIBUTE_TYPE,
+    CK_ULONG,
+    CK_BYTE,
+    CK_CHAR,
+    CK_KEY_STATUS,
+)
+from .defines import CKA_EKM_UID, CKA_GENERIC_1, CKA_GENERIC_2, CKA_GENERIC_3
 from .defines import (
     CKA_USAGE_LIMIT,
     CKA_USAGE_COUNT,
@@ -85,7 +92,7 @@ from .defines import (
     CKA_VALUE,
     CKA_BYTES_REMAINING,
     CKA_FAILED_KEY_AUTH_COUNT,
-    CKA_KEY_STATUS
+    CKA_KEY_STATUS,
 )
 
 LOG = logging.getLogger(__name__)
@@ -251,6 +258,7 @@ def to_pka_key_status(val, reverse=False):
 
     return to_byte_array(val, reverse)
 
+
 @ret_type(CK_BYTE)
 def to_byte_array(val, reverse=False):
     """Converts an arbitrarily sized integer, list, or byte array
@@ -402,8 +410,8 @@ KEY_TRANSFORMS.update(
         # Dict
         CKA_UNWRAP_TEMPLATE: to_sub_attributes,
         CKA_DERIVE_TEMPLATE: to_sub_attributes,
-        #pka
-        CKA_KEY_STATUS: to_pka_key_status
+        # pka
+        CKA_KEY_STATUS: to_pka_key_status,
     }
 )
 

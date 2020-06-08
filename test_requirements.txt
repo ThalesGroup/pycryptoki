@@ -1,4 +1,5 @@
 pytz
 mock
-pytest==3.10.1
-hypothesis==4.6.1
+pytest
+hypothesis
+pytest-coverage

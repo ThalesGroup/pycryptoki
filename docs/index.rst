@@ -15,6 +15,8 @@ It's highly recommended that you have the `PKCS11 <https://www.cryptsoft.com/pkc
 handy, as pycryptoki uses that as the underlying C interface. Session management, object management,
 and other concepts are unchanged from PKCS11.
 
+See :ref:`usertypes` for the mapping of Luna users to PKCS11 constants.
+
 .. code-block:: python
 
    from pycryptoki.default_templates import *

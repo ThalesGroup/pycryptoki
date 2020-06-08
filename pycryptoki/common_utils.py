@@ -18,6 +18,7 @@ class CException(Exception):
     """
     Raised from attempts at parsing ctypes!
     """
+
     pass
 
 
@@ -144,9 +145,9 @@ class AutoCArray(object):
         """
         Return a legible version of the array.
         """
-        return "AutoCArray = ({ctype} * {size})({data})".format(ctype=self.ctype,
-                                                                size=len(self),
-                                                                data=self._array)
+        return "AutoCArray = ({ctype} * {size})({data})".format(
+            ctype=self.ctype, size=len(self), data=self._array
+        )
 
 
 def refresh_c_arrays(retries=1):

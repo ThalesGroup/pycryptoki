@@ -4,12 +4,22 @@ import pytest
 
 from . import config as hsm_config
 from pycryptoki.defaults import ADMIN_PARTITION_LABEL, ADMINISTRATOR_PASSWORD
-from pycryptoki.defines import CKF_TOKEN_PRESENT, CKF_LOGIN_REQUIRED, \
-    CKF_RESTORE_KEY_NOT_NEEDED, CKF_TOKEN_INITIALIZED, CKF_SERIAL_SESSION, CKF_SO_SESSION, \
-    CKF_RW_SESSION
-from pycryptoki.session_management import ca_factory_reset_ex, \
-    c_get_token_info_ex, c_close_all_sessions, c_close_all_sessions_ex, \
-    c_open_session_ex
+from pycryptoki.defines import (
+    CKF_TOKEN_PRESENT,
+    CKF_LOGIN_REQUIRED,
+    CKF_RESTORE_KEY_NOT_NEEDED,
+    CKF_TOKEN_INITIALIZED,
+    CKF_SERIAL_SESSION,
+    CKF_SO_SESSION,
+    CKF_RW_SESSION,
+)
+from pycryptoki.session_management import (
+    ca_factory_reset_ex,
+    c_get_token_info_ex,
+    c_close_all_sessions,
+    c_close_all_sessions_ex,
+    c_open_session_ex,
+)
 from pycryptoki.token_management import c_init_token_ex
 
 logger = logging.getLogger(__name__)
@@ -19,16 +29,16 @@ logger = logging.getLogger(__name__)
 def reset_to_defaults():
     yield
     # Factory Reset
-    slot = hsm_config['test_slot']
+    slot = hsm_config["test_slot"]
 
     c_close_all_sessions_ex(slot)
     ca_factory_reset_ex(slot)
 
     # Initialize the Admin Token
-    session_flags = (CKF_SERIAL_SESSION | CKF_RW_SESSION | CKF_SO_SESSION)
+    session_flags = CKF_SERIAL_SESSION | CKF_RW_SESSION | CKF_SO_SESSION
 
     h_session = c_open_session_ex(slot, session_flags)
-    c_init_token_ex(slot, hsm_config['admin_pwd'], ADMIN_PARTITION_LABEL)
+    c_init_token_ex(slot, hsm_config["admin_pwd"], ADMIN_PARTITION_LABEL)
 
     # TODO: change this for ppso hardware.
     # slot = get_token_by_label_ex(ADMIN_PARTITION_LABEL)
@@ -58,20 +68,29 @@ class TestGetTokenInfo(object):
         ca_factory_reset_ex(admin_slot)
 
         # Look at flags before initialization
-        flags = c_get_token_info_ex(admin_slot)['flags']
+        flags = c_get_token_info_ex(admin_slot)["flags"]
         expected_flags = CKF_TOKEN_PRESENT | CKF_LOGIN_REQUIRED | CKF_RESTORE_KEY_NOT_NEEDED
-        assert expected_flags & flags != 0, "After factory reset found flags " + str(
-            hex(flags)) + " on admin partition should match expected flags" + str(
-            hex(expected_flags))
+        assert expected_flags & flags != 0, (
+            "After factory reset found flags "
+            + str(hex(flags))
+            + " on admin partition should match expected flags"
+            + str(hex(expected_flags))
+        )
 
         c_init_token_ex(admin_slot, ADMINISTRATOR_PASSWORD, ADMIN_PARTITION_LABEL)
 
         # Test flags after initialization
-        flags = c_get_token_info_ex(admin_slot)['flags']
+        flags = c_get_token_info_ex(admin_slot)["flags"]
         expected_flags = expected_flags | CKF_TOKEN_INITIALIZED
-        assert flags & expected_flags != 0, "After initialization found flags " + str(
-            hex(flags)) + " on admin partition should match expected flags" + str(
-            hex(expected_flags))
-        logger.info("After initialization found flags " + str(
-            hex(flags)) + " on admin partition should match expected flags" + str(
-            hex(expected_flags)))
+        assert flags & expected_flags != 0, (
+            "After initialization found flags "
+            + str(hex(flags))
+            + " on admin partition should match expected flags"
+            + str(hex(expected_flags))
+        )
+        logger.info(
+            "After initialization found flags "
+            + str(hex(flags))
+            + " on admin partition should match expected flags"
+            + str(hex(expected_flags))
+        )

@@ -17,9 +17,21 @@ from six import integer_types
 from pycryptoki.conversions import from_bytestring
 from .attributes import Attributes, to_byte_array
 from .common_utils import refresh_c_arrays, AutoCArray
-from .cryptoki import C_GenerateRandom, CK_BYTE_PTR, CK_ULONG, \
-    C_SeedRandom, C_DigestInit, C_DigestUpdate, C_DigestFinal, C_Digest, C_CreateObject, \
-    CA_SetPedId, CK_SLOT_ID, CA_GetPedId, C_DigestKey
+from .cryptoki import (
+    C_GenerateRandom,
+    CK_BYTE_PTR,
+    CK_ULONG,
+    C_SeedRandom,
+    C_DigestInit,
+    C_DigestUpdate,
+    C_DigestFinal,
+    C_Digest,
+    C_CreateObject,
+    CA_SetPedId,
+    CK_SLOT_ID,
+    CA_GetPedId,
+    C_DigestKey,
+)
 from .defines import CKR_OK
 from .exceptions import make_error_handle_function
 from .mechanism import parse_mechanism
@@ -97,10 +109,9 @@ def c_digest(h_session, data_to_digest, digest_flavor, mechanism=None, output_bu
     is_multi_part_operation = isinstance(data_to_digest, (list, tuple))
 
     if is_multi_part_operation:
-        ret, digested_python_string = do_multipart_sign_or_digest(h_session, C_DigestUpdate,
-                                                                  C_DigestFinal,
-                                                                  data_to_digest,
-                                                                  output_buffer=output_buffer)
+        ret, digested_python_string = do_multipart_sign_or_digest(
+            h_session, C_DigestUpdate, C_DigestFinal, data_to_digest, output_buffer=output_buffer
+        )
     else:
         # Get arguments
         c_data_to_digest, c_digest_data_len = to_byte_array(from_bytestring(data_to_digest))
@@ -108,11 +119,14 @@ def c_digest(h_session, data_to_digest, digest_flavor, mechanism=None, output_bu
 
         if output_buffer is not None:
             size = CK_ULONG(output_buffer)
-            digested_data = AutoCArray(ctype=c_ubyte,
-                                       size=size)
-            ret = C_Digest(h_session,
-                           c_data_to_digest, c_digest_data_len,
-                           digested_data.array, digested_data.size)
+            digested_data = AutoCArray(ctype=c_ubyte, size=size)
+            ret = C_Digest(
+                h_session,
+                c_data_to_digest,
+                c_digest_data_len,
+                digested_data.array,
+                digested_data.size,
+            )
         else:
             digested_data = AutoCArray(ctype=c_ubyte)
 
@@ -120,9 +134,13 @@ def c_digest(h_session, data_to_digest, digest_flavor, mechanism=None, output_bu
             def _digest():
                 """ Perform the digest operations
                 """
-                return C_Digest(h_session,
-                                c_data_to_digest, c_digest_data_len,
-                                digested_data.array, digested_data.size)
+                return C_Digest(
+                    h_session,
+                    c_data_to_digest,
+                    c_digest_data_len,
+                    digested_data.array,
+                    digested_data.size,
+                )
 
             ret = _digest()
 
@@ -130,8 +148,7 @@ def c_digest(h_session, data_to_digest, digest_flavor, mechanism=None, output_bu
             return ret, None
 
         # Convert Digested data into a python string
-        digested_python_string = string_at(digested_data.array,
-                                           digested_data.size.contents.value)
+        digested_python_string = string_at(digested_data.array, digested_data.size.contents.value)
 
     return ret, digested_python_string
 

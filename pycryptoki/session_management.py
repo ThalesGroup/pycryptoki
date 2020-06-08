@@ -2,43 +2,53 @@
 Methods responsible for managing a user's session and login/c_logout
 """
 import logging
-from ctypes import cast, c_void_p, create_string_buffer, \
-    byref, pointer, string_at
+from ctypes import cast, c_void_p, create_string_buffer, byref, pointer, string_at
 
 from .common_utils import AutoCArray
+
 # cryptoki constants
-from .cryptoki import (CK_ULONG,
-                       CK_BBOOL,
-                       CK_SLOT_ID,
-                       CK_SLOT_INFO,
-                       CK_SESSION_HANDLE,
-                       CK_FLAGS,
-                       CK_NOTIFY,
-                       CK_SESSION_INFO,
-                       CK_USER_TYPE,
-                       CK_TOKEN_INFO,
-                       CK_VOID_PTR,
-                       CK_BYTE, CK_INFO, C_GetInfo, CA_GetFirmwareVersion, c_ulong,
-                       CK_C_INITIALIZE_ARGS, CK_C_INITIALIZE_ARGS_PTR)
+from .cryptoki import (
+    CK_ULONG,
+    CK_BBOOL,
+    CK_SLOT_ID,
+    CK_SLOT_INFO,
+    CK_SESSION_HANDLE,
+    CK_FLAGS,
+    CK_NOTIFY,
+    CK_SESSION_INFO,
+    CK_USER_TYPE,
+    CK_TOKEN_INFO,
+    CK_VOID_PTR,
+    CK_BYTE,
+    CK_INFO,
+    C_GetInfo,
+    CA_GetFirmwareVersion,
+    c_ulong,
+    CK_C_INITIALIZE_ARGS,
+    CK_C_INITIALIZE_ARGS_PTR,
+)
+
 # Cryptoki Functions
-from .cryptoki import (C_Initialize,
-                       C_GetSlotList,
-                       C_GetSlotInfo,
-                       C_CloseAllSessions,
-                       C_GetSessionInfo,
-                       C_OpenSession,
-                       C_Login,
-                       C_Logout,
-                       C_CloseSession,
-                       C_InitPIN,
-                       CA_FactoryReset,
-                       C_GetTokenInfo,
-                       C_Finalize,
-                       C_SetPIN,
-                       CA_OpenApplicationID,
-                       CA_CloseApplicationID,
-                       CA_Restart,
-                       CA_SetApplicationID)
+from .cryptoki import (
+    C_Initialize,
+    C_GetSlotList,
+    C_GetSlotInfo,
+    C_CloseAllSessions,
+    C_GetSessionInfo,
+    C_OpenSession,
+    C_Login,
+    C_Logout,
+    C_CloseSession,
+    C_InitPIN,
+    CA_FactoryReset,
+    C_GetTokenInfo,
+    C_Finalize,
+    C_SetPIN,
+    CA_OpenApplicationID,
+    CA_CloseApplicationID,
+    CA_Restart,
+    CA_SetApplicationID,
+)
 
 from .defines import CKR_OK, CKF_RW_SESSION, CKF_SERIAL_SESSION
 from .exceptions import make_error_handle_function, LunaCallException
@@ -104,9 +114,13 @@ def c_open_session(slot_num, flags=(CKF_SERIAL_SESSION | CKF_RW_SESSION)):
     h_session = CK_SESSION_HANDLE()
     arg3 = cast(arg3, c_void_p)
     # CFUNCTYPE(CK_RV, CK_SESSION_HANDLE, CK_NOTIFICATION, CK_VOID_PTR)
-    ret = C_OpenSession(CK_SLOT_ID(slot_num), CK_FLAGS(flags),
-                        cast(arg3, CK_VOID_PTR), CK_NOTIFY(0),
-                        pointer(h_session))
+    ret = C_OpenSession(
+        CK_SLOT_ID(slot_num),
+        CK_FLAGS(flags),
+        cast(arg3, CK_VOID_PTR),
+        CK_NOTIFY(0),
+        pointer(h_session),
+    )
     LOG.info("C_OpenSession: Opening Session. slot=%s", slot_num)
 
     return ret, h_session.value
@@ -126,11 +140,8 @@ def login(h_session, slot_num=1, password=None, user_type=1):
     :rtype: int
     """
     # LOGIN
-    LOG.info("C_Login: "
-             "user_type=%s, "
-             "slot=%s, "
-             "password=***", user_type, slot_num)
-    if password == '':
+    LOG.info("C_Login: " "user_type=%s, " "slot=%s, " "password=***", user_type, slot_num)
+    if password == "":
         password = None
 
     user_type = CK_USER_TYPE(user_type)
@@ -165,11 +176,11 @@ def c_get_info():
     info_struct = CK_INFO()
     ret = C_GetInfo(byref(info_struct))
     if ret == CKR_OK:
-        info['cryptokiVersion'] = info_struct.cryptokiVersion
-        info['manufacturerID'] = string_at(info_struct.manufacturerID)
-        info['flags'] = info_struct.flags
-        info['libraryDescription'] = string_at(info_struct.libraryDescription)
-        info['libraryVersion'] = info_struct.libraryVersion
+        info["cryptokiVersion"] = info_struct.cryptokiVersion
+        info["manufacturerID"] = string_at(info_struct.manufacturerID)
+        info["flags"] = info_struct.flags
+        info["libraryDescription"] = string_at(info_struct.libraryDescription)
+        info["libraryVersion"] = info_struct.libraryVersion
     return ret, info
 
 
@@ -185,14 +196,10 @@ def c_get_slot_list(token_present=True):
     """
     slots = AutoCArray(ctype=CK_ULONG)
 
-    rc = C_GetSlotList(CK_BBOOL(token_present),
-                       slots.array,
-                       slots.size)
+    rc = C_GetSlotList(CK_BBOOL(token_present), slots.array, slots.size)
     if rc != CKR_OK:
         return rc, []
-    rc = C_GetSlotList(CK_BBOOL(token_present),
-                       slots.array,
-                       slots.size)
+    rc = C_GetSlotList(CK_BBOOL(token_present), slots.array, slots.size)
     return rc, [x for x in slots]
 
 
@@ -212,16 +219,17 @@ def c_get_slot_info(slot):
     if ret != CKR_OK:
         return ret, {}
 
-    slot_info_dict['slotDescription'] = string_at(slot_info.slotDescription, 64).rstrip()
-    slot_info_dict['manufacturerID'] = string_at(slot_info.manufacturerID, 32).rstrip()
-    slot_info_dict['flags'] = slot_info.flags
-    hw_version = "{}.{}".format(slot_info.hardwareVersion.major,
-                                slot_info.hardwareVersion.minor)
-    slot_info_dict['hardwareVersion'] = hw_version
-    fw_version = "{}.{}.{}".format(slot_info.firmwareVersion.major,
-                                   slot_info.firmwareVersion.minor / 10,
-                                   slot_info.firmwareVersion.minor % 10)
-    slot_info_dict['firmwareVersion'] = fw_version
+    slot_info_dict["slotDescription"] = string_at(slot_info.slotDescription, 64).rstrip()
+    slot_info_dict["manufacturerID"] = string_at(slot_info.manufacturerID, 32).rstrip()
+    slot_info_dict["flags"] = slot_info.flags
+    hw_version = "{}.{}".format(slot_info.hardwareVersion.major, slot_info.hardwareVersion.minor)
+    slot_info_dict["hardwareVersion"] = hw_version
+    fw_version = "{}.{}.{}".format(
+        slot_info.firmwareVersion.major,
+        slot_info.firmwareVersion.minor / 10,
+        slot_info.firmwareVersion.minor % 10,
+    )
+    slot_info_dict["firmwareVersion"] = fw_version
     return ret, slot_info_dict
 
 
@@ -240,10 +248,10 @@ def c_get_session_info(session):
     ret = C_GetSessionInfo(CK_SESSION_HANDLE(session), byref(c_session_info))
 
     if ret == CKR_OK:
-        session_info['state'] = c_session_info.state
-        session_info['flags'] = c_session_info.flags
-        session_info['slotID'] = c_session_info.slotID
-        session_info['usDeviceError'] = c_session_info.usDeviceError
+        session_info["state"] = c_session_info.state
+        session_info["flags"] = c_session_info.flags
+        session_info["slotID"] = c_session_info.slotID
+        session_info["usDeviceError"] = c_session_info.usDeviceError
 
     return ret, session_info
 
@@ -265,30 +273,30 @@ def c_get_token_info(slot_id, rstrip=True):
     ret = C_GetTokenInfo(CK_ULONG(slot_id), byref(c_token_info))
 
     if ret == CKR_OK:
-        token_info['label'] = string_at(c_token_info.label, 32)
-        token_info['manufacturerID'] = string_at(c_token_info.manufacturerID, 32)
-        token_info['model'] = string_at(c_token_info.model, 16)
-        token_info['serialNumber'] = string_at(c_token_info.serialNumber, 16)
-        token_info['flags'] = c_token_info.flags
-        token_info['ulFreePrivateMemory'] = c_token_info.ulFreePrivateMemory
-        token_info['ulTotalPrivateMemory'] = c_token_info.ulTotalPrivateMemory
-        token_info['ulMaxSessionCount'] = c_token_info.usMaxSessionCount
-        token_info['ulSessionCount'] = c_token_info.usSessionCount
-        token_info['ulMaxRwSessionCount'] = c_token_info.usMaxRwSessionCount
-        token_info['ulRwSessionCount'] = c_token_info.usRwSessionCount
-        token_info['ulMaxPinLen'] = c_token_info.usMaxPinLen
-        token_info['ulMinPinLen'] = c_token_info.usMinPinLen
-        token_info['ulTotalPublicMemory'] = c_token_info.ulTotalPublicMemory
-        token_info['ulFreePublicMemory'] = c_token_info.ulFreePublicMemory
-        token_info['hardwareVersion'] = c_token_info.hardwareVersion
-        token_info['firmwareVersion'] = c_token_info.firmwareVersion
-        token_info['utcTime'] = string_at(c_token_info.utcTime, 16)
+        token_info["label"] = string_at(c_token_info.label, 32)
+        token_info["manufacturerID"] = string_at(c_token_info.manufacturerID, 32)
+        token_info["model"] = string_at(c_token_info.model, 16)
+        token_info["serialNumber"] = string_at(c_token_info.serialNumber, 16)
+        token_info["flags"] = c_token_info.flags
+        token_info["ulFreePrivateMemory"] = c_token_info.ulFreePrivateMemory
+        token_info["ulTotalPrivateMemory"] = c_token_info.ulTotalPrivateMemory
+        token_info["ulMaxSessionCount"] = c_token_info.usMaxSessionCount
+        token_info["ulSessionCount"] = c_token_info.usSessionCount
+        token_info["ulMaxRwSessionCount"] = c_token_info.usMaxRwSessionCount
+        token_info["ulRwSessionCount"] = c_token_info.usRwSessionCount
+        token_info["ulMaxPinLen"] = c_token_info.usMaxPinLen
+        token_info["ulMinPinLen"] = c_token_info.usMinPinLen
+        token_info["ulTotalPublicMemory"] = c_token_info.ulTotalPublicMemory
+        token_info["ulFreePublicMemory"] = c_token_info.ulFreePublicMemory
+        token_info["hardwareVersion"] = c_token_info.hardwareVersion
+        token_info["firmwareVersion"] = c_token_info.firmwareVersion
+        token_info["utcTime"] = string_at(c_token_info.utcTime, 16)
         if rstrip:
-            token_info['label'] = token_info['label'].rstrip()
-            token_info['manufacturerID'] = token_info['manufacturerID'].rstrip()
-            token_info['model'] = token_info['model'].rstrip()
-            token_info['serialNumber'] = token_info['serialNumber'].rstrip()
-            token_info['utcTime'] = token_info['utcTime'].rstrip()
+            token_info["label"] = token_info["label"].rstrip()
+            token_info["manufacturerID"] = token_info["manufacturerID"].rstrip()
+            token_info["model"] = token_info["model"].rstrip()
+            token_info["serialNumber"] = token_info["serialNumber"].rstrip()
+            token_info["utcTime"] = token_info["utcTime"].rstrip()
 
     return ret, token_info
 
@@ -391,15 +399,14 @@ def c_set_pin(h_session, old_pass, new_pass):
     :returns: The result code
 
     """
-    LOG.info("C_SetPIN: Changing password. "
-             "old_pass=%s, new_pass=%s", old_pass, new_pass)
+    LOG.info("C_SetPIN: Changing password. " "old_pass=%s, new_pass=%s", old_pass, new_pass)
 
     old_pass = AutoCArray(data=old_pass)
     new_pass = AutoCArray(data=new_pass)
 
-    ret = C_SetPIN(h_session,
-                   old_pass.array, old_pass.size.contents,
-                   new_pass.array, new_pass.size.contents)
+    ret = C_SetPIN(
+        h_session, old_pass.array, old_pass.size.contents, new_pass.array, new_pass.size.contents
+    )
     return ret
 
 
@@ -534,7 +541,7 @@ def get_firmware_version(slot):
             minor = ul_minor.value
             subminor = ul_subminor.value
     except AttributeError:
-        raw_firmware = c_get_token_info_ex(slot)['firmwareVersion']
+        raw_firmware = c_get_token_info_ex(slot)["firmwareVersion"]
         major = raw_firmware.major
         minor = raw_firmware.minor / 10
         subminor = raw_firmware.minor % 10
