@@ -65,7 +65,8 @@ from pycryptoki.defines import (
     CKM_DES_ECB,
     CKR_MECHANISM_INVALID,
     CKM_DES2_DUKPT_IPEK,
-)
+    CKM_AES_CBC_ENCRYPT_DATA,
+    CKM_AES_ECB_ENCRYPT_DATA)
 from pycryptoki.ca_extensions.object_handler import ca_destroy_multiple_objects_ex
 from pycryptoki.encryption import c_encrypt_ex, c_decrypt_ex
 from pycryptoki.key_generator import (
@@ -282,6 +283,37 @@ class TestKeys(object):
         key_template = get_session_template(get_default_key_template(key_type))
         h_base_key = c_generate_key_ex(self.h_session, key_type, key_template)
         mech = NullMech(d_type).to_c_mech()
+
+        derived_key_template = key_template.copy()
+        del derived_key_template[CKA_VALUE_LEN]
+
+        ret, h_derived_key = c_derive_key(self.h_session, h_base_key, key_template, mechanism=mech)
+        try:
+            self.verify_ret(ret, CKR_OK)
+            verify_object_attributes(self.h_session, h_derived_key, key_template)
+        finally:
+            if h_base_key:
+                c_destroy_object(self.h_session, h_base_key)
+            if h_derived_key:
+                c_destroy_object(self.h_session, h_derived_key)
+
+    @pytest.mark.parametrize(
+        "mech",
+        [
+            {
+                "mech_type": CKM_AES_CBC_ENCRYPT_DATA,
+                "params": {"data": list(range(32)), "iv": list(range(16))},
+            },
+            {
+                "mech_type": CKM_AES_ECB_ENCRYPT_DATA,
+                "params": {"data": list(range(32))},
+            }
+        ],
+        ids=["CKM_AES_CBC_ENCRYPT_DATA", "CKM_AES_ECB_ENCRYPT_DATA"],
+    )
+    def test_derive_key_aes_mechs(self, mech):
+        key_template = get_session_template(get_default_key_template(CKM_AES_KEY_GEN))
+        h_base_key = c_generate_key_ex(self.h_session, CKM_AES_KEY_GEN, key_template)
 
         derived_key_template = key_template.copy()
         del derived_key_template[CKA_VALUE_LEN]
