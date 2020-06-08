@@ -153,7 +153,7 @@ class AESECBEncryptDataMechanism(Mechanism):
         # Note: data should be a multiple of 16 long.
         params = CK_KEY_DERIVATION_STRING_DATA()
         pdata, data_len = to_byte_array(self.params["data"])
-        params.pData = cast(pdata, c_void_p)
+        params.pData = cast(pdata, CK_BYTE_PTR)
         params.ulLen = CK_ULONG(data_len)
         self.mech.pParameter = cast(pointer(params), c_void_p)
         self.mech.usParameterLen = CK_ULONG(sizeof(params))
@@ -182,7 +182,7 @@ class AESCBCEncryptDataMechanism(Mechanism):
         pdata, data_len = to_byte_array(self.params["data"])
         # Note: IV should always be a length of 8.
         p_iv, _ = to_byte_array(self.params["iv"])
-        params.pData = cast(pdata, c_void_p)
+        params.pData = cast(pdata, CK_BYTE_PTR)
         params.ulLen = CK_ULONG(data_len)
         params.iv = p_iv
         self.mech.pParameter = cast(pointer(params), c_void_p)
