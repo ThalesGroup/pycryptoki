@@ -5,27 +5,50 @@ import logging
 from ctypes import byref, c_ulong
 
 from .common_utils import AutoCArray, refresh_c_arrays
-from .cryptoki import CA_OpenSecureToken, CA_CloseSecureToken, CA_Extract, CA_Insert, \
-    CK_ULONG, \
-    CA_SIMExtract, CK_BYTE, string_at, create_string_buffer, POINTER, cast, pointer, \
-    CK_BYTE_PTR, c_ubyte, CA_SIMInsert, CA_SIMMultiSign
-from .defines import (CKA_SIM_NO_AUTHORIZATION, CKA_SIM_PASSWORD, CKA_SIM_CHALLENGE,
-                      CKA_SIM_SECURE_PORT, CKA_SIM_PORTABLE_NO_AUTHORIZATION,
-                      CKA_SIM_PORTABLE_PASSWORD, CKA_SIM_PORTABLE_CHALLENGE,
-                      CKA_SIM_PORTABLE_SECURE_PORT, CKR_OK)
+from .cryptoki import (
+    CA_OpenSecureToken,
+    CA_CloseSecureToken,
+    CA_Extract,
+    CA_Insert,
+    CK_ULONG,
+    CA_SIMExtract,
+    CK_BYTE,
+    string_at,
+    create_string_buffer,
+    POINTER,
+    cast,
+    pointer,
+    CK_BYTE_PTR,
+    c_ubyte,
+    CA_SIMInsert,
+    CA_SIMMultiSign,
+)
+from .defines import (
+    CKA_SIM_NO_AUTHORIZATION,
+    CKA_SIM_PASSWORD,
+    CKA_SIM_CHALLENGE,
+    CKA_SIM_SECURE_PORT,
+    CKA_SIM_PORTABLE_NO_AUTHORIZATION,
+    CKA_SIM_PORTABLE_PASSWORD,
+    CKA_SIM_PORTABLE_CHALLENGE,
+    CKA_SIM_PORTABLE_SECURE_PORT,
+    CKR_OK,
+)
 from .exceptions import make_error_handle_function
 from .mechanism import parse_mechanism
 
 logger = logging.getLogger(__name__)
 
-SIM_AUTH_FORMS = (CKA_SIM_NO_AUTHORIZATION,
-                  CKA_SIM_PASSWORD,
-                  CKA_SIM_CHALLENGE,
-                  CKA_SIM_SECURE_PORT,
-                  CKA_SIM_PORTABLE_NO_AUTHORIZATION,
-                  CKA_SIM_PORTABLE_PASSWORD,
-                  CKA_SIM_PORTABLE_CHALLENGE,
-                  CKA_SIM_PORTABLE_SECURE_PORT)
+SIM_AUTH_FORMS = (
+    CKA_SIM_NO_AUTHORIZATION,
+    CKA_SIM_PASSWORD,
+    CKA_SIM_CHALLENGE,
+    CKA_SIM_SECURE_PORT,
+    CKA_SIM_PORTABLE_NO_AUTHORIZATION,
+    CKA_SIM_PORTABLE_PASSWORD,
+    CKA_SIM_PORTABLE_CHALLENGE,
+    CKA_SIM_PORTABLE_SECURE_PORT,
+)
 
 
 def ca_open_secure_token(h_session, storage_path, dev_ID, mode):
@@ -39,8 +62,9 @@ def ca_open_secure_token(h_session, storage_path, dev_ID, mode):
     """
     number_of_elems = CK_ULONG(0)
     ph_ID = CK_ULONG(0)
-    ret = CA_OpenSecureToken(h_session, storage_path, dev_ID, mode, byref(number_of_elems),
-                             byref(ph_ID))
+    ret = CA_OpenSecureToken(
+        h_session, storage_path, dev_ID, mode, byref(number_of_elems), byref(ph_ID)
+    )
 
     return ret, number_of_elems.value, ph_ID.value
 
@@ -95,8 +119,9 @@ def ca_insert(h_session, mechanism):
 ca_insert_ex = make_error_handle_function(ca_insert)
 
 
-def ca_sim_extract(h_session, key_handles, authform, auth_secrets=None, subset_size=0,
-                   delete_after_extract=False):
+def ca_sim_extract(
+    h_session, key_handles, authform, auth_secrets=None, subset_size=0, delete_after_extract=False
+):
     """
     Extract multiple keys to a wrapped blob. The returned blob can then be written into
     a file.
@@ -118,9 +143,10 @@ def ca_sim_extract(h_session, key_handles, authform, auth_secrets=None, subset_s
         auth_secrets = []
 
     auth_secret_sizes = AutoCArray(data=[c_ulong(len(x)) for x in auth_secrets])
-    c_auth_secrets = AutoCArray(data=[cast(pointer(create_string_buffer(x, len(x))),
-                                           CK_BYTE_PTR) for x in auth_secrets],
-                                ctype=POINTER(CK_BYTE))
+    c_auth_secrets = AutoCArray(
+        data=[cast(pointer(create_string_buffer(x, len(x))), CK_BYTE_PTR) for x in auth_secrets],
+        ctype=POINTER(CK_BYTE),
+    )
     c_key_handles = AutoCArray(key_handles)
     blob_data = AutoCArray(ctype=c_ubyte)
 
@@ -130,13 +156,19 @@ def ca_sim_extract(h_session, key_handles, authform, auth_secrets=None, subset_s
         Closure to allow us to get the size of the blob_data.
         """
         blobarr, bloblen = blob_data.array, blob_data.size
-        return CA_SIMExtract(h_session,
-                             len(c_key_handles), c_key_handles.array,
-                             CK_ULONG(len(auth_secrets)), CK_ULONG(subset_size),
-                             authform,
-                             auth_secret_sizes.array, c_auth_secrets.array,
-                             delete_after_extract,
-                             bloblen, blobarr)
+        return CA_SIMExtract(
+            h_session,
+            len(c_key_handles),
+            c_key_handles.array,
+            CK_ULONG(len(auth_secrets)),
+            CK_ULONG(subset_size),
+            authform,
+            auth_secret_sizes.array,
+            c_auth_secrets.array,
+            delete_after_extract,
+            bloblen,
+            blobarr,
+        )
 
     ret = extract()
     if ret == 0:
@@ -166,9 +198,10 @@ def ca_sim_insert(h_session, blob_data, authform, auth_secrets=None):
         auth_secrets = []
 
     auth_secret_sizes = AutoCArray(data=[c_ulong(len(x)) for x in auth_secrets])
-    c_auth_secrets = AutoCArray(data=[cast(create_string_buffer(x, len(x)), CK_BYTE_PTR)
-                                      for x in auth_secrets],
-                                ctype=POINTER(CK_BYTE))
+    c_auth_secrets = AutoCArray(
+        data=[cast(create_string_buffer(x, len(x)), CK_BYTE_PTR) for x in auth_secrets],
+        ctype=POINTER(CK_BYTE),
+    )
     c_key_handles = AutoCArray()
     c_blob_data = create_string_buffer(blob_data, len(blob_data))
 
@@ -178,11 +211,17 @@ def ca_sim_insert(h_session, blob_data, authform, auth_secrets=None):
         Closure to allow us to get the size of the blob_data.
         """
         key_array, key_array_len = c_key_handles.array, c_key_handles.size
-        return CA_SIMInsert(h_session,
-                            CK_ULONG(len(auth_secrets)), authform,
-                            auth_secret_sizes.array, c_auth_secrets.array,
-                            len(blob_data), cast(c_blob_data, POINTER(CK_BYTE)),
-                            key_array_len, key_array)
+        return CA_SIMInsert(
+            h_session,
+            CK_ULONG(len(auth_secrets)),
+            authform,
+            auth_secret_sizes.array,
+            c_auth_secrets.array,
+            len(blob_data),
+            cast(c_blob_data, POINTER(CK_BYTE)),
+            key_array_len,
+            key_array,
+        )
 
     ret = insert()
     if ret == 0:
@@ -219,9 +258,10 @@ def ca_sim_multisign(h_session, blob_data, data_to_sign, mechanism, authform, au
     c_mechanism = parse_mechanism(mechanism)
 
     auth_secret_sizes = AutoCArray(data=[c_ulong(len(x)) for x in auth_secrets])
-    c_auth_secrets = AutoCArray(data=[cast(create_string_buffer(x, len(x)),
-                                           CK_BYTE_PTR) for x in auth_secrets],
-                                ctype=POINTER(CK_BYTE))
+    c_auth_secrets = AutoCArray(
+        data=[cast(create_string_buffer(x, len(x)), CK_BYTE_PTR) for x in auth_secrets],
+        ctype=POINTER(CK_BYTE),
+    )
     c_blob_data = create_string_buffer(blob_data, len(blob_data))
 
     # Output array of signatures (array of pointers
@@ -234,26 +274,28 @@ def ca_sim_multisign(h_session, blob_data, data_to_sign, mechanism, authform, au
 
     # Input data sizes
     data_lens = AutoCArray([len(x) for x in data_to_sign])
-    data_buffers = [cast(create_string_buffer(chunk, len(chunk)), CK_BYTE_PTR)
-                    for chunk in data_to_sign]
+    data_buffers = [
+        cast(create_string_buffer(chunk, len(chunk)), CK_BYTE_PTR) for chunk in data_to_sign
+    ]
 
     # Input data to sign -- array of pointers
-    input_data = AutoCArray(ctype=CK_BYTE_PTR,
-                            data=data_buffers)
+    input_data = AutoCArray(ctype=CK_BYTE_PTR, data=data_buffers)
 
-    ret = CA_SIMMultiSign(h_session,
-                          byref(c_mechanism),
-                          CK_ULONG(len(auth_secrets)),
-                          authform,
-                          auth_secret_sizes.array,
-                          c_auth_secrets.array,
-                          len(blob_data),
-                          cast(c_blob_data, CK_BYTE_PTR),
-                          len(data_to_sign),
-                          data_lens.array,
-                          input_data.array,
-                          signature_lens,
-                          signatures)
+    ret = CA_SIMMultiSign(
+        h_session,
+        byref(c_mechanism),
+        CK_ULONG(len(auth_secrets)),
+        authform,
+        auth_secret_sizes.array,
+        c_auth_secrets.array,
+        len(blob_data),
+        cast(c_blob_data, CK_BYTE_PTR),
+        len(data_to_sign),
+        data_lens.array,
+        input_data.array,
+        signature_lens,
+        signatures,
+    )
     py_sigs = []
     if ret == CKR_OK:
         for sig, sig_len in zip(signatures, signature_lens):

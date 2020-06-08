@@ -18,6 +18,7 @@ class TestSessionManagement(object):
     """
     Tests session management functions
     """
+
     @pytest.fixture(autouse=True)
     def setup_teardown(self, auth_session):
         self.admin_slot = hsm_config["test_slot"]
@@ -28,20 +29,20 @@ class TestSessionManagement(object):
         ret, sess_info = sess_mang.c_get_session_info(self.h_session)
         assert ret == CKR_OK
         # Checks that session_info dictionary is the right format. Does not check the values
-        assert isinstance(sess_info['state'], integer_types)
-        assert isinstance(sess_info['flags'], integer_types)
-        assert isinstance(sess_info['slotID'], integer_types)
-        assert isinstance(sess_info['usDeviceError'], integer_types)
+        assert isinstance(sess_info["state"], integer_types)
+        assert isinstance(sess_info["flags"], integer_types)
+        assert isinstance(sess_info["slotID"], integer_types)
+        assert isinstance(sess_info["usDeviceError"], integer_types)
 
     def test_ca_get_session_info(self):
         """ ca_get_session_info() """
         ret, sess_info = ca_get_session_info(self.h_session)
         assert ret == CKR_OK
         # Checks that session_info dictionary is the right format. Does not check the values
-        assert isinstance(sess_info['aidHigh'], integer_types)
-        assert isinstance(sess_info['aidLow'], integer_types)
-        assert isinstance(sess_info['containerNumber'], integer_types)
-        assert isinstance(sess_info['authenticationLevel'], integer_types)
+        assert isinstance(sess_info["aidHigh"], integer_types)
+        assert isinstance(sess_info["aidLow"], integer_types)
+        assert isinstance(sess_info["containerNumber"], integer_types)
+        assert isinstance(sess_info["authenticationLevel"], integer_types)
 
     def test_get_slot_dict(self):
         """ get_slot_dict() """

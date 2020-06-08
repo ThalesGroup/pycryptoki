@@ -29,15 +29,13 @@ def ca_get_object_handle(slot, session, objectouid):
     objecttype = CK_ULONG()
     objecthandle = CK_ULONG()
     # ulContainerNumber is required which is of type CK_ULONG
-    container_number = ca_get_session_info_ex(session)['containerNumber']
+    container_number = ca_get_session_info_ex(session)["containerNumber"]
     ouid, size_ouid = to_byte_array(int(objectouid, 16))
     c_ouid = cast(ouid, POINTER(c_ubyte))
 
-    ret = CA_GetObjectHandle(CK_SLOT_ID(slot),
-                             container_number,
-                             c_ouid,
-                             byref(objecttype),
-                             byref(objecthandle))
+    ret = CA_GetObjectHandle(
+        CK_SLOT_ID(slot), container_number, c_ouid, byref(objecttype), byref(objecthandle)
+    )
     if ret != CKR_OK:
         return ret, None
 

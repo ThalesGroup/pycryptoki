@@ -15,9 +15,9 @@ def _decode(value):
     :return: string.
     """
     try:
-        ret = value.decode('utf-8', 'strict')
+        ret = value.decode("utf-8", "strict")
     except UnicodeDecodeError:
-        ret = to_hex(from_bytestring(value)).decode('utf-8', 'backslashreplace')
+        ret = to_hex(from_bytestring(value)).decode("utf-8", "backslashreplace")
     except Exception:
         ret = value
     return ret
@@ -32,6 +32,7 @@ def _coerce_mech_to_str(mech):
     :return: String display of a mechanism.
     """
     from .mechanism import Mechanism
+
     if isinstance(mech, dict):
         mech = Mechanism(**mech)
     elif isinstance(mech, CK_MECHANISM):

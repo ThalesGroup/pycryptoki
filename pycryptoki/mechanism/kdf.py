@@ -10,7 +10,8 @@ from ..cryptoki import CK_PRF_KDF_PARAMS, CK_BYTE_PTR, CK_ULONG
 
 class PRFKDFDeriveMechanism(Mechanism):
     """PRF KDF-specific mechanism."""
-    REQUIRED_PARAMS = ['prf_type', 'label', 'context', 'counter', 'encoding_scheme']
+
+    REQUIRED_PARAMS = ["prf_type", "label", "context", "counter", "encoding_scheme"]
 
     def to_c_mech(self):
         """
@@ -21,22 +22,22 @@ class PRFKDFDeriveMechanism(Mechanism):
         """
         super(PRFKDFDeriveMechanism, self).to_c_mech()
         params = CK_PRF_KDF_PARAMS()
-        params.prfType = self.params['prf_type']
-        if self.params['label'] is None:
-            label = ''
+        params.prfType = self.params["prf_type"]
+        if self.params["label"] is None:
+            label = ""
             label_len = 0
         else:
-            label, label_len = to_byte_array(self.params['label'])
-        if self.params['context'] is None:
-            context = ''
+            label, label_len = to_byte_array(self.params["label"])
+        if self.params["context"] is None:
+            context = ""
             context_len = 0
         else:
-            context, context_len = to_byte_array(self.params['context'])
-        if self.params['counter'] is None:
+            context, context_len = to_byte_array(self.params["context"])
+        if self.params["counter"] is None:
             counter = 1
         else:
-            counter = self.params['counter']
-        ul_encoding_scheme = self.params['encoding_scheme']
+            counter = self.params["counter"]
+        ul_encoding_scheme = self.params["encoding_scheme"]
 
         params.pLabel = cast(label, CK_BYTE_PTR)
         params.ulLabelLen = label_len

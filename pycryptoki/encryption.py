@@ -9,17 +9,25 @@ from .string_helpers import _coerce_mech_to_str
 from .attributes import Attributes, to_byte_array
 from .common_utils import AutoCArray, refresh_c_arrays
 from .conversions import from_bytestring
-from .cryptoki import CK_ULONG, \
-    C_EncryptInit, C_Encrypt
-from .cryptoki import C_Decrypt, C_DecryptInit, CK_OBJECT_HANDLE, \
-    C_WrapKey, C_UnwrapKey, C_EncryptUpdate, C_EncryptFinal, CK_BYTE_PTR, \
-    C_DecryptUpdate, C_DecryptFinal
+from .cryptoki import CK_ULONG, C_EncryptInit, C_Encrypt
+from .cryptoki import (
+    C_Decrypt,
+    C_DecryptInit,
+    CK_OBJECT_HANDLE,
+    C_WrapKey,
+    C_UnwrapKey,
+    C_EncryptUpdate,
+    C_EncryptFinal,
+    CK_BYTE_PTR,
+    C_DecryptUpdate,
+    C_DecryptFinal,
+)
 from .defines import CKR_OK
 from .exceptions import make_error_handle_function
 from .lookup_dicts import ret_vals_dictionary
 from .mechanism import parse_mechanism
 
-MAX_BUFFER = 0xffff
+MAX_BUFFER = 0xFFFF
 
 LOG = logging.getLogger(__name__)
 
@@ -70,19 +78,17 @@ def c_encrypt(h_session, h_key, data, mechanism, output_buffer=None):
         return ret, None
 
     if is_multi_part_operation:
-        ret, encrypted_python_string = do_multipart_operation(h_session, C_EncryptUpdate,
-                                                              C_EncryptFinal, data, output_buffer)
+        ret, encrypted_python_string = do_multipart_operation(
+            h_session, C_EncryptUpdate, C_EncryptFinal, data, output_buffer
+        )
     else:
         plain_data, plain_data_length = to_byte_array(from_bytestring(data))
         plain_data = cast(plain_data, POINTER(c_ubyte))
         if output_buffer is not None:
             size = CK_ULONG(output_buffer)
-            enc_data = AutoCArray(ctype=c_ubyte,
-                                  size=size)
+            enc_data = AutoCArray(ctype=c_ubyte, size=size)
 
-            ret = C_Encrypt(h_session,
-                            plain_data, plain_data_length,
-                            enc_data.array, enc_data.size)
+            ret = C_Encrypt(h_session, plain_data, plain_data_length, enc_data.array, enc_data.size)
 
         else:
             enc_data = AutoCArray(ctype=c_ubyte)
@@ -90,9 +96,9 @@ def c_encrypt(h_session, h_key, data, mechanism, output_buffer=None):
             @refresh_c_arrays(1)
             def _encrypt():
                 """Closure for getting the buffer size with encrypt."""
-                return C_Encrypt(h_session,
-                                 plain_data, plain_data_length,
-                                 enc_data.array, enc_data.size)
+                return C_Encrypt(
+                    h_session, plain_data, plain_data_length, enc_data.array, enc_data.size
+                )
 
             ret = _encrypt()
         if ret != CKR_OK:
@@ -116,7 +122,7 @@ def _split_string_into_list(python_string, block_size):
 
     """
     total_length = len(python_string)
-    return [python_string[x:x + block_size] for x in range(0, total_length, block_size)]
+    return [python_string[x : x + block_size] for x in range(0, total_length, block_size)]
 
 
 def _get_string_from_list(list_of_strings):
@@ -172,8 +178,9 @@ def c_decrypt(h_session, h_key, encrypted_data, mechanism, output_buffer=None):
     is_multi_part_operation = isinstance(encrypted_data, (list, tuple))
 
     if is_multi_part_operation:
-        ret, python_data = do_multipart_operation(h_session, C_DecryptUpdate, C_DecryptFinal,
-                                                  encrypted_data, output_buffer)
+        ret, python_data = do_multipart_operation(
+            h_session, C_DecryptUpdate, C_DecryptFinal, encrypted_data, output_buffer
+        )
     else:
 
         # Get the length of the final data
@@ -187,21 +194,20 @@ def c_decrypt(h_session, h_key, encrypted_data, mechanism, output_buffer=None):
         c_enc_data = cast(c_enc_data, POINTER(c_ubyte))
         if output_buffer is not None:
             size = CK_ULONG(output_buffer)
-            decrypted_data = AutoCArray(ctype=c_ubyte,
-                                        size=size)
+            decrypted_data = AutoCArray(ctype=c_ubyte, size=size)
 
-            ret = C_Decrypt(h_session,
-                            c_enc_data, c_enc_data_len,
-                            decrypted_data.array, decrypted_data.size)
+            ret = C_Decrypt(
+                h_session, c_enc_data, c_enc_data_len, decrypted_data.array, decrypted_data.size
+            )
         else:
             decrypted_data = AutoCArray(ctype=c_ubyte)
 
             @refresh_c_arrays(1)
             def _decrypt():
                 """ Perform the decryption ops"""
-                return C_Decrypt(h_session,
-                                 c_enc_data, c_enc_data_len,
-                                 decrypted_data.array, decrypted_data.size)
+                return C_Decrypt(
+                    h_session, c_enc_data, c_enc_data_len, decrypted_data.array, decrypted_data.size
+                )
 
             ret = _decrypt()
         if ret != CKR_OK:
@@ -216,11 +222,9 @@ def c_decrypt(h_session, h_key, encrypted_data, mechanism, output_buffer=None):
 c_decrypt_ex = make_error_handle_function(c_decrypt)
 
 
-def do_multipart_operation(h_session,
-                           c_update_function,
-                           c_finalize_function,
-                           input_data_list,
-                           output_buffer=None):
+def do_multipart_operation(
+    h_session, c_update_function, c_finalize_function, input_data_list, output_buffer=None
+):
     """Some code which will do a multipart encrypt or decrypt since they are the same
     with just different functions called
 
@@ -254,36 +258,50 @@ def do_multipart_operation(h_session,
     for index, chunk in enumerate(input_data_list):
         if output_buffer:
             out_data_len = CK_ULONG(output_buffer[index])
-            out_data = cast(create_string_buffer(b'', output_buffer[index]), CK_BYTE_PTR)
+            out_data = cast(create_string_buffer(b"", output_buffer[index]), CK_BYTE_PTR)
         else:
             out_data_len = CK_ULONG()
             out_data = None
         data_chunk, data_chunk_len = to_byte_array(from_bytestring(chunk))
         data_chunk = cast(data_chunk, POINTER(c_ubyte))
 
-        ret = c_update_function(h_session,
-                                data_chunk, data_chunk_len,
-                                out_data, byref(out_data_len))
+        ret = c_update_function(
+            h_session, data_chunk, data_chunk_len, out_data, byref(out_data_len)
+        )
         if ret != CKR_OK:
-            LOG.debug("%s call on chunk %.20s (%s/%s) Failed w/ ret %s (%s)",
-                      c_update_function.__name__,
-                      chunk, index + 1, len(input_data_list),
-                      ret_vals_dictionary.get(ret, "Unknown retcode"), str(hex(ret)))
+            LOG.debug(
+                "%s call on chunk %.20s (%s/%s) Failed w/ ret %s (%s)",
+                c_update_function.__name__,
+                chunk,
+                index + 1,
+                len(input_data_list),
+                ret_vals_dictionary.get(ret, "Unknown retcode"),
+                str(hex(ret)),
+            )
             error = ret
             break
 
         if not output_buffer:
             # Need a second call to actually get the data.
             LOG.debug("Creating cipher data buffer of size %s", out_data_len.value)
-            out_data = create_string_buffer(b'', out_data_len.value)
-            ret = c_update_function(h_session,
-                                    data_chunk, data_chunk_len,
-                                    cast(out_data, CK_BYTE_PTR), byref(out_data_len))
+            out_data = create_string_buffer(b"", out_data_len.value)
+            ret = c_update_function(
+                h_session,
+                data_chunk,
+                data_chunk_len,
+                cast(out_data, CK_BYTE_PTR),
+                byref(out_data_len),
+            )
             if ret != CKR_OK:
-                LOG.debug("%s call on chunk %.20s (%s/%s) Failed w/ ret %s (%s)",
-                          c_update_function.__name__,
-                          chunk, index + 1, len(input_data_list),
-                          ret_vals_dictionary.get(ret, "Unknown retcode"), str(hex(ret)))
+                LOG.debug(
+                    "%s call on chunk %.20s (%s/%s) Failed w/ ret %s (%s)",
+                    c_update_function.__name__,
+                    chunk,
+                    index + 1,
+                    len(input_data_list),
+                    ret_vals_dictionary.get(ret, "Unknown retcode"),
+                    str(hex(ret)),
+                )
                 error = ret
                 break
 
@@ -292,21 +310,27 @@ def do_multipart_operation(h_session,
 
     if error:
         # Make sure we finalize the operation -- don't want to leave any operations active.
-        ret = c_finalize_function(h_session,
-                                  cast(create_string_buffer(b'', MAX_BUFFER), CK_BYTE_PTR),
-                                  CK_ULONG(MAX_BUFFER))
-        LOG.debug("%s call after a %s failure returned: %s (%s)",
-                  c_finalize_function.__name__,
-                  c_update_function.__name__,
-                  ret_vals_dictionary.get(ret, "Unknown retcode"), str(hex(ret)))
+        ret = c_finalize_function(
+            h_session,
+            cast(create_string_buffer(b"", MAX_BUFFER), CK_BYTE_PTR),
+            CK_ULONG(MAX_BUFFER),
+        )
+        LOG.debug(
+            "%s call after a %s failure returned: %s (%s)",
+            c_finalize_function.__name__,
+            c_update_function.__name__,
+            ret_vals_dictionary.get(ret, "Unknown retcode"),
+            str(hex(ret)),
+        )
         return error, b"".join(python_data)
 
     if output_buffer:
         fin_out_data_len = CK_ULONG(max(output_buffer))
         fin_out_data = create_string_buffer(b"", fin_out_data_len.value)
 
-        ret = c_finalize_function(h_session, cast(fin_out_data, CK_BYTE_PTR),
-                                  byref(fin_out_data_len))
+        ret = c_finalize_function(
+            h_session, cast(fin_out_data, CK_BYTE_PTR), byref(fin_out_data_len)
+        )
         if ret != CKR_OK:
             return ret, b"".join(python_data)
     else:
@@ -344,20 +368,29 @@ def c_wrap_key(h_session, h_wrapping_key, h_key, mechanism, output_buffer=None):
 
     if output_buffer is not None:
         size = CK_ULONG(output_buffer)
-        wrapped_key = AutoCArray(ctype=c_ubyte,
-                                 size=size)
-        ret = C_WrapKey(h_session, mech,
-                        CK_OBJECT_HANDLE(h_wrapping_key), CK_OBJECT_HANDLE(h_key),
-                        wrapped_key.array, wrapped_key.size)
+        wrapped_key = AutoCArray(ctype=c_ubyte, size=size)
+        ret = C_WrapKey(
+            h_session,
+            mech,
+            CK_OBJECT_HANDLE(h_wrapping_key),
+            CK_OBJECT_HANDLE(h_key),
+            wrapped_key.array,
+            wrapped_key.size,
+        )
     else:
         wrapped_key = AutoCArray(ctype=c_ubyte)
 
         @refresh_c_arrays(1)
         def _wrap():
             """  Perform the Wrapping operation"""
-            return C_WrapKey(h_session, mech,
-                             CK_OBJECT_HANDLE(h_wrapping_key), CK_OBJECT_HANDLE(h_key),
-                             wrapped_key.array, wrapped_key.size)
+            return C_WrapKey(
+                h_session,
+                mech,
+                CK_OBJECT_HANDLE(h_wrapping_key),
+                CK_OBJECT_HANDLE(h_key),
+                wrapped_key.array,
+                wrapped_key.size,
+            )
 
         ret = _wrap()
 
@@ -403,9 +436,16 @@ def c_unwrap_key(h_session, h_unwrapping_key, wrapped_key, key_template, mechani
     byte_wrapped_key, key_len = to_byte_array(from_bytestring(wrapped_key))
     byte_wrapped_key = cast(byte_wrapped_key, CK_BYTE_PTR)
     h_output_key = CK_ULONG()
-    ret = C_UnwrapKey(h_session, mech, CK_OBJECT_HANDLE(h_unwrapping_key),
-                      byte_wrapped_key, key_len,
-                      c_template, CK_ULONG(len(key_template)), byref(h_output_key))
+    ret = C_UnwrapKey(
+        h_session,
+        mech,
+        CK_OBJECT_HANDLE(h_unwrapping_key),
+        byte_wrapped_key,
+        key_len,
+        c_template,
+        CK_ULONG(len(key_template)),
+        byref(h_output_key),
+    )
 
     return ret, h_output_key.value
 

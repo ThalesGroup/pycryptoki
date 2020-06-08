@@ -175,7 +175,7 @@ class RemotePycryptokiClient(object):
                 host=self.ip,
                 port=self.port,
                 service=SlaveService,
-                config={"sync_result_timeout": DEFAULT_TIMEOUT},
+                config={"sync_request_timeout": DEFAULT_TIMEOUT},
             )
             self.connection.ping()
             self.server = self.connection.root
@@ -186,12 +186,12 @@ class RemotePycryptokiClient(object):
         Get the underlying connection timeout value.
         """
         if self.connection:
-            # Possible issue here, on RPYC 3.4.x, this timeout is a class-var (SYNC_RESULT_TIMEOUT)
+            # Possible issue here, on RPYC 3.4.x, this timeout is a class-var (SYNC_REQUEST_TIMEOUT)
             # I don't know if I want to update it, because we haven't really seen any issues of
             # timeouts on 3.4.x. It's possible that there's some backend changes to how commands
             # are dispatched on 4.x that makes the timeout come into play more...
-            return self.connection._config.get("sync_result_timeout") or getattr(
-                self.connection, "SYNC_RESULT_TIMEOUT", None
+            return self.connection._config.get("sync_request_timeout") or getattr(
+                self.connection, "SYNC_REQUEST_TIMEOUT", None
             )
         else:
             return None
@@ -202,7 +202,7 @@ class RemotePycryptokiClient(object):
         Set the underlying connection's timeout value. Useful if you're doing something like
         DH param generation which can take a long time... or doing an 8k RSA keygen on a G5.
         """
-        self.connection._config["sync_result_timeout"] = value
+        self.connection._config["sync_request_timeout"] = value
 
     def cleanup(self):
         """ """

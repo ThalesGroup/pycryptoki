@@ -1,8 +1,7 @@
 """
 Methods responsible for key usage
 """
-from .cryptoki import CA_CloneMofN, CA_DuplicateMofN, \
-    CK_VOID_PTR, CK_SESSION_HANDLE
+from .cryptoki import CA_CloneMofN, CA_DuplicateMofN, CK_VOID_PTR, CK_SESSION_HANDLE
 from .exceptions import make_error_handle_function
 
 

@@ -12,15 +12,32 @@ from six import b, binary_type
 
 from pycryptoki.common_utils import AutoCArray
 
-c_types = [c_short, c_ushort, c_long, c_ulong, c_int, c_uint, c_float, c_double,
-           c_longlong, c_ulonglong, c_byte, c_ubyte, c_char, c_char_p, c_void_p, c_bool]
+c_types = [
+    c_short,
+    c_ushort,
+    c_long,
+    c_ulong,
+    c_int,
+    c_uint,
+    c_float,
+    c_double,
+    c_longlong,
+    c_ulonglong,
+    c_byte,
+    c_ubyte,
+    c_char,
+    c_char_p,
+    c_void_p,
+    c_bool,
+]
 
 MAX_INT = 2 ** (sizeof(c_ulong) * 8) - 1
 
 
 class TestAutoCArray(object):
-    @pytest.mark.xfail(hasattr(sys, "pypy_version_info"),
-                       reason="Fails on Pypy w/ AssertionError: unknown shape g")
+    @pytest.mark.xfail(
+        hasattr(sys, "pypy_version_info"), reason="Fails on Pypy w/ AssertionError: unknown shape g"
+    )
     @given(sampled_from(c_types))
     def test_auto_c_array_empty(self, typ_val):
         """
@@ -34,7 +51,7 @@ class TestAutoCArray(object):
         assert c_array.ctype == typ_val
 
         if typ_val == c_char:
-            assert c_array.array.contents.value == typ_val(b'\x00').value
+            assert c_array.array.contents.value == typ_val(b"\x00").value
         else:
             assert c_array.array.contents.value == typ_val(0).value
 
@@ -61,7 +78,9 @@ class TestAutoCArray(object):
 
         assert c_array.size.contents.value == len(c_array) == len(list_val)
         assert c_array.ctype == c_byte
-        assert b"".join([bytes(c_byte(x)) for x in c_array]) == b"".join([bytes(x) for x in list_val])
+        assert b"".join([bytes(c_byte(x)) for x in c_array]) == b"".join(
+            [bytes(x) for x in list_val]
+        )
         assert c_array.array[0] == cast(c_array.array, POINTER(c_byte)).contents.value
 
     @given(lists(elements=integers(min_value=0, max_value=256), min_size=1))
@@ -76,12 +95,15 @@ class TestAutoCArray(object):
         assert c_array.size.contents.value == len(c_array) == len(list_val)
         assert c_array.ctype == c_ubyte
         assert b"".join([bytes(c_ubyte(x)) for x in c_array]) == b"".join(
-            [bytes(x) for x in list_val])
+            [bytes(x) for x in list_val]
+        )
         assert c_array.array[0] == cast(c_array.array, POINTER(c_ubyte)).contents.value
 
-    @given(lists(elements=integers(min_value=int(-MAX_INT / 2),
-                                   max_value=int(MAX_INT / 2)),
-                 min_size=1))
+    @given(
+        lists(
+            elements=integers(min_value=int(-MAX_INT / 2), max_value=int(MAX_INT / 2)), min_size=1
+        )
+    )
     def test_auto_c_array_long_list(self, list_val):
         """
         Initalize an array from list of long's
@@ -93,7 +115,8 @@ class TestAutoCArray(object):
         assert c_array.size.contents.value == len(c_array) == len(list_val)
         assert c_array.ctype == c_long
         assert b"".join([bytes(c_long(x)) for x in c_array]) == b"".join(
-            [bytes(x) for x in list_val])
+            [bytes(x) for x in list_val]
+        )
         assert c_array.array[0] == cast(c_array.array, POINTER(c_long)).contents.value
 
     @given(lists(elements=integers(min_value=0, max_value=MAX_INT), min_size=1))
@@ -108,7 +131,8 @@ class TestAutoCArray(object):
         assert c_array.size.contents.value == len(c_array) == len(list_val)
         assert c_array.ctype == c_ulong
         assert b"".join([bytes(c_ulong(x)) for x in c_array]) == b"".join(
-            [bytes(x) for x in list_val])
+            [bytes(x) for x in list_val]
+        )
         assert c_array.array[0] == cast(c_array.array, POINTER(c_ulong)).contents.value
 
     @given(lists(elements=text(alphabet=ascii_letters, min_size=1, max_size=1), min_size=1))
@@ -127,7 +151,7 @@ class TestAutoCArray(object):
         assert c_array.array[0] == cast(c_array.array, POINTER(c_char)).contents.value
 
     @given(list_val=lists(elements=integers(min_value=0, max_value=127), min_size=1))
-    @pytest.mark.parametrize('test_type', [c_byte, c_ubyte, c_long, c_char])
+    @pytest.mark.parametrize("test_type", [c_byte, c_ubyte, c_long, c_char])
     def test_auto_c_array_no_type_fail(self, list_val, test_type):
         """
         Attempt to initialize an array of 'test_type' without specifying the type. Should error

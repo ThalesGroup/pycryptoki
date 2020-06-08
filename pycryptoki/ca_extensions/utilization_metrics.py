@@ -3,21 +3,24 @@ Module to work with utilization metrics
 """
 import collections
 from ctypes import c_ulong
-from pycryptoki.cryptoki import (CA_ReadUtilizationMetrics,
-                                 CA_ReadAllUtilizationCounters,
-                                 CA_ReadAndResetUtilizationMetrics)
+from pycryptoki.cryptoki import (
+    CA_ReadUtilizationMetrics,
+    CA_ReadAllUtilizationCounters,
+    CA_ReadAndResetUtilizationMetrics,
+)
 from pycryptoki.cryptoki import CK_UTILIZATION_COUNTER
 from pycryptoki.cryptoki import CK_SESSION_HANDLE
 from pycryptoki.exceptions import make_error_handle_function
 
 BIN_IDS = {
-    0: 'SIGN',
-    1: 'VERIFY',
-    2: 'ENCRYPT',
-    3: 'DECRYPT',
-    4: 'KEY_GENERATION',
-    5: 'KEY_DERIVATION'
-    }
+    0: "SIGN",
+    1: "VERIFY",
+    2: "ENCRYPT",
+    3: "DECRYPT",
+    4: "KEY_GENERATION",
+    5: "KEY_DERIVATION",
+}
+
 
 def ca_read_utilization_metrics(session):
     """
@@ -29,7 +32,9 @@ def ca_read_utilization_metrics(session):
     h_session = CK_SESSION_HANDLE(session)
     return CA_ReadUtilizationMetrics(h_session)
 
+
 ca_read_utilization_metrics_ex = make_error_handle_function(ca_read_utilization_metrics)
+
 
 def ca_read_and_reset_utilization_metrics(session):
     """
@@ -44,8 +49,11 @@ def ca_read_and_reset_utilization_metrics(session):
 
     return CA_ReadAndResetUtilizationMetrics(h_session)
 
-ca_read_and_reset_utilization_metrics_ex = \
-                        make_error_handle_function(ca_read_and_reset_utilization_metrics)
+
+ca_read_and_reset_utilization_metrics_ex = make_error_handle_function(
+    ca_read_and_reset_utilization_metrics
+)
+
 
 def ca_read_all_utilization_counters(h_session):
     """
@@ -69,10 +77,9 @@ def ca_read_all_utilization_counters(h_session):
     # Restructuting this list as a dictionary
     partitions = collections.defaultdict(dict)
     for counter in arr:
-        partitions[str(counter.ullSerialNumber)]\
-                [BIN_IDS[counter.ulBindId]] = counter.ullCount
+        partitions[str(counter.ullSerialNumber)][BIN_IDS[counter.ulBindId]] = counter.ullCount
 
     return ret, partitions
 
-ca_read_all_utilization_counters_ex = \
-                        make_error_handle_function(ca_read_all_utilization_counters)
+
+ca_read_all_utilization_counters_ex = make_error_handle_function(ca_read_all_utilization_counters)

@@ -3,8 +3,14 @@ Methods responsible for retrieving hsm info from the K7 card
 """
 import logging
 from ctypes import c_ulong, byref, cast, POINTER
-from pycryptoki.cryptoki import (CK_ULONG, CA_GetNumberOfAllowedContainers, CA_RetrieveLicenseList,
-                                 CA_GetHSMStorageInformation, CA_GetTSV, CA_GetCVFirmwareVersion)
+from pycryptoki.cryptoki import (
+    CK_ULONG,
+    CA_GetNumberOfAllowedContainers,
+    CA_RetrieveLicenseList,
+    CA_GetHSMStorageInformation,
+    CA_GetTSV,
+    CA_GetCVFirmwareVersion,
+)
 from pycryptoki.exceptions import make_error_handle_function
 from pycryptoki.defines import CKR_OK
 
@@ -66,15 +72,20 @@ def ca_retrieve_hsm_storage_info(slot):
     total_hsm_storage = c_ulong()
     used_hsm_storage = c_ulong()
     free_hsm_storage = c_ulong()
-    ret = CA_GetHSMStorageInformation(slot, byref(container_overhead), byref(total_hsm_storage),
-                                      byref(used_hsm_storage), byref(free_hsm_storage))
+    ret = CA_GetHSMStorageInformation(
+        slot,
+        byref(container_overhead),
+        byref(total_hsm_storage),
+        byref(used_hsm_storage),
+        byref(free_hsm_storage),
+    )
     LOG.info("Getting allowed maximum container number. slot=%s", slot)
 
     if ret == CKR_OK:
-        hsm_storage_info['ContainerOverhead'] = container_overhead
-        hsm_storage_info['TotalHsmStorage'] = total_hsm_storage
-        hsm_storage_info['UsedHsmStorage'] = used_hsm_storage
-        hsm_storage_info['FreeHsmStorage'] = free_hsm_storage
+        hsm_storage_info["ContainerOverhead"] = container_overhead
+        hsm_storage_info["TotalHsmStorage"] = total_hsm_storage
+        hsm_storage_info["UsedHsmStorage"] = used_hsm_storage
+        hsm_storage_info["FreeHsmStorage"] = free_hsm_storage
     return ret, hsm_storage_info
 
 
@@ -112,12 +123,11 @@ def ca_get_cv_firmware_version(slot_id):
     if ret != CKR_OK:
         return ret, None
     cv_fwv = {}
-    cv_fwv['major'] = major.value
-    cv_fwv['minor'] = minor.value
-    cv_fwv['sub_minor'] = sub_minor.value
+    cv_fwv["major"] = major.value
+    cv_fwv["minor"] = minor.value
+    cv_fwv["sub_minor"] = sub_minor.value
 
     return ret, cv_fwv
 
 
 ca_get_cv_firmware_version_ex = make_error_handle_function(ca_get_cv_firmware_version)
-

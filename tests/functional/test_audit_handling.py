@@ -11,7 +11,6 @@ logger = logging.getLogger(__name__)
 
 
 class TestAuditHandling(object):
-
     @pytest.fixture(autouse=True)
     def setup_teardown(self, auth_session):
         self.admin_slot = hsm_config["test_slot"]

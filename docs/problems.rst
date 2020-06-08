@@ -124,3 +124,33 @@ number of parts in the operation::
 
 For a multi-part operation that returns data in the ``C_*Final`` function, the output buffer will be
 equivalent to the largest buffer size specified in the output_buffer list.
+
+
+.. _usertypes:
+
+Luna & PKCS11 User types
+------------------------
+
+Following is a table showing the mapping between Luna user types & their PKCS11 constant equivalents
+
+Note that the user type is context-dependent -- some users are only valid on the Admin partition,
+and some are only valid on a User partition, and some are dual-use.
+
+
++----------------------------+----------------------------+-----------------+
+| Luna User                  | PKCS11 User                | Partition       |
++============================+============================+=================+
+| Security Officer           | CKU_SO                     | Admin Partition |
++----------------------------+----------------------------+-----------------+
+| Administrator              | CKU_USER                   | Admin Partition |
++----------------------------+----------------------------+-----------------+
+| Auditor                    | CKU_AUDIT                  | Admin Partition |
++----------------------------+----------------------------+-----------------+
+| Partition Security Officer | CKU_SO                     | User Partition  |
++----------------------------+----------------------------+-----------------+
+| Crypto Officer             | CKU_USER                   | User Partition  |
++----------------------------+----------------------------+-----------------+
+| Crypto User                | CKU_LIMITED_USER           | User Partition  |
++----------------------------+----------------------------+-----------------+
+| Limited Crypto Officer     | CKU_LIMITED_CRYPTO_OFFICER | User Partition  |
++----------------------------+----------------------------+-----------------+

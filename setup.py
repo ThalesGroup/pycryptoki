@@ -13,7 +13,7 @@ setup(
     description="A python wrapper around the C cryptoki library.",
     author="Ashley Straw",
     url="https://github.com/gemalto/pycryptoki",
-    version="2.5.4",
+    version="2.5.11",
     packages=[
         "pycryptoki",
         "pycryptoki.cryptoki",
@@ -22,7 +22,7 @@ setup(
         "pycryptoki.ca_extensions",
     ],
     scripts=["pycryptoki/daemon/rpyc_pycryptoki.py"],
-    tests_require=["pytest==3.10.1", "hypothesis==4.6.1", "mock", "pytz"],
+    tests_require=["pytest", "hypothesis", "mock", "pytz"],
     install_requires=[
         "future",
         "rpyc==3.4.4;python_version<='2.7'",

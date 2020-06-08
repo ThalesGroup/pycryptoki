@@ -38,23 +38,23 @@ from six import b
 
 def _chunks(inval, chunk_size):
     """
-    Split an iterable into chunks of the given size. 
+    Split an iterable into chunks of the given size.
     
     :param inval: Iterable to be chunked.
     :param chunk_size: Size of chunks.
     :return: Iterator
     """
     for i in range(0, len(inval), chunk_size):
-        yield inval[i:i + chunk_size]
+        yield inval[i : i + chunk_size]
 
 
 def from_bytestring(ascii_):
     """
     Convert an iterable of strings into an iterable of integers.
-    
+
     .. note:: For bytestrings on python3, this does effectively nothing, since
         iterating over a bytestring in python 3 will return integers.
-    
+
     :param ascii_: String to convert
     :return: iterator
     """
@@ -68,18 +68,18 @@ def from_bytestring(ascii_):
 def to_bytestring(ascii_):
     """
     Convert an iterable of integers into a bytestring.
-    
+
     :param iterable ascii_: Iterable of integers
     :return: bytestring
     """
-    return b(''.join(chr(a) for a in ascii_))
+    return b("".join(chr(a) for a in ascii_))
 
 
 def from_bin(bin_):
     """
     Convert a string-representation of binary into a list
-    of integers.  
-    
+    of integers.
+
     :param str bin_: String representation of binary data (ex: "10110111")
     :return: iterator over integers
     """
@@ -90,11 +90,11 @@ def from_bin(bin_):
 def to_bin(ascii_):
     """
     Convert an iterable of integers to a binary representation.
-    
+
     :param iterable ascii_: iterable of integers
     :return: bytestring of the binary values
     """
-    return b''.join(b('{:08b}'.format(a)) for a in ascii_)
+    return b"".join(b("{:08b}".format(a)) for a in ascii_)
 
 
 def from_hex(hex_):
@@ -115,4 +115,4 @@ def to_hex(ints):
     :param iterable ints: Iterable of integers
     :return: bytestring representing the hex data.
     """
-    return b''.join(b('{:02x}'.format(a)) for a in ints)
+    return b"".join(b("{:02x}".format(a)) for a in ints)
