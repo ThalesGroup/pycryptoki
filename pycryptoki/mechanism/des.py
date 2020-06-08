@@ -2,7 +2,7 @@
 DES3-specific mechanism implementations.
 """
 import logging
-from ctypes import c_void_p, cast, pointer, sizeof, POINTER
+from ctypes import c_void_p, cast, pointer, sizeof
 
 from . import Mechanism
 

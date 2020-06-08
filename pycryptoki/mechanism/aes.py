@@ -15,6 +15,7 @@ from ..cryptoki import (
     CK_KEY_DERIVATION_STRING_DATA,
     CK_AES_CBC_ENCRYPT_DATA_PARAMS,
     CK_AES_CTR_PARAMS,
+    c_ubyte,
 )
 
 LOG = logging.getLogger(__name__)
@@ -153,8 +154,8 @@ class AESECBEncryptDataMechanism(Mechanism):
         # Note: data should be a multiple of 16 long.
         params = CK_KEY_DERIVATION_STRING_DATA()
         pdata, data_len = to_byte_array(self.params["data"])
-        params.pData = pdata
-        params.ulLen = CK_ULONG(data_len)
+        params.pData = cast(pdata, CK_BYTE_PTR)
+        params.ulLen = data_len
         self.mech.pParameter = cast(pointer(params), c_void_p)
         self.mech.usParameterLen = CK_ULONG(sizeof(params))
         return self.mech
@@ -181,10 +182,9 @@ class AESCBCEncryptDataMechanism(Mechanism):
         params = CK_AES_CBC_ENCRYPT_DATA_PARAMS()
         pdata, data_len = to_byte_array(self.params["data"])
         # Note: IV should always be a length of 8.
-        p_iv, _ = to_byte_array(self.params["iv"])
-        params.pData = pdata
-        params.ulLen = CK_ULONG(data_len)
-        params.iv = p_iv
+        params.pData = cast(pdata, CK_BYTE_PTR)
+        params.length = data_len
+        params.iv = (c_ubyte * 16)(*self.params["iv"])
         self.mech.pParameter = cast(pointer(params), c_void_p)
         self.mech.usParameterLen = CK_ULONG(sizeof(params))
         return self.mech

@@ -29,7 +29,6 @@ from pycryptoki.cryptoki.func_defs import (
 from pycryptoki.defines import CKR_OK
 from pycryptoki.exceptions import make_error_handle_function
 
-
 LOG = logging.getLogger(__name__)
 
 
