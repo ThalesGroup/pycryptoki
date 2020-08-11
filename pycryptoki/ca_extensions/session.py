@@ -25,6 +25,7 @@ from pycryptoki.cryptoki.func_defs import (
     CA_OpenApplicationIDForContainerV2,
     CA_CloseApplicationIDForContainerV2,
     CA_GetUserContainerNumber,
+    CA_SessionCancel,
 )
 from pycryptoki.defines import CKR_OK
 from pycryptoki.exceptions import make_error_handle_function
@@ -198,3 +199,17 @@ def ca_close_application_id_for_container_v2(slot, appid, container):
 ca_close_application_id_for_container_v2_ex = make_error_handle_function(
     ca_close_application_id_for_container_v2
 )
+
+
+def ca_session_cancel(h_session, flags):
+    """
+    User cancels ongoing crypto operation
+
+    :param h_session: session handle
+    :param flags: session flags
+    :return: Ret code
+    """
+    return CA_SessionCancel(CK_SESSION_HANDLE(h_session), CK_FLAGS(flags))
+
+
+ca_session_cancel_ex = make_error_handle_function(ca_session_cancel)
