@@ -23,7 +23,6 @@ from .lookup_dicts import ATTR_NAME_LOOKUP, ret_vals_dictionary
 
 LOG = logging.getLogger(__name__)
 
-DEFAULT_TIMEOUT = 300
 
 # from https://github.com/saltycrane/retry-decorator/blob/master/decorators.py
 def retry(ExceptionToCheck, tries=4, delay=3, backoff=2, logger=None):
@@ -149,9 +148,10 @@ class RemotePycryptokiClient(object):
     :param port: What Port the daemon is running on.
     """
 
-    def __init__(self, ip=None, port=None):
+    def __init__(self, ip=None, port=None, timeout=300):
         self.ip = ip
         self.port = port
+        self.default_timeout = timeout
         self.connection = None
         self.server = None
 
@@ -175,7 +175,7 @@ class RemotePycryptokiClient(object):
                 host=self.ip,
                 port=self.port,
                 service=SlaveService,
-                config={"sync_request_timeout": DEFAULT_TIMEOUT},
+                config={"sync_request_timeout": self.default_timeout},
             )
             self.connection.ping()
             self.server = self.connection.root
