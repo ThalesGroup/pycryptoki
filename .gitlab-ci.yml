@@ -21,6 +21,7 @@ stages:
 
 before_script:
   - export PATH="$HOME/.pyenv/bin/:$PATH"
+  - eval "$(pyenv init -)"
   - pyenv global 2.7.15 3.8.5 3.6.12 3.7.9
   - python -V
   
