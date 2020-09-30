@@ -24,7 +24,7 @@ before_script:
   - pyenv global 3.8.5 3.6.12 3.7.9 2.7.15
   - python -V
   - pip install virtualenv
-  - python -m virtualenv venv
+  - python -m virtualenv .venv
   - source venv/bin/activate
   - pip install tox flake8
   
