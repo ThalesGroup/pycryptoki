@@ -22,17 +22,18 @@ stages:
 before_script:
   - export PATH="$HOME/.pyenv/bin/:$PATH"
   - pyenv global 2.7.15 3.8.5 3.6.12 3.7.9
+  - python -V
   
 
 test:
   script:
-    - python3.8 -m pip install tox flake8  # you can also use tox
+    - python3 -m pip install tox flake8  # you can also use tox
     - tox
 
 build:
   script:
     - python2.7 setup.py bdist_wheel
-    - python3.8 setup.py bdist_wheel
+    - python3 setup.py bdist_wheel
     
   artifacts:
     paths:
