@@ -23,10 +23,8 @@ stages:
     - build
 
 before_script:
-  - python -V  # Print out python version for debugging
-  - pip install virtualenv
-  - virtualenv venv
-  - source venv/bin/activate
+  - pyenv global 2.7.15 3.8.5 3.6.12 3.7.9
+  
 
 test:
   script:
