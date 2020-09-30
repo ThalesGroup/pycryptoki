@@ -1,7 +1,5 @@
-# This file is a template, and might need editing before it works on your project.
-# Official language image. Look for the different tagged releases at:
-# https://hub.docker.com/r/library/python/tags/
-image: py_tox_tester:latest
+
+image: otaaplvlp05.gemalto.com:5443/py_tox_tester:latest
 
 # Change pip's cache directory to be inside the project directory since we can
 # only cache local items.
@@ -33,10 +31,9 @@ test:
 
 build:
   script:
-    - python setup.py bdist_wheel
-    # an alternative approach is to install and run:
-    - pip install dist/*
-    # run the command here
+    - python2.7 setup.py bdist_wheel
+    - python3.8 setup.py bdist_wheel
+    
   artifacts:
     paths:
       - dist/*.whl
