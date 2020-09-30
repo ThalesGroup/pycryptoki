@@ -4,7 +4,6 @@ image: otaaplvlp05.gemalto.com:5443/py_tox_tester:latest
 # only cache local items.
 variables:
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
-  PATH: "$HOME/.pyenv/bin/:$PATH"
 
 # Pip's cache doesn't store the python packages
 # https://pip.pypa.io/en/stable/reference/pip_install/#caching
@@ -21,6 +20,7 @@ stages:
     - build
 
 before_script:
+  - export PATH="$HOME/.pyenv/bin/:$PATH"
   - pyenv global 2.7.15 3.8.5 3.6.12 3.7.9
   
 
