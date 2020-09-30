@@ -1,10 +1,10 @@
-
 image: otaaplvlp05.gemalto.com:5443/py_tox_tester:latest
 
 # Change pip's cache directory to be inside the project directory since we can
 # only cache local items.
 variables:
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  PATH: "$HOME/.pyenv/bin/:$PATH"
 
 # Pip's cache doesn't store the python packages
 # https://pip.pypa.io/en/stable/reference/pip_install/#caching
