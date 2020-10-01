@@ -67,7 +67,7 @@ build:
 
 pages:
   script:
-    - pip install docs/requirements.txt
+    - pip install -r docs/requirements.txt
     - mkdir _docs
     - sphinx-build docs _docs
   artifacts:
