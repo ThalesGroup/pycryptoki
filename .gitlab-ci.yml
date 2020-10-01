@@ -39,9 +39,17 @@ test:
   stage: test
   script:
     - tox
+  artifacts:
+    when: always
+    paths:
+      - junit*.xml
+    reports:
+      junit: junit*.xml
+      cobertura: coverage.xml
+
 
 build:
-  stage: test
+  stage: build
   script:
     - python2.7 setup.py bdist_wheel
     - python3.8 setup.py bdist_wheel
@@ -49,6 +57,13 @@ build:
   artifacts:
     paths:
       - dist/*.whl
+
+# TODO: 'deploy' stage for release branch, that will push the generated wheels
+#  to internal pypi
+# deploy:
+#   stage: deploy
+#   only: release
+#   script: ...
 
 pages:
   script:
@@ -59,4 +74,4 @@ pages:
     paths:
       - public
   only:
-    - master
+    - release
