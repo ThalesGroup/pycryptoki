@@ -2,6 +2,7 @@
 .gitreview
 .pytest_cache
 .venv
+_docs
 ### PyCharm ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm
 
