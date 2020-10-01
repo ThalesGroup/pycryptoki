@@ -16,6 +16,7 @@ cache:
     
 stages:
     - test
+    - lint
     - build
 
 before_script:
@@ -26,8 +27,11 @@ before_script:
   - pip install virtualenv
   - python -m virtualenv .venv
   - source .venv/bin/activate
-  - pip install tox flake8
+  - pip install tox flake8 black
   
+lint:
+  script:
+    - black -l 100 . --check
 
 test:
   script:
