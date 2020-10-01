@@ -78,12 +78,12 @@ class TestCKAStartEndDate(object):
 
     def test_symmetric_key_expiry_des(self):
         """Test: Verify that user is not able to use the symmetric object after date specified in
-                    CKA_END_DATE attribute
-            Procedure:
-            Generate a DES Key des1
-            Use des1 in encrypt operation. Should work fine
-            Using audit role, change the date of HSM to 12/31/2013
-            Use des1 in encrypt operation
+                CKA_END_DATE attribute
+        Procedure:
+        Generate a DES Key des1
+        Use des1 in encrypt operation. Should work fine
+        Using audit role, change the date of HSM to 12/31/2013
+        Use des1 in encrypt operation
 
 
         """

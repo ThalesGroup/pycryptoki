@@ -343,8 +343,7 @@ def ca_get_hsm_capability_set(slot):
 
     @refresh_c_arrays(1)
     def _get_hsm_caps():
-        """Closer for retries to work w/ properties
-        """
+        """Closer for retries to work w/ properties"""
         return CA_GetHSMCapabilitySet(
             slot_id, cap_ids.array, cap_ids.size, cap_vals.array, cap_vals.size
         )
@@ -388,8 +387,7 @@ def ca_get_hsm_policy_set(slot):
 
     @refresh_c_arrays(1)
     def _ca_get_hsm_policy_set():
-        """Closure for retries.
-        """
+        """Closure for retries."""
         return CA_GetHSMPolicySet(
             slot_id, pol_ids.array, pol_ids.size, pol_vals.array, pol_vals.size
         )

@@ -88,7 +88,7 @@ def c_digest(h_session, data_to_digest, digest_flavor, mechanism=None, output_bu
         SHA224, SHA256, SHA384, SHA512)
     :param mechanism: See the :py:func:`~pycryptoki.mechanism.parse_mechanism` function
         for possible values. If None will use digest flavor.
-    :param list|int output_buffer: Integer or list of integers that specify a size of output 
+    :param list|int output_buffer: Integer or list of integers that specify a size of output
         buffer to use for an operation. By default will query with NULL pointer buffer
         to get required size of buffer.
     :returns: (retcode, a python string of the digested data)
@@ -132,8 +132,7 @@ def c_digest(h_session, data_to_digest, digest_flavor, mechanism=None, output_bu
 
             @refresh_c_arrays(1)
             def _digest():
-                """ Perform the digest operations
-                """
+                """Perform the digest operations"""
                 return C_Digest(
                     h_session,
                     c_data_to_digest,

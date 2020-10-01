@@ -19,11 +19,11 @@ MAX_INT = 2 ** (sizeof(c_ulong) * 8) - 1
 
 def new_xform(val, reverse=False):
     """
-        Mock transformation to replace existing xforms in KEY_TRANSFORMS
-        :param val: Any value.
-        :param reverse: 'reverse' place holder for conversion methods
-        :return: (1, 1)
-        """
+    Mock transformation to replace existing xforms in KEY_TRANSFORMS
+    :param val: Any value.
+    :param reverse: 'reverse' place holder for conversion methods
+    :return: (1, 1)
+    """
     if reverse:
         return 1
     return 1, 1

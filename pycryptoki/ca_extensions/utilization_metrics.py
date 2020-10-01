@@ -57,13 +57,13 @@ ca_read_and_reset_utilization_metrics_ex = make_error_handle_function(
 
 def ca_read_all_utilization_counters(h_session):
     """
-        Read Metrics from previously saved HSM snapshot
-        Call either functions prior to create snapshot:
-        ca_read_utilization_metrics
-        ca_read_and_reset_utilization_metrics
+    Read Metrics from previously saved HSM snapshot
+    Call either functions prior to create snapshot:
+    ca_read_utilization_metrics
+    ca_read_and_reset_utilization_metrics
 
-        :return: a dictionary, where keys are serial numbers
-        and values are dictionaries of bins and values, example: 'SIGN':0
+    :return: a dictionary, where keys are serial numbers
+    and values are dictionaries of bins and values, example: 'SIGN':0
     """
     # Reading length of counters
     length = c_ulong()
