@@ -66,9 +66,9 @@ build:
 #   script: ...
 
 pages:
+  stage: build
   script:
     - pip install -r docs/requirements.txt
-    - mkdir _docs
     - sphinx-build docs _docs
   artifacts:
     paths:
