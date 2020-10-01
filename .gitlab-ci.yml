@@ -68,10 +68,10 @@ build:
 pages:
   script:
     - pip install sphinx sphinx-rtd-theme
-    - cd doc ; make html
-    - mv build/html/ ../public/
+    - mkdir _docs
+    - sphinx-build docs _docs
   artifacts:
     paths:
-      - public
+      - _docs
   only:
     - release
