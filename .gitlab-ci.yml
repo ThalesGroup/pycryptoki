@@ -28,6 +28,7 @@ before_script:
   - python -m virtualenv .venv
   - source .venv/bin/activate
   - pip install tox flake8 black
+  - python2.7 -m pip install wheel
   
 lint:
   stage: lint
@@ -37,7 +38,6 @@ lint:
 test:
   stage: test
   script:
-    - python -m pip install tox flake8  # you can also use tox
     - tox
 
 build:
