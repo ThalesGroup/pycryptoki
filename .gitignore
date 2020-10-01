@@ -1,6 +1,7 @@
 # Created by https://www.gitignore.io
 .gitreview
 .pytest_cache
+.venv
 ### PyCharm ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm
 

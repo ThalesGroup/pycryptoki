@@ -39,6 +39,11 @@ test:
   stage: test
   script:
     - tox
+  artifacts:
+    reports:
+      junit: junit*.xml
+      cobertura: coverage.xml
+
 
 build:
   stage: test
