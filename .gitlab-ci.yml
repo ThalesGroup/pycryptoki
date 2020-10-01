@@ -15,9 +15,9 @@ cache:
     - .cache/pip
     
 stages:
-    - test
-    - lint
-    - build
+  - test
+  - lint
+  - build
 
 before_script:
   - export PATH="$HOME/.pyenv/bin/:$PATH"
@@ -30,15 +30,18 @@ before_script:
   - pip install tox flake8 black
   
 lint:
+  stage: lint
   script:
     - black -l 100 . --check
 
 test:
+  stage: test
   script:
     - python -m pip install tox flake8  # you can also use tox
     - tox
 
 build:
+  stage: test
   script:
     - python2.7 setup.py bdist_wheel
     - python3.8 setup.py bdist_wheel
