@@ -15,8 +15,8 @@ cache:
     - .cache/pip
     
 stages:
-  - test
   - lint
+  - test
   - build
 
 before_script:
