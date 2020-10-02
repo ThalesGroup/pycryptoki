@@ -39,7 +39,9 @@ lint:
 test:
   stage: test
   script:
-    - tox
+    - tox -e clean
+    - tox -p -e py27,py36,py37,py38
+    - tox -e report
   artifacts:
     when: always
     paths:

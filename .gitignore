@@ -3,6 +3,8 @@
 .pytest_cache
 .venv
 _docs
+coverage.xml
+junit*.xml
 ### PyCharm ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm
 
