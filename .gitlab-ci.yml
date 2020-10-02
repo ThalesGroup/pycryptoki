@@ -63,9 +63,11 @@ build:
 
 deploy:
   stage: deploy
+  dependencies:
+    - build
   only:
     - release
-  script: ./deploy.sh
+  script: /root/deploy.sh
 
 #pages:
 #  stage: build
