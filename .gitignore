@@ -5,6 +5,7 @@
 _docs
 coverage.xml
 junit*.xml
+.python-version
 ### PyCharm ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm
 
