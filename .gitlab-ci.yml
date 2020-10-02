@@ -18,10 +18,9 @@ stages:
   - lint
   - test
   - build
+  - deploy
 
 before_script:
-  - export PATH="$HOME/.pyenv/bin/:$PATH"
-  - eval "$(pyenv init -)"
   - pyenv global 3.8.5 3.6.12 3.7.9 2.7.15
   - python -V
   - pip install virtualenv
@@ -60,18 +59,18 @@ build:
 
 # TODO: 'deploy' stage for release branch, that will push the generated wheels
 #  to internal pypi
-# deploy:
-#   stage: deploy
-#   only: release
-#   script: ...
+ deploy:
+   stage: deploy
+   only: release
+   script: ./deploy.sh
 
-pages:
-  stage: build
-  script:
-    - pip install -r docs/requirements.txt
-    - sphinx-build docs _docs
-  artifacts:
-    paths:
-      - _docs
-  only:
-    - release
+#pages:
+#  stage: build
+#  script:
+#    - pip install -r docs/requirements.txt
+#    - sphinx-build docs _docs
+#  artifacts:
+#    paths:
+#      - _docs
+#  only:
+#    - release
