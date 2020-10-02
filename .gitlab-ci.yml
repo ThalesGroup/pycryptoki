@@ -18,6 +18,7 @@ stages:
   - lint
   - test
   - build
+  - deploy
 
 before_script:
   - export PATH="$HOME/.pyenv/bin/:$PATH"
@@ -38,7 +39,9 @@ lint:
 test:
   stage: test
   script:
-    - tox
+    - tox -e clean
+    - tox -p -e py27,py36,py37,py38
+    - tox -e report
   artifacts:
     when: always
     paths:
@@ -58,20 +61,19 @@ build:
     paths:
       - dist/*.whl
 
-# TODO: 'deploy' stage for release branch, that will push the generated wheels
-#  to internal pypi
-# deploy:
-#   stage: deploy
-#   only: release
-#   script: ...
-
-pages:
-  stage: build
-  script:
-    - pip install -r docs/requirements.txt
-    - sphinx-build docs _docs
-  artifacts:
-    paths:
-      - _docs
+deploy:
+  stage: deploy
   only:
     - release
+  script: ./deploy.sh
+
+#pages:
+#  stage: build
+#  script:
+#    - pip install -r docs/requirements.txt
+#    - sphinx-build docs _docs
+#  artifacts:
+#    paths:
+#      - _docs
+#  only:
+#    - release
