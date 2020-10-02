@@ -57,12 +57,11 @@ build:
     paths:
       - dist/*.whl
 
-# TODO: 'deploy' stage for release branch, that will push the generated wheels
-#  to internal pypi
- deploy:
-   stage: deploy
-   only: release
-   script: ./deploy.sh
+deploy:
+  stage: deploy
+  only:
+    - release
+  script: ./deploy.sh
 
 #pages:
 #  stage: build
