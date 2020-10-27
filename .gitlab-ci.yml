@@ -25,14 +25,11 @@ before_script:
   - eval "$(pyenv init -)"
   - pyenv global 3.8.5 3.6.12 3.7.9 2.7.15
   - python -V
-  - pip install virtualenv
-  - python -m virtualenv .venv
-  - source .venv/bin/activate
-  - pip install tox flake8 black
-  - python2.7 -m pip install wheel
+  - source /.venv/bin/activate
   
 lint:
   stage: lint
+  interruptible: true
   script:
     - black -l 100 . --check
 
@@ -42,6 +39,7 @@ test:
     - tox -e clean
     - tox -p -e py27,py36,py37,py38
     - tox -e report
+  interruptible: true
   artifacts:
     when: always
     paths:
@@ -53,6 +51,7 @@ test:
 
 build:
   stage: build
+  interruptible: true
   script:
     - python2.7 setup.py bdist_wheel
     - python3.8 setup.py bdist_wheel
@@ -69,13 +68,3 @@ deploy:
     - release
   script: /root/deploy.sh
 
-#pages:
-#  stage: build
-#  script:
-#    - pip install -r docs/requirements.txt
-#    - sphinx-build docs _docs
-#  artifacts:
-#    paths:
-#      - _docs
-#  only:
-#    - release
