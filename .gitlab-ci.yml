@@ -28,12 +28,14 @@ before_script:
   - source /.venv/bin/activate
   
 lint:
+  needs: []
   stage: lint
   interruptible: true
   script:
     - black -l 100 . --check
 
 test:
+  needs: []
   stage: test
   script:
     - tox -e clean
@@ -61,6 +63,8 @@ build:
       - dist/*.whl
 
 deploy:
+  tags:
+    - hsmtest
   stage: deploy
   dependencies:
     - build

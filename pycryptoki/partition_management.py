@@ -488,7 +488,7 @@ def ca_init_token(slot, so_password, part_label, domain, policies=None, hsm_poli
         so_password = None
     password = AutoCArray(data=so_password)
     slot_id = CK_ULONG(slot)
-    label = AutoCArray(data=part_label)
+    label = AutoCArray(data=part_label, size=32, pad=True, pad_char=" ")
     domain = AutoCArray(data=domain)
 
     if policies:
