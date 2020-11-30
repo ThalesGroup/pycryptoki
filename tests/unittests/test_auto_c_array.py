@@ -165,3 +165,22 @@ class TestAutoCArray(object):
 
         with pytest.raises(TypeError):
             c_array = AutoCArray(data=new_list)
+
+    def test_padded_data(self):
+        data = "hello, world"
+        padded_data = b"hello, world        "
+
+        arr = AutoCArray(data=data, size=20, pad=True, pad_char=" ")
+        assert b"".join(arr) == padded_data
+
+    def test_short_pad(self):
+        data = "hello, world"
+
+        with pytest.raises(ValueError):
+            arr = AutoCArray(data=data, size=8, pad=True, pad_char=" ")
+
+    def test_exact_size(self):
+        data = "hello, world"
+
+        arr = AutoCArray(data=data, size=12, pad=True, pad_char=" ")
+        assert b"".join(arr) == b(data)

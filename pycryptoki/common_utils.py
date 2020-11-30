@@ -5,7 +5,7 @@ import logging
 from _ctypes import pointer, POINTER
 from ctypes import c_ulong, cast, create_string_buffer
 
-from six import b, string_types
+from six import b, text_type
 
 from pycryptoki.cryptoki import CK_CHAR
 from pycryptoki.defines import CKR_OK
@@ -28,7 +28,7 @@ class AutoCArray(object):
 
     """
 
-    def __init__(self, data=None, ctype=c_ulong, size=None):
+    def __init__(self, data=None, ctype=c_ulong, size=None, pad=False, pad_char=b"\x00"):
         """
         Initialize the Array.
 
@@ -48,18 +48,35 @@ class AutoCArray(object):
         :param data: Data array should be initialized with. Needs to be string/list.
         :param ctype: Type of data the array should store (Default: CK_ULONG)
         :param size: Size of the array. PKCS#11 calls will init this for us, but you can also
-        specify it manually.
+          specify it manually.
+
+          .. note:: This has no effect if you are passing in data and do NOT specify pad=True. The
+            array will be auto-sized to the data length, unless you ask for it to be padded.
+
+        :param pad: If true, will pad the array to the specified size with the given pad_char. Valid
+          only for bytes/string types.
+        :param pad_char: Character to use for padding out the array.
+        :raises: ValueError when the size of the data is larger than the specified pad size.
         """
         self._array = None
         self._size = size
         self.ctype = ctype
 
-        # name was just for logging.
         if data is not None:
-            # Parse out any given data.
-            if isinstance(data, (bytes, string_types)):
-                self._array = create_string_buffer(b(data), len(data))
-                self._size = c_ulong(len(data))
+            if isinstance(data, (bytes, text_type)):
+                # Conversions to bytes...
+                if isinstance(data, text_type):
+                    data = b(data)
+                if isinstance(pad_char, text_type):
+                    pad_char = b(pad_char)
+
+                if pad and size:
+                    # If len(data) > size, this raises ValueError
+                    self._array = create_string_buffer(data, size)
+                    self._array[len(data) :] = pad_char * (size - len(data))
+                else:
+                    self._array = create_string_buffer(data, len(data))
+                self._size = c_ulong(len(self._array))
                 self.ctype = CK_CHAR
             elif isinstance(data, list):
                 self._array = (ctype * len(data))(*data)
