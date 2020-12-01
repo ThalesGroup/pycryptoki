@@ -39,7 +39,7 @@ from six import b
 def _chunks(inval, chunk_size):
     """
     Split an iterable into chunks of the given size.
-    
+
     :param inval: Iterable to be chunked.
     :param chunk_size: Size of chunks.
     :return: Iterator

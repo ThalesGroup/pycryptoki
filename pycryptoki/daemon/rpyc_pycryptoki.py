@@ -100,6 +100,8 @@ from pycryptoki.ca_extensions.session import (
     ca_open_application_id_for_container_v2_ex,
     ca_close_application_id_for_container_v2,
     ca_close_application_id_for_container_v2_ex,
+    ca_session_cancel,
+    ca_session_cancel_ex,
 )
 from pycryptoki.ca_extensions.stc import (
     ca_stc_register,
@@ -673,6 +675,9 @@ class PycryptokiService(rpyc.SlaveService):
     ca_increment_failed_auth_count_ex = staticmethod(ca_increment_failed_auth_count_ex)
     ca_reset_authorization_data = staticmethod(ca_reset_authorization_data)
     ca_reset_authorization_data_ex = staticmethod(ca_reset_authorization_data_ex)
+
+    ca_session_cancel = staticmethod(ca_session_cancel)
+    ca_session_cancel_ex = staticmethod(ca_session_cancel_ex)
 
     ca_bip32_import_public_key = staticmethod(ca_bip32_import_public_key)
     ca_bip32_import_public_key_ex = staticmethod(ca_bip32_import_public_key_ex)

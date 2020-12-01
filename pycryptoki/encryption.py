@@ -60,7 +60,7 @@ def c_encrypt(h_session, h_key, data, mechanism, output_buffer=None):
 
     :param mechanism: See the :py:func:`~pycryptoki.mechanism.parse_mechanism` function
         for possible values.
-    :param list|int output_buffer: Integer or list of integers that specify a size of output 
+    :param list|int output_buffer: Integer or list of integers that specify a size of output
         buffer to use for an operation. By default will query with NULL pointer buffer
         to get required size of buffer.
     :returns: (Retcode, Python bytestring of encrypted data)
@@ -161,7 +161,7 @@ def c_decrypt(h_session, h_key, encrypted_data, mechanism, output_buffer=None):
 
     :param mechanism: See the :py:func:`~pycryptoki.mechanism.parse_mechanism` function
         for possible values.
-    :param list|int output_buffer: Integer or list of integers that specify a size of output 
+    :param list|int output_buffer: Integer or list of integers that specify a size of output
         buffer to use for an operation. By default will query with NULL pointer buffer
         to get required size of buffer.
     :returns: (Retcode, Python bytestring of decrypted data))

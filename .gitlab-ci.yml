@@ -1,0 +1,74 @@
+image: otaaplvlp05.gemalto.com:5443/py_tox_tester:latest
+
+# Change pip's cache directory to be inside the project directory since we can
+# only cache local items.
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+
+# Pip's cache doesn't store the python packages
+# https://pip.pypa.io/en/stable/reference/pip_install/#caching
+#
+# If you want to also cache the installed packages, you have to install
+# them in a virtualenv and cache it as well.
+cache:
+  paths:
+    - .cache/pip
+    
+stages:
+  - lint
+  - test
+  - build
+  - deploy
+
+before_script:
+  - export PATH="$HOME/.pyenv/bin/:$PATH"
+  - eval "$(pyenv init -)"
+  - pyenv global 3.8.5 3.6.12 3.7.9 2.7.15
+  - python -V
+  - source /.venv/bin/activate
+  
+lint:
+  needs: []
+  stage: lint
+  interruptible: true
+  script:
+    - black -l 100 . --check
+
+test:
+  needs: []
+  stage: test
+  script:
+    - tox -e clean
+    - tox -p -e py27,py36,py37,py38
+    - tox -e report
+  interruptible: true
+  artifacts:
+    when: always
+    paths:
+      - junit*.xml
+    reports:
+      junit: junit*.xml
+      cobertura: coverage.xml
+
+
+build:
+  stage: build
+  interruptible: true
+  script:
+    - python2.7 setup.py bdist_wheel
+    - python3.8 setup.py bdist_wheel
+    
+  artifacts:
+    paths:
+      - dist/*.whl
+
+deploy:
+  tags:
+    - hsmtest
+  stage: deploy
+  dependencies:
+    - build
+  only:
+    - release
+  script: /root/deploy.sh
+

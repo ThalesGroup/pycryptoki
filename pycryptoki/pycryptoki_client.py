@@ -149,9 +149,10 @@ class RemotePycryptokiClient(object):
     :param port: What Port the daemon is running on.
     """
 
-    def __init__(self, ip=None, port=None):
+    def __init__(self, ip=None, port=None, timeout=300):
         self.ip = ip
         self.port = port
+        self.default_timeout = timeout
         self.connection = None
         self.server = None
 
@@ -175,7 +176,7 @@ class RemotePycryptokiClient(object):
                 host=self.ip,
                 port=self.port,
                 service=SlaveService,
-                config={"sync_request_timeout": DEFAULT_TIMEOUT},
+                config={"sync_request_timeout": self.default_timeout},
             )
             self.connection.ping()
             self.server = self.connection.root

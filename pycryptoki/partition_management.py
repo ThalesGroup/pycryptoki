@@ -140,8 +140,7 @@ def ca_get_container_list(slot, group_handle=0, container_type=LUNA_PARTITION_TY
 
     @refresh_c_arrays(1)
     def _get_cont_list():
-        """Closer for retries to work w/ properties
-        """
+        """Closer for retries to work w/ properties"""
         return CA_GetContainerList(slot_id, group, cont_type, cont_handles.array, cont_handles.size)
 
     ret = _get_cont_list()
@@ -185,8 +184,7 @@ def ca_get_container_capability_set(slot, h_container):
 
     @refresh_c_arrays(1)
     def _get_container_caps():
-        """Closer for retries to work w/ properties
-        """
+        """Closer for retries to work w/ properties"""
         return CA_GetContainerCapabilitySet(
             slot_id, cont_id, cap_ids.array, cap_ids.size, cap_vals.array, cap_vals.size
         )
@@ -236,8 +234,7 @@ def ca_get_container_policy_set(slot, h_container):
 
     @refresh_c_arrays(1)
     def _ca_get_container_policy_set():
-        """Closure for retries.
-        """
+        """Closure for retries."""
         return CA_GetContainerPolicySet(
             slot_id, cont_id, pol_ids.array, pol_ids.size, pol_vals.array, pol_vals.size
         )
@@ -491,7 +488,7 @@ def ca_init_token(slot, so_password, part_label, domain, policies=None, hsm_poli
         so_password = None
     password = AutoCArray(data=so_password)
     slot_id = CK_ULONG(slot)
-    label = AutoCArray(data=part_label)
+    label = AutoCArray(data=part_label, size=32, pad=True, pad_char=" ")
     domain = AutoCArray(data=domain)
 
     if policies:

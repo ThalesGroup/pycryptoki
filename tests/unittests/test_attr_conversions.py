@@ -256,6 +256,14 @@ class TestAttrConversions(object):
         py_bytes = self.reverse_case(pointer, leng, to_byte_array)
         assert py_bytes == b"deadbeef"
 
+    def test_byte_to_array_str_leading_zeros(self):
+        """Create Attributes with OUID template having ouid with leading zeros"""
+        val = b"005211001100000128230900"
+        pointer, leng = to_byte_array(val)
+        self.verify_c_type(pointer, leng)
+        py_bytes = self.reverse_case(pointer, leng, to_byte_array)
+        assert py_bytes == val
+
     @given(integers(min_value=0))
     def test_to_byte_array_int(self, int_val):
         """

@@ -66,7 +66,8 @@ from pycryptoki.defines import (
     CKR_MECHANISM_INVALID,
     CKM_DES2_DUKPT_IPEK,
     CKM_AES_CBC_ENCRYPT_DATA,
-    CKM_AES_ECB_ENCRYPT_DATA)
+    CKM_AES_ECB_ENCRYPT_DATA,
+)
 from pycryptoki.ca_extensions.object_handler import ca_destroy_multiple_objects_ex
 from pycryptoki.encryption import c_encrypt_ex, c_decrypt_ex
 from pycryptoki.key_generator import (
@@ -304,10 +305,7 @@ class TestKeys(object):
                 "mech_type": CKM_AES_CBC_ENCRYPT_DATA,
                 "params": {"data": list(range(32)), "iv": list(range(16))},
             },
-            {
-                "mech_type": CKM_AES_ECB_ENCRYPT_DATA,
-                "params": {"data": list(range(32))},
-            }
+            {"mech_type": CKM_AES_ECB_ENCRYPT_DATA, "params": {"data": list(range(32))}},
         ],
         ids=["CKM_AES_CBC_ENCRYPT_DATA", "CKM_AES_ECB_ENCRYPT_DATA"],
     )
