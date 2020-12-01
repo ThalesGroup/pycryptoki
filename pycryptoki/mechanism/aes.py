@@ -15,7 +15,8 @@ from ..cryptoki import (
     CK_KEY_DERIVATION_STRING_DATA,
     CK_AES_CBC_ENCRYPT_DATA_PARAMS,
     CK_AES_CTR_PARAMS,
-    c_ubyte)
+    c_ubyte,
+)
 
 LOG = logging.getLogger(__name__)
 

@@ -77,8 +77,7 @@ def get_token_by_label(label):
 
     @refresh_c_arrays(1)
     def _get_slot_list():
-        """Closure
-        """
+        """Closure"""
         return C_GetSlotList(CK_BBOOL(1), slot_list.array, slot_list.size)
 
     ret = _get_slot_list()
@@ -111,8 +110,7 @@ def c_get_mechanism_list(slot):
 
     @refresh_c_arrays(1)
     def _c_get_mech_list():
-        """Closure for retry to work w/ properties.
-        """
+        """Closure for retry to work w/ properties."""
         return C_GetMechanismList(slot_id, mech.array, mech.size)
 
     ret = _c_get_mech_list()
@@ -151,8 +149,7 @@ def ca_get_token_policies(slot):
 
     @refresh_c_arrays(1)
     def _get_token_policies():
-        """Closure for retries to work w/ properties.
-        """
+        """Closure for retries to work w/ properties."""
         return CA_GetTokenPolicies(
             slot_id, pol_ids.array, pol_ids.size, pol_vals.array, pol_vals.size
         )

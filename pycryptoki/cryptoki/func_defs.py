@@ -125,6 +125,7 @@ CA_AssignKey = make_late_binding_function("CA_AssignKey", [CK_SESSION_HANDLE, CK
 CA_IncrementFailedAuthCount = make_late_binding_function(
     "CA_IncrementFailedAuthCount", [CK_SESSION_HANDLE, CK_OBJECT_HANDLE]
 )
+CA_SessionCancel = make_late_binding_function("CA_SessionCancel", [CK_SESSION_HANDLE, CK_FLAGS])
 CA_ManualKCV = make_late_binding_function("CA_ManualKCV", [CK_SESSION_HANDLE])
 CA_SetLKCV = make_late_binding_function("CA_SetLKCV", [CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG])
 CA_SetKCV = make_late_binding_function("CA_SetKCV", [CK_SESSION_HANDLE, CK_BYTE_PTR, CK_ULONG])

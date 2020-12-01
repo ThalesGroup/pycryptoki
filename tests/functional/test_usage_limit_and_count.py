@@ -148,8 +148,7 @@ class TestUsageLimitAndCount(object):
     """
 
     def test_usagelimit_no_use_sym(self, auth_session, sym_key_params, usage_set):
-        """Verify that CKA_USAGE_LIMIT is reported correctly by C_GetAttribute
-        """
+        """Verify that CKA_USAGE_LIMIT is reported correctly by C_GetAttribute"""
         LOG.info(
             "Test: Verify that user is able to set CKA_USAGE_LIMIT attribute on \
                   an symmetric crypto object"
@@ -164,11 +163,11 @@ class TestUsageLimitAndCount(object):
 
     def test_usagelimit_sym(self, auth_session, sym_key_params, usage_set):
         """Test: Verify that CKA_USAGE_COUNT attribute increments as user
-                  uses the symmetric crypto object
+                uses the symmetric crypto object
 
-          Gen key w/ limit set to 5
-          Use key 5x
-          Verify usage count == 5
+        Gen key w/ limit set to 5
+        Use key 5x
+        Verify usage count == 5
         """
         _, new_limit = usage_set
         LOG.info(
@@ -192,10 +191,10 @@ class TestUsageLimitAndCount(object):
     def test_usagelimit_exceed_sym(self, auth_session, sym_key_params):
         """Test that changing the usage limit works as expected
 
-           Gen key w/ limit = 5
-           Set limit = 2
-           Use key 2x
-           Verify next usage returns CKR_KEY_NOT_ACTIVE
+        Gen key w/ limit = 5
+        Set limit = 2
+        Use key 2x
+        Verify next usage returns CKR_KEY_NOT_ACTIVE
         """
         LOG.info(
             "Verify that crypto operation returns error CKR_KEY_NOT_ACTIVE \

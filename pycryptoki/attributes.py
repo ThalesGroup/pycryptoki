@@ -297,6 +297,10 @@ def to_byte_array(val, reverse=False):
         if "\\x" in repr(val):
             val = list(from_bytestring(val))
             byte_array = (CK_BYTE * len(val))(*val)
+        # byte value with leading zeros: b'005211001100000128230900'
+        elif val.startswith(b"00"):
+            val = bytearray(binascii.unhexlify(val))
+            byte_array = (CK_BYTE * len(val))(*val)
         # Hex string: '01af'
         else:
             val = int(val, 16)
