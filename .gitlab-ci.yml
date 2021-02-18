@@ -32,7 +32,8 @@ lint:
   stage: lint
   interruptible: true
   script:
-    - black -l 100 . --check
+    - black --version
+    - black -l 100 . --check --diff
 
 test:
   needs: []
