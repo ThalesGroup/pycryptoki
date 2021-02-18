@@ -48,6 +48,16 @@ def _coerce_mech_to_str(mech):
     return str(mech)
 
 
+def _trunc(val):
+    msg = str(val)
+    if len(msg) > PYC_MAX_ARG_LENGTH:
+        msg = "%s[...]%s" % (
+            msg[: PYC_MAX_ARG_LENGTH // 2],
+            msg[-PYC_MAX_ARG_LENGTH // 2 :],
+        )
+    return msg
+
+
 def pformat_pyc_args(func_args):
     """
     Convert a dictionary of funcargs: funcvalues into a nicely formatted string.
@@ -68,7 +78,10 @@ def pformat_pyc_args(func_args):
             for template_key, template_value in sorted(value.items(), key=lambda x: x[0]):
                 log_list.append(
                     "\t\t%s: %s"
-                    % (ATTR_NAME_LOOKUP.get(template_key, "0x%08x" % template_key), template_value)
+                    % (
+                        ATTR_NAME_LOOKUP.get(template_key, "0x%08x" % template_key),
+                        _trunc(_decode(template_value)),
+                    )
                 )
         elif "password" in key:
             log_list.append("\t%s: *" % key)
@@ -84,14 +97,7 @@ def pformat_pyc_args(func_args):
             else:
                 log_val = str(value)
 
-            if len(log_val) > PYC_MAX_ARG_LENGTH:
-                msg = "\t%s: %s[...]%s" % (
-                    key,
-                    log_val[: PYC_MAX_ARG_LENGTH // 2],
-                    log_val[-PYC_MAX_ARG_LENGTH // 2 :],
-                )
-            else:
-                msg = "\t\t%s: %s" % (key, log_val)
+            msg = "\t\t%s: %s" % (key, _trunc(log_val))
 
             log_list.append(msg)
 
