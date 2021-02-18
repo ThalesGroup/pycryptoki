@@ -1,12 +1,20 @@
 """
 Testcases for string helpers
 """
-import os
 
 import pytest
+
+from pycryptoki.default_templates import dh_prime
 from pycryptoki.mechanism import Mechanism, IvMechanism
 
-from pycryptoki.defines import CKM_DES_ECB, CKM_AES_CBC, CKA_DECRYPT
+from pycryptoki.defines import (
+    CKM_DES_ECB,
+    CKM_AES_CBC,
+    CKA_DECRYPT,
+    CKA_OUID,
+    CKA_PRIME,
+    CKA_KEY_TYPE,
+)
 from pycryptoki.string_helpers import _decode, _coerce_mech_to_str, pformat_pyc_args
 
 
@@ -52,12 +60,27 @@ def test_mech_printing(mech, output):
             "wrapped_key: 0ad70452d54f75665515[...]ffc66aa714f9db1b0ad3",
         ),
         (
-            {"template": {CKA_DECRYPT: True, 0x80000111: True}},
+            {"template": {CKA_DECRYPT: True, 0x80000111: True, CKA_KEY_TYPE: 0}},
             "CKA_DECRYPT: True\n\t\t0x80000111: True",
         ),
         ({"password": "badpassword"}, "password: *"),
+        (
+            {"template": {CKA_OUID: b"005211001100000128230900"}},
+            "CKA_OUID: 005211001100000128230900",
+        ),
+        (
+            {"public_template": {CKA_PRIME: dh_prime}},
+            "CKA_PRIME: [244, 136, 253, 88, [...], 233, 47, 120, 199]",
+        ),
     ],
-    ids=["Mechanism", "Invalid UTF8 (binary data)", "Template", "password"],
+    ids=[
+        "Mechanism",
+        "Invalid UTF8 (binary data)",
+        "Template",
+        "password",
+        "ouid template",
+        "long template value",
+    ],
 )
 def test_arg_formatting(testargs, expected_result):
     result = pformat_pyc_args(testargs)

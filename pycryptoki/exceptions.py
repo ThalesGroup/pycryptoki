@@ -119,7 +119,8 @@ def check_luna_exception(ret, luna_function, args, kwargs):
     all_args = inspect.getcallargs(luna_function, *args, **kwargs)
     formatted_args = pformat_pyc_args(all_args)
 
-    arg_string = "({})".format(formatted_args)
+    # Tab it over one more for exception logging.
+    arg_string = "\n".join("\t{}".format(x) for x in formatted_args.splitlines())
     LOG.debug(
         "Call to %s returned %s (%s)",
         luna_function.__name__,
