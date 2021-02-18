@@ -10,7 +10,7 @@ from ctypes import CDLL
 
 from six.moves import configparser
 
-from pycryptoki.cryptoki.ck_defs import CK_RV
+from pycryptoki.cryptoki.c_defs import CK_RV
 from pycryptoki.defaults import CHRYSTOKI_DLL_FILE, CHRYSTOKI_CONFIG_FILE
 from pycryptoki.exceptions import LunaException
 
