@@ -13,7 +13,7 @@ setup(
     description="A python wrapper around the C cryptoki library.",
     author="Ashley Straw",
     url="https://github.com/gemalto/pycryptoki",
-    version="2.5.19",
+    version="2.5.20",
     packages=[
         "pycryptoki",
         "pycryptoki.cryptoki",
