@@ -3383,7 +3383,7 @@ curve_list = {
     "microsoftPlayReadP160": [
         0x30,
         0x81,
-        0x95,
+        0x98,
         0x02,
         0x01,
         0x01,
@@ -3533,6 +3533,9 @@ curve_list = {
         0xC2,
         0xA6,
         0x75,
+        0x02,
+        0x01,
+        0x01,
     ],
 }
 
