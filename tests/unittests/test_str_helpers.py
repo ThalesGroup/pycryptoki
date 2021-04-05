@@ -51,7 +51,7 @@ def test_mech_printing(mech, output):
     [
         (
             {"mechanism": IvMechanism(mech_type=CKM_AES_CBC)},
-            "IvMechanism(mech_type: CKM_AES_CBC)",
+            "mechanism: \n\tIvMechanism(mech_type: CKM_AES_CBC)",
         ),
         (
             {
@@ -61,16 +61,16 @@ def test_mech_printing(mech, output):
         ),
         (
             {"template": {CKA_DECRYPT: True, 0x80000111: True, CKA_KEY_TYPE: 0}},
-            "CKA_DECRYPT: True\n\t\t0x80000111: True",
+            "\n\tCKA_DECRYPT: True\n\t0x80000111: True",
         ),
         ({"password": "badpassword"}, "password: *"),
         (
             {"template": {CKA_OUID: b"005211001100000128230900"}},
-            "CKA_OUID: 005211001100000128230900",
+            "template: \n\tCKA_OUID: 005211001100000128230900",
         ),
         (
             {"public_template": {CKA_PRIME: dh_prime}},
-            "CKA_PRIME: [244, 136, 253, 88, [...], 233, 47, 120, 199]",
+            "public_template: \n\tCKA_PRIME: [244, 136, 253, 88, [...], 233, 47, 120, 199]",
         ),
     ],
     ids=[
@@ -84,4 +84,4 @@ def test_mech_printing(mech, output):
 )
 def test_arg_formatting(testargs, expected_result):
     result = pformat_pyc_args(testargs)
-    assert expected_result in result
+    assert expected_result in "\n".join(result)

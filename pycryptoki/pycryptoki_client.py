@@ -106,7 +106,7 @@ def log_args(funcname, arg_dict):
     if arg_dict:
         log_msg += " with args:"
     formatted_args = pformat_pyc_args(arg_dict)
-    log_list = [log_msg, formatted_args]
+    log_list = [log_msg] + ["\t{}".format(x) for x in formatted_args]
     LOG.debug("\n".join(log_list))
 
 

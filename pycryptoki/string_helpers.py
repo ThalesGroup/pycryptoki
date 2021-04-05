@@ -73,22 +73,22 @@ def pformat_pyc_args(func_args):
         if "template" in key and isinstance(value, dict):
             # Means it's a template, so let's perform a lookup on all of the objects within
             # this.
-            log_list.append("\t%s: " % key)
+            log_list.append("%s: " % key)
             # Sorted so we get the same order every time for testing purposes.
             for template_key, template_value in sorted(value.items(), key=lambda x: x[0]):
                 log_list.append(
-                    "\t\t%s: %s"
+                    "\t%s: %s"
                     % (
                         ATTR_NAME_LOOKUP.get(template_key, "0x%08x" % template_key),
                         _trunc(_decode(template_value)),
                     )
                 )
         elif "password" in key:
-            log_list.append("\t%s: *" % key)
+            log_list.append("%s: *" % key)
         elif "mechanism" in key:
-            log_list.append("\t%s: " % key)
+            log_list.append("%s: " % key)
             nice_mech = _coerce_mech_to_str(value).splitlines()
-            log_list.extend(["\t\t%s" % x for x in nice_mech])
+            log_list.extend(["\t%s" % x for x in nice_mech])
         else:
             log_val = value
             if isinstance(value, (binary_type, string_types)):
@@ -97,8 +97,8 @@ def pformat_pyc_args(func_args):
             else:
                 log_val = str(value)
 
-            msg = "\t\t%s: %s" % (key, _trunc(log_val))
+            msg = "\t%s: %s" % (key, _trunc(log_val))
 
             log_list.append(msg)
 
-    return "\n".join(log_list)
+    return log_list
