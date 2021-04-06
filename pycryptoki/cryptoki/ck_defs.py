@@ -1143,7 +1143,7 @@ struct_def(
         ("deleteAfterExtract", CK_ULONG_PTR),
         ("result", CK_ULONG_PTR),
         ("keyBlobLen", CK_ULONG_PTR),
-        ("keyBlob", CK_BYTE_PTR),
+        ("keyBlob", POINTER(CK_BYTE_PTR)),
     ],
 )
 CK_CPV4_EXTRACT_PARAMS_PTR = POINTER(CK_CPV4_EXTRACT_PARAMS)
@@ -1162,7 +1162,7 @@ struct_def(
         ("objectType", CK_ULONG_PTR),
         ("storageType", CK_ULONG_PTR),
         ("keyBlobLen", CK_ULONG_PTR),
-        ("keyBlob", CK_BYTE_PTR),
+        ("keyBlob", POINTER(CK_BYTE_PTR)),
         ("result", CK_ULONG_PTR),
         ("objectHandle", CK_ULONG_PTR),
     ],
