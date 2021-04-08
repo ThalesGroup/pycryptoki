@@ -1,8 +1,10 @@
+# coding=utf-8
 """
 Testcases for string helpers
 """
 
 import pytest
+from hypothesis import given, strategies, example
 
 from pycryptoki.default_templates import dh_prime
 from pycryptoki.mechanism import Mechanism, IvMechanism
@@ -21,14 +23,22 @@ from pycryptoki.string_helpers import _decode, _coerce_mech_to_str, pformat_pyc_
 @pytest.mark.parametrize(
     "value,ret",
     [
-        (b"this is a test string", u"this is a test string"),
-        (b"\x01\x23\x82\x20\x01\xb6\x09\xd2\xb6|gN\xcc", u"0123822001b609d2b67c674ecc"),
+        (b"this is a test string", b"this is a test string"),
+        (b"\x01\x23\x82\x20\x01\xb6\x09\xd2\xb6|gN\xcc", "0123822001b609d2b67c674ecc"),
         (None, None),
-        (b"", u""),
+        (b"", ""),
     ],
 )
 def test_decode(value, ret):
     assert _decode(value) == ret
+
+
+@given(strategies.binary())
+# Explicit example from a failing test in live -- has a unicode character that will fail on a str() call in python2
+@example(u" SxҎTmi".encode("utf-8"))
+def test_fuzzed_decoding(bdata):
+    # raises if we couldn't call str() on the results
+    pformat_pyc_args({"data": bdata})
 
 
 CBC_OUT = """Iv16Mechanism(mech_type: CKM_AES_CBC,
