@@ -1,3 +1,5 @@
+import binascii
+
 from six import integer_types, binary_type, string_types
 
 from pycryptoki.lookup_dicts import ATTR_NAME_LOOKUP
@@ -9,21 +11,19 @@ PYC_MAX_ARG_LENGTH = 40
 
 def _decode(value):
     """
-    Attempts to convert invalid bytestring data to hex while preserving regular text.
+    Attempt to convert a bytestring into something more readable. Assumes hex first, if that fails and non-standard
+    characters are in the bytestring ( e.g. ``\x12``), convert to hex.
 
-    It does this by attempting to decode the string to unicode (using utf8), and on failure
-    converting to hex. There are some corner cases where bytestring data is still valid unicode.
-
-    :param value: Bytestring that should be converted to either unicode or hex.
-    :return: string.
+    Anything converted to hex will be returned as *unicode*; anything that is left 'as-is', will stay bytestring.
     """
     try:
-        ret = value.decode("utf-8", "strict")
-    except UnicodeDecodeError:
-        ret = to_hex(from_bytestring(value)).decode("utf-8", "backslashreplace")
-    except Exception:
-        ret = value
-    return ret
+        binascii.unhexlify(value)
+        # value is already valid hex, return it.
+        return value.decode("utf-8", "ignore")
+    except (binascii.Error, TypeError):
+        if "\\x" in repr(value):
+            return to_hex(from_bytestring(value)).decode("utf-8", "ignore")
+        return value
 
 
 def _coerce_mech_to_str(mech):
