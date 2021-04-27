@@ -1140,7 +1140,6 @@ struct_def(
         ("numberOfObjects", CK_ULONG),
         ("objectType", CK_ULONG_PTR),
         ("objectHandle", CK_ULONG_PTR),
-        ("deleteAfterExtract", CK_ULONG_PTR),
         ("result", CK_ULONG_PTR),
         ("keyBlobLen", CK_ULONG_PTR),
         ("keyBlob", POINTER(CK_BYTE_PTR)),
