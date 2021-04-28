@@ -1155,6 +1155,8 @@ class CK_CPV4_INSERT_PARAMS(Structure):
 struct_def(
     CK_CPV4_INSERT_PARAMS,
     [
+        ("inputLength", CK_ULONG),
+        ("input", CK_BYTE_PTR),
         ("sessionOuid", CK_BYTE * 12),
         ("insertionFlags", CK_ULONG),
         ("numberOfObjects", CK_ULONG),
