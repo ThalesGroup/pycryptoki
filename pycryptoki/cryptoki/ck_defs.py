@@ -1135,7 +1135,8 @@ struct_def(
     [
         ("inputLength", CK_ULONG),
         ("input", CK_BYTE_PTR),
-        ("sessionOuid", CK_BYTE * 12),
+        ("sessionOuidLen", CK_ULONG),
+        ("sessionOuid", CK_BYTE_PTR),
         ("extractionFlags", CK_ULONG),
         ("numberOfObjects", CK_ULONG),
         ("objectType", CK_ULONG_PTR),
@@ -1157,7 +1158,8 @@ struct_def(
     [
         ("inputLength", CK_ULONG),
         ("input", CK_BYTE_PTR),
-        ("sessionOuid", CK_BYTE * 12),
+        ("sessionOuidLen", CK_ULONG),
+        ("sessionOuid", CK_BYTE_PTR),
         ("insertionFlags", CK_ULONG),
         ("numberOfObjects", CK_ULONG),
         ("objectType", CK_ULONG_PTR),
