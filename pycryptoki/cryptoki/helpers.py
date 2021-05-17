@@ -80,9 +80,13 @@ def parse_chrystoki_conf():
         )
 
     LOG.debug("Searching %s for Chrystoki DLL path...", conf_path)
-
-    dll_path = _search_for_dll_in_chrystoki_conf(conf_path)
-
+    try:
+        dll_path = _search_for_dll_in_chrystoki_conf(conf_path)
+    except FileNotFoundError as e:
+        LOG.exception(
+            "Luna /etc/Chrystoki.conf not be found, pycryptoki switched to point to the library of different product"
+        )
+        return None
     LOG.info("Using DLL at location: %s", dll_path)
 
     return dll_path
@@ -181,7 +185,8 @@ class CryptokiDLLSingleton(object):
         if not cls._instance_map.get(CRYSTOKI_CONF_DLL):
             new_instance = super(CryptokiDLLSingleton, cls).__new__(cls, *args, **kwargs)
 
-            dll_path = parse_chrystoki_conf()
+            #  depends on different product, lib path could be configured by pointing to path, or stored in a file
+            dll_path = os.environ.get(CRYSTOKI_CONF_DLL, parse_chrystoki_conf())
             new_instance.dll_path = dll_path
             if "win" in sys.platform and IS_64B:
                 import ctypes
