@@ -578,6 +578,14 @@ CA_SIMMultiSign = make_late_binding_function(
 )
 CA_Extract = make_late_binding_function("CA_Extract", [CK_SESSION_HANDLE, CK_MECHANISM_PTR])
 CA_Insert = make_late_binding_function("CA_Insert", [CK_SESSION_HANDLE, CK_MECHANISM_PTR])
+CA_MigrateKeys = make_late_binding_function(
+    "CA_MigrateKeys",
+    [CK_SESSION_HANDLE, CK_SESSION_HANDLE, CK_ULONG, CK_ULONG, CK_OBJECT_MIGRATION_DATA_PTR],
+)
+CA_MigrationStartSessionNegotiation = make_late_binding_function(
+    "CA_MigrationStartSessionNegotiation",
+    [CK_SESSION_HANDLE, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR, CK_ULONG_PTR, CK_BYTE_PTR],
+)
 CA_GetTokenObjectUID = make_late_binding_function(
     "CA_GetTokenObjectUID", [CK_SLOT_ID, CK_ULONG, CK_ULONG, POINTER(CK_BYTE)]
 )

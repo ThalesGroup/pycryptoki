@@ -187,6 +187,7 @@ from pycryptoki.ca_extensions.hsm_info import (
     ca_get_cv_firmware_version,
     ca_get_cv_firmware_version_ex,
 )
+from pycryptoki.ca_extensions.cpv4 import ca_migrate_keys, ca_migrate_keys_ex
 from pycryptoki.cryptoki import CK_ULONG
 from pycryptoki.encryption import (
     c_encrypt,
@@ -754,6 +755,8 @@ class PycryptokiService(rpyc.SlaveService):
     ca_stc_get_digest_ids_ex = staticmethod(ca_stc_get_digest_ids_ex)
     ca_stc_get_digest_name_by_id = staticmethod(ca_stc_get_digest_name_by_id)
     ca_stc_get_digest_name_by_id_ex = staticmethod(ca_stc_get_digest_name_by_id_ex)
+    ca_migrate_keys = staticmethod(ca_migrate_keys)
+    ca_migrate_keys_ex = staticmethod(ca_migrate_keys_ex)
 
 
 def server_launch(service, ip, port, config):

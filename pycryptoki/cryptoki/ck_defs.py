@@ -1126,6 +1126,22 @@ class CK_APPLICATION_ID(Structure):
 struct_def(CK_APPLICATION_ID, [("id", CK_BYTE * 16)])
 
 
+class CK_OBJECT_MIGRATION_DATA(Structure):
+    pass
+
+
+struct_def(
+    CK_OBJECT_MIGRATION_DATA,
+    [
+        ("objectType", CK_ULONG),
+        ("sourceHandle", CK_OBJECT_HANDLE),
+        ("targetHandle", CK_OBJECT_HANDLE),
+        ("rv", CK_RV),
+    ],
+)
+CK_OBJECT_MIGRATION_DATA_PTR = POINTER(CK_OBJECT_MIGRATION_DATA)
+
+
 class CK_CPV4_EXTRACT_PARAMS(Structure):
     pass
 
