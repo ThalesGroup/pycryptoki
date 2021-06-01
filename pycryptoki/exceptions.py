@@ -8,7 +8,7 @@ from functools import wraps
 from six import integer_types
 
 from .defines import CKR_OK
-from .lookup_dicts import ret_vals_dictionary, ATTR_NAME_LOOKUP
+from .lookup_dicts import ret_vals_dictionary
 
 LOG = logging.getLogger(__name__)
 
@@ -114,34 +114,13 @@ def check_luna_exception(ret, luna_function, args, kwargs):
     :param luna_function: pycryptoki function that was called
     :param args: Arguments passed to the pycryptoki function.
     """
-    from pycryptoki.string_helpers import _coerce_mech_to_str
+    from pycryptoki.string_helpers import pformat_pyc_args
 
-    log_list = []
     all_args = inspect.getcallargs(luna_function, *args, **kwargs)
-    for key, value in all_args.items():
-        if "template" in key and isinstance(value, dict):
-            # Means it's a template, so let's perform a lookup on all of the objects within
-            # this.
-            log_list.append("\t\t%s: " % key)
-            for template_key, template_value in all_args[key].items():
-                log_list.append(
-                    "\t\t\t%s: %s"
-                    % (ATTR_NAME_LOOKUP.get(template_key, template_key), template_value)
-                )
-        elif "password" in key:
-            log_list.append("\t\t%s: *" % key)
-        elif "mechanism" in key:
-            log_list.append("\t%s: " % key)
-            nice_mech = _coerce_mech_to_str(all_args[key]).splitlines()
-            log_list.extend(["\t\t%s" % x for x in nice_mech])
-        else:
-            if len(str(value)) > 20:
-                msg = "\t\t%s: %s[...]%s" % (key, str(value)[:10], str(value)[-10:])
-            else:
-                msg = "\t\t%s: %s" % (key, value)
-            log_list.append(msg)
+    formatted_args = pformat_pyc_args(all_args)
 
-    arg_string = "({})".format("\n".join(log_list))
+    # Tab it over one more for exception logging.
+    arg_string = "\n".join("\t{}".format(x) for x in formatted_args)
     LOG.debug(
         "Call to %s returned %s (%s)",
         luna_function.__name__,

@@ -3,7 +3,7 @@ from __future__ import print_function
 from rpyc.utils.classic import SlaveService
 from six import string_types, binary_type
 
-from pycryptoki.string_helpers import _decode, _coerce_mech_to_str
+from pycryptoki.string_helpers import _decode, _coerce_mech_to_str, pformat_pyc_args
 
 """
 Contains both a local and remote pycryptoki client
@@ -106,35 +106,8 @@ def log_args(funcname, arg_dict):
     log_msg = "Remote pycryptoki command: {}()".format(funcname)
     if arg_dict:
         log_msg += " with args:"
-    log_list = [log_msg]
-    for key, value in arg_dict.items():
-        if "template" in key and isinstance(value, dict):
-            # Means it's a template, so let's perform a lookup on all of the objects within
-            # this.
-            log_list.append("\t%s: " % key)
-            for template_key, template_value in arg_dict[key].items():
-                log_list.append(
-                    "\t\t%s: %s"
-                    % (ATTR_NAME_LOOKUP.get(template_key, template_key), template_value)
-                )
-        elif "password" in key:
-            log_list.append("\t%s: *" % key)
-        elif "mechanism" in key:
-            log_list.append("\t%s: " % key)
-            nice_mech = _coerce_mech_to_str(arg_dict[key]).splitlines()
-            log_list.extend(["\t\t%s" % x for x in nice_mech])
-        else:
-            if isinstance(value, binary_type):
-                log_val = _decode(value)
-            else:
-                log_val = value
-
-            if isinstance(log_val, (string_types, binary_type)) and len(log_val) > 40:
-                msg = "\t%s: %s[...]%s" % (key, log_val[:20], log_val[-20:])
-            else:
-                msg = "\t%s: %s" % (key, log_val)
-            log_list.append(msg)
-
+    formatted_args = pformat_pyc_args(arg_dict)
+    log_list = [log_msg] + ["\t{}".format(x) for x in formatted_args]
     LOG.debug("\n".join(log_list))
 
 
