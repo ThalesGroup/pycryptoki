@@ -77,6 +77,7 @@ from .rc import RC2CBCMechanism, RC2Mechanism, RC5CBCMechanism, RC5Mechanism
 from .rsa import RSAPKCSOAEPMechanism, RSAPKCSPSSMechanism
 from .kdf import PRFKDFDeriveMechanism
 from .shake import ShakeMechanism
+from .sha import ShaHmacGeneralMechanism
 from ..defines import (
     CKM_DES_CBC,
     CKM_DES3_CBC,
@@ -126,6 +127,10 @@ from ..defines import (
     CKM_SHA3_256_RSA_PKCS_PSS,
     CKM_SHA3_384_RSA_PKCS_PSS,
     CKM_SHA3_512_RSA_PKCS_PSS,
+    CKM_SHA3_512_HMAC_GENERAL,
+    CKM_SHA3_224_HMAC_GENERAL,
+    CKM_SHA3_256_HMAC_GENERAL,
+    CKM_SHA3_384_HMAC_GENERAL,
     CKM_DES_ECB,
     CKM_AES_CBC_ENCRYPT_DATA,
     CKM_AES_ECB_ENCRYPT_DATA,
@@ -203,6 +208,10 @@ MECH_LOOKUP = {
     CKM_SHA3_256_RSA_PKCS_PSS: RSAPKCSPSSMechanism,
     CKM_SHA3_384_RSA_PKCS_PSS: RSAPKCSPSSMechanism,
     CKM_SHA3_512_RSA_PKCS_PSS: RSAPKCSPSSMechanism,
+    CKM_SHA3_224_HMAC_GENERAL: ShaHmacGeneralMechanism,
+    CKM_SHA3_256_HMAC_GENERAL: ShaHmacGeneralMechanism,
+    CKM_SHA3_384_HMAC_GENERAL: ShaHmacGeneralMechanism,
+    CKM_SHA3_512_HMAC_GENERAL: ShaHmacGeneralMechanism,
     CKM_DES_ECB: NullMech,
     CKM_AES_CBC_ENCRYPT_DATA: AESCBCEncryptDataMechanism,
     CKM_AES_ECB_ENCRYPT_DATA: AESECBEncryptDataMechanism,

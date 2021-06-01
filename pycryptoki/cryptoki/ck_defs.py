@@ -1126,6 +1126,69 @@ class CK_APPLICATION_ID(Structure):
 struct_def(CK_APPLICATION_ID, [("id", CK_BYTE * 16)])
 
 
+class CK_OBJECT_MIGRATION_DATA(Structure):
+    pass
+
+
+struct_def(
+    CK_OBJECT_MIGRATION_DATA,
+    [
+        ("objectType", CK_ULONG),
+        ("sourceHandle", CK_OBJECT_HANDLE),
+        ("targetHandle", CK_OBJECT_HANDLE),
+        ("rv", CK_RV),
+    ],
+)
+CK_OBJECT_MIGRATION_DATA_PTR = POINTER(CK_OBJECT_MIGRATION_DATA)
+
+
+class CK_CPV4_EXTRACT_PARAMS(Structure):
+    pass
+
+
+struct_def(
+    CK_CPV4_EXTRACT_PARAMS,
+    [
+        ("inputLength", CK_ULONG),
+        ("input", CK_BYTE_PTR),
+        ("sessionOuidLen", CK_ULONG),
+        ("sessionOuid", CK_BYTE_PTR),
+        ("extractionFlags", CK_ULONG),
+        ("numberOfObjects", CK_ULONG),
+        ("objectType", CK_ULONG_PTR),
+        ("objectHandle", CK_ULONG_PTR),
+        ("result", CK_ULONG_PTR),
+        ("keyBlobLen", CK_ULONG_PTR),
+        ("keyBlob", POINTER(CK_BYTE_PTR)),
+    ],
+)
+CK_CPV4_EXTRACT_PARAMS_PTR = POINTER(CK_CPV4_EXTRACT_PARAMS)
+
+
+class CK_CPV4_INSERT_PARAMS(Structure):
+    pass
+
+
+struct_def(
+    CK_CPV4_INSERT_PARAMS,
+    [
+        ("inputLength", CK_ULONG),
+        ("input", CK_BYTE_PTR),
+        ("sessionOuidLen", CK_ULONG),
+        ("sessionOuid", CK_BYTE_PTR),
+        ("insertionFlags", CK_ULONG),
+        ("numberOfObjects", CK_ULONG),
+        ("objectType", CK_ULONG_PTR),
+        ("storageType", CK_ULONG_PTR),
+        ("keyBlobLen", CK_ULONG_PTR),
+        ("keyBlob", POINTER(CK_BYTE_PTR)),
+        ("result", CK_ULONG_PTR),
+        ("objectHandle", CK_ULONG_PTR),
+    ],
+)
+CK_CPV4_INSERT_PTR = POINTER(CK_CPV4_INSERT_PARAMS)
+
+
 class CK_EDDSA_PARAMS(Structure):
     pass
 
@@ -1183,3 +1246,11 @@ class CK_SHAKE_PARAMS(Structure):
 
 struct_def(CK_SHAKE_PARAMS, [("ulOutputLen", CK_ULONG)])
 CK_SHAKE_PARAMS_PTR = POINTER(CK_SHAKE_PARAMS)
+
+
+class CK_SHA_HMAC_GENERAL_PARAMS(Structure):
+    pass
+
+
+struct_def(CK_SHA_HMAC_GENERAL_PARAMS, [("ulOutputLen", CK_ULONG)])
+CK_SHA_HMAC_GENERAL_PARAMS_PTR = POINTER(CK_SHA_HMAC_GENERAL_PARAMS)

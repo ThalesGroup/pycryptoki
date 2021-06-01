@@ -51,6 +51,14 @@ def pytest_addoption(parser):
         dest="test_slot",
     )
     optiongroup.addoption(
+        "--clo-slot",
+        help="Specify the slot as the target cloning slot",
+        type=int,
+        default=os.environ.get("CLONE_SLOT", 2),
+        dest="test_clone_slot",
+        required=False,
+    )
+    optiongroup.addoption(
         "--reset",
         help="Reset the HSM back to its default settings with a factory" " reset.",
         action="store_true",
@@ -97,6 +105,7 @@ def pytest_configure(config):
         logger.setLevel(config.getoption("loglevel").upper())
 
     hsm_config["test_slot"] = config.getoption("test_slot")
+    hsm_config["test_clone_slot"] = config.getoption("test_clone_slot")
     hsm_config["user"] = config.getoption("user")
     hsm_config["reset"] = config.getoption("reset")
 
