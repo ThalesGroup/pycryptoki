@@ -50,9 +50,6 @@ def ca_migrate_keys(
 
     ret = CA_MigrateKeys(source_session, target_session, migration_flags, num_objects, c_mig_data)
 
-    if ret != CKR_OK:
-        return ret, None
-
     return ret, [(data.rv, data.targetHandle) for data in c_mig_data]
 
 
