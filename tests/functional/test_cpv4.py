@@ -21,7 +21,7 @@ from pycryptoki.defines import (
     CKF_RW_SESSION,
     CKF_SERIAL_SESSION,
     CKF_CPV4_CONTINUE_ON_ERR,
-    LUNA_CRYPTOKI_ELEMENT,
+    CK_CRYPTOKI_ELEMENT,
     CKM_DES_ECB,
     CKM_DES_CBC,
     CKM_DES_CBC_PAD,
@@ -57,14 +57,15 @@ from pycryptoki.defines import (
     CKA_VALUE_LEN,
     CKA_EXTRACTABLE,
     CKA_OUID,
-    LUNA_NULL_ELEMENT,
-    LUNA_PARAM_ELEMENT,
-    LUNA_CONTAINER_ACTIVATION_ELEMENT,
-    LUNA_MOFN_ACTIVATION_ELEMENT,
-    LUNA_CONTAINER_ELEMENT,
-    LUNA_UNKNOWN_ELEMENT,
+    CK_NULL_ELEMENT,
+    CK_CRYPTOKI_ELEMENT,
+    CK_PARAM_ELEMENT,
+    CK_CONTAINER_ACTIVATION_ELEMENT,
+    CK_MOFN_ACTIVATION_ELEMENT,
+    CK_CONTAINER_ELEMENT,
     CKA_TOKEN,
     CKR_INTEGER_OVERFLOW,
+    CKR_OBJECT_TYPE_INVALID,
 )
 from pycryptoki.encryption import c_wrap_key, c_unwrap_key, c_encrypt, c_decrypt
 from pycryptoki.key_generator import (
@@ -100,12 +101,11 @@ CERT_DATA = "cert_data"
 USER_TYPE = 1
 SESSION_FLAGS = CKF_SERIAL_SESSION | CKF_RW_SESSION
 INVALID_OBJECTS_TYPES = [
-    LUNA_NULL_ELEMENT,
-    LUNA_PARAM_ELEMENT,
-    LUNA_CONTAINER_ACTIVATION_ELEMENT,
-    LUNA_MOFN_ACTIVATION_ELEMENT,
-    LUNA_CONTAINER_ELEMENT,
-    LUNA_UNKNOWN_ELEMENT,
+    CK_NULL_ELEMENT,
+    CK_PARAM_ELEMENT,
+    CK_CONTAINER_ACTIVATION_ELEMENT,
+    CK_MOFN_ACTIVATION_ELEMENT,
+    CK_CONTAINER_ELEMENT,
 ]
 
 
@@ -213,7 +213,7 @@ def migration_flags():
     yield CKF_CPV4_CONTINUE_ON_ERR
 
 
-def get_migration_data(objects_to_clone, object_type=LUNA_CRYPTOKI_ELEMENT):
+def get_migration_data(objects_to_clone, object_type=CK_CRYPTOKI_ELEMENT):
     """Prepares the migration data"""
     mig_data_list = []
     for obj in objects_to_clone:
@@ -233,7 +233,7 @@ def one_object(request, source_session):
 @pytest.fixture(scope="function")
 def invalid_object_handle():
     """invalid object handle"""
-    yield [MIGRATION_DATA(object_type=LUNA_CRYPTOKI_ELEMENT, source_handle=11111)]
+    yield [MIGRATION_DATA(object_type=CK_CRYPTOKI_ELEMENT, source_handle=11111)]
 
 
 @pytest.fixture(scope="function", params=INVALID_OBJECTS_TYPES)
@@ -332,7 +332,11 @@ class TestMigrateKeys(object):
             len(invalid_object_type),
             invalid_object_type,
         )
-        assert ret == 5
+
+        assert ret == CKR_OK
+        verify_migrated_objects(
+            source_session, target_session, invalid_object_type, mig_data, CKR_OBJECT_TYPE_INVALID
+        )
 
     def test_migrate_hundred_obj(
         self, source_session, target_session, migration_flags, hundred_objects
