@@ -81,7 +81,7 @@ from pycryptoki.key_generator import (
 )
 from pycryptoki.mechanism import NullMech, StringDataDerivationMechanism
 from pycryptoki.object_attr_lookup import c_get_attribute_value_ex, c_find_objects_ex
-from pycryptoki.return_values import ret_vals_dictionary
+from pycryptoki.lookup_dicts import ret_vals_dictionary
 from pycryptoki.test_functions import verify_object_attributes
 from .util import get_session_template
 

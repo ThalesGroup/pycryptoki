@@ -13,7 +13,7 @@
 
 # Add <file or directory> to the black list. It should be a base name, not a
 # path. You may set this option multiple times.
-ignore=.svn,cryptoki.py,defines.py,default_templates.py,return_values.py,lookup_dict.py
+ignore=.svn,cryptoki.py,defines.py,default_templates.py,lookup_dict.py
 
 # Pickle collected data for later comparisons.
 persistent=yes
