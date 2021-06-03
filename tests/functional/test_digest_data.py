@@ -2,7 +2,7 @@
 import logging
 import pytest
 
-from pycryptoki.return_values import ret_vals_dictionary
+from pycryptoki.lookup_dicts import ret_vals_dictionary
 from pycryptoki.defines import (
     CKR_OK,
     CKM_MD2,

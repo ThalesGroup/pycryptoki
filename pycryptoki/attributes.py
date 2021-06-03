@@ -7,7 +7,6 @@ import binascii
 import collections
 import datetime
 import logging
-from collections import defaultdict
 from ctypes import (
     cast,
     c_void_p,
@@ -286,7 +285,7 @@ def to_byte_array(val, reverse=False):
         LOG.debug("Final hex data: %s", fin)
         return fin
 
-    if not isinstance(val, (binary_type, collections.Iterable, integer_types)):
+    if not isinstance(val, (binary_type, collections.abc.Iterable, integer_types)):
         raise TypeError("Unknown conversion to byte array for type {}".format(type(val)))
 
     if isinstance(val, binary_type):
@@ -304,7 +303,7 @@ def to_byte_array(val, reverse=False):
         # Hex string: '01af'
         else:
             val = int(val, 16)
-    elif isinstance(val, collections.Iterable):
+    elif isinstance(val, collections.abc.Iterable):
         py_bytes = bytearray(val)
         byte_array = (CK_BYTE * len(py_bytes))(*py_bytes)
 
@@ -344,7 +343,7 @@ def to_sub_attributes(val, reverse=False):
 
 
 # Default any unset transform to :func:`to_byte_array`
-KEY_TRANSFORMS = defaultdict(lambda: to_byte_array)
+KEY_TRANSFORMS = collections.defaultdict(lambda: to_byte_array)
 
 KEY_TRANSFORMS.update(
     {
