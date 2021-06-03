@@ -66,6 +66,7 @@ from pycryptoki.defines import (
     CKA_TOKEN,
     CKR_INTEGER_OVERFLOW,
     CKR_OBJECT_TYPE_INVALID,
+    CKR_OBJECT_HANDLE_INVALID,
 )
 from pycryptoki.encryption import c_wrap_key, c_unwrap_key, c_encrypt, c_decrypt
 from pycryptoki.key_generator import (
@@ -269,16 +270,23 @@ def verify_migrated_objects(
     source_session, target_session, source_objs, migrated_objs, expected_retcode=CKR_OK
 ):
     """verifies CA_MigrateKeys result"""
-    src_ouids = [
-        c_get_attribute_value_ex(source_session, obj.source_handle, {CKA_OUID: None})[CKA_OUID]
-        for obj in source_objs
-    ]
+
+    assert len(source_objs) == len(migrated_objs)
+
+    counter = -1
+
     for rv, obj_h in migrated_objs:
 
+        counter += 1
         assert rv == expected_retcode
+
         if expected_retcode == CKR_OK:
+            src_uid = c_get_attribute_value_ex(
+                source_session, source_objs[counter].source_handle, {CKA_OUID: None}
+            )[CKA_OUID]
+
             target_uid = c_get_attribute_value_ex(target_session, obj_h, {CKA_OUID: None})[CKA_OUID]
-            assert target_uid in src_ouids
+            assert target_uid == src_uid
 
 
 @pytest.fixture(scope="function", autouse=True)
@@ -317,7 +325,14 @@ class TestMigrateKeys(object):
             len(invalid_object_handle),
             invalid_object_handle,
         )
-        assert ret == 7
+        assert ret == CKR_OK
+        verify_migrated_objects(
+            source_session,
+            target_session,
+            invalid_object_handle,
+            mig_data,
+            CKR_OBJECT_HANDLE_INVALID,
+        )
 
     def test_migrate_invalid_obj_type(
         self, source_session, target_session, migration_flags, invalid_object_type
