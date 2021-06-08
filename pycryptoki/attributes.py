@@ -22,7 +22,7 @@ from ctypes import (
 )
 from functools import wraps
 
-from six import b, string_types, integer_types, binary_type
+from six import b, string_types, integer_types, binary_type, moves
 from pycryptoki.conversions import from_bytestring, from_hex, to_bytestring
 from .cryptoki import (
     CK_ATTRIBUTE,
@@ -285,7 +285,7 @@ def to_byte_array(val, reverse=False):
         LOG.debug("Final hex data: %s", fin)
         return fin
 
-    if not isinstance(val, (binary_type, collections.abc.Iterable, integer_types)):
+    if not isinstance(val, (binary_type, moves.collections_abc.Iterable, integer_types)):
         raise TypeError("Unknown conversion to byte array for type {}".format(type(val)))
 
     if isinstance(val, binary_type):
@@ -303,7 +303,7 @@ def to_byte_array(val, reverse=False):
         # Hex string: '01af'
         else:
             val = int(val, 16)
-    elif isinstance(val, collections.abc.Iterable):
+    elif isinstance(val, moves.collections_abc.Iterable):
         py_bytes = bytearray(val)
         byte_array = (CK_BYTE * len(py_bytes))(*py_bytes)
 
