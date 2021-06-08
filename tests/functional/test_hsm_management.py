@@ -45,7 +45,7 @@ from pycryptoki.hsm_management import (
     c_performselftest,
 )
 from pycryptoki.key_generator import c_generate_key_pair
-from pycryptoki.return_values import ret_vals_dictionary
+from pycryptoki.lookup_dicts import ret_vals_dictionary
 from . import config as hsm_config
 
 
