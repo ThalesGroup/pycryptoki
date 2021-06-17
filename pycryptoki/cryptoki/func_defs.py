@@ -586,6 +586,27 @@ CA_MigrationStartSessionNegotiation = make_late_binding_function(
     "CA_MigrationStartSessionNegotiation",
     [CK_SESSION_HANDLE, CK_ULONG, CK_BYTE_PTR, CK_ULONG_PTR, CK_ULONG_PTR, CK_BYTE_PTR],
 )
+
+CA_MigrationContinueSessionNegotiation = make_late_binding_function(
+    "CA_MigrationContinueSessionNegotiation",
+    [
+        CK_SESSION_HANDLE,
+        CK_ULONG,
+        CK_ULONG,
+        CK_BYTE_PTR,
+        CK_ULONG_PTR,
+        CK_ULONG_PTR,
+        CK_BYTE_PTR,
+        CK_ULONG_PTR,
+        CK_ULONG_PTR,
+        CK_BYTE_PTR,
+    ],
+)
+
+CA_MigrationCloseSession = make_late_binding_function(
+    "CA_MigrationCloseSession", [CK_SESSION_HANDLE, CK_ULONG, CK_BYTE_PTR]
+)
+
 CA_GetTokenObjectUID = make_late_binding_function(
     "CA_GetTokenObjectUID", [CK_SLOT_ID, CK_ULONG, CK_ULONG, POINTER(CK_BYTE)]
 )
