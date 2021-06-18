@@ -25,7 +25,7 @@ from pycryptoki.token_management import c_init_token_ex
 logger = logging.getLogger(__name__)
 
 
-@pytest.yield_fixture(scope="class", autouse=True)
+@pytest.fixture(scope="class", autouse=True)
 def reset_to_defaults():
     yield
     # Factory Reset
