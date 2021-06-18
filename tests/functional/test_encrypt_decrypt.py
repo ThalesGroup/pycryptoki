@@ -214,7 +214,7 @@ def idfn(item):
     return id_str
 
 
-@pytest.yield_fixture(scope="class")
+@pytest.fixture(scope="class")
 def sym_keys(auth_session):
     """ Fixture containing all sym. keys"""
     keys = {}
@@ -234,7 +234,7 @@ def sym_keys(auth_session):
             c_destroy_object(auth_session, handle)
 
 
-@pytest.yield_fixture(scope="class")
+@pytest.fixture(scope="class")
 def asym_keys(auth_session):
     """ Fixture containing all asym. keys """
     keys = {}

@@ -93,7 +93,7 @@ EXTRA_PARAM = {
 VALUE_LEN = [CKM_AES_KEY_GEN, CKM_CAST3_KEY_GEN, CKM_CAST5_KEY_GEN]
 
 
-@pytest.yield_fixture(scope="class")
+@pytest.fixture(scope="class")
 def keys(auth_session):
     """ Fixture containing keys"""
     keys = {}

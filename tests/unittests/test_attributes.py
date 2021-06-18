@@ -34,7 +34,7 @@ mock_xform_dict = defaultdict(lambda: new_xform)
 mock_xform_dict.update({key: new_xform for key in KEY_TRANSFORMS})
 
 
-@pytest.yield_fixture()
+@pytest.fixture()
 def setup_mock_dict():
     """ Fixture for creating dictionary of mockxforms """
     with mock.patch("pycryptoki.attributes.KEY_TRANSFORMS", new=mock_xform_dict):
