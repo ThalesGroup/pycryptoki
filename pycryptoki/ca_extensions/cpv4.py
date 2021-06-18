@@ -52,7 +52,12 @@ def ca_migrate_keys(
     """
     Runs CA_MigrateKeys command
 
-    :param objects_to_migrate: a list of tuples (objectType, sourceHandle) or list of MIGRATION_DATA
+    :param int source_session: session opened on Source partition
+    :param int target_session: session opened on Target partition
+    :param int migration_flags: Flags
+    :param int num_objects: Number of objects to migrate.
+    :param objects_to_migrate: a list of tuples (objectType, sourceHandle) or list of
+    `~pycryptoki.ca_extensions.cpv4.MIGRATION_DATA` namedtuples
     """
     objects_to_migrate = (
         objects_to_migrate if isinstance(objects_to_migrate, list) else [objects_to_migrate]
@@ -71,9 +76,8 @@ def ca_migration_start_session_negotiation(target_session, input_data=None):
     """
     Runs CA_MigrationStartSessionNegotiation command
 
-    :param target_session: target slot session
-    :param step: Output step of the protocol, this can be used as input as well,
-                 but hey early stages of development and design!
+    :param int target_session: target slot session
+    :param bytes input_data: Input data for negotiating Migration
     """
     output_data = (c_ubyte * PCPROT_MAX_BUFFER_SIZE)()
     output_data_len = CK_ULONG(PCPROT_MAX_BUFFER_SIZE)
@@ -110,6 +114,12 @@ def ca_migration_continue_session_negotiation(
 ):
     """
     Runs CA_MigrationContinueSessionNegotiation
+
+    :param int target_session: Session handle
+    :param int input_step: TBD
+    :param bytes input_data: TBD
+    :param bytes session_ouid: Session OUID.
+    :return: Retcode, Dictionary.
     """
     output_step = CK_ULONG()
     output_data = (c_ubyte * PCPROT_MAX_BUFFER_SIZE)()
@@ -160,6 +170,10 @@ ca_migration_continue_session_negotiation_ex = make_error_handle_function(
 def ca_migration_close_session(target_session, session_ouid):
     """
     Runs CA_MigrationCloseSession
+
+    :param int target_session: Session handle
+    :param bytes session_ouid: Session OUID (in bytestring, not hex).
+    :return: Retcode
     """
     session_ouid, session_ouid_len = to_byte_array(from_bytestring(session_ouid))
     session_ouid = cast(session_ouid, POINTER(c_ubyte))
