@@ -159,7 +159,7 @@ def pytest_collection_modifyitems(session, config, items):
             items.remove(test_item)
 
 
-@pytest.yield_fixture(scope="session", autouse=True)
+@pytest.fixture(scope="session", autouse=True)
 def hsm_configured(pytestconfig):
     """
     Factory reset & init the hsm.
@@ -191,7 +191,7 @@ def hsm_configured(pytestconfig):
         c_finalize_ex()
 
 
-@pytest.yield_fixture(scope="class")
+@pytest.fixture(scope="class")
 def session(pytestconfig, hsm_configured):
     """
     Creates & returns a session on the Admin slot.
@@ -207,7 +207,7 @@ def session(pytestconfig, hsm_configured):
     c_close_session(slot)
 
 
-@pytest.yield_fixture(scope="class")
+@pytest.fixture(scope="class")
 def auth_session(pytestconfig, session):
     """
     Logs into the created admin session
@@ -219,7 +219,7 @@ def auth_session(pytestconfig, session):
     c_logout(session)
 
 
-@pytest.yield_fixture(scope="class")
+@pytest.fixture(scope="class")
 def valid_mechanisms():
     """
     Fixture that will query the active slot to get a list of valid mechanisms.
