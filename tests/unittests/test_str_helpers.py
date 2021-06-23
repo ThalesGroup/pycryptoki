@@ -67,7 +67,7 @@ def test_mech_printing(mech, output):
             {
                 "wrapped_key": b"\n\xd7\x04R\xd5OufU\x15\x19\xf4\x93\x94\x05\xec\xf9b\x92\xb5,\xa75NM\x93\x14\xeb\xdd\x97\xe0\x8a\xe6\x15w\x86\xe9\x12mu\xb5l\x80QG\x852$X!\xf3H\x05+\xff\xc6j\xa7\x14\xf9\xdb\x1b\n\xd3",
             },
-            "wrapped_key: 0ad70452d54f75665515[...]ffc66aa714f9db1b0ad3",
+            "wrapped_key: 0ad70452d54f7566551519f4939405ecf96292b5[...] (len: 64)",
         ),
         (
             {"template": {CKA_DECRYPT: True, 0x80000111: True, CKA_KEY_TYPE: 0}},
@@ -80,7 +80,7 @@ def test_mech_printing(mech, output):
         ),
         (
             {"public_template": {CKA_PRIME: dh_prime}},
-            "public_template: \n\tCKA_PRIME: [244, 136, 253, 88, [...], 233, 47, 120, 199]",
+            "public_template: \n\tCKA_PRIME: [244, 136, 253, 88, 78, 73, 219, 205, 32[...] (len: 128)",
         ),
     ],
     ids=[
