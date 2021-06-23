@@ -14,7 +14,7 @@ def _decode(value):
     Attempt to convert a bytestring into something more readable. Assumes hex first, if that fails and non-standard
     characters are in the bytestring ( e.g. ``\x12``), convert to hex.
 
-    Anything converted to hex will be returned as *unicode*; anything that is left 'as-is', will stay bytestring.
+    Anything converted to hex will be returned as UTF-8; anything that is left 'as-is', will stay bytestring.
     """
     try:
         binascii.unhexlify(value)
@@ -48,12 +48,18 @@ def _coerce_mech_to_str(mech):
     return str(mech)
 
 
-def _trunc(val):
+def _trunc(val, val_len=None):
     msg = str(val)
+    if val_len is None:
+        try:
+            val_len = len(val)
+        except TypeError:
+            val_len = len(msg)
+
     if len(msg) > PYC_MAX_ARG_LENGTH:
-        msg = "%s[...]%s" % (
-            msg[: PYC_MAX_ARG_LENGTH // 2],
-            msg[-PYC_MAX_ARG_LENGTH // 2 :],
+        msg = "%s[...] (len: %s)" % (
+            msg[:PYC_MAX_ARG_LENGTH],
+            val_len,
         )
     return msg
 
@@ -91,13 +97,16 @@ def pformat_pyc_args(func_args):
             log_list.extend(["\t%s" % x for x in nice_mech])
         else:
             log_val = value
+            val_len = None
+            # Note: we get the length of value before we decode/truncate it.
             if isinstance(value, (binary_type, string_types)):
                 if isinstance(value, binary_type):
                     log_val = _decode(value)
+                val_len = len(value)
             else:
                 log_val = str(value)
 
-            msg = "\t%s: %s" % (key, _trunc(log_val))
+            msg = "\t%s: %s" % (key, _trunc(log_val, val_len))
 
             log_list.append(msg)
 
