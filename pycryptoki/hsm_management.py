@@ -32,6 +32,7 @@ from .cryptoki import (
     CA_GetHSMCapabilitySetting,
     CA_GetHSMPolicySet,
     CA_GetHSMPolicySetting,
+    CA_ResetDevice,
 )
 from .exceptions import make_error_handle_function
 
@@ -416,3 +417,18 @@ def ca_get_hsm_policy_setting(slot, policy_id):
 
 
 ca_get_hsm_policy_setting_ex = make_error_handle_function(ca_get_hsm_policy_setting)
+
+
+def ca_reset_device(slot, flags=0):
+    """resets the hsm device
+
+    :param slot: slot number
+    :param flags: flags
+    :returns: the result code
+
+    """
+    ret = CA_ResetDevice(CK_SLOT_ID(slot), CK_ULONG(flags))
+    return ret
+
+
+ca_reset_device_ex = make_error_handle_function(ca_reset_device)
