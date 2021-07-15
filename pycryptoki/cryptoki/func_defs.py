@@ -594,6 +594,8 @@ CA_MigrationContinueSessionNegotiation = make_late_binding_function(
         CK_ULONG,
         CK_ULONG,
         CK_BYTE_PTR,
+        CK_ULONG,
+        CK_BYTE_PTR,
         CK_ULONG_PTR,
         CK_ULONG_PTR,
         CK_BYTE_PTR,
