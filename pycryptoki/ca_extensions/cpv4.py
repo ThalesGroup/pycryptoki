@@ -110,7 +110,7 @@ ca_migration_start_session_negotiation_ex = make_error_handle_function(
 
 
 def ca_migration_continue_session_negotiation(
-    target_session, input_step, input_data, session_ouid=None
+    target_session, input_step, input_data, input_session_ouid=None
 ):
     """
     Runs CA_MigrationContinueSessionNegotiation
@@ -125,13 +125,19 @@ def ca_migration_continue_session_negotiation(
     output_data = (c_ubyte * PCPROT_MAX_BUFFER_SIZE)()
     output_data_len = CK_ULONG(PCPROT_MAX_BUFFER_SIZE)
     status = CK_ULONG()
+    output_session_ouid = None
+    output_session_ouid_len = None
+    input_session_ouid_len = CK_ULONG()
 
-    if session_ouid is None:
-        session_ouid = (c_ubyte * PCPROT_MAX_BUFFER_SIZE)()
-        session_ouid_len = CK_ULONG(PCPROT_MAX_BUFFER_SIZE)
+    if input_session_ouid is None:
+        output_session_ouid = (c_ubyte * PCPROT_MAX_BUFFER_SIZE)()
+        output_session_ouid_len = CK_ULONG(PCPROT_MAX_BUFFER_SIZE)
+        output_session_ouid_len = pointer(output_session_ouid_len)
     else:
-        session_ouid, session_ouid_len = to_byte_array(from_bytestring(session_ouid))
-        session_ouid = cast(session_ouid, POINTER(c_ubyte))
+        input_session_ouid, input_session_ouid_len = to_byte_array(
+            from_bytestring(input_session_ouid)
+        )
+        input_session_ouid = cast(input_session_ouid, POINTER(c_ubyte))
 
     input_data, input_len = to_byte_array(from_bytestring(input_data))
     input_data = cast(input_data, POINTER(c_ubyte))
@@ -141,25 +147,30 @@ def ca_migration_continue_session_negotiation(
         input_step,
         input_len,
         input_data,
+        input_session_ouid_len,
+        input_session_ouid,
         byref(output_step),
         byref(output_data_len),
         output_data,
         byref(status),
-        byref(session_ouid_len),
-        session_ouid,
+        output_session_ouid_len,
+        output_session_ouid,
     )
     if ret != CKR_OK:
         return ret, {}
 
-    return (
-        ret,
-        {
-            "output": string_at(output_data, output_data_len.value),
-            "step": output_step.value,
-            "status": status.value,
-            "session_ouid": string_at(session_ouid, session_ouid_len.value),
-        },
-    )
+    ret_dict = {
+        "output": string_at(output_data, output_data_len.value),
+        "step": output_step.value,
+        "status": status.value,
+    }
+
+    if input_session_ouid is None:
+        ret_dict["session_ouid"] = string_at(
+            output_session_ouid, output_session_ouid_len.contents.value
+        )
+
+    return (ret, ret_dict)
 
 
 ca_migration_continue_session_negotiation_ex = make_error_handle_function(
