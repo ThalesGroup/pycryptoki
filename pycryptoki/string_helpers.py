@@ -2,7 +2,7 @@ import binascii
 
 from six import integer_types, binary_type, string_types
 
-from pycryptoki.lookup_dicts import ATTR_NAME_LOOKUP
+from pycryptoki.lookup_dicts import ATTR_NAME_LOOKUP, MECH_NAME_LOOKUP
 from .conversions import to_hex, from_bytestring
 from .cryptoki import CK_MECHANISM
 
@@ -34,16 +34,19 @@ def _coerce_mech_to_str(mech):
     :param mech: Dict, Mechanism class, or integer
     :return: String display of a mechanism.
     """
-    from .mechanism import Mechanism
+    from .mechanism import Mechanism, MechanismException
 
-    if isinstance(mech, dict):
-        mech = Mechanism(**mech)
-    elif isinstance(mech, CK_MECHANISM):
-        mech = mech
-    elif isinstance(mech, integer_types):
-        mech = Mechanism(mech_type=mech)
-    elif isinstance(mech, Mechanism):
-        pass
+    try:
+        if isinstance(mech, dict):
+            mech = Mechanism(**mech)
+        elif isinstance(mech, CK_MECHANISM):
+            mech = mech
+        elif isinstance(mech, integer_types):
+            mech = Mechanism(mech_type=mech)
+        elif isinstance(mech, Mechanism):
+            pass
+    except MechanismException:
+        mech = MECH_NAME_LOOKUP.get(mech, mech)
 
     return str(mech)
 
