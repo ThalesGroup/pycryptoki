@@ -16,6 +16,7 @@ from pycryptoki.defines import (
     CKA_OUID,
     CKA_PRIME,
     CKA_KEY_TYPE,
+    CKM_RSA_PKCS_PSS,
 )
 from pycryptoki.string_helpers import _decode, _coerce_mech_to_str, pformat_pyc_args
 
@@ -41,14 +42,14 @@ def test_fuzzed_decoding(bdata):
     pformat_pyc_args({"data": bdata})
 
 
-CBC_OUT = """Iv16Mechanism(mech_type: CKM_AES_CBC,
+CBC_OUT = """Iv16Mechanism(mech_type: CKM_AES_CBC (0x00001082),
               iv: [0, 1, 2, 3, 4, 5, 6, 7])"""
 
 
 @pytest.mark.parametrize(
     "mech,output",
     [
-        ({"mech_type": CKM_DES_ECB}, "NullMech(mech_type: CKM_DES_ECB)"),
+        ({"mech_type": CKM_DES_ECB}, "NullMech(mech_type: CKM_DES_ECB (0x00000121))"),
         (Mechanism(CKM_AES_CBC, params={"iv": list(range(8))}), CBC_OUT),
     ],
 )
@@ -61,7 +62,7 @@ def test_mech_printing(mech, output):
     [
         (
             {"mechanism": IvMechanism(mech_type=CKM_AES_CBC)},
-            "mechanism: \n\tIvMechanism(mech_type: CKM_AES_CBC)",
+            "mechanism: \n\tIvMechanism(mech_type: CKM_AES_CBC (0x00001082))",
         ),
         (
             {
@@ -95,3 +96,8 @@ def test_mech_printing(mech, output):
 def test_arg_formatting(testargs, expected_result):
     result = pformat_pyc_args(testargs)
     assert expected_result in "\n".join(result)
+
+
+def test_incomplete_mech():
+    kwargs = {"mechanism": CKM_RSA_PKCS_PSS}
+    assert "mechanism: \n\tCKM_RSA_PKCS_PSS" in "\n".join(pformat_pyc_args(kwargs))
