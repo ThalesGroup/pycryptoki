@@ -339,7 +339,7 @@ def to_sub_attributes(val, reverse=False):
 
     attrs = Attributes(val).get_c_struct()
 
-    return cast(pointer(attrs), c_void_p), CK_ULONG(len(attrs))
+    return cast(pointer(attrs), c_void_p), CK_ULONG(len(attrs) * sizeof(CK_ATTRIBUTE))
 
 
 # Default any unset transform to :func:`to_byte_array`
