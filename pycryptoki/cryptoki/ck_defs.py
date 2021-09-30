@@ -315,6 +315,7 @@ struct_def(
         ("pedId", CK_ULONG),
         ("pbFileName", CK_BYTE_PTR),
         ("ctxID", CK_ULONG),
+        ("ulContainerNumber", CK_ULONG),
     ],
 )
 CK_AES_CBC_PAD_INSERT_PARAMS_PTR = POINTER(CK_AES_CBC_PAD_INSERT_PARAMS)
