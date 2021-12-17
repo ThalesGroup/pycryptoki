@@ -71,5 +71,8 @@ deploy:
     - build
   only:
     - release
+  before_script:
+    - cp $DEPLOYMENT_PRIVKEY ~/.ssh/
+    - chmod 600 ~/.ssh/$DEPLOYMENT_PRIVKEY
   script: /root/deploy.sh
 

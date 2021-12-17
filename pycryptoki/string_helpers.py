@@ -20,7 +20,7 @@ def _decode(value):
         binascii.unhexlify(value)
         # value is already valid hex, return it.
         return value.decode("utf-8", "ignore")
-    except (binascii.Error, TypeError):
+    except (binascii.Error, TypeError, AttributeError):
         if "\\x" in repr(value):
             return to_hex(from_bytestring(value)).decode("utf-8", "ignore")
         return value
