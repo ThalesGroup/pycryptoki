@@ -4,4 +4,4 @@ hypothesis
 pytest
 future
 mock
-six
+six==1.16.0
