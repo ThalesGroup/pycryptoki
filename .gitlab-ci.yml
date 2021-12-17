@@ -72,7 +72,7 @@ deploy:
   only:
     - release
   before_script:
-    - cp $DEPLOYMENT_PRIVKEY ~/.ssh/
-    - chmod 600 ~/.ssh/$DEPLOYMENT_PRIVKEY
+    - cp $DEPLOYMENT_PRIVKEY ~/.ssh/id_ecdsa
+    - chmod 600 ~/.ssh/id_ecdsa
   script: /root/deploy.sh
 
