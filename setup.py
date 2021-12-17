@@ -27,6 +27,6 @@ setup(
         "future",
         "rpyc==3.4.4;python_version<='2.7'",
         "rpyc==4.0.2;python_version>'3'",
-        "six",
+        "six==1.16.0",
     ],
 )
