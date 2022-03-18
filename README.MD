@@ -10,7 +10,7 @@ Latest API documentation can be found on [readthedocs](http://pycryptoki.readthe
 
 ## Installation
 
-pip install git+https://github.com/gemalto/pycryptoki
+pip install git+https://github.com/ThalesGroup/pycryptoki
 
 ## Key Generation Example
 
