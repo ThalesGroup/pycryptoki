@@ -4,6 +4,7 @@ import logging
 from distutils.version import LooseVersion
 
 import pytest
+from six import moves
 
 from pycryptoki.default_templates import (
     get_default_key_template,
@@ -267,7 +268,7 @@ class TestEncryptData(object):
         :param ret: the actual return value
         :param expected_ret: the expected return value
         """
-        if isinstance(expected_ret, collections.Iterable):
+        if isinstance(expected_ret, moves.collections_abc.Iterable):
             ret_codes = ", ".join(("{}".format(ret_vals_dictionary[val] for val in expected_ret)))
             err_message = "Function should return one of: {}.\n" "Instead returned: {}".format(
                 ret_codes, ret_vals_dictionary[ret]
