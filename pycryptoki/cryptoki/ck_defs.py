@@ -315,6 +315,7 @@ struct_def(
         ("pedId", CK_ULONG),
         ("pbFileName", CK_BYTE_PTR),
         ("ctxID", CK_ULONG),
+        ("ulContainerNumber", CK_ULONG),
     ],
 )
 CK_AES_CBC_PAD_INSERT_PARAMS_PTR = POINTER(CK_AES_CBC_PAD_INSERT_PARAMS)
@@ -1186,7 +1187,8 @@ struct_def(
         ("objectHandle", CK_ULONG_PTR),
     ],
 )
-CK_CPV4_INSERT_PTR = POINTER(CK_CPV4_INSERT_PARAMS)
+
+CK_CPV4_INSERT_PARAMS_PTR = POINTER(CK_CPV4_EXTRACT_PARAMS)
 
 
 class CK_EDDSA_PARAMS(Structure):

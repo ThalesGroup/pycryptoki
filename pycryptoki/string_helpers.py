@@ -2,7 +2,7 @@ import binascii
 
 from six import integer_types, binary_type, string_types
 
-from pycryptoki.lookup_dicts import ATTR_NAME_LOOKUP
+from pycryptoki.lookup_dicts import ATTR_NAME_LOOKUP, MECH_NAME_LOOKUP
 from .conversions import to_hex, from_bytestring
 from .cryptoki import CK_MECHANISM
 
@@ -14,13 +14,13 @@ def _decode(value):
     Attempt to convert a bytestring into something more readable. Assumes hex first, if that fails and non-standard
     characters are in the bytestring ( e.g. ``\x12``), convert to hex.
 
-    Anything converted to hex will be returned as *unicode*; anything that is left 'as-is', will stay bytestring.
+    Anything converted to hex will be returned as UTF-8; anything that is left 'as-is', will stay bytestring.
     """
     try:
         binascii.unhexlify(value)
         # value is already valid hex, return it.
         return value.decode("utf-8", "ignore")
-    except (binascii.Error, TypeError):
+    except (binascii.Error, TypeError, AttributeError):
         if "\\x" in repr(value):
             return to_hex(from_bytestring(value)).decode("utf-8", "ignore")
         return value
@@ -34,27 +34,33 @@ def _coerce_mech_to_str(mech):
     :param mech: Dict, Mechanism class, or integer
     :return: String display of a mechanism.
     """
-    from .mechanism import Mechanism
+    from .mechanism import Mechanism, MechanismException
 
-    if isinstance(mech, dict):
-        mech = Mechanism(**mech)
-    elif isinstance(mech, CK_MECHANISM):
-        mech = mech
-    elif isinstance(mech, integer_types):
-        mech = Mechanism(mech_type=mech)
-    elif isinstance(mech, Mechanism):
-        pass
+    try:
+        if isinstance(mech, dict):
+            mech = Mechanism(**mech)
+        elif isinstance(mech, CK_MECHANISM):
+            mech = mech
+        elif isinstance(mech, integer_types):
+            mech = Mechanism(mech_type=mech)
+        elif isinstance(mech, Mechanism):
+            pass
+    except MechanismException:
+        mech = MECH_NAME_LOOKUP.get(mech, mech)
 
     return str(mech)
 
 
-def _trunc(val):
+def _trunc(val, val_len=None):
     msg = str(val)
+    if val_len is None:
+        try:
+            val_len = len(val)
+        except TypeError:
+            val_len = len(msg)
+
     if len(msg) > PYC_MAX_ARG_LENGTH:
-        msg = "%s[...]%s" % (
-            msg[: PYC_MAX_ARG_LENGTH // 2],
-            msg[-PYC_MAX_ARG_LENGTH // 2 :],
-        )
+        msg = "%s[...] (len: %s)" % (msg[:PYC_MAX_ARG_LENGTH], val_len,)
     return msg
 
 
@@ -91,13 +97,16 @@ def pformat_pyc_args(func_args):
             log_list.extend(["\t%s" % x for x in nice_mech])
         else:
             log_val = value
+            val_len = None
+            # Note: we get the length of value before we decode/truncate it.
             if isinstance(value, (binary_type, string_types)):
                 if isinstance(value, binary_type):
                     log_val = _decode(value)
+                val_len = len(value)
             else:
                 log_val = str(value)
 
-            msg = "\t%s: %s" % (key, _trunc(log_val))
+            msg = "\t%s: %s" % (key, _trunc(log_val, val_len))
 
             log_list.append(msg)
 

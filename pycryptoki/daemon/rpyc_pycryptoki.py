@@ -236,6 +236,8 @@ from pycryptoki.hsm_management import (
     ca_set_hsm_policies_ex,
     ca_set_destructive_hsm_policies,
     ca_set_destructive_hsm_policies_ex,
+    ca_reset_device,
+    ca_reset_device_ex,
 )
 from pycryptoki.key_generator import (
     c_destroy_object,
@@ -594,6 +596,8 @@ class PycryptokiService(rpyc.SlaveService):
     ca_set_hsm_policies_ex = staticmethod(ca_set_hsm_policies_ex)
     ca_set_destructive_hsm_policies = staticmethod(ca_set_destructive_hsm_policies)
     ca_set_destructive_hsm_policies_ex = staticmethod(ca_set_destructive_hsm_policies_ex)
+    ca_reset_device = staticmethod(ca_reset_device)
+    ca_reset_device_ex = staticmethod(ca_reset_device_ex)
 
     # partition_management.py
     ca_create_container = staticmethod(ca_create_container)

@@ -1,9 +1,10 @@
-image: otaaplvlp05.gemalto.com:5443/py_tox_tester:latest
+image: aa1569.lab.hsm:5443/py_tox_tester:latest
 
 # Change pip's cache directory to be inside the project directory since we can
 # only cache local items.
 variables:
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  PYTHON_VERSIONS: "2.7.15 3.6.12 3.7.9 3.8.5 3.9.13 3.10.4"
 
 # Pip's cache doesn't store the python packages
 # https://pip.pypa.io/en/stable/reference/pip_install/#caching
@@ -23,7 +24,7 @@ stages:
 before_script:
   - export PATH="$HOME/.pyenv/bin/:$PATH"
   - eval "$(pyenv init -)"
-  - pyenv global 3.8.5 3.6.12 3.7.9 2.7.15
+  - pyenv global ${PYTHON_VERSIONS[@]}
   - python -V
   - source /.venv/bin/activate
   
@@ -32,6 +33,7 @@ lint:
   stage: lint
   interruptible: true
   script:
+    - pip install black==19.10b0 click==8.0.2
     - black --version
     - black -l 100 . --check --diff
 
@@ -40,7 +42,7 @@ test:
   stage: test
   script:
     - tox -e clean
-    - tox -p -e py27,py36,py37,py38
+    - tox -p -e py27,py36,py37,py38,py39,py310
     - tox -e report
   interruptible: true
   artifacts:
@@ -56,8 +58,12 @@ build:
   stage: build
   interruptible: true
   script:
-    - python2.7 setup.py bdist_wheel
-    - python3.8 setup.py bdist_wheel
+    - |
+      for py in ${PYTHON_VERSIONS}; do
+        bin="python$( echo $py | cut -d'.' -f1-2 )"
+        $bin -m pip install wheel
+        $bin setup.py bdist_wheel
+      done
     
   artifacts:
     paths:
@@ -71,5 +77,8 @@ deploy:
     - build
   only:
     - release
+  before_script:
+    - cp $DEPLOYMENT_PRIVKEY ~/.ssh/id_ecdsa
+    - chmod 600 ~/.ssh/id_ecdsa
   script: /root/deploy.sh
 

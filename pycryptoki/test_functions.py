@@ -13,7 +13,7 @@ else:
 from .cryptoki import CK_OBJECT_HANDLE, CK_ULONG, C_GetObjectSize
 from .defines import CKR_OBJECT_HANDLE_INVALID
 from .defines import CKR_OK
-from .return_values import ret_vals_dictionary
+from .lookup_dicts import ret_vals_dictionary
 from .exceptions import (
     LunaCallException,
     LunaException,  # Backwards compatibility for external imports

@@ -131,10 +131,10 @@ class Mechanism(object):
         """
         Return a human-readable string of the mechanism data.
         """
-        # todo: lookup dict for the mechanism name.
-        return "{}(mech_type: {}," " {})".format(
+        return "{}(mech_type: {} (0x{:08x})," " {})".format(
             self.__class__.__name__,
             MECH_NAME_LOOKUP.get(self.mech_type, "UNKNOWN"),
+            self.mech_type,
             ", ".join("{}: {}".format(k, v) for k, v in self.params.items()),
         )
 
@@ -143,8 +143,8 @@ class Mechanism(object):
         Formatted string representation of a mechanism.
         """
         nice_params = []
-        msg = "{}(mech_type: {}".format(
-            self.__class__.__name__, MECH_NAME_LOOKUP.get(self.mech_type, "UNKNOWN")
+        msg = "{}(mech_type: {} (0x{:08x})".format(
+            self.__class__.__name__, MECH_NAME_LOOKUP.get(self.mech_type, "UNKNOWN"), self.mech_type
         )
         # +1 for the opening (
         msg_buff = len(self.__class__.__name__) + 1

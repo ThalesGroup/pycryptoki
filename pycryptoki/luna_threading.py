@@ -11,7 +11,7 @@ from .default_templates import (
 from .defaults import ADMIN_PARTITION_LABEL, MANUFACTURER_ID, MODEL
 from .defines import CKM_DES_KEY_GEN, CKM_RSA_PKCS_KEY_PAIR_GEN, CKR_OK
 from .key_generator import c_generate_key_ex, c_generate_key_pair_ex
-from .return_values import ret_vals_dictionary
+from .lookup_dicts import ret_vals_dictionary
 from .session_management import (
     c_open_session_ex,
     c_get_token_info_ex,

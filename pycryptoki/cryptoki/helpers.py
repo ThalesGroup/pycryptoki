@@ -141,18 +141,18 @@ def _search_for_dll_in_chrystoki_conf(conf_path):
 
             if len(lib_unix_line) > 1:
                 raise CryptokiConfigException(
-                    "Found more than one" " LibUNIX pattern on the same line"
+                    "Found more than one LibUNIX pattern on the same line"
                 )
             elif len(lib_unix_line) == 1:
                 if dll_path != "":
                     raise CryptokiConfigException(
-                        "Found more than one instance of" " LibUNIX in the file."
+                        "Found more than one instance of LibUNIX in the file."
                     )
-                dll_path = lib_unix_line[0].strip().strip(";").strip().strip("'").strip('"')
+                dll_path = lib_unix_line[0].strip().strip("'\";")
 
         if dll_path == "":
             raise CryptokiConfigException(
-                "Error finding LibUNIX declaration in configuration file:" " %s" % conf_path
+                "Error finding LibUNIX declaration in configuration file: %s" % conf_path
             )
 
     return dll_path
