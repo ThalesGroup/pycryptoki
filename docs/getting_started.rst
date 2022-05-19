@@ -10,7 +10,7 @@ Installation
 Pycryptoki can be installed on any machine that has Python installed. Python versions >= 2.7
 are supported.::
 
-    pip install git+https://github.com/gemalto/pycryptoki
+    pip install git+https://github.com/ThalesGroup/pycryptoki
 
 
 Pycryptoki will attempt to auto-locate the SafeNet Cryptoki shared library when pycryptoki
