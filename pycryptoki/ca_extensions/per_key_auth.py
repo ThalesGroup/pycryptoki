@@ -10,6 +10,7 @@ from pycryptoki.cryptoki import (
     CA_AuthorizeKey,
     CA_AssignKey,
     CA_IncrementFailedAuthCount,
+    CK_ULONG,
 )
 from pycryptoki.cryptoki import CK_SESSION_HANDLE, CK_OBJECT_HANDLE, CK_UTF8CHAR
 from pycryptoki.exceptions import make_error_handle_function
@@ -94,8 +95,12 @@ def ca_authorize_key(h_session, h_object, auth_data):
     :param auth_data: authorization byte list, e.g. [11, 12, 13, ..]
     :return: Ret code
     """
-    auth_data_ptr, auth_data_length = to_byte_array(auth_data)
-    auth_data_ptr = cast(auth_data_ptr, POINTER(CK_UTF8CHAR))
+    if auth_data is not None:
+        auth_data_ptr, auth_data_length = to_byte_array(auth_data)
+        auth_data_ptr = cast(auth_data_ptr, POINTER(CK_UTF8CHAR))
+    else:
+        auth_data_ptr = None
+        auth_data_length = CK_ULONG(0)
 
     h_object = CK_OBJECT_HANDLE(h_object)
     h_session = CK_SESSION_HANDLE(h_session)

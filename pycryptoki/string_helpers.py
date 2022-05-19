@@ -60,10 +60,7 @@ def _trunc(val, val_len=None):
             val_len = len(msg)
 
     if len(msg) > PYC_MAX_ARG_LENGTH:
-        msg = "%s[...] (len: %s)" % (
-            msg[:PYC_MAX_ARG_LENGTH],
-            val_len,
-        )
+        msg = "%s[...] (len: %s)" % (msg[:PYC_MAX_ARG_LENGTH], val_len,)
     return msg
 
 
