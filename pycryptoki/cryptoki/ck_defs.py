@@ -1184,7 +1184,7 @@ struct_def(
         ("keyBlobLen", CK_ULONG_PTR),
         ("keyBlob", POINTER(CK_BYTE_PTR)),
         ("result", CK_ULONG_PTR),
-        ("objectHandle", CK_ULONG_PTR),
+        ("objectHandle", POINTER(CK_RV)),
     ],
 )
 
