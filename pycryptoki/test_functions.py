@@ -20,6 +20,7 @@ from .exceptions import (
     make_error_handle_function,
 )
 
+_ = LunaException, make_error_handle_function
 LOG = logging.getLogger(__name__)
 
 
