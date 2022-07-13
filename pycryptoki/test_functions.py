@@ -6,7 +6,7 @@ import logging
 from ctypes import byref
 
 if sys.version_info < (3,):
-    integer_types = (int, long)
+    integer_types = (int, long)  # noqa: F821
 else:
     integer_types = (int,)
 

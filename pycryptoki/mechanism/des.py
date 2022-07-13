@@ -30,8 +30,15 @@ from ..cryptoki import (
 
 from ..attributes import to_byte_array
 from ..conversions import from_bytestring
-from ..cryptoki import CK_ULONG, CK_BYTE, CK_BYTE_PTR, CK_DES_CTR_PARAMS, \
-    CK_KEY_DERIVATION_STRING_DATA, CK_DES_CBC_ENCRYPT_DATA_PARAMS
+from ..cryptoki import (
+    CK_ULONG,
+    CK_BYTE,
+    CK_BYTE_PTR,
+    CK_DES_CTR_PARAMS,
+    CK_KEY_DERIVATION_STRING_DATA,
+    CK_DES_CBC_ENCRYPT_DATA_PARAMS,
+)
+
 LOG = logging.getLogger(__name__)
 
 
