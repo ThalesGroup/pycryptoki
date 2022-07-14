@@ -66,3 +66,8 @@ Functional tests require an HSM to test against, and will actively test the inte
 ```
 py.test tests/functional --slot=<slot_num> [--reset] [--password=<pwd>] [--copassword=<pwd>] [--user=<user>] [--loglevel=<level>]
 ```
+
+### Adding new tests
+
+Tests for new functionality should be added as the new commands are added. Ideally functional
+tests for things that hit an HSM, and unittests for more complicated pure-python handling.
