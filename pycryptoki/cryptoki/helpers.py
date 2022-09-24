@@ -72,7 +72,7 @@ def parse_chrystoki_conf():
             conf_path,
         )
 
-    if conf_path is None:
+    if conf_path is None and dll_path is None:
         conf_path = "/etc/Chrystoki.conf"
         LOG.warning(
             "No DLL Path or Chyrstoki.conf path set in defaults.py " "looking up DLL path in %s",
