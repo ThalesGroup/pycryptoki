@@ -72,11 +72,11 @@ def c_initialize(flags=None, init_struct=None):
     :returns: Cryptoki return code.
     """
     if flags:
-        if not init_struct:
+        if init_struct is None:
             init_struct = CK_C_INITIALIZE_ARGS()
         init_struct.flags = flags
-    if init_struct:
-        init_struct_p = cast(init_struct, c_void_p)
+    if init_struct is not None:
+        init_struct_p = cast(pointer(init_struct), c_void_p)
     else:
         init_struct_p = None
     LOG.info("Initializing Cryptoki Library")
