@@ -72,7 +72,7 @@ def pformat_pyc_args(func_args):
     hex, mask passwords, and truncate args over ``PYC_MAX_ARG_LENGTH`` to that size.
 
     :param func_args: dictionary
-    :return: formatted string.
+    :return: List of string lines
     """
     log_list = []
     for key, value in func_args.items():

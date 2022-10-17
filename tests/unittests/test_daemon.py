@@ -3,6 +3,7 @@ Testcases for the RPYC Daemon & Client.
 """
 import logging
 import os
+import random
 
 import pytest
 from pycryptoki.daemon.rpyc_pycryptoki import (
@@ -28,22 +29,21 @@ def local_rpyc():
         "allow_setattr": True,
         "allow_delattr": True,
     }
+    port = random.randint(10000, 65535)
     server = create_server_subprocess(
-        server_launch,
-        args=(PycryptokiService, "127.0.0.1", os.getpid(), server_config),
-        logger=logger,
+        server_launch, args=(PycryptokiService, "127.0.0.1", port, server_config), logger=logger,
     )
     assert server.exitcode is None
     assert server.is_alive()
-    yield
+    yield port
     server.terminate()
 
 
 class TestPycryptokiDaemon(object):
     def test_simple_connect(self, local_rpyc):
-        client = RemotePycryptokiClient("127.0.0.1", os.getpid())
+        client = RemotePycryptokiClient("127.0.0.1", local_rpyc)
         assert client.test_conn()
 
     def test_attribute_delivery(self, local_rpyc):
-        client = RemotePycryptokiClient("127.0.0.1", os.getpid())
+        client = RemotePycryptokiClient("127.0.0.1", local_rpyc)
         client.test_attrs(get_default_key_template(CKM_AES_KEY_GEN))
