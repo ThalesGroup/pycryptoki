@@ -26,7 +26,7 @@ setup(
     install_requires=[
         "future",
         "rpyc==3.4.4;python_version<='2.7'",
-        "rpyc==4.0.2;python_version>'3'",
+        "rpyc==6.0.0;python_version>'3'",
         "six==1.16.0",
     ],
 )
